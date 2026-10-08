@@ -1,0 +1,775 @@
+schema_version: 1
+plan_type: content_backlog
+created_at: '2026-09-29'
+status: completed
+target_article_count: 41
+notice: 首轮 41 项正文已交付；第三至第七批 astra/xhigh 审阅发现均已修订并定向复核关闭。全部目标文件、身份与生成清单已核对。done 仅表示本轮草稿或实验设计产物交付，不代表 reviewed 或 reproduced；完整二级主题仍有后续扩展。
+task_statuses:
+- planned
+- collecting
+- drafting
+- reviewing
+- done
+- blocked_on_evidence
+metadata_policy: 新正文使用 status:draft；审核、来源核对和实测分开。案例无证据则保留待办；实验本轮交付设计。
+hardware_policy: 本清单不要求执行真实GPU/NPU实验；复现另按匹配环境推进，无设备不阻塞来源整理。
+case_policy: 同一案例若含多个故障，主归属按主要调查问题；保留原始来源及版本。保留独立诊断评测集，不能用已入库完整复盘冒充未见测试。
+first_batch_order:
+- F05
+- F06
+- E01
+- F03
+- F09
+- F11
+- F07
+- F08
+- F17
+- F18
+tasks:
+- id: F01
+  title: 一次训练任务的端到端路径
+  stage: foundation
+  status: done
+  content_id: overview.training-lifecycle
+  type: concept
+  domain: overview
+  target_path: knowledge/00-overview/training-lifecycle.md
+  platforms:
+  - generic
+  source_packages:
+  - A01
+  - A08
+  - A10
+  - A18
+  depends_on:
+  - F03
+  - F05
+  - F07
+  - F09
+  - F11
+  - F13
+  acceptance: 有资源/状态/数据路径图，连接各层已完成条目，不将单一框架等同所有训练。
+- id: F02
+  title: 一次推理请求的端到端路径
+  stage: foundation
+  status: done
+  content_id: overview.inference-lifecycle
+  type: concept
+  domain: overview
+  target_path: knowledge/00-overview/inference-lifecycle.md
+  platforms:
+  - generic
+  source_packages:
+  - A01
+  - A11
+  - A19
+  - A20
+  depends_on:
+  - F03
+  - F05
+  - F11
+  - F15
+  - F16
+  acceptance: 说明请求、执行、缓存和服务指标的关系，区分引擎与后端条件。
+- id: F03
+  title: 计算节点资源与拓扑参考
+  stage: foundation
+  status: done
+  content_id: hardware.resource-topology
+  type: reference
+  domain: hardware
+  target_path: knowledge/01-hardware/resource-topology.md
+  platforms:
+  - generic
+  source_packages:
+  - A02
+  - A03
+  - A15
+  depends_on: []
+  acceptance: 区分主机/设备内存、设备/互联/故障域，并给具体机型来源。
+- id: F04
+  title: 设备健康证据与检测边界
+  stage: foundation
+  status: done
+  content_id: hardware.health-evidence
+  type: reference
+  domain: hardware
+  target_path: knowledge/01-hardware/health-evidence.md
+  platforms:
+  - generic
+  source_packages:
+  - A04
+  - A15
+  depends_on:
+  - F03
+  - F17
+  acceptance: 记录指标语义、被动查询/主动测试和未覆盖条件，GPU/NPU 实现分开。
+- id: F05
+  title: 主机到模型执行的软件栈分层
+  stage: foundation
+  status: done
+  content_id: software-stack.layers-and-boundaries
+  type: concept
+  domain: software-stack
+  target_path: knowledge/02-software-stack/layers-and-boundaries.md
+  platforms:
+  - generic
+  source_packages:
+  - A01
+  - A03
+  - A13
+  depends_on: []
+  acceptance: 解释驱动、runtime、框架、插件和引擎各自职责与依赖。
+- id: F06
+  title: 如何判断版本配套是否有依据
+  stage: foundation
+  status: done
+  content_id: software-stack.compatibility-evidence
+  type: reference
+  domain: software-stack
+  target_path: knowledge/02-software-stack/compatibility-evidence.md
+  platforms:
+  - generic
+  source_packages:
+  - A03
+  - A13
+  - A18
+  depends_on:
+  - F05
+  acceptance: 区分发行包矩阵、源码分支、官方声明和本地验证，未知组合显式列出。
+- id: F07
+  title: 集合通信与 rank 进度
+  stage: foundation
+  status: done
+  content_id: communication.collectives-and-rank-progress
+  type: concept
+  domain: communication
+  target_path: knowledge/03-communication/collectives-and-rank-progress.md
+  platforms:
+  - generic
+  source_packages:
+  - A05
+  - A14
+  - A16
+  - A10
+  depends_on:
+  - F03
+  - F05
+  acceptance: 解释参与者、次序和进度；超时作为症状，各平台机制单独引用。
+- id: F08
+  title: 通信带宽与性能基线口径
+  stage: foundation
+  status: done
+  content_id: communication.bandwidth-baselines
+  type: reference
+  domain: communication
+  target_path: knowledge/03-communication/bandwidth-baselines.md
+  platforms:
+  - generic
+  source_packages:
+  - A05
+  - A14
+  depends_on:
+  - F07
+  acceptance: 记录消息大小、拓扑、并发、单位、版本及测量方法，不设无条件阈值。
+- id: F09
+  title: 训练数据供给路径与等待
+  stage: foundation
+  status: done
+  content_id: data-storage.training-data-path
+  type: concept
+  domain: data-storage
+  target_path: knowledge/04-data-storage/training-data-path.md
+  platforms:
+  - generic
+  source_packages:
+  - A01
+  - A06
+  - A07
+  - A10
+  depends_on:
+  - F03
+  acceptance: 连接存储、缓存、加载、主机与设备，区分各阶段观测。
+- id: F10
+  title: Checkpoint 写入与持久化边界
+  stage: foundation
+  status: done
+  content_id: data-storage.checkpoint-durability
+  type: concept
+  domain: data-storage
+  target_path: knowledge/04-data-storage/checkpoint-durability.md
+  platforms:
+  - generic
+  source_packages:
+  - A06
+  - A07
+  - A17
+  - A10
+  depends_on:
+  - F09
+  acceptance: 区分写入返回、缓存、持久化与文件完整性；训练状态语义链接 F14。
+- id: F11
+  title: 从物理设备到容器资源的状态链
+  stage: foundation
+  status: done
+  content_id: cluster-platform.device-resource-chain
+  type: concept
+  domain: cluster-platform
+  target_path: knowledge/05-cluster-platform/device-resource-chain.md
+  platforms:
+  - generic
+  source_packages:
+  - A08
+  - A15
+  depends_on:
+  - F03
+  - F05
+  acceptance: 分别说明设备存在、驱动可见、插件上报、可分配、分配和容器可访问。
+- id: F12
+  title: 作业准入、调度与拓扑放置
+  stage: foundation
+  status: done
+  content_id: cluster-platform.admission-and-placement
+  type: concept
+  domain: cluster-platform
+  target_path: knowledge/05-cluster-platform/admission-and-placement.md
+  platforms:
+  - generic
+  source_packages:
+  - A09
+  depends_on:
+  - F11
+  acceptance: 区分配额、准入、调度与分配，记录不同系统术语和状态证据。
+- id: F13
+  title: 并行策略与训练状态
+  stage: foundation
+  status: done
+  content_id: training.parallelism-and-state
+  type: concept
+  domain: training
+  target_path: knowledge/06-training/parallelism-and-state.md
+  platforms:
+  - generic
+  source_packages:
+  - A10
+  - A18
+  depends_on:
+  - F05
+  - F07
+  acceptance: 列出权重、梯度、优化器、随机状态与数据进度，说明并行分片影响。
+- id: F14
+  title: Checkpoint 恢复一致性
+  stage: foundation
+  status: done
+  content_id: training.checkpoint-state-consistency
+  type: concept
+  domain: training
+  target_path: knowledge/06-training/checkpoint-state-consistency.md
+  platforms:
+  - generic
+  source_packages:
+  - A10
+  - A17
+  - A18
+  depends_on:
+  - F10
+  - F13
+  acceptance: 区分框架/API 与应用职责，给恢复后验证项及适用限制。
+- id: F15
+  title: 推理执行与 KV cache
+  stage: foundation
+  status: done
+  content_id: inference.execution-and-kv-cache
+  type: concept
+  domain: inference
+  target_path: knowledge/07-inference/execution-and-kv-cache.md
+  platforms:
+  - generic
+  source_packages:
+  - A11
+  - A19
+  - A20
+  depends_on:
+  - F05
+  acceptance: 描述 prefill/decode、batch、缓存与内存，保留引擎/后端差异。
+- id: F16
+  title: 推理延迟与吞吐指标字典
+  stage: foundation
+  status: done
+  content_id: inference.latency-metrics
+  type: reference
+  domain: inference
+  target_path: knowledge/07-inference/latency-metrics.md
+  platforms:
+  - generic
+  source_packages:
+  - A11
+  - A19
+  depends_on:
+  - F15
+  acceptance: TTFT/TPOT/吞吐各自单位、起止点、窗口和聚合对象有来源。
+- id: F17
+  title: 可靠性维度与故障域
+  stage: foundation
+  status: done
+  content_id: reliability.dimensions-and-failure-domains
+  type: concept
+  domain: reliability
+  target_path: knowledge/08-reliability/dimensions-and-failure-domains.md
+  platforms:
+  - generic
+  source_packages:
+  - A02
+  - A12
+  depends_on: []
+  acceptance: 统一可用性、正确性、性能稳定性和恢复目标；不从单一集群外推故障率。
+- id: F18
+  title: 诊断中的证据、假设与结论
+  stage: foundation
+  status: done
+  content_id: reliability.evidence-and-hypotheses
+  type: concept
+  domain: reliability
+  target_path: knowledge/08-reliability/evidence-and-hypotheses.md
+  platforms:
+  - generic
+  source_packages:
+  - A12
+  - A16
+  depends_on:
+  - F17
+  acceptance: 分开症状、观测、候选原因与结论，给反驳和未知的表达方式。
+- id: E01
+  title: 昇腾软件栈的文档配套档案
+  stage: profiles
+  status: done
+  content_id: software-stack.ascend-documented-profile
+  type: reference
+  domain: software-stack
+  target_path: knowledge/02-software-stack/ascend-documented-profile.md
+  platforms:
+  - ascend
+  source_packages:
+  - A13
+  - A15
+  - A18
+  - A19
+  depends_on:
+  - F06
+  acceptance: 固定一个研究版本基线；逐项引用官方约束，交集未经确认时保持未知；不是本地实测档案。
+- id: E02
+  title: NVIDIA 软件栈的文档配套档案
+  stage: profiles
+  status: done
+  content_id: software-stack.nvidia-documented-profile
+  type: reference
+  domain: software-stack
+  target_path: knowledge/02-software-stack/nvidia-documented-profile.md
+  platforms:
+  - nvidia
+  source_packages:
+  - A03
+  - A04
+  - A05
+  - A08
+  - A10
+  - A11
+  depends_on:
+  - F06
+  - F04
+  acceptance: 固定一个研究版本基线，区分驱动/toolkit/容器/框架约束；不是部署推荐或本地验证。
+- id: T01-P
+  title: 昇腾版本配套失败诊断指南
+  stage: scenarios
+  status: done
+  content_id: software-stack.ascend-version-mismatch-triage
+  type: procedure
+  domain: software-stack
+  target_path: knowledge/02-software-stack/ascend-version-mismatch-triage.md
+  platforms:
+  - ascend
+  source_packages:
+  - A13
+  - A14
+  - A18
+  depends_on:
+  - E01
+  - F18
+  acceptance: 有环境前提、证据、假设分支、停止和完成判据；命令可追溯，未实测则说明。不得把源码主干和发行包矩阵混用。
+- id: T01-C
+  title: 昇腾版本配套失败来源案例
+  stage: scenarios
+  status: done
+  content_id: software-stack.ascend-version-mismatch-source-case
+  type: case
+  domain: software-stack
+  target_path: knowledge/02-software-stack/ascend-version-mismatch-source-case.md
+  platforms:
+  - ascend
+  source_packages:
+  - A13
+  - A14
+  - A18
+  depends_on:
+  - E01
+  - F18
+  acceptance: 从真实原始复盘或 Issue/PR 筛选；环境、时间线、关闭/修复状态和未解项齐全。找不到完整材料则保留待办，不虚构案例。不得把源码主干和发行包矩阵混用。
+- id: T01-X
+  title: 昇腾版本配套失败验证实验设计
+  stage: scenarios
+  status: done
+  content_id: software-stack.ascend-version-mismatch-experiment
+  type: experiment
+  domain: software-stack
+  target_path: knowledge/02-software-stack/ascend-version-mismatch-experiment.md
+  platforms:
+  - ascend
+  source_packages:
+  - A13
+  - A14
+  - A18
+  depends_on:
+  - T01-P
+  acceptance: 给准备、输入、对照、步骤、资源影响、观测和通过标准；当前交付设计并标 not_verified，不填写测量结果。不得把源码主干和发行包矩阵混用。
+- id: T02-P
+  title: 容器内 NPU 不可见诊断指南
+  stage: scenarios
+  status: done
+  content_id: cluster-platform.ascend-device-visibility-triage
+  type: procedure
+  domain: cluster-platform
+  target_path: knowledge/05-cluster-platform/ascend-device-visibility-triage.md
+  platforms:
+  - ascend
+  source_packages:
+  - A08
+  - A14
+  - A15
+  depends_on:
+  - E01
+  - F11
+  - F18
+  acceptance: 有环境前提、证据、假设分支、停止和完成判据；命令可追溯，未实测则说明。分离主机、插件、资源分配和容器访问证据。
+- id: T02-C
+  title: 容器内 NPU 不可见来源案例
+  stage: scenarios
+  status: done
+  content_id: cluster-platform.ascend-device-visibility-source-case
+  type: case
+  domain: cluster-platform
+  target_path: knowledge/05-cluster-platform/ascend-device-visibility-source-case.md
+  platforms:
+  - ascend
+  source_packages:
+  - A08
+  - A14
+  - A15
+  depends_on:
+  - E01
+  - F11
+  - F18
+  acceptance: 从真实原始复盘或 Issue/PR 筛选；环境、时间线、关闭/修复状态和未解项齐全。找不到完整材料则保留待办，不虚构案例。分离主机、插件、资源分配和容器访问证据。
+- id: T02-X
+  title: 容器内 NPU 不可见验证实验设计
+  stage: scenarios
+  status: done
+  content_id: cluster-platform.ascend-device-visibility-experiment
+  type: experiment
+  domain: cluster-platform
+  target_path: knowledge/05-cluster-platform/ascend-device-visibility-experiment.md
+  platforms:
+  - ascend
+  source_packages:
+  - A08
+  - A14
+  - A15
+  depends_on:
+  - T02-P
+  acceptance: 给准备、输入、对照、步骤、资源影响、观测和通过标准；当前交付设计并标 not_verified，不填写测量结果。分离主机、插件、资源分配和容器访问证据。
+- id: T03-P
+  title: HCCL 超时诊断指南
+  stage: scenarios
+  status: done
+  content_id: communication.hccl-timeout-triage
+  type: procedure
+  domain: communication
+  target_path: knowledge/03-communication/hccl-timeout-triage.md
+  platforms:
+  - ascend
+  source_packages:
+  - A14
+  - A15
+  - A16
+  - A18
+  depends_on:
+  - E01
+  - F07
+  - F08
+  - F18
+  acceptance: 有环境前提、证据、假设分支、停止和完成判据；命令可追溯，未实测则说明。保留 rank 进度、较早异常、网络和设备等候选分支。
+- id: T03-C
+  title: HCCL 超时来源案例
+  stage: scenarios
+  status: done
+  content_id: communication.hccl-timeout-source-case
+  type: case
+  domain: communication
+  target_path: knowledge/03-communication/hccl-timeout-source-case.md
+  platforms:
+  - ascend
+  source_packages:
+  - A14
+  - A15
+  - A16
+  - A18
+  depends_on:
+  - E01
+  - F07
+  - F08
+  - F18
+  acceptance: 从真实原始复盘或 Issue/PR 筛选；环境、时间线、关闭/修复状态和未解项齐全。找不到完整材料则保留待办，不虚构案例。保留 rank 进度、较早异常、网络和设备等候选分支。
+- id: T03-X
+  title: HCCL 超时验证实验设计
+  stage: scenarios
+  status: done
+  content_id: communication.hccl-timeout-experiment
+  type: experiment
+  domain: communication
+  target_path: knowledge/03-communication/hccl-timeout-experiment.md
+  platforms:
+  - ascend
+  source_packages:
+  - A14
+  - A15
+  - A16
+  - A18
+  depends_on:
+  - T03-P
+  acceptance: 给准备、输入、对照、步骤、资源影响、观测和通过标准；当前交付设计并标 not_verified，不填写测量结果。保留 rank 进度、较早异常、网络和设备等候选分支。
+- id: T04-P
+  title: NCCL 超时诊断指南
+  stage: scenarios
+  status: done
+  content_id: communication.nccl-timeout-triage
+  type: procedure
+  domain: communication
+  target_path: knowledge/03-communication/nccl-timeout-triage.md
+  platforms:
+  - nvidia
+  source_packages:
+  - A04
+  - A05
+  - A10
+  depends_on:
+  - E02
+  - F07
+  - F08
+  - F18
+  acceptance: 有环境前提、证据、假设分支、停止和完成判据；命令可追溯，未实测则说明。仅使用适用版本的 NCCL 机制和命令，不照抄 HCCL 步骤。
+- id: T04-C
+  title: NCCL 超时来源案例
+  stage: scenarios
+  status: done
+  content_id: communication.nccl-timeout-source-case
+  type: case
+  domain: communication
+  target_path: knowledge/03-communication/nccl-timeout-source-case.md
+  platforms:
+  - nvidia
+  source_packages:
+  - A04
+  - A05
+  - A10
+  depends_on:
+  - E02
+  - F07
+  - F08
+  - F18
+  acceptance: 从真实原始复盘或 Issue/PR 筛选；环境、时间线、关闭/修复状态和未解项齐全。找不到完整材料则保留待办，不虚构案例。仅使用适用版本的 NCCL 机制和命令，不照抄 HCCL 步骤。
+- id: T04-X
+  title: NCCL 超时验证实验设计
+  stage: scenarios
+  status: done
+  content_id: communication.nccl-timeout-experiment
+  type: experiment
+  domain: communication
+  target_path: knowledge/03-communication/nccl-timeout-experiment.md
+  platforms:
+  - nvidia
+  source_packages:
+  - A04
+  - A05
+  - A10
+  depends_on:
+  - T04-P
+  acceptance: 给准备、输入、对照、步骤、资源影响、观测和通过标准；当前交付设计并标 not_verified，不填写测量结果。仅使用适用版本的 NCCL 机制和命令，不照抄 HCCL 步骤。
+- id: T05-P
+  title: GPU 到 NPU 的精度差异诊断指南
+  stage: scenarios
+  status: done
+  content_id: training.gpu-npu-precision-difference-triage
+  type: procedure
+  domain: training
+  target_path: knowledge/06-training/gpu-npu-precision-difference-triage.md
+  platforms:
+  - ascend
+  - nvidia
+  source_packages:
+  - A13
+  - A14
+  - A18
+  depends_on:
+  - E01
+  - E02
+  - F13
+  - F18
+  acceptance: 有环境前提、证据、假设分支、停止和完成判据；命令可追溯，未实测则说明。固定输入/权重/shape/dtype/layout，容差有依据，不把正常差异直接判为硬件错误。
+- id: T05-C
+  title: GPU 到 NPU 的精度差异来源案例
+  stage: scenarios
+  status: done
+  content_id: training.gpu-npu-precision-difference-source-case
+  type: case
+  domain: training
+  target_path: knowledge/06-training/gpu-npu-precision-difference-source-case.md
+  platforms:
+  - ascend
+  - nvidia
+  source_packages:
+  - A13
+  - A14
+  - A18
+  depends_on:
+  - E01
+  - E02
+  - F13
+  - F18
+  acceptance: 从真实原始复盘或 Issue/PR 筛选；环境、时间线、关闭/修复状态和未解项齐全。找不到完整材料则保留待办，不虚构案例。固定输入/权重/shape/dtype/layout，容差有依据，不把正常差异直接判为硬件错误。
+- id: T05-X
+  title: GPU 到 NPU 的精度差异验证实验设计
+  stage: scenarios
+  status: done
+  content_id: training.gpu-npu-precision-difference-experiment
+  type: experiment
+  domain: training
+  target_path: knowledge/06-training/gpu-npu-precision-difference-experiment.md
+  platforms:
+  - ascend
+  - nvidia
+  source_packages:
+  - A13
+  - A14
+  - A18
+  depends_on:
+  - T05-P
+  acceptance: 给准备、输入、对照、步骤、资源影响、观测和通过标准；当前交付设计并标 not_verified，不填写测量结果。固定输入/权重/shape/dtype/layout，容差有依据，不把正常差异直接判为硬件错误。
+- id: T06-P
+  title: Checkpoint 恢复状态异常诊断指南
+  stage: scenarios
+  status: done
+  content_id: training.checkpoint-state-recovery-triage
+  type: procedure
+  domain: training
+  target_path: knowledge/06-training/checkpoint-state-recovery-triage.md
+  platforms:
+  - generic
+  source_packages:
+  - A10
+  - A17
+  - A18
+  depends_on:
+  - F14
+  - F18
+  acceptance: 有环境前提、证据、假设分支、停止和完成判据；命令可追溯，未实测则说明。先选定一个框架完成具体流程；不同框架的恢复保证分别记录。
+- id: T06-C
+  title: Checkpoint 恢复状态异常来源案例
+  stage: scenarios
+  status: done
+  content_id: training.checkpoint-state-recovery-source-case
+  type: case
+  domain: training
+  target_path: knowledge/06-training/checkpoint-state-recovery-source-case.md
+  platforms:
+  - generic
+  source_packages:
+  - A10
+  - A17
+  - A18
+  depends_on:
+  - F14
+  - F18
+  acceptance: 从真实原始复盘或 Issue/PR 筛选；环境、时间线、关闭/修复状态和未解项齐全。找不到完整材料则保留待办，不虚构案例。先选定一个框架完成具体流程；不同框架的恢复保证分别记录。
+- id: T06-X
+  title: Checkpoint 恢复状态异常验证实验设计
+  stage: scenarios
+  status: done
+  content_id: training.checkpoint-state-recovery-experiment
+  type: experiment
+  domain: training
+  target_path: knowledge/06-training/checkpoint-state-recovery-experiment.md
+  platforms:
+  - generic
+  source_packages:
+  - A10
+  - A17
+  - A18
+  depends_on:
+  - T06-P
+  acceptance: 给准备、输入、对照、步骤、资源影响、观测和通过标准；当前交付设计并标 not_verified，不填写测量结果。先选定一个框架完成具体流程；不同框架的恢复保证分别记录。
+- id: T07-P
+  title: 昇腾推理长尾诊断指南
+  stage: scenarios
+  status: done
+  content_id: inference.ascend-inference-tail-latency-triage
+  type: procedure
+  domain: inference
+  target_path: knowledge/07-inference/ascend-inference-tail-latency-triage.md
+  platforms:
+  - ascend
+  source_packages:
+  - A11
+  - A19
+  - A20
+  depends_on:
+  - E01
+  - F15
+  - F16
+  - F18
+  acceptance: 有环境前提、证据、假设分支、停止和完成判据；命令可追溯，未实测则说明。首个流程聚焦选定 vLLM Ascend 环境；MindIE 用于机制对照，不能套用参数。
+- id: T07-C
+  title: 昇腾推理长尾来源案例
+  stage: scenarios
+  status: done
+  content_id: inference.ascend-inference-tail-latency-source-case
+  type: case
+  domain: inference
+  target_path: knowledge/07-inference/ascend-inference-tail-latency-source-case.md
+  platforms:
+  - ascend
+  source_packages:
+  - A11
+  - A19
+  - A20
+  depends_on:
+  - E01
+  - F15
+  - F16
+  - F18
+  acceptance: 从真实原始复盘或 Issue/PR 筛选；环境、时间线、关闭/修复状态和未解项齐全。找不到完整材料则保留待办，不虚构案例。首个流程聚焦选定 vLLM Ascend 环境；MindIE 用于机制对照，不能套用参数。
+- id: T07-X
+  title: 昇腾推理长尾验证实验设计
+  stage: scenarios
+  status: done
+  content_id: inference.ascend-inference-tail-latency-experiment
+  type: experiment
+  domain: inference
+  target_path: knowledge/07-inference/ascend-inference-tail-latency-experiment.md
+  platforms:
+  - ascend
+  source_packages:
+  - A11
+  - A19
+  - A20
+  depends_on:
+  - T07-P
+  acceptance: 给准备、输入、对照、步骤、资源影响、观测和通过标准；当前交付设计并标 not_verified，不填写测量结果。首个流程聚焦选定 vLLM Ascend 环境；MindIE 用于机制对照，不能套用参数。

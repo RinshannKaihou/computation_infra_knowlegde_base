@@ -1,0 +1,29 @@
+schema_version: 1
+domains:
+  - id: overview
+    title: 导读与系统全景
+    directory: 00-overview
+  - id: hardware
+    title: 物理设施与计算节点
+    directory: 01-hardware
+  - id: software-stack
+    title: 系统软件与加速器执行栈
+    directory: 02-software-stack
+  - id: communication
+    title: 互联网络与分布式通信
+    directory: 03-communication
+  - id: data-storage
+    title: 数据路径与存储系统
+    directory: 04-data-storage
+  - id: cluster-platform
+    title: 集群平台与资源管理
+    directory: 05-cluster-platform
+  - id: training
+    title: 训练与后训练系统
+    directory: 06-training
+  - id: inference
+    title: 推理与服务系统
+    directory: 07-inference
+  - id: reliability
+    title: 可靠性与计算正确性方法
+    directory: 08-reliability

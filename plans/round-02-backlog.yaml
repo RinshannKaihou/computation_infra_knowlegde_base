@@ -1,0 +1,252 @@
+schema_version: 1
+plan_type: content_backlog
+round: 2
+created_at: '2026-09-30'
+status: completed
+notice: 第二轮首批任务（对应 batch 08 研究记录）。首轮 41 项的完成记录保留在 content-backlog.yaml，本清单不重复。done 仅表示本轮草稿交付，不代表 reviewed 或 reproduced。
+metadata_policy: 新正文 status:draft；procedure 必须填写 applicability 与 verification；来源核对、编辑审核、实验验证分别记录。
+review_policy: 2026-10-08 用户更新，批次审阅使用 gpt-6.1-sol / xhigh；batch 10/11/12 已完成审阅、修订与定向复核，13 项发现全部关闭，三批在原审阅范围内通过，详见 docs/research/batch-10-11-12-codex-review-summary.md；done 仍仅表示草稿交付，修订并定向复核后才可声明审阅通过。
+hardware_policy: 本批不要求真实 GPU/NPU 实验；无设备不阻塞来源整理与诊断流程草稿。
+selection_basis: 依据 docs/handoff-to-opus.md 第 8 节建议，选来源可固定的三项；07 昇腾推理 OOM 依赖 R2-01 的内存机制，留待后续批次。
+tasks:
+- id: R2-01
+  title: 昇腾 NPU 内存与 OOM 证据
+  status: done
+  content_id: software-stack.ascend-memory-oom-evidence
+  type: concept
+  domain: software-stack
+  target_path: knowledge/02-software-stack/ascend-memory-oom-evidence.md
+  platforms:
+  - ascend
+  source_packages:
+  - A13
+  - A14
+  depends_on:
+  - F05
+  acceptance: 区分物理设备内存、框架分配/保留、workspace、碎片与异步错误；固定 TorchNPU/CANN 来源版本，不迁用 CUDA 指标语义；未知项显式保留。
+- id: R2-02
+  title: 训练数据加载饥饿诊断指南
+  status: done
+  content_id: data-storage.data-starvation-triage
+  type: procedure
+  domain: data-storage
+  target_path: knowledge/04-data-storage/data-starvation-triage.md
+  platforms:
+  - generic
+  source_packages:
+  - A10
+  depends_on:
+  - F09
+  - F18
+  acceptance: 复用 training-data-path 的阶段框架；按存储、CPU 处理、队列、传输、训练消费给出可区分分支；命令可追溯，未实测则说明。
+- id: R2-03
+  title: 空闲设备但作业等待诊断指南
+  status: done
+  content_id: cluster-platform.idle-resource-job-waiting-triage
+  type: procedure
+  domain: cluster-platform
+  target_path: knowledge/05-cluster-platform/idle-resource-job-waiting-triage.md
+  platforms:
+  - generic
+  source_packages:
+  - A09
+  depends_on:
+  - F12
+  - F18
+  acceptance: 选定 Kueue v0.19.0 为主要实现样板；区分 quota、admission、gang、topology、实际放置与设备分配；其他实现只作边界提示；命令可追溯，未实测则说明。
+- id: R2-04
+  title: 昇腾推理 OOM 诊断指南
+  status: done
+  content_id: inference.ascend-inference-oom-triage
+  type: procedure
+  domain: inference
+  target_path: knowledge/07-inference/ascend-inference-oom-triage.md
+  platforms:
+  - ascend
+  source_packages:
+  - A11
+  - A19
+  depends_on:
+  - R2-01
+  - F15
+  - F16
+  acceptance: 区分加载、profiling、warmup/图编译、prefill、decode 与并发阶段；固定引擎与插件快照，不拼成已验证组合；公开报告只作形态记录不归因。
+- id: R2-05
+  title: 通信带宽退化诊断指南
+  status: done
+  content_id: communication.bandwidth-degradation-triage
+  type: procedure
+  domain: communication
+  target_path: knowledge/03-communication/bandwidth-degradation-triage.md
+  platforms:
+  - generic
+  source_packages:
+  - A05
+  depends_on:
+  - F08
+  - F18
+  acceptance: 区分测量口径、配置/映射与真实链路退化三类；GPU（nccl-tests/NCCL 2.27.5）与 NPU（HCCL Test 9.1.X）证据分开不互比；链路计数器缺口如实标注。
+- id: R2-06
+  title: 静默错误与计算完整性判定
+  status: done
+  content_id: reliability.silent-errors-and-integrity
+  type: concept
+  domain: reliability
+  target_path: knowledge/08-reliability/silent-errors-and-integrity.md
+  platforms:
+  - generic
+  source_packages:
+  - A12
+  depends_on:
+  - F17
+  - F18
+  acceptance: 区分 SDC、灰色退化与软件层静默错误结果；检测方法标证据强度；CPU/GPU 实证不外推 NPU；数值噪声背景用 PyTorch 2.6 文档限定。
+- id: R2-07
+  title: 慢 rank 诊断指南
+  status: done
+  content_id: training.slow-rank-triage
+  type: procedure
+  domain: training
+  target_path: knowledge/06-training/slow-rank-triage.md
+  platforms:
+  - generic
+  source_packages:
+  - A05
+  - A10
+  - A04
+  depends_on:
+  - F07
+  - F18
+  acceptance: 区分“谁先慢”与“慢在哪个阶段”；PyTorch 2.8 desync/flight recorder/heartbeat 与 NCCL 2.27.5 RAS 为固定证据；NPU 侧观测缺口如实标注。
+- id: R2-08
+  title: 供电、散热与性能退化证据
+  status: done
+  content_id: hardware.power-thermal-evidence
+  type: reference
+  domain: hardware
+  target_path: knowledge/01-hardware/power-thermal-evidence.md
+  platforms:
+  - generic
+  source_packages:
+  - A02
+  - A04
+  - A15
+  depends_on:
+  - F04
+  acceptance: 降频位图/violation 计数/健康与诊断边界/机型规格分别固定版本；violation 单位跨版本冲突明确；NPU 侧无 throttle 等价物的缺口保留。
+- id: R2-09
+  title: Checkpoint 慢写与恢复 I/O 诊断指南
+  status: done
+  content_id: data-storage.checkpoint-slow-io-triage
+  type: procedure
+  domain: data-storage
+  target_path: knowledge/04-data-storage/checkpoint-slow-io-triage.md
+  platforms:
+  - generic
+  source_packages:
+  - A10
+  - A17
+  - A07
+  depends_on:
+  - F10
+  - F18
+  acceptance: 区分 staging、后台写入、内核 writeback/fsync、后端与读路径；PyTorch 2.6 DCP 与 MindIO ACP 固定样板；网络存储证据缺口如实标注。
+- id: R2-10
+  title: 昇腾算子不支持与图编译失败诊断指南
+  status: done
+  content_id: software-stack.ascend-op-graph-failure-triage
+  type: procedure
+  domain: software-stack
+  target_path: knowledge/02-software-stack/ascend-op-graph-failure-triage.md
+  platforms:
+  - ascend
+  source_packages:
+  - A13
+  - A14
+  depends_on:
+  - F05
+  - F18
+  acceptance: 区分注册层（dispatcher NotImplemented）、实现/编译层（GE/ACL 错误码）与图模式层；固定 TorchNPU/PyTorch 源码样板；CANN 图编译排障文档缺口如实标注。
+- id: R2-11
+  title: 弹性训练与成员变更
+  status: done
+  content_id: training.elastic-training-and-membership
+  type: concept
+  domain: training
+  target_path: knowledge/06-training/elastic-training-and-membership.md
+  platforms:
+  - generic
+  source_packages:
+  - A10
+  - A18
+  depends_on:
+  - F13
+  - F17
+  acceptance: rendezvous/成员变更/失败语义与状态责任分开；PyTorch 2.6 elastic 与 MindSpeed-LLM v2.2.0 副本机制对照，不拼配套；文档未列的代码断言如实记录。
+- id: R2-12
+  title: 推理量化与输出质量验证
+  status: done
+  content_id: inference.quantization-and-quality
+  type: concept
+  domain: inference
+  target_path: knowledge/07-inference/quantization-and-quality.md
+  platforms:
+  - generic
+  source_packages:
+  - A11
+  - A19
+  depends_on:
+  - F15
+  - F18
+  acceptance: 支持矩阵按实现×硬件分别核对，NPU 不从上游表推断；质量验证用固定任务评估对照；量化故障分加载/执行/精度三层。
+- id: R2-13
+  title: Prefill/Decode 分离与流量分配
+  status: done
+  content_id: inference.pd-disaggregation
+  type: concept
+  domain: inference
+  target_path: knowledge/07-inference/pd-disaggregation.md
+  platforms:
+  - generic
+  source_packages:
+  - A11
+  - A19
+  depends_on:
+  - F15
+  - F16
+  acceptance: 分离动机、角色划分、KV 传输连接器与代理/路由口径分别固定 vLLM v0.14.0 与 vLLM-Ascend v0.14.0rc1 证据；NPU 支持状态只按插件矩阵，不继承上游；不声明本库已验证任何 PD 部署。
+- id: R2-14
+  title: 新节点与返修节点验收
+  status: done
+  content_id: hardware.node-acceptance-triage
+  type: procedure
+  domain: hardware
+  target_path: knowledge/01-hardware/node-acceptance-triage.md
+  platforms:
+  - generic
+  source_packages:
+  - A04
+  - A12
+  - A02
+  - A15
+  depends_on:
+  - F04
+  - F18
+  acceptance: 被动证据、主动诊断与基准验收分层；DCGM 级别/单项测试的权限、独占性与影响分别记录；NPU 侧验收工具链缺口如实标注；一次通过不声明硬件完全无故障。
+- id: R2-15
+  title: Checkpoint 完整性与校验证据
+  status: done
+  content_id: data-storage.checkpoint-integrity-evidence
+  type: concept
+  domain: data-storage
+  target_path: knowledge/04-data-storage/checkpoint-integrity-evidence.md
+  platforms:
+  - generic
+  source_packages:
+  - A10
+  - A17
+  - A06
+  depends_on:
+  - F10
+  - F17
+  acceptance: 区分容器格式自带校验、框架层元数据与存储层 scrub/修复；DCP 2.6 是否有应用层校验以固定源码为准；MindIO checker 职责以 v26.1.1 接口文档为准；Ceph 仅作存储层实现例子，不套用到其他系统。

@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Knowledge content metadata",
+  "type": "object",
+  "required": ["id", "title", "type", "domain", "status", "platforms", "source_refs", "updated_at"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {"type": "string", "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)+$"},
+    "title": {"type": "string", "minLength": 1},
+    "type": {"enum": ["index", "path", "concept", "reference", "procedure", "case", "experiment"]},
+    "domain": {"enum": ["overview", "hardware", "software-stack", "communication", "data-storage", "cluster-platform", "training", "inference", "reliability"]},
+    "status": {"enum": ["draft", "reviewed", "deprecated"]},
+    "platforms": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"enum": ["generic", "ascend", "nvidia", "amd", "other"]}
+    },
+    "source_refs": {"$ref": "#/$defs/strings"},
+    "updated_at": {"type": "string", "format": "date"},
+    "summary": {"type": "string"},
+    "aliases": {"$ref": "#/$defs/strings"},
+    "tasks": {"$ref": "#/$defs/strings"},
+    "related_ids": {"$ref": "#/$defs/strings"},
+    "applicability": {
+      "type": "object", "additionalProperties": false,
+      "required": ["environment_refs", "notes"],
+      "properties": {
+        "environment_refs": {"$ref": "#/$defs/strings"},
+        "notes": {"type": "string", "minLength": 1}
+      }
+    },
+    "verification": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "evidence_refs", "notes"],
+      "properties": {
+        "status": {"enum": ["not_verified", "source_checked", "reproduced"]},
+        "evidence_refs": {"$ref": "#/$defs/strings"},
+        "notes": {"type": "string", "minLength": 1}
+      },
+      "allOf": [{
+        "if": {"properties": {"status": {"const": "reproduced"}}},
+        "then": {"properties": {"evidence_refs": {"minItems": 1}}}
+      }]
+    }
+  },
+  "$defs": {
+    "strings": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  },
+  "allOf": [{
+    "if": {"properties": {"type": {"enum": ["procedure", "case", "experiment"]}}},
+    "then": {"required": ["applicability", "verification"]}
+  }]
+}

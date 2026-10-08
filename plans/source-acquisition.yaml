@@ -1,0 +1,512 @@
+schema_version: 1
+plan_type: source_acquisition
+created_at: '2026-09-29'
+status: in_progress
+notice: 来源工作包按实际选读范围更新，不要求首轮镜像或读完所有项目。首轮 41 项正文及各批来源审阅已交付；已登记来源不等于全项目采集完成。技术审阅与现场验证分开，未采用的来源和未覆盖主题保留 planned/collecting。
+common_steps:
+- 先领取内容任务，确定要回答的问题和获取范围
+- 在原站选择 release/ref，解析 commit，确认文件与文档许可
+- 从选定文件树定位路径，获取最小文档/实现/测试组合
+- 记录定位、获取时间、摘要、主张、前提、反例和未知
+- 正式使用前登记具体来源，依模板写成内容并近旁引用
+- 独立做来源与版本审核，再运行结构检查和构建
+storage_policy: 允许保存的原件和工作笔记留暂存区；正式知识进 knowledge/。首批正式库保留链接、原创归纳与审计记录，不镜像外部全文或保存软件发行包。
+packages:
+- id: A01
+  title: 开源知识书与中文课程
+  status: planned
+  target_domains:
+  - overview
+  - hardware
+  - software-stack
+  - communication
+  - data-storage
+  - cluster-platform
+  - training
+  - inference
+  - reliability
+  existing_registry_ids:
+  - src.stas.ml-engineering
+  - src.infrasys.aiinfra
+  discovery_urls:
+  - https://github.com/stas00/ml-engineering
+  - https://github.com/Infrasys-AI/AIInfra
+  - https://github.com/Infrasys-AI/AISystem
+  selected_revision: null
+  fetch_targets:
+  - README、目录与正文/代码许可
+  - 按当前文章选择 compute/network/storage/orchestration/training/inference/debug/testing 等相关实际章节
+  - 章节引用的原始规范与论文
+  transform_into:
+  - 章节到本库主题映射
+  - 共同概念与问题清单
+  - 全景路径文章的材料
+  acceptance:
+  - 不逐章翻译或镜像全书
+  - 具体命令和支持能力回查原始资料
+  - 改编/图表复用明确许可和署名
+- id: A02
+  title: 系统手册、资产与物理故障域
+  status: collecting
+  target_domains:
+  - hardware
+  - overview
+  existing_registry_ids: []
+  discovery_urls:
+  - https://docs.nvidia.com/dgx/dgxh100-user-guide/introduction-to-dgxh100.html
+  - https://e.huawei.com/cn/products/computing/ascend/atlas-800t-a2
+  - https://www.dmtf.org/standards/redfish
+  - https://netboxlabs.com/docs/netbox/models/dcim/powerpanel/
+  selected_revision: DGX H100/H200 guide last updated 2026-01-26; Atlas 800T A2 product page observed 2026-09-29
+  progress_notes: 第二批 F03 已核对 DGX 组件/端口映射和 Atlas 800T A2 产品规格，登记两项机型来源。Atlas 的 NPU 数量/设备内存/互联仍未知；Redfish、NetBox、BMC 与现场拓扑尚未核查。第十批（2026-09-30）补读 DGX 电源冗余与环境规格（6×3.3kW 4+2、三 PSU 失效降额运行）与 Atlas 800T A2 电源风扇规格（4×2.6kW 2+2、8 风扇 N+1），支撑 R2-08 供电散热参考。第十二批（2026-10-08）复读 DGX 用户指南规格基线（8×H100/H200、4×NVSwitch、CX-7、6×3.3kW 4+2、环境规格；无验收/burn-in 专章）并复核 ascend-dmi toolboxug_0020/0019 页（新登记 0019 显示界面为 src.huawei.mindx-dl-60rc2-ascend-dmi-display-2026-10-08），支撑 R2-14 节点验收。
+  fetch_targets:
+  - 选定机型的组成、供电、散热和 BMC 文档
+  - Redfish 对应资源和事件定义
+  - NetBox 电源/设备关系定义
+  transform_into:
+  - 硬件资源关系图
+  - 供电散热与故障域参考
+  - 节点验收证据清单
+  acceptance:
+  - 厂商机型例子与通用原理分开
+  - 规范或数据模型不等于设备实际支持
+  - 公开文档复用许可独立核对
+- id: A03
+  title: 主机系统与 GPU 软件栈
+  status: collecting
+  target_domains:
+  - hardware
+  - software-stack
+  existing_registry_ids: []
+  discovery_urls:
+  - https://docs.kernel.org/admin-guide/mm/numa_memory_policy.html
+  - https://docs.nvidia.com/cuda/cuda-installation-guide-linux/
+  selected_revision: CUDA 12.8.0 archive; NVIDIA PyTorch container 25.01-py3 documentation
+  progress_notes: 第五批补齐 NVIDIA 文档档案：release/catalog、当前容器职责与兼容机制；R545 与 Python 路径冲突保留，未拉取镜像或验证运行。Linux NUMA 仍待收集。
+  fetch_targets:
+  - NUMA/内存策略的选定版本说明
+  - CUDA 安装前提、支持矩阵和运行验证
+  - 沿官方链接读取相应驱动及主机依赖说明
+  transform_into:
+  - 主机与设备资源边界
+  - 软件栈分层
+  - NVIDIA 配套档案输入
+  acceptance:
+  - 固定内核/驱动/toolkit 文档版本
+  - 区分主机驱动、容器用户态库和框架构建要求
+  - 不将最新文档直接当部署推荐
+- id: A04
+  title: GPU 健康证据与验收
+  status: collecting
+  target_domains:
+  - hardware
+  - reliability
+  existing_registry_ids: []
+  discovery_urls:
+  - https://docs.nvidia.com/datacenter/dcgm/latest/learn/modules/health-monitoring.html
+  - https://docs.nvidia.com/datacenter/dcgm/latest/learn/modules/dcgm-diagnostics.html
+  - https://docs.nvidia.com/deploy/gpu-debug-guidelines/gpu-node-triage.html
+  selected_revision: DCGM v3.3.9 commit b0ec3c624ea21e688b0d93cf9b214ae0eeb6fe52; latest docs observed 2026-09-30
+  progress_notes: 第五批选读 health/diagnostics/exporter 与固定字段源码；被动证据与主动测试分开。未执行 GPU 查询、测试或验收。第十批（2026-09-30）补读降频位图（dcgm_fields.h）、violation 计数器、热/电源 watch 判定实现、targeted_power/pulse_test、nvidia-smi Clocks Event Reasons 与 exporter 默认导出边界，支撑 R2-08 供电散热参考与 R2-07 慢 rank 设备侧字段；violation 单位跨版本冲突已记录。第十二批（2026-10-08）补读 DCGM diagnostics 的 user-guide 形态页（Run Levels and Tests 四级表、各插件前提与判据、Exit Codes、Automating Responses 错误枚举）与 GPU Node Triage 页（Xid 动作表、reset 能力矩阵、field diagnostic 的 RMA 地位、nccl-tests 逐对基线建议），登记 src.nvidia.dcgm-diag-user-guide-latest-2026-10-08 与 src.nvidia.gpu-node-triage-2026-10-08 两项新来源，支撑 R2-14 节点验收；learn/user-guide 两页测试清单口径不一致已记录；仍未执行任何诊断。
+  fetch_targets:
+  - 设备监测和主动诊断章节
+  - 指标、错误信息、测试前提及支持范围
+  - 按具体错误回查官方错误码说明
+  transform_into:
+  - 设备健康证据参考
+  - 被动查询与主动测试的区分
+  - 节点验收实验材料
+  acceptance:
+  - 记录硬件与工具版本
+  - 测试通过不声明所有硬件故障均被排除
+  - 字段单位、计数范围与采集失败含义明确
+- id: A05
+  title: 集合通信库原理与测试（NCCL/HCCL）
+  status: collecting
+  target_domains:
+  - communication
+  - training
+  existing_registry_ids:
+  - src.nvidia.nccl-docs
+  - src.nvidia.nccl-tests
+  discovery_urls:
+  - https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/troubleshooting.html
+  - https://github.com/NVIDIA/nccl-tests
+  selected_revision: NCCL 2.27.5 docs; nccl-tests b4d5beebca8a76cf01335f724d154b9b9d394d96; HCCL API CANN 8.0.RC1.alpha003; cann-hccl 2d685b084a60366b47ad8e50a563ee5c4dbef7fe
+  progress_notes: 第三批 F07/F08 核对集合通信契约、rank/stream 进度、NCCL-tests 计时与公式，以及 HCCL 正式接口与测试示例字段。版本分别作为样板，不组成配套；未运行基准或完成超时案例。 第六批补读版本化 HCCL 8.1 用户指南、NCCL2.27.5
+    RAS/环境与 PyTorch2.8 观测字段，分别写HCCL/NCCL超时指南/公开案例/实验设计；未执行测试。第九批（2026-09-30）核对 nccl-tests 计时/校验实现（host 墙钟、-c 不进计时、Out of bounds 语义、NCCL_TESTS_MIN_BW）、NCCL 2.27.5 troubleshooting/env/RAS 页，并登记 CANN 9.1.X《HCCL性能测试工具》指南（算法带宽口径、参数与结果字段），支撑 R2-05 带宽退化指南；HCCL Test 计时实现与链路级计数器来源仍未获取。
+  fetch_targets:
+  - 选定版本的 troubleshooting、配置与相关诊断机制
+  - nccl-tests README、参数、性能说明和相关测试实现
+  - 按 timeout 症状筛选 Issue/PR/回归测试
+  transform_into:
+  - collective 与 rank 进度解释
+  - 通信性能基线
+  - NCCL 超时指南、案例和实验
+  acceptance:
+  - 记录 CUDA/NCCL/MPI、设备、拓扑和消息大小
+  - HCCL 与 NCCL 的命令和诊断机制分别编写
+  - 关联修复需核对 release
+- id: A06
+  title: 存储故障与持久化参考
+  status: collecting
+  target_domains:
+  - data-storage
+  - reliability
+  existing_registry_ids: []
+  discovery_urls:
+  - https://docs.ceph.com/en/latest/rados/operations/health-checks/
+  - https://docs.ceph.com/en/latest/rados/operations/monitoring/
+  selected_revision: latest pages observed 2026-10-08 (Ceph main, "21 umbrella dev")
+  progress_notes: 第十二批（2026-10-08）首次选读：osd-config-ref Scrubbing 节（light/deep scrub 语义与默认间隔、osd_scrub_auto_repair 默认 false）、health-checks 页（PG_DAMAGED/OSD_SCRUB_ERRORS/OSD_TOO_MANY_REPAIRS；latest 无 PG_INCONSISTENT 健康检查，inconsistent 是 PG 状态标志）、monitoring-osd-pg 页，以及 ceph/ceph 固定 commit caf3def 的 man page（pg repair/scrub/deep-scrub）与 doc/conf.py 许可行（CC BY-SA 3.0）；登记 src.ceph.docs-scrubbing-latest-2026-10-08 与 src.ceph.repo-caf3def，支撑 R2-15。版本化页面（/en/tentacle/ 等）未核对；未部署或操作任何 Ceph 集群。
+  fetch_targets:
+  - 选定稳定版的容量、可用性、慢请求与完整性告警
+  - 监控字段及恢复中的性能影响说明
+  transform_into:
+  - 存储症状与作业症状关联
+  - checkpoint I/O 故障参考
+  - 异常时的证据清单
+  acceptance:
+  - Ceph 作为具体实现例子
+  - 告警不是唯一根因
+  - 不将其操作套到其他存储系统
+- id: A07
+  title: AI 存储负载与设计案例
+  status: collecting
+  target_domains:
+  - data-storage
+  existing_registry_ids: []
+  discovery_urls:
+  - https://github.com/mlcommons/storage
+  - https://mlcommons.org/benchmarks/storage/
+  - https://github.com/deepseek-ai/3FS
+  selected_revision: MLPerf Storage v2.0; commit 7e71ca162d8f9e7ae4b5b698d7d79b0883817f25
+  progress_notes: 第二批 F09 核对 MLPerf Storage 规则的模拟计算、AU、缓存条件及 host DRAM 测量终点，登记 src.mlcommons.storage-rules-v2.0；第十批（2026-09-30）补读 v2.0 新增 Checkpointing 负载类别（10 次平均、LLaMA3 四档、default/subset 模式、drop_caches 条件、强制 fsync、读写带宽与跨 host 可读时延指标），支撑 R2-09；未运行基准，未读取 3FS 实现或完成 checkpoint 设计。
+  fetch_targets:
+  - 负载定义、基准规则、配置与结果格式
+  - 3FS 架构、依赖和与任务相关的实现说明
+  transform_into:
+  - 训练数据供给路径
+  - checkpoint 存储实验设计
+  - 存储架构权衡案例
+  acceptance:
+  - 保留缓存状态、数据规模、并发和硬件条件
+  - 吞吐与持久性分开验证
+  - 未运行基准时不填写测量结果
+- id: A08
+  title: Kubernetes 设备与容器资源链
+  status: collecting
+  target_domains:
+  - cluster-platform
+  existing_registry_ids: []
+  discovery_urls:
+  - https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/device-plugins/
+  - https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/
+  selected_revision: Kubernetes v1.32 documentation snapshot
+  progress_notes: 第一批 F05 和第二批 F11 已核对 Device Plugin 注册、健康上报、分配、capacity/allocatable 与旧 Pod 行为；来源 src.kubernetes.device-plugins-v1-32。固定 Ascend 插件实现见 A15；没有据此确认它与
+    Kubernetes v1.32 的配套，Operator/驱动组合仍待核查。
+  fetch_targets:
+  - Device Plugin 接口和资源分配语义
+  - 选定 Operator 版本的依赖、部署与问题定位资料
+  - 与 Ascend 插件对应层次的资料
+  transform_into:
+  - 设备发现到容器访问的状态链
+  - 设备可见性问题的通用调查结构
+  acceptance:
+  - 固定 Kubernetes/plugin/operator/driver 组合
+  - 区别发现、可分配和容器可访问
+  - 平台实现分别引用
+- id: A09
+  title: 调度、准入与放置
+  status: collecting
+  target_domains:
+  - cluster-platform
+  existing_registry_ids: []
+  discovery_urls:
+  - https://slurm.schedmd.com/gres.html
+  - https://kueue.sigs.k8s.io/docs/concepts/topology_aware_scheduling/
+  - https://volcano.sh/docs/home/introduction/
+  selected_revision: Kueue v0.19.0 commit 911a822a49bcfd99c9c62203a009efa4130ad604; Volcano v1.15.0 docs; MindCluster v26.1.1
+  progress_notes: 第五批完成准入与放置概念来源，记录 Kueue 文档与 API 差异、TAS 延迟分配及 NPU 型号亲和条件；未部署或提交任务，Slurm 待收集。第八批（2026-09-30）补读同一固定 commit 的 troubleshooting 与 pending workloads 文档、kueuectl、cohort/借用、scheduler 事件与 UnadmittedWorkloadsObservability 门控（v0.19 默认关闭，细分等待 reason 不可见），支撑 R2-03 空闲设备等待指南；v1beta1 在该 commit 已标记 deprecated。仍未部署或运行。
+  fetch_targets:
+  - 资源、配额、作业状态、事件和拓扑约束说明
+  - 选定系统的配置示例与限制
+  transform_into:
+  - 准入与放置概念页
+  - 空卡但任务排不上问题索引
+  - 事件与资源账本参考
+  acceptance:
+  - Kueue 准入与 kube-scheduler 职责分开
+  - Slurm、K8s、Volcano 术语不直接等同
+  - 环境未选定时保留机制比较而非统一操作命令
+- id: A10
+  title: PyTorch 数据加载、训练状态与 Checkpoint
+  status: collecting
+  target_domains:
+  - data-storage
+  - training
+  existing_registry_ids: []
+  discovery_urls:
+  - https://docs.pytorch.org/docs/2.6/data.html
+  - https://docs.pytorch.org/docs/2.6/notes/cuda.html
+  - https://docs.pytorch.org/docs/stable/distributed.checkpoint.html
+  - https://github.com/pytorch/pytorch
+  selected_revision: PyTorch 2.6 DataLoader/CUDA/DCP/parallel training/numerical verification; 2.8 distributed docs and fixed WorkNCCL; not one deployment
+    profile
+  progress_notes: 第二批核对 DataLoader/CUDA；第三批 F07 核对 2.8 distributed 契约，F10 核对 2.6 DCP 的暂存、Future、StorageWriter 和固定 FileSystemWriter 实现。版本分别取证，不拼为同一环境；第四批补查并行/state-dict/数值、默认
+    planner 去重与应用恢复责任；本地验证未执行。第八批（2026-09-30）补读 PyTorch 2.6 profiler 页面与固定 v2.6.0 dataloader.py（worker 崩溃、timeout 分支、prefetch 预填、FD 耗尽、record_function 区间名），支撑 R2-02 数据饥饿指南；未运行代码。第十二批（2026-10-08）补充核对 DCP 2.6 完整性语义：filesystem.py 全文与 torch/distributed/checkpoint/ 28 个 .py 文件校验和关键词扫描零命中（无应用层校验和）、.metadata 为 pickle（tmp+rename）、storage_data 只记 (relative_path, offset, length)、读路径仅形状断言、serialization.py 的 _compute_crc32 默认 True 且 docstring 明示 CRC 损坏时 torch.load 仍可加载，支撑 R2-15。
+  fetch_targets:
+  - 选定版本的 DataLoader 与平台传输语义；CUDA 和 TorchNPU 分别核对
+  - 从官方页面跳转到固定版本的 DCP 文档
+  - 与状态保存/恢复相关的示例、实现、测试和限制
+  - 按主题读取分布式/弹性相关说明
+  transform_into:
+  - 训练数据供给路径与等待
+  - 训练状态清单
+  - 恢复一致性原理
+  - Checkpoint 案例与实验输入
+  acceptance:
+  - API 保证与应用负责保存的状态分开
+  - 记录分片、并行配置及数据进度
+  - 页面重定向后保存最终版本定位
+- id: A11
+  title: vLLM 执行、指标与负载
+  status: collecting
+  target_domains:
+  - inference
+  existing_registry_ids: []
+  discovery_urls:
+  - https://docs.vllm.ai/en/latest/usage/metrics/
+  - https://github.com/vllm-project/vllm
+  selected_revision: vLLM v0.14.0; commit b17039bccc17b94a2ea107272ad7bc93508708df; plugin, KV cache, metrics and bench serve
+  progress_notes: 首批核对 platform plugin；第四批只读核对执行/KV、服务端指标与 bench serve 源码，审阅补查 HTTP 到 engine request 的计时调用链。负载实验、真实服务和 GPU/NPU 验证未执行。 第七批 T07 补充固定口径的长尾分支和对照实验设计，未运行服务/负载。第九批（2026-09-30）核对启动期内存链（gpu_memory_utilization 语义、request_memory、profile_run、KV 容量 ValueError、EngineDeadError 形态）与 conserving_memory/troubleshooting 文档，支撑 R2-04 推理 OOM 指南。第十一批（2026-10-08）核对量化文档目录、硬件支持表、int8 方法页与 _verify_quantization 实现，支撑 R2-12 量化质量概念。第十二批（2026-10-08）核对 PD 分离：docs/features/disagg_prefill.md（动机、"DOES NOT improve throughput"、experimental、三层抽象）与 nixl_connector_usage.md、vllm/config/kv_transfer.py（KVTransferConfig 与 kv_load_failure_policy）、kv_connector/factory.py（注册 10 个 connector，全树无 SharedStorageConnector）、v1/metrics.py（connector 级 Prometheus 框架）、examples/benchmarks 的 toy 代理（轮询+do_remote_decode）与 requirements/kv_connectors.txt，支撑 R2-13；disagg 度量文档缺失，指标归属 unknown。
+  fetch_targets:
+  - 选定版本的指标、troubleshooting、benchmarking 和执行资料
+  - 指标定义实现及相关测试/基准配置
+  transform_into:
+  - 执行与 KV cache 概念
+  - TTFT/TPOT/吞吐指标参考
+  - 推理长尾负载描述和对照方法
+  acceptance:
+  - 指标名称、单位、时间窗口和聚合对象匹配版本
+  - 上游支持能力不能自动外推到 Ascend 后端
+  - 负载变化与系统回归分开
+- id: A12
+  title: 可靠性方法与原始研究
+  status: collecting
+  target_domains:
+  - reliability
+  existing_registry_ids: []
+  discovery_urls:
+  - https://sre.google/workbook/table-of-contents/
+  - https://www.usenix.org/conference/atc24/presentation/xiong
+  - https://aclanthology.org/2025.acl-long.996/
+  - https://github.com/InternLM/Awesome-LLM-Training-System/blob/main/Fault_Tolerance.md
+  selected_revision: Google SRE chapters observed 2026-09-29; SuperBench ATC 2024; Silent Data Corruptions at Scale arXiv 2102.11245v1
+  progress_notes: 第三批 F17/F18 核对 SLI、监控、恢复和假设检验方法，并限定 SuperBench GPU 与 SDC CPU 论文的外推范围。未形成 GPU/NPU 发生率或本地实验结论。第九批（2026-09-30）核读 SDC 论文 v1 节级内容与 SuperBench 印刷页 835–844，并登记 OCP《Silent Data Corruption in AI》白皮书（CC BY-SA 4.0，已读 p.1–19/29），支撑 R2-06 静默错误概念；SDC 检测量化原始论文（arXiv:2203.08989）与 LLM 训练 SDC 研究（arXiv:2502.12340）仅确认存在，未读全文。第十二批（2026-10-08）补读 SuperBench arXiv:2402.06194v2 HTML §1–§7：判据方法（无监督 CDF 相似度 α=0.95、单向距离、Algorithm 2）、两阶段执行、生产统计（24k+ A100、10.36% 缺陷节点、复测一致性 >97.5%）与局限（MTBI 22.61× 为仿真），支撑 R2-14；Table 2 逐项清单未被 HTML 渲染，如需逐项引用需读 PDF。
+  fetch_targets:
+  - SRE 的监控、SLO、事故复盘相关章节
+  - SuperBench 与 SDC 论文的问题、实验、结果、限制
+  - 论文索引中与当前任务有关的原文
+  transform_into:
+  - 可靠性维度与故障域
+  - 证据与假设方法
+  - 实验设计参考
+  acceptance:
+  - 索引只用于发现，结论引用原文
+  - 作者报告与本地观测分开
+  - 论文生产效果不外推成通用阈值
+- id: A13
+  title: TorchNPU 配套与适配
+  status: collecting
+  target_domains:
+  - software-stack
+  - training
+  existing_registry_ids:
+  - src.ascend.torch-npu
+  discovery_urls:
+  - https://github.com/Ascend/pytorch
+  - https://github.com/Ascend/pytorch/blob/master/COMPATIBILITY.en.md
+  selected_revision: bc51ab84cc6f35c77aab1c59886e0ea43681a317
+  progress_notes: 第一批核对固定 tag 的英文 README、version.txt 和根 LICENSE；该快照无独立 COMPATIBILITY 文件。第二批补充当前 CANN 安装正文中的驱动/固件前提；URL 含 83RC1 而页头为 8.3.RCX，单独登记，不补齐旧基线的精确
+    HDK 关系。第八批（2026-09-30）核对固定 commit 的 torch_npu 内存 API、NPUCachingAllocator/NPUWorkspaceAllocator/NpuUtils/OptionsManager、PYTORCH_NPU_ALLOC_CONF 五选项与 OOM 文案、docs/api 对照表空缺，以及 CANN 8.2.RC1.alpha001 内存页和 82RC1 错误码页，支撑 R2-01 内存与 OOM 概念；master 选项集已变，仅作发现。第十一批（2026-10-08）补充核对 csrc/aten 结构、codegen 注册、VariableFallbackKernel 性质、torchair/NPUGraph/_inductor 存在性与日志环境变量读取点，支撑 R2-10 算子/图编译指南；CANN 图编译排障版本化文档未取得。测试用例、发行包、历史 CANN/HDK 与上层组件交集仍待核查。
+  fetch_targets:
+  - 选定 ref 的 COMPATIBILITY.md/COMPATIBILITY.en.md、README.zh.md 和 version.txt
+  - 设备初始化、分布式或精度相关 test/ 用例
+  - 配套表引用的对应版本 CANN/HDK 条件
+  transform_into:
+  - 昇腾文档配套档案
+  - 环境核对指南
+  - 精度迁移验证设计
+  acceptance:
+  - 源码分支支持与发行包兼容矩阵分别记录
+  - 主干与 release 不混用
+  - docs 与代码的许可分别核验
+- id: A14
+  title: 昇腾任务工作流与 FAQ 方法
+  status: planned
+  target_domains:
+  - software-stack
+  - communication
+  - cluster-platform
+  - reliability
+  existing_registry_ids:
+  - src.ascend.agent-skills
+  discovery_urls:
+  - https://github.com/Ascend/agent-skills
+  - https://github.com/Ascend/agent-skills/blob/master/skills/vLLM-ascend_FAQ_Generator/SKILL.md
+  selected_revision: null
+  fetch_targets:
+  - 定位 cann-installer、ascend-docker、npu-smi、hccl-test、npu-adapter-reviewer 的 SKILL.md
+  - 读取所选 Skill 实际引用的 references 和必要脚本
+  - FAQ Generator 的输入选择与输出结构
+  transform_into:
+  - 安装/环境检查清单
+  - 通信与容器调查步骤候选
+  - Issue 到案例的维护流程
+  acceptance:
+  - 只作为研究材料读取，不安装或执行
+  - 命令回查同版本官方依据
+  - 外引材料不自动继承 Skill 仓库许可
+  - closed Issue 不等于确定修复
+- id: A15
+  title: MindCluster 设备、调度与监控
+  status: collecting
+  target_domains:
+  - hardware
+  - cluster-platform
+  existing_registry_ids:
+  - src.ascend.mind-cluster
+  discovery_urls:
+  - https://github.com/Ascend/mind-cluster
+  - https://github.com/Ascend/mind-cluster/tree/master/component/ascend-device-plugin
+  - https://github.com/Ascend/mind-cluster/tree/master/component/npu-exporter
+  selected_revision: v26.1.1; commit 44385c13d7b1d87def35f1604e8be4d16de6ca4e
+  progress_notes: 第二批 F11 核对固定 Ascend Device Plugin 的组件文档、Register/ListAndWatch/Allocate 实现及代码/文档许可，登记 src.ascend.mind-cluster-v26.1.1。Exporter、部署配置、目标集群和整栈配套尚未验证。
+    第五批另核对固定 DCMI 健康/错误/ECC/超时封装及调度、机型亲和文档；第六批补 Docker client/runtime 与插件部署前提、两路径可见性。第十批（2026-09-30）补读 npu-exporter 组件的温度/功耗/电压/频率指标与采集配置，确认无降频原因类指标。npu-exporter完整指标实现和现场组合仍未验证。
+  fetch_targets:
+  - 选定 ref 的 docs、release 配套和组件 README
+  - 插件 pkg/ 与部署配置中的相关资源/健康处理
+  - Exporter 的指标定义和不支持情况处理
+  transform_into:
+  - NPU 设备资源链
+  - 容器内不可见调查
+  - 硬件健康字段参考
+  acceptance:
+  - 区分物理存在、驱动可见、平台可分配和容器可用
+  - 指标单位、标签、计数范围交叉检查
+  - 组件版本必须有明确配套依据
+- id: A16
+  title: Ascend FaultDiag 证据与故障模式
+  status: planned
+  target_domains:
+  - reliability
+  - communication
+  - cluster-platform
+  existing_registry_ids:
+  - src.ascend.mind-cluster
+  discovery_urls:
+  - https://github.com/Ascend/mind-cluster/tree/master/component/ascend-faultdiag
+  - https://github.com/Ascend/mind-cluster/blob/master/docs/zh/faultdiag/ascend-faultdiag/05_usage/03_log_parsing.md
+  selected_revision: null
+  fetch_targets:
+  - 选定 ref 的 README、src/、test/ 与日志清洗/诊断说明
+  - 仅选取当前专题相关的事件、解析规则和夹具
+  transform_into:
+  - 日志到事件再到假设的解释
+  - 各专题的证据清单
+  - 离线解析实验候选
+  acceptance:
+  - 规则匹配不自动等于根因确认
+  - 测试夹具明确标合成
+  - 深层文档路径从所选文件树重新定位
+- id: A17
+  title: MindIO 保存与恢复机制
+  status: collecting
+  target_domains:
+  - data-storage
+  - training
+  existing_registry_ids:
+  - src.ascend.mind-cluster
+  discovery_urls:
+  - https://github.com/Ascend/mind-cluster/tree/master/component/mindio
+  selected_revision: MindCluster v26.1.1; commit 44385c13d7b1d87def35f1604e8be4d16de6ca4e
+  progress_notes: 第三批 F10 仅核对 MindIO ACP README 的内存暂存与异步持久化边界；第十批（2026-09-30）补读 doc/Interface_description/ 的 save/multi_save/flush/register_checker/load 与 doc/环境变量.md（仅两个变量、无性能调节参数），支撑 R2-09 checkpoint 慢写指南；memfs 实现与性能数据仍未获取。第十二批（2026-10-08）补充核对 register_checker 接口文档与 framework_acp.py 调用方：checker 语义为指定 path 文件个数完备性（非字节级校验和），异步保存完成后注册 {path：file_count}（路径到文件个数），回调成功才写 tracker 文件；接口文档实际路径为 component/mindio/acp/doc/Interface_description/，支撑 R2-15。
+  fetch_targets:
+  - 选定 ref 下 acp/、tft/ 的 README、接口、测试及框架接入说明
+  - 从该版本文件树定位配套的恢复文档
+  transform_into:
+  - Checkpoint I/O 与持久化边界
+  - 恢复条件、状态覆盖与回退参考
+  - 恢复一致性实验材料
+  acceptance:
+  - 代码与 docs 许可分开
+  - 记录框架适配、触发条件、设备限制和失败回退
+  - 有容错模块不等于所有任务无损恢复
+- id: A18
+  title: MindSpeed 训练、精度与恢复
+  status: collecting
+  target_domains:
+  - training
+  - software-stack
+  existing_registry_ids: []
+  discovery_urls:
+  - https://github.com/Ascend/MindSpeed
+  - https://github.com/Ascend/MindSpeed/blob/master/docs/zh/release_notes_core.md
+  - https://github.com/Ascend/MindSpeed-LLM
+  selected_revision: MindSpeed-LLM v2.2.0; commit 53f3639c3da9c000a187c44cc0c08d55026ddded; HA docs and checkpoint wrapper; external dependencies unresolved
+  progress_notes: 第十一批（2026-10-08）补读 high_availability.md 全文（副本 DP 组、TTP/UCE/弹性训练开关与四条专属约束、mindio_ttp/taskd 依赖）与 high_availability.py 实现入口（开关注册、validate_args 断言），支撑 R2-11 弹性训练概念；弹性缩扩内部协议与 TTP 约束外链未读。
+  fetch_targets:
+  - 配套表及 docs；在文件树定位 functional/、tests_extend/ 的相关实现/测试
+  - LLM 套件的 docs、configs、examples、tests 中所选模型配置
+  transform_into:
+  - 训练并行与状态参考
+  - 迁移精度与吞吐验证设计
+  - Checkpoint 接入和恢复案例
+  acceptance:
+  - 固定 Megatron/Mcore、MindSpeed、模型、torch_npu/CANN
+  - 性能数据记录 batch/序列长度/精度/并行度/拓扑
+  - 首次正式引入前补来源和许可范围
+- id: A19
+  title: vLLM Ascend 部署、性能与案例
+  status: collecting
+  target_domains:
+  - inference
+  existing_registry_ids:
+  - src.ascend.vllm-ascend
+  discovery_urls:
+  - https://github.com/vllm-project/vllm-ascend
+  - https://docs.vllm.ai/projects/ascend/en/latest/user_guide/support_matrix/
+  selected_revision: vLLM Ascend v0.14.0rc1; commit 52d4acfa51fb868823d1070b81cbd2d97e9e4696; feature matrix and release limits
+  fetch_targets:
+  - docs/source/、所选版本实际文档构建配置（v0.14.0rc1 为 Sphinx conf.py）、collect_env.py、Dockerfile* 中与所选环境有关的部分
+  - 相关 tests/、benchmarks/ 及经筛选的 Issue→PR→测试链
+  transform_into:
+  - Ascend 推理特性/环境参考
+  - 长尾诊断指南与来源案例
+  - 固定负载基线实验
+  acceptance:
+  - 固定 vLLM 与插件版本，不继承上游全部功能
+  - 展开文档宏前固定所选版本实际构建配置；本批为 docs/source/conf.py
+  - 复验或修复 release 未确认时明确未知
+  progress_notes: ' 第六批核对 #1188、#2557→PR2541、#14296 的公开问题链和评论；第七批整理 #17443 未闭环长尾报告。历史案例与0.14.0rc1样板独立，关闭、补丁、自动回复和现场复验分别记录。第九批（2026-09-30）核对插件默认 PYTORCH_NPU_ALLOC_CONF 追加逻辑、NPU determine_available_memory 与日志文案差异、block_size 默认/强制 128、FAQ 13/14/18 与 release notes 的 OOM 相关条目，并登记 #15920/#12692 两条未闭环 OOM 报告（归因均未证实）。第十一批（2026-10-08）补充核对支持矩阵的 Quantization 行（W8A8 Functional、W4A8 在研）与评估指南目录存在性。第十二批（2026-10-08）补充核对：supported_features.md 的 Prefill Decode Disaggregation 行（Functional, xPyD is supported）、developer_guide/feature_guide/disaggregated_prefill.md（Mooncake 拉/推 connector、异构 P/D 不支持、非对称 TP 限制、DFX 校验）、tutorials/pd_disaggregation_mooncake_single_node.md（内部版本引用 v0.11.0rc1 落后于快照，只作步骤形态证据）与 vllm_ascend/distributed/kv_transfer/ 存在性，支撑 R2-13。'
+- id: A20
+  title: MindIE-LLM 机制与推理对照
+  status: planned
+  target_domains:
+  - inference
+  existing_registry_ids: []
+  discovery_urls:
+  - https://github.com/Ascend/MindIE-LLM
+  selected_revision: null
+  fetch_targets:
+  - 在选定 ref 定位 docs、mkdocs.yml、config.conf、examples/atb_models/、tests/
+  - 按问题读取 scheduler、block_manager 或 mindie_llm 相关实现
+  transform_into:
+  - 执行与配置语义参考
+  - KV cache/调度的实现对照
+  - 来源完整时补充推理案例
+  acceptance:
+  - 产品发行包与源码仓库范围分开
+  - 不将其他引擎的参数直接套用
+  - 记录模型、算子包、运行模式和具体文件许可

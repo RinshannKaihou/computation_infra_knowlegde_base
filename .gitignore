@@ -1,0 +1,21 @@
+# Local Python environment and generated files
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+build/
+
+# Local secrets (only sanitized examples may be versioned)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# macOS metadata
+.DS_Store

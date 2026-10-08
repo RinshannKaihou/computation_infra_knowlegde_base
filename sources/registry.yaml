@@ -1,0 +1,1087 @@
+schema_version: 1
+sources:
+- id: src.ascend.agent-skills
+  title: Ascend Agent Skills
+  url: https://github.com/Ascend/agent-skills
+  kind: repository
+  registered_at: '2026-09-29'
+  revision: null
+  license:
+    status: identified
+    scopes:
+    - scope: 仓库根许可证；外部引用材料另计
+      identifier: MulanPSL-2.0
+      url: https://github.com/Ascend/agent-skills/blob/master/LICENSE
+    notes: 依据本轮调研登记；实际引入文件时固定版本并核对文件声明及依赖。
+  notes: 任务入口与知识维护流程参考，未安装或运行；尚未固定 commit。
+- id: src.ascend.mind-cluster
+  title: Ascend MindCluster
+  url: https://github.com/Ascend/mind-cluster
+  kind: repository
+  registered_at: '2026-09-29'
+  revision: null
+  license:
+    status: partial
+    scopes:
+    - scope: 仓库代码根许可证
+      identifier: Apache-2.0
+      url: https://github.com/Ascend/mind-cluster/blob/master/LICENSE
+    - scope: docs 目录
+      identifier: CC-BY-4.0
+      url: https://github.com/Ascend/mind-cluster/blob/master/docs/LICENSE
+    notes: 代码与文档分开登记；发行包和第三方依赖需另行核验。
+  notes: 集群组件、诊断和恢复知识入口；登记不构成部署版本推荐。
+- id: src.ascend.torch-npu
+  title: Ascend PyTorch / TorchNPU
+  url: https://github.com/Ascend/pytorch
+  kind: repository
+  registered_at: '2026-09-29'
+  revision: null
+  license:
+    status: partial
+    scopes:
+    - scope: docs 目录
+      identifier: CC-BY-4.0
+      url: https://github.com/Ascend/pytorch/blob/master/docs/LICENSE
+    notes: 本登记只确认文档许可；代码及具体文件在复用时分别核对。
+  notes: 框架适配与版本配套资料入口；正式条目需引用具体版本及位置。
+- id: src.ascend.vllm-ascend
+  title: vLLM Ascend
+  url: https://github.com/vllm-project/vllm-ascend
+  kind: repository
+  registered_at: '2026-09-29'
+  revision: null
+  license:
+    status: partial
+    scopes:
+    - scope: 仓库根许可证
+      identifier: Apache-2.0
+      url: https://github.com/vllm-project/vllm-ascend
+    notes: 依据调研记录仓库许可；第三方文件、文档与发行包的具体范围仍需核对。
+  notes: 推理适配与问题案例入口，不推断其支持上游引擎的全部功能。
+- id: src.nvidia.nccl-docs
+  title: NVIDIA NCCL 官方文档
+  url: https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/
+  kind: documentation
+  registered_at: '2026-09-29'
+  revision: null
+  license:
+    status: unknown
+    scopes: []
+    notes: 公开可读不等于允许全文再发布；本仓库先登记链接。
+  notes: 集合通信与故障定位资料入口；使用时需固定文档版本。
+- id: src.nvidia.nccl-tests
+  title: NVIDIA NCCL Tests
+  url: https://github.com/NVIDIA/nccl-tests
+  kind: repository
+  registered_at: '2026-09-29'
+  revision: null
+  license:
+    status: unknown
+    scopes: []
+    notes: 本次骨架仅登记项目入口；引入代码前核验指定版本的许可证。
+  notes: 通信验证实验参考，尚未在本项目运行。
+- id: src.stas.ml-engineering
+  title: ML Engineering
+  url: https://github.com/stas00/ml-engineering
+  kind: repository
+  registered_at: '2026-09-29'
+  revision: null
+  license:
+    status: partial
+    scopes:
+    - scope: 项目正文，依据调研记录
+      identifier: CC-BY-SA-4.0
+      url: https://github.com/stas00/ml-engineering
+    notes: 具体脚本、图片和第三方引文需分别核对；本仓库尚未复制正文。
+  notes: 工程知识与学习路径参考；经验结论需匹配实际环境。
+- id: src.infrasys.aiinfra
+  title: Infrasys AIInfra
+  url: https://github.com/Infrasys-AI/AIInfra
+  kind: repository
+  registered_at: '2026-09-29'
+  revision: null
+  license:
+    status: unknown
+    scopes: []
+    notes: 已知仓库区分正文与代码许可；本登记暂不覆盖具体文件，复用时再核验范围。
+  notes: 中文课程与内容组织入口，章节成熟度和技术结论需逐项核对。
+- id: src.nvidia.cuda-toolkit-12-8
+  title: NVIDIA CUDA Toolkit Documentation 12.8
+  url: https://docs.nvidia.com/cuda/archive/12.8.0/
+  kind: documentation
+  registered_at: '2026-09-29'
+  revision: 12.8.0
+  license:
+    status: partial
+    scopes:
+    - scope: CUDA 12.8 归档入口所列 SDK 及相关文档许可；具体组件条款另计
+      identifier: NVIDIA CUDA Toolkit EULA
+      url: https://docs.nvidia.com/cuda/archive/12.8.0/eula/index.html
+    notes: 官方归档入口指向该 EULA；未完成具体文件及再分发条件核验，本库仅作原创归纳与链接。
+  notes: 用于区分编译器、运行时、基础库和驱动，以及开发包与运行依赖的边界；不是版本部署推荐。
+- id: src.kubernetes.device-plugins-v1-32
+  title: Kubernetes v1.32 Device Plugins
+  url: https://v1-32.docs.kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/device-plugins/
+  kind: documentation
+  registered_at: '2026-09-29'
+  revision: v1.32 documentation snapshot
+  license:
+    status: partial
+    scopes:
+    - scope: Kubernetes website 仓库文档许可声明；main 链接为可变定位
+      identifier: CC-BY-4.0
+      url: https://github.com/kubernetes/website/blob/main/LICENSE
+    notes: 版本化页面与当前仓库许可分别记录；未固定 v1.32 文档源提交，仅作原创归纳与链接。
+  notes: 说明设备插件向 kubelet 上报资源并参与容器分配；框架设备后端是不同概念。
+- id: src.vllm.plugin-system-v0-14
+  title: vLLM v0.14.0 Plugin System
+  url: https://docs.vllm.ai/en/v0.14.0/design/plugin_system/
+  kind: documentation
+  registered_at: '2026-09-29'
+  revision: v0.14.0 documentation
+  license:
+    status: partial
+    scopes:
+    - scope: vLLM 仓库根许可证
+      identifier: Apache-2.0
+      url: https://github.com/vllm-project/vllm/blob/v0.14.0/LICENSE
+    notes: 根仓库许可已定位；生成文档及第三方材料的具体复用范围仍需核验。
+  notes: 用于说明推理引擎的平台插件扩展点；不据此推断某个 Ascend 插件版本与引擎兼容。
+- id: src.ascend.torch-npu-v7.2.0-pytorch2.6.0
+  title: TorchNPU v7.2.0-pytorch2.6.0 固定源码快照
+  url: https://github.com/Ascend/pytorch/tree/bc51ab84cc6f35c77aab1c59886e0ea43681a317
+  kind: repository
+  registered_at: '2026-09-29'
+  revision: bc51ab84cc6f35c77aab1c59886e0ea43681a317
+  license:
+    status: partial
+    scopes:
+    - scope: 固定 commit 的仓库根 LICENSE；第三方文件按各自声明核查
+      identifier: BSD-3-Clause
+      url: https://github.com/Ascend/pytorch/blob/bc51ab84cc6f35c77aab1c59886e0ea43681a317/LICENSE
+    notes: 根 LICENSE 条款已核对；该快照无 docs/LICENSE，未完成各文档和第三方文件的适用许可核验。发行 wheel、CANN/HDK 软件包的许可另行核查。
+  notes: tag v7.2.0-pytorch2.6.0 在核查时解析到此 commit。引用英文 README 与 version.txt 的配套声明；该快照无独立 COMPATIBILITY 文件，README.zh.md 存在合并冲突标记。未下载或运行发行包。第八批（2026-09-30）补充核对：torch_npu/npu/memory.py 内存 API 与 torch_npu/npu/__init__.py 导出；csrc 的 NPUCachingAllocator、NPUWorkspaceAllocator、NpuUtils、OpParamMaker、OptionsManager 与 memory_snapshot；PYTORCH_NPU_ALLOC_CONF 在该快照支持 max_split_size_mb、garbage_collection_threshold、expandable_segments、base_addr_aligned_kb、page_size 五个选项，而 master 分支选项集已变化（master 仅作发现入口）；docs/api/torch_npu_apis.md 对照表的内存 API 覆盖与空缺；test/npu/test_expandable_segments.py；third_party/acl/inc 头文件中的 207001/245002 错误码。注意 memory.py docstring 多处沿用 CUDA 措辞（如 nvidia-smi、cudaMalloc），不作为 NPU 行为证据；该快照文档许可仍未核验。代审修订（2026-09-30）补充：alloc_block L2692–2694 的进程额度分支（set_fraction 超额时分配器自设 207001，不调用运行时）、setMemoryFraction L1717–1724、OOM 文案的 allowed 字段（L1391–1394）、garbage_collection_threshold 生效条件（L1353–1369、L2624–2629）。第十一批（2026-10-08）补充：csrc/aten 目录结构与 codegen 生成的注册方式（codegen/templates/CustomRegisterSchema.cpp 等）、VariableFallbackKernel.cpp 的 AutogradPrivateUse1、PrivateUse1 CPU fallback 与 SparsePrivateUse1 报错分支（全文 L232–271，aten/CMakeLists.txt 收集该文件）、third_party/torchair vendored 构建脚本、csrc/core/npu/NPUGraph.cpp（图捕获）与 torch_npu/_inductor/、OptionsManager.cpp 的 ASCEND_GLOBAL_LOG_LEVEL（L229）、TORCH_NPU_DISABLED_WARNING（L584）等环境变量读取点。 2026-10-08 审阅修订 B11-C01：PrivateUse1 分支调用 at::native::cpu_fallback 并按算子名去重提示性能影响，不能从 autograd 文件头推断无 CPU fallback；具体算子回退成功、性能和梯度正确性未执行验证。
+- id: src.huawei.atlas-800t-a2-product-2026-09-29
+  title: Atlas 800T A2训练服务器产品页（2026-09-29核对）
+  url: https://e.huawei.com/cn/products/computing/ascend/atlas-800t-a2
+  kind: documentation
+  registered_at: '2026-09-29'
+  revision: page observed 2026-09-29
+  license:
+    status: unknown
+    scopes: []
+    notes: 华为网站法律声明称网站材料受版权保护且未经许可不得复制等；本库仅登记链接并作原创归纳，未取得产品页内容的再分发许可。
+  notes: 已打开并核对技术规格区；支持 Atlas 800T A2 的主机、内存槽、本地存储组合、网络、PCIe扩展槽、电源与风扇规格。页面未给 NPU 数量、设备内存或节点内互联，不能据此补写。第十批（2026-09-30）复核电源散热规格：4×2.6kW 热插拔电源 2+2 冗余、8 热插拔风扇模组 N+1 冗余、风冷、工作温度 5–35℃；页面需浏览器/UA 渲染，为可变网页，引用带观察日期。
+- id: src.nvidia.dgx-h100-h200-user-guide-2026-01-26
+  title: NVIDIA DGX H100/H200 System User Guide（2026-01-26）
+  url: https://docs.nvidia.com/dgx/dgxh100-user-guide/introduction-to-dgxh100.html
+  kind: documentation
+  registered_at: '2026-09-29'
+  revision: last updated 2026-01-26
+  license:
+    status: unknown
+    scopes: []
+    notes: 官方 Notices 称文档不授予知识产权许可，复制需事先书面批准并满足条件；本库仅登记链接并作原创归纳，未复制官方拓扑图。
+  notes: 已核对 DGX H100/H200 组件表、网络端口与 GPU/CPU 映射、系统拓扑图入口和电源冗余说明；具体数值按 H100/H200 分列，不把 H200 数值写入 H100 示例。第十二批（2026-10-08）复读规格基线：8×H100(640GB)/H200(1.128TB)、4×NVSwitch 900GB/s、CX-7 IB 400G、2TB DIMM、6×3.3kW PSU 4+2（≥3 PSU 开机、3 PSU 时降性能运行）、环境 5–30°C/20–80%RH；该页无验收/burn-in 专章，仅作规格核对基线。
+- id: src.pytorch.data-loader-2.6
+  title: torch.utils.data — PyTorch 2.6 documentation
+  url: https://docs.pytorch.org/docs/2.6/data.html
+  kind: documentation
+  registered_at: '2026-09-29'
+  revision: PyTorch 2.6 documentation; release tag v2.6.0 resolves to 1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库根 LICENSE；生成站点及第三方引用材料的具体范围另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 固定 tag 的根许可证已打开核对；本文只做短摘要与链接，未复制文档正文、示例或第三方材料。
+  notes: 核对 DataLoader 的数据集、采样、自动组 batch、多进程 worker、预取和 memory pinning 语义；不提供最佳 worker 数或目标环境性能证据。
+- id: src.pytorch.cuda-semantics-2.6
+  title: CUDA semantics — PyTorch 2.6 documentation
+  url: https://docs.pytorch.org/docs/2.6/notes/cuda.html
+  kind: documentation
+  registered_at: '2026-09-29'
+  revision: PyTorch 2.6 documentation; release tag v2.6.0 resolves to 1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库根 LICENSE；生成站点及第三方引用材料的具体范围另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 固定 tag 的根许可证已打开核对；本文只做短摘要与链接，未复制文档正文、示例或第三方材料。
+  notes: 仅用于 PyTorch 2.6 的 CUDA pinned memory、non_blocking copy、重叠条件及警告；不能作为 TorchNPU/CANN 行为证据。第八批（2026-09-30）补充核对 #memory-management、#optimizing-memory-usage-with-pytorch-cuda-alloc-conf、#asynchronous-execution、#cublas-workspaces 小节锚点，仍仅作 CUDA 对照。
+- id: src.mlcommons.storage-rules-v2.0
+  title: MLPerf Storage Benchmark Submission Guidelines v2.0
+  url: https://github.com/mlcommons/storage/blob/7e71ca162d8f9e7ae4b5b698d7d79b0883817f25/Submission_guidelines.md
+  kind: documentation
+  registered_at: '2026-09-29'
+  revision: v2.0 release; commit 7e71ca162d8f9e7ae4b5b698d7d79b0883817f25
+  license:
+    status: partial
+    scopes:
+    - scope: mlcommons/storage v2.0 仓库根 LICENSE.md；商标与外部链接材料另计
+      identifier: Apache-2.0
+      url: https://github.com/mlcommons/storage/blob/7e71ca162d8f9e7ae4b5b698d7d79b0883817f25/LICENSE.md
+    notes: 主任务已通过官方 raw 文件补充读取该固定 commit 的根 LICENSE.md，核对为 Apache-2.0；商标、外部材料与发行制品范围仍需分开，登记保留 partial。本文只做原创归纳与链接。
+  notes: 核对训练 benchmark 的模拟加速器、AU、缓存控制和 host DRAM 终点；该范围不包含预处理、设备传输或真实 GPU/NPU 计算通信。第十批（2026-09-30）补充核对：v2.0 新增 Checkpointing 负载类别（连跑 10 次取平均、LLaMA3 8B–1T 四档 105GB–18TB、default 共享存储与 subset 节点本地两种模式、checkpoint 小于 3× 客户端内存时须 drop_caches、规则强制 fsync、指标含写/读带宽与跨 host 可读时延）。llama3_*.yaml 具体 I/O 参数与 DLIO 实现未读。
+- id: src.ascend.mind-cluster-v26.1.1
+  title: MindCluster v26.1.1 固定源码快照
+  url: https://github.com/Ascend/mind-cluster/tree/44385c13d7b1d87def35f1604e8be4d16de6ca4e
+  kind: repository
+  registered_at: '2026-09-29'
+  revision: 44385c13d7b1d87def35f1604e8be4d16de6ca4e
+  license:
+    status: partial
+    scopes:
+    - scope: 固定 commit 的仓库根代码与配置；第三方文件按各自声明核查
+      identifier: Apache-2.0
+      url: https://github.com/Ascend/mind-cluster/blob/44385c13d7b1d87def35f1604e8be4d16de6ca4e/LICENSE
+    - scope: 固定 commit 的 component/ascend-device-plugin 自有代码；LICENSES/vendor 下依赖另计
+      identifier: Apache-2.0
+      url: https://github.com/Ascend/mind-cluster/blob/44385c13d7b1d87def35f1604e8be4d16de6ca4e/component/ascend-device-plugin/LICENSES/LICENSE
+    - scope: 固定 commit 的 docs 目录文档；第三方素材按各自声明核查
+      identifier: CC-BY-4.0
+      url: https://github.com/Ascend/mind-cluster/blob/44385c13d7b1d87def35f1604e8be4d16de6ca4e/docs/LICENSE
+    notes: 代码、文档和 vendored 依赖分开登记；未核验发行包、镜像及其第三方内容的再分发条件。
+  notes: annotated tag v26.1.1 在 2026-09-29 核查时解引用到此 commit。用于核对 Ascend Device Plugin 的 README、组件说明及 Register、ListAndWatch、Allocate
+    实现；未安装、构建或运行，也不构成与 Kubernetes、驱动、CANN、TorchNPU 或硬件的整栈配套声明。第十批（2026-09-30）补充核对 npu-exporter 组件：collector_for_npu.go 的温度/功耗/电压/AICore 频率/健康指标（L64–L70，help 字符串不含单位口径，Ascend310P 用整卡功耗替代的注释 L238–247）、build/metricConfiguration.json（采集组默认开启、5 秒间隔）；collector 目录无降频原因/throttle 类指标。
+- id: src.huawei.cann-83rcx-install-2026-09-29
+  title: CANN community 安装文档：页头 8.3.RCX、URL 路径 83RC1
+  url: https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/83RC1/softwareinst/instg/instg_quick.html?Mode=PmIns&InstallType=netconda&OS=openEuler&Software=cannToolKit
+  kind: documentation
+  registered_at: '2026-09-29'
+  revision: page observed 2026-09-29; page header 8.3.RCX; URL path 83RC1
+  license:
+    status: unknown
+    scopes: []
+    notes: 公开可读不代表允许全文再分发；本文仅链接与原创归纳。CANN/HDK 软件包、EULA 和第三方 notice 另计，未下载或复用软件包。
+  notes: 使用浏览器实际加载快速安装及 instg_0005.html 安装 NPU 驱动和固件正文；仅用于安装前提和物理机/容器职责边界。页头与 URL 版本标识不一致，不作为不可变 8.3.RC1 历史快照，不支持精确 HDK、子包或整栈配套。
+- id: src.nvidia.nccl-user-guide-2.27.5
+  title: NVIDIA NCCL 2.27.5 User Guide
+  url: https://docs.nvidia.com/deeplearning/nccl/archives/nccl_2275/user-guide/docs/
+  kind: documentation
+  registered_at: '2026-09-29'
+  revision: 2.27.5 archive
+  license:
+    status: partial
+    scopes:
+    - scope: NCCL 2.27.5 软件源码许可入口；User Guide 网页与图的再分发范围未单独确认
+      identifier: BSD-3-Clause
+      url: https://docs.nvidia.com/deeplearning/nccl/archives/nccl_2275/pdf/NCCL-BSD.pdf
+    notes: 归档页同时列出软件许可协议和 BSD License；本库没有把软件源码条款扩张为全部网页内容，仅链接并原创归纳 User Guide。
+  notes: 已核对 communicator 创建、多 communicator 并发次序、collective 参数、CUDA stream、Group Calls 和错误处理页面；未安装或运行 NCCL，也不构成与 PyTorch/CUDA/驱动的配套声明。第九批（2026-09-30）补充核对：troubleshooting.html 全部小节（GPU Direct/ACS/拓扑检测/网络问题）与 env.html 的 NCCL_ALGO/NCCL_PROTO/NCCL_DEBUG/NCCL_DEBUG_SUBSYS/P2P/SHM/NET/IB_* 语义；RAS 章节实际路径为 troubleshooting/ras.html（顶层 ras.html 404），since 2.24，仅 job/communicator 健康事件（含进度 MISMATCH），无链路级硬件计数器；日志行格式无官方样例。第十批（2026-09-30）补充核对 RAS 细节：MISMATCH 对离群组逐成员列出 Rank/GPU/进程 PID/节点 IP（默认组规模 ≤25% 总数且 ≤10 成员才展开，verbose 放宽）；INIT/FINALIZE 过渡期同为瞬态；进程无响应先 INCOMPLETE、60 秒判 DEAD；ncclras 客户端 localhost:28028 文本协议（telnet/netcat 可用）；RAS 自 2.24 默认开启，输出格式官方称 "expected to evolve"。 B10-C01：持续计数差异只提供候选 rank；无差异、未展开或响应不完整不能证明全体变慢，需各 rank 阶段时间线。后一判读限制是本库方法推论，非 RAS 提供的二分判据。
+- id: src.pytorch.distributed-2.8
+  title: PyTorch 2.8 torch.distributed documentation
+  url: https://docs.pytorch.org/docs/2.8/distributed.html
+  kind: documentation
+  registered_at: '2026-09-29'
+  revision: PyTorch 2.8 documentation
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.8.0 仓库自有代码与随附文档；第三方依赖和独立网站资产另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/v2.8.0/LICENSE
+    notes: 版本化文档页由项目文档生成；本库仅链接并原创归纳，未复制示例或网站资产。
+  notes: 已核对 ProcessGroup、rank、组创建与多 NCCL group 次序、同步/异步 collective 和若干 API 的 size 契约；另核对 v2.8.0 commit ba56102387ef21a3b04b357e5b183d48f0afefc7
+    的 ProcessGroupNCCL.cpp，区分 Work 完成、异常与 CPU 等待条件；未核对发行二进制及其内置通信库版本。第十批（2026-09-30）补充核对：distributed.html 的 #torch-distributed-debug（OFF/INFO/DETAIL；DETAIL 按 rank 分行的 forward/backward/comm 统计与 per-collective 一致性检查）、#logging 矩阵、monitored_barrier 仅 GLOO、NCCL_DEBUG_SUBSYS=COLL 用途；同 commit 的 TraceUtils.h（desync 报告实现）、FlightRecorder.hpp（entry 字段与 CPU 侧发现时刻的限定）、ProcessGroupNCCL.cpp 的默认值（TRACE_BUFFER_SIZE 2000、HEARTBEAT_TIMEOUT_SEC 480s、WAIT_TIMEOUT_DUMP_MILSEC 15000ms）。
+- id: src.huawei.hccl-api-cann-8.0-rc1-alpha003
+  title: CANN 8.0.RC1.alpha003 集合通信接口参考 01
+  url: https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/80RC1alpha003/apiref/hcclapiref/CANN%208.0.RC1.alpha003%20%E9%9B%86%E5%90%88%E9%80%9A%E4%BF%A1%E6%8E%A5%E5%8F%A3%E5%8F%82%E8%80%83%2001.pdf
+  kind: documentation
+  registered_at: '2026-09-29'
+  revision: CANN 8.0.RC1.alpha003; document 01; 2024-06-06
+  license:
+    status: unknown
+    scopes: []
+    notes: PDF 标示华为版权所有，未发现允许再分发全文或图片的许可；本库仅登记链接并作原创归纳。
+  notes: 已核对 HCCL 执行阶段、rank/group 概念、C++ collective 参数约束、异常说明与样例同步位置；RC/alpha 文档不代表其他 HCCL/CANN/TorchNPU/固件/设备版本，且未给出所有 collective
+    的统一主机返回边界。
+- id: src.pytorch.dcp-2.6
+  title: PyTorch 2.6 Distributed Checkpoint 文档与固定保存和装载实现
+  url: https://docs.pytorch.org/docs/2.6/distributed.checkpoint.html
+  kind: documentation
+  registered_at: '2026-09-29'
+  revision: 2.6 documentation; source commit 1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch 固定 commit 根代码 LICENSE；生成站点及第三方材料另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 根许可沿用本库对 PyTorch v2.6.0 的已核对记录；不概括所有文档与发行包。仅原创归纳和链接。
+  notes: 核对 async_save、AsyncStager、StorageWriter 和 filesystem.py 的 sync_files、写入、元数据提交；固定 default_planner.py、_dedup_save_plans.py 和 planner_helpers.py 支持同 MetadataIndex 去重及 rank-local 状态边界；state_dict_loader.py 的 Stateful 回调发生在公共 load 返回前。不是目标后端持久性、训练恢复正确性或 TorchNPU 支持声明。第十批（2026-09-30）补充核对：async_save 的 staging 在主线程执行、后台单线程 save（state_dict_saver.py L228–242）；CPU 后端 assert（L216–221）；BlockingAsyncStager 默认实现与 pinned 缓存（staging.py L15–117）；save 的 plan/write 两次集合同步点；FileSystemWriter 参数（thread_count/per_thread_copy_ahead/single_file_per_rank/sync_files）与 _OverlappingCpuLoader 性能陷阱 TODO（filesystem.py L290–302）；FileSystemReader 2.6 无并发参数、逐文件串行读（L617–674）；dcp_logger 观测接口。第十二批（2026-10-08）补充核对完整性语义：filesystem.py 769 行全文与 torch/distributed/checkpoint/ 全部 28 个 .py 文件关键词扫描（checksum/hash/crc/digest/integrity）未命中（历史扫描记录，不证明所有后端/扩展路径无校验）；所查 FileSystem 读写与 metadata 未见独立内容摘要；.metadata 为 pickle 序列化 Metadata 对象（tmp+rename 原子替换，filesystem.py L582-595），Metadata 字段仅 state_dict_metadata/planner_data/storage_data/storage_meta（metadata.py L136-147），storage_data 只记 (relative_path, offset, length)；tensor 读回后的形状断言（filesystem.py L666–668）不验证内容；解析可发现某些损坏，保持可解析性与形状的损坏可能逃过；torch/serialization.py 的 _compute_crc32 默认 True（L184）且 docstring 明示 CRC 损坏时 torch.load 仍可加载（L196-209）。 2026-10-08 修订 B12-C03：filesystem.py L225–246、L447–463、L507–534 对照默认 single_file_per_rank=True/thread_count=1 的单桶、多线程分桶及 False 时逐 item 文件布局；文件集以实际计划和 metadata 为准。
+- id: src.linux-man-pages.fsync-6.19
+  title: Linux man-pages 6.19 fsync(2)
+  url: https://man7.org/linux/man-pages/man2/fsync.2.html
+  kind: documentation
+  registered_at: '2026-09-29'
+  revision: man-pages 6.19; manual date 2026-02-08; HTML generated 2026-09-09
+  license:
+    status: unknown
+    scopes: []
+    notes: 本次未成功取得该手册源文件许可声明，只保存精确链接与原创解释。
+  notes: 核对文件数据/元数据同步、目录项边界和错误返回；不据此推断网络或对象存储的完整协议及目标现场保障。
+- id: src.ascend.mindio-acp-v26.1.1
+  title: MindIO ACP v26.1.1 固定 README
+  url: https://github.com/Ascend/mind-cluster/blob/44385c13d7b1d87def35f1604e8be4d16de6ca4e/component/mindio/acp/README.md
+  kind: repository
+  registered_at: '2026-09-29'
+  revision: 44385c13d7b1d87def35f1604e8be4d16de6ca4e
+  license:
+    status: partial
+    scopes:
+    - scope: 固定 MindCluster commit 的根代码许可；组件文档与第三方材料仍需分别核查
+      identifier: Apache-2.0
+      url: https://github.com/Ascend/mind-cluster/blob/44385c13d7b1d87def35f1604e8be4d16de6ca4e/LICENSE
+    notes: 沿用同 commit 已核对的根代码许可；没有把 docs/LICENSE 的范围自动延伸到 component 下 README，也未核验 wheel 和第三方内容。仅原创归纳与链接。
+  notes: 只核对 README 的先内存暂存、再异步后端写入关系；未核对接口/副本/回退细节，未安装或运行，不构成与现有 TorchNPU 档案的整栈配套。第十批（2026-09-30）补充核对 doc/Interface_description/：save（open_way memfs/fopen，返回值区分 -1/0/1/2）、multi_save、flush（等待后台异步刷盘全部成功，0 成功/1 失败，无超时与部分失败语义）、register_checker（timeout_sec 异步回调）、load（pickle 安全须知）；doc/环境变量.md 仅 MINDIO_AUTO_PATCH_MEGATRON 与 HCOM_FILE_PATH_PREFIX，无性能/并发调节参数；memfs 内部实现与带宽数据未获取。第十二批（2026-10-08）补充核对 register_checker 细节：checker 语义为"校验指定 path 下的文件个数是否符合要求"（register_checker接口.md L39，文件个数完备性、非字节级校验和）；framework_acp.py L136 在异步保存完成后注册 {real_iteration_dir：total_file_count}（路径到文件个数），回调成功（result==0）才写 tracker 文件，失败记 "watching checkpoint failed" 且不写 tracker（L111-124）；load 接口文档含 pickle 仅可加载可信数据的安全须知。注意接口文档实际路径为 component/mindio/acp/doc/Interface_description/。
+- id: src.nvidia.nccl-tests-b4d5beeb
+  title: NVIDIA nccl-tests 固定源码与文档快照 b4d5beeb
+  url: https://github.com/NVIDIA/nccl-tests/tree/b4d5beebca8a76cf01335f724d154b9b9d394d96
+  kind: repository
+  registered_at: '2026-09-29'
+  revision: b4d5beebca8a76cf01335f724d154b9b9d394d96
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 commit 的仓库源码与随附文档；第三方依赖和外部链接材料另计
+      identifier: BSD-3-Clause
+      url: https://github.com/NVIDIA/nccl-tests/blob/b4d5beebca8a76cf01335f724d154b9b9d394d96/LICENSE.txt
+    notes: 根 LICENSE.txt 的三条款 BSD 文本已直接打开核对；README 明确称源码和 accompanying documentation 使用 BSD license。未核验任何构建产物、容器、NCCL/CUDA
+      包或第三方依赖的许可。
+  notes: 2026-09-29 只读解析官方 master 得到此 commit。已核对 README、doc/PERFORMANCE.md、common.cu、all_reduce.cu、all_gather.cu、alltoall.cu
+    和 LICENSE.txt；仅用于工具自身的 rank、size、计时、正确性及 algbw/busbw 口径，不构成硬件峰值或环境配套推荐，未构建或运行。第九批（2026-09-30）补充核对：src/timer.cc 的 host steady_clock 主计时、common.cu 的计时循环/deltaSec/校验循环分离（-c 校验不进计时）、util.cu 的 Out of bounds values 与 Avg bus bandwidth 页脚及 NCCL_TESTS_MIN_BW 阈值（common.cu 读取）、消息大小单位二进制而输出 GB/s 为十进制的换算位置。
+- id: src.ascend.cann-hccl-2d685b08
+  title: Ascend cann-hccl 固定源码与文档快照 2d685b08
+  url: https://gitee.com/ascend/cann-hccl/tree/2d685b084a60366b47ad8e50a563ee5c4dbef7fe
+  kind: repository
+  registered_at: '2026-09-29'
+  revision: 2d685b084a60366b47ad8e50a563ee5c4dbef7fe
+  license:
+    status: partial
+    scopes:
+    - scope: 固定 commit 根 LICENSE 所定义的可许可 API、源码、二进制与相关文档；仅限协议允许的 Ascend processors 用途
+      identifier: CANN Open Software License Agreement Version 1.0
+      url: https://gitee.com/ascend/cann-hccl/blob/2d685b084a60366b47ad8e50a563ee5c4dbef7fe/LICENSE
+    notes: 根协议全文已通过固定 raw URL读取；docs/LICENSE 在该 commit 不存在。仓库协议含用途和分发限制。未取得 CANN/HCCL Test 发行包及第三方 notices，不能用本登记覆盖其制品许可。
+  notes: 2026-09-29 只读解析官方 master 得到此 commit。已核对 README 的 α–β 模型、版本配套警告和 HCCL Test 示例字段；该快照不是与特定 CANN 版本配套的 tag，不构成部署建议。未构建、安装或运行。第九批（2026-09-30）补充核对：docs/README.md 为参考资料索引（外链《HCCL性能测试工具》指南），docs/ 下九个算法页（NHR/Pipeline/AHC/Mesh 等含带宽相关定性表述），test/README.md 仅 2 行占位；仓库内无 HCCL Test 结果解释文档，HCCL Test 口径证据改由 CANN 9.1.X 版本化指南登记（src.huawei.hccl-perf-test-guide-cann-9.1.x），其计时实现仍未获取。
+- id: src.google.sre-implementing-slos
+  title: Google SRE Workbook — Implementing SLOs
+  url: https://sre.google/workbook/implementing-slos/
+  kind: documentation
+  registered_at: '2026-09-29'
+  revision: web chapter observed 2026-09-29
+  license:
+    status: unknown
+    scopes: []
+    notes: 精确章节页未给出适用于该网页正文的明确再分发许可；公开可读不等于允许复制。本库仅作原创摘要并链接，不复制图表或长段正文。
+  notes: 核对好事件/总事件 SLI、SLI 规格与实现、覆盖和成本差异，以及正确性等 SLO 类型；不采用页面示例阈值作为本库目标。
+- id: src.google.sre-monitoring-distributed-systems
+  title: Google SRE Book — Monitoring Distributed Systems
+  url: https://sre.google/sre-book/monitoring-distributed-systems/
+  kind: documentation
+  registered_at: '2026-09-29'
+  revision: web chapter observed 2026-09-29; original SRE Book chapter
+  license:
+    status: unknown
+    scopes: []
+    notes: 精确章节页未给出适用于该网页正文的明确再分发许可；本库仅作原创摘要和链接，未复制原图或长段正文。
+  notes: 核对症状与原因、黑盒/白盒边界，以及成功状态码伴随错误内容的隐式错误；不把 four golden signals 当作本文四个可靠性维度。
+- id: src.google.sre-data-integrity
+  title: 'Google SRE Book — Data Integrity: What You Read Is What You Wrote'
+  url: https://sre.google/sre-book/data-integrity/
+  kind: documentation
+  registered_at: '2026-09-29'
+  revision: web chapter observed 2026-09-29; original SRE Book chapter
+  license:
+    status: unknown
+    scopes: []
+    notes: 精确章节页未给出适用于该网页正文的明确再分发许可；本库仅作原创摘要和链接，未复制原图或长段正文。
+  notes: 核对恢复系统、按故障模式定义数据可用性目标并演练的原则；不支持具体 AI checkpoint、训练状态或平台恢复命令。
+- id: src.google.sre-effective-troubleshooting
+  title: Google SRE Book — Effective Troubleshooting
+  url: https://sre.google/sre-book/effective-troubleshooting/
+  kind: documentation
+  registered_at: '2026-09-29'
+  revision: web chapter observed 2026-09-29; original SRE Book chapter
+  license:
+    status: unknown
+    scopes: []
+    notes: 精确章节页未给出适用于该网页正文的明确再分发许可；本库仅作原创摘要和链接，未复制原图或长段正文。
+  notes: 核对假设—演绎排障、支持/反驳、证据保全、混杂和主动测试副作用；页面中的示例命令不作为任何 GPU/NPU 环境的操作指南。
+- id: src.usenix.superbench-atc24
+  title: 'SuperBench: Improving Cloud AI Infrastructure Reliability with Proactive Validation'
+  url: https://www.usenix.org/conference/atc24/presentation/xiong
+  kind: paper
+  registered_at: '2026-09-29'
+  revision: USENIX ATC 2024 proceedings, pages 835–850, July 2024
+  license:
+    status: partial
+    scopes:
+    - scope: USENIX 发布的论文；作者保留版权，USENIX 依据其 open access 与出版授权公开论文
+      identifier: USENIX Open Access / author-retained copyright
+      url: https://www.usenix.org/conferences/author-resources/submissions-policy
+    notes: 已确认公开访问与作者保留版权，没有确认允许改编或再分发全文的通用许可证；本库仅作原创摘要并链接论文，未复制图表。
+  notes: 核对论文中的 AI 基础设施灰色退化、冗余掩盖、组件/端到端主动验证和验证代价权衡；Azure GPU 数据不外推为 NPU 或其他集群基线，未运行开源实现。第九批（2026-09-30）读取开放获取 PDF 印刷页 835–844（§1 至 §5.2 开头；PDF 文件页 = 印刷页 − 834），含冗余掩盖退化实证（图 3、表 1、图 4）、验证分类（§3.2、表 2）、代价—覆盖率权衡（§2.3、§3.3）与 MTBI 提升为仿真的边界；印刷页 845–850 未读。第十批（2026-09-30）补充核对 §2.1（印刷页 837）的环境案例：热带数据中心 BER>10⁻¹² 的缺陷 IB 链路数量多 35 倍（注意是缺陷链路数量、非 BER 倍数），以及同数据中心内机架/位置温差导致部分 GPU thermal throttling 的观察。第十二批（2026-10-08）补读 arXiv:2402.06194v2 HTML §1–§7：通过判据不是与厂商规格比对，而是集群 build-out 全集结果的无监督 CDF 相似度判据（α=0.95、单向距离只判更差、Algorithm 2 迭代剔除后取中位样本）；两阶段执行（single-node→multiple-node，阶段间剔除缺陷节点）；网络验证 full scan O(n)/quick scan O(1)；生产 24k+ A100 检出 10.36% 缺陷节点、有效 benchmark 复测一致性 >97.5%；局限（MTBI 22.61× 为仿真且假设全集可发现全部 incident、测量方差不可消除、罕见负载需先漏检一次、固件/驱动更新后需重调参数）；arXiv HTML 未渲染 Table 2 逐项清单。
+- id: src.arxiv.sdc-at-scale-v1
+  title: Silent Data Corruptions at Scale — arXiv v1
+  url: https://arxiv.org/abs/2102.11245v1
+  kind: paper
+  registered_at: '2026-09-29'
+  revision: arXiv:2102.11245v1, submitted 2021-02-22
+  license:
+    status: partial
+    scopes:
+    - scope: arXiv 对该版本的公开分发
+      identifier: arXiv non-exclusive distribution license 1.0
+      url: https://arxiv.org/licenses/nonexclusive-distrib/1.0/license.html
+    notes: 该许可授予 arXiv 分发权，不是本库复制、改编或再发布全文的通用许可；本库仅作原创摘要和链接，未复制论文图表或长段正文。
+  notes: 仅用于论文明确覆盖的数据中心 CPU SDC、CPU 错误报告缺口和跨栈应用表现；不得外推为 GPU/NPU 发生率、诊断结论或本地事故证据。第九批（2026-09-30）核对 ar5iv HTML 全文节级内容：SDC 定义与 2x3=5 示例（§1）、干净日志的单案例排查（§5）、fleet 三类检测（§7）、冗余与容错库（§8）；abs 页确认仅有 v1 无后续版本；温度/电压/频率依赖在 v1 仅为待研究方向（§6.1），不作为结论证据。
+- id: src.pytorch.parallel-training-state-2.6
+  title: PyTorch 2.6 并行训练与状态文档
+  url: https://docs.pytorch.org/docs/2.6/distributed.html
+  kind: documentation
+  registered_at: '2026-09-30'
+  revision: PyTorch 2.6 documentation; source commit 1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库自有代码与随附文档；独立网站资产和第三方材料另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 版本化页面由 PyTorch 仓库文档生成；本库仅作原创归纳并链接精确页面，不复制示例、图或网站资产。
+  notes: 实际核对 DDP、FSDP、tensor parallel、pipeline parallel、optimizer、scheduler、GradScaler、RNG、DataLoader/DistributedSampler
+    与 elastic train script 页面及固定 GradScaler 源码；用于训练状态布局与责任，不构成与 NCCL、TorchNPU、CANN、MindSpeed 或硬件的配套声明，未运行任何上游代码。
+- id: src.pytorch.numerical-verification-2.6
+  title: PyTorch 2.6 数值精度、可复现性与 assert_close 文档
+  url: https://docs.pytorch.org/docs/2.6/notes/numerical_accuracy.html
+  kind: documentation
+  registered_at: '2026-09-30'
+  revision: PyTorch 2.6 documentation; source commit 1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库自有代码与随附文档；独立网站资产和第三方材料另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 本库只链接版本化页面并原创归纳 bitwise、随机性和容差边界，未复制示例或网站资产。
+  notes: 实际核对 numerical accuracy、reproducibility 与 torch.testing.assert_close 页面；支持浮点结果不盲目要求 bitwise 和显式记录 rtol/atol 规则，不提供任何模型的验收阈值，也不构成跨平台确定性保证。第九批（2026-09-30）补充核对：numerical_accuracy 页的浮点非结合性/CPU↔GPU 不保证逐位一致/TF32 与降精度累加开关/linalg 病态输入静默错误声明；randomness 页的确定性控制与跨平台不保证声明；testing.html 的 assert_close 默认容差表（generated/torch.testing.assert_close.html 在 2.6 为 404，文档位于 testing.html）。
+- id: src.ascend.mindspeed-llm-ha-v2.2.0
+  title: MindSpeed-LLM v2.2.0 固定高可用性文档
+  url: https://github.com/Ascend/MindSpeed-LLM/blob/53f3639c3da9c000a187c44cc0c08d55026ddded/docs/pytorch/features/high_availability.md
+  kind: documentation
+  registered_at: '2026-09-30'
+  revision: v2.2.0 tag; commit 53f3639c3da9c000a187c44cc0c08d55026ddded
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 commit 的 high_availability.md 文档源码；文件无单独许可头，根 LICENSE 声明除另有说明外适用于所有文件
+      identifier: BSD-3-Clause
+      url: https://github.com/Ascend/MindSpeed-LLM/blob/53f3639c3da9c000a187c44cc0c08d55026ddded/LICENSE
+    notes: 根 LICENSE 还列出若干第三方文件的其他许可；本条仅登记该 Markdown 文本，不覆盖文档引用的图片、外链 MindIO/TaskD 制品或其他第三方材料。本库不复制原图和长段正文。
+  notes: 核对 distributed/replica optimizer 的 DP 状态布局、TTP/UCE/弹性功能描述，以及 DP size、MoE、长序列、并行方式和缩扩次数限制；没有安装相关 wheel、运行恢复或核验外链组件配套。该
+    tag README 指向 PyTorch 2.7.1 且多项 NPU 组件为在研，不能与 PyTorch 2.6 来源拼成支持组合。第十一批（2026-10-08）补充核对：high_availability.md 全文行号级内容（副本 DP 组机制、内存公式、TTP/UCE/弹性训练开关与四条弹性专属约束、mindio_ttp/taskd 依赖、HIGH_AVAILABILITY 环境变量优先级）与实现入口 mindspeed_llm/features_manager/high_availability/high_availability.py（五开关注册、validate_args 的 mindio_ttp/taskd 导入检查与 use_dist_ckpt/swap_optimizer/EP/CP 断言）；tests/ut 与 tests/st 无 HA 专项目录（tests/0day 等未枚举）。
+- id: src.ascend.mindspeed-llm-checkpoint-v2.2.0
+  title: MindSpeed-LLM v2.2.0 固定 checkpoint wrapper 实现
+  url: https://github.com/Ascend/MindSpeed-LLM/blob/53f3639c3da9c000a187c44cc0c08d55026ddded/mindspeed_llm/training/checkpointing.py
+  kind: repository
+  registered_at: '2026-09-30'
+  revision: v2.2.0 tag; commit 53f3639c3da9c000a187c44cc0c08d55026ddded
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 checkpointing.py 文件；文件头明确声明
+      identifier: Apache-2.0
+      url: https://github.com/Ascend/MindSpeed-LLM/blob/53f3639c3da9c000a187c44cc0c08d55026ddded/mindspeed_llm/training/checkpointing.py
+    notes: 只适用于该文件明确标示的代码；外部 Megatron、ModelOpt、MindIO、TorchNPU、制品与仓库其他文件另行核查。本库仅作原创解释和链接。
+  notes: 核对 save_checkpoint_wrapper 对 model/optimizer/scheduler/RNG/iteration/累计 FLOP 的传递、legacy 与 distributed checkpoint
+    分支、optimizer sharding 选项、异步格式限制及 tracker finalize 位置；generate_state_dict、完整 load 与 dist-checkpoint 语义属于未随本文件固定的外部依赖，未运行代码或硬件。
+- id: src.vllm.inference-v0-14
+  title: vLLM v0.14.0 推理执行、指标与服务基准固定快照
+  url: https://github.com/vllm-project/vllm/tree/b17039bccc17b94a2ea107272ad7bc93508708df
+  kind: repository
+  registered_at: '2026-09-30'
+  revision: b17039bccc17b94a2ea107272ad7bc93508708df
+  license:
+    status: partial
+    scopes:
+    - scope: 固定 commit 的仓库源码与随附文档；带独立声明的文件和第三方内容另计
+      identifier: Apache-2.0
+      url: https://github.com/vllm-project/vllm/blob/b17039bccc17b94a2ea107272ad7bc93508708df/LICENSE
+    - scope: 固定 commit 的 Python source package metadata；声明 Apache-2.0 并列入 LICENSE
+      identifier: Apache-2.0
+      url: https://github.com/vllm-project/vllm/blob/b17039bccc17b94a2ea107272ad7bc93508708df/pyproject.toml#L17-L20
+    notes: 仓库根许可与 source package metadata 已直接核对。未下载 wheel、容器或其他发行制品，未核验其第三方 notices；docs.vllm.ai 的生成站点没有作为独立再分发许可依据。
+  notes: tag v0.14.0 解析到此 commit。已读取 prefix caching、optimization、v1 metrics stats/loggers、engine finish/abort 路径及 bench serve 客户端实现；仅支持该版本的概念与口径，不构成部署建议或硬件兼容性声明，未构建、安装或运行。第九批（2026-09-30）补充核对启动期内存链：vllm/config/cache.py 的 gpu_memory_utilization 语义与默认 0.9、v1/worker/utils.py 的 request_memory 启动检查、v1/worker/gpu_worker.py 的 determine_available_memory/profile_run 与 150MiB CUDAGraph 冗余、v1/core/kv_cache_utils.py 的 KV 容量日志与不足 ValueError、v1/engine/core.py 的初始化入口与 EngineDeadError 形态、docs/configuration/conserving_memory.md 与 docs/usage/troubleshooting.md 的 OOM/enforce_eager 小节。第十一批（2026-10-08）补充核对：docs/features/quantization/ 目录（README 硬件支持表、int8.md 的 W8A8 四步流程与 lm_eval 评估、quantized_kvcache.md 等 14 个方法页，另有 README，共 15 个文件）与 vllm/config/model.py 的 _verify_quantization（L867 起，quant_method 检测与 override 顺序、未知方法 ValueError）。第十二批（2026-10-08）补充核对 PD 分离：docs/features/disagg_prefill.md（定义、TTFT/ITL 分别调优动机、"DOES NOT improve throughput" 反面声明、experimental 标注、Pipe/LookupBuffer/Connector 三层抽象与扩展路径）、docs/features/nixl_connector_usage.md（nixl>=0.7.1 依赖、UCX 默认传输、kv_role 为占位的 tip）、vllm/config/kv_transfer.py（KVTransferConfig 字段、kv_role 校验、kv_load_failure_policy 默认 recompute）、kv_connector/factory.py（注册 10 个 connector，无 SharedStorageConnector 名称；此前全树名称检索未命中）、kv_connector/v1/metrics.py（connector 级 Prometheus 框架）、examples 与 benchmarks 的 toy 代理（itertools.cycle 轮询、do_remote_decode 触发）、requirements/kv_connectors.txt。 2026-10-08 修订 B11-C04/C05 与 B12-C04/C05：README 与 int8.md 在 Turing/SM 7.5 上存在严格 >7.5 与标为支持的冲突，kernel/runtime 边界未证，Blackwell 限制仅归属该方法页/快照；offloading_connector.py L24–65 接入 kv_offload，不证明与旧共享存储接口替代关系。PD 评估联合观察时延、吞吐/goodput、失败率与 KV 传输成本属于本库方法建议，未实测。
+- id: src.ascend.vllm-ascend-v0-14-0rc1
+  title: vLLM Ascend v0.14.0rc1 固定源码与文档快照
+  url: https://github.com/vllm-project/vllm-ascend/tree/52d4acfa51fb868823d1070b81cbd2d97e9e4696
+  kind: repository
+  registered_at: '2026-09-30'
+  revision: 52d4acfa51fb868823d1070b81cbd2d97e9e4696
+  license:
+    status: partial
+    scopes:
+    - scope: 固定 commit 的仓库源码与随附文档；带独立声明的文件和第三方内容另计
+      identifier: Apache-2.0
+      url: https://github.com/vllm-project/vllm-ascend/blob/52d4acfa51fb868823d1070b81cbd2d97e9e4696/LICENSE
+    - scope: 固定 commit 的 Python source package metadata；setup.py 声明 Apache 2.0
+      identifier: Apache-2.0
+      url: https://github.com/vllm-project/vllm-ascend/blob/52d4acfa51fb868823d1070b81cbd2d97e9e4696/setup.py#L475-L492
+    notes: 仓库根许可与 source package metadata 已直接核对。未下载 wheel、容器、CANN/HDK/torch-npu 包或其第三方 notices；生成网站和外链材料的许可另计。
+  notes: tag v0.14.0rc1 解析到此 commit。固定 conf.py 的 substitutions 指向 vLLM v0.14.1、vLLM Ascend v0.14.0rc1 与 CANN image tag 8.5.0；PyTorch/torch-npu
+    2.9.0 来自固定 README requirements；同 commit 的 version policy 存在 v0.14.1rc1 标注冲突。仅用于插件快照的 feature/hardware/model 边界，不与本文上游
+    vLLM v0.14.0 拼成配套，未安装或运行。第九批（2026-09-30）补充核对：platform.py 非 sleep mode 默认追加 PYTORCH_NPU_ALLOC_CONF=expandable_segments:True（与 max_split_size_mb/garbage_collection_threshold 互斥判断）、full graph OOM 警告；worker/worker.py 的 NPU determine_available_memory 与 "Available memory" 日志（与上游文案不同）；utils.py 的 block_size 默认/强制 128；faqs.md 的 OOM（FAQ 13）、MLA graph 限制（14）、aclgraph stream 耗尽（18）；release_notes 的 expandable_segments 默认化修复与 MLAPO 内存提示；model_runner_v1.py 中两处未决 OOM 注释。第十一批（2026-10-08）补充核对：supported_features.md 的 Quantization 行（W8A8 Functional、W4A8 在研）、docs/source/user_guide/feature_guide/quantization.md 量化用户指南（ModelSlim/LLM-Compressor 工具链）与 docs/source/developer_guide/evaluation/ 四份评估指南的存在性。第十二批（2026-10-08）补充核对 PD 分离：supported_features.md 的 Prefill Decode Disaggregation 行（Functional, xPyD is supported）、developer_guide/feature_guide/disaggregated_prefill.md（MooncakeConnector D 拉取与 MooncakeLayerwiseConnector P 逐层推送、异构 P/D 不支持、非对称 TP 仅 P_tp>D_tp 且整除、启动 DFX 校验）、tutorials/pd_disaggregation_mooncake_single_node.md（教程内版本引用 v0.11.0rc1 落后于本快照，只作步骤形态证据）、examples/disaggregated_prefill_v1/ 与 vllm_ascend/distributed/kv_transfer/ 的存在性。
+- id: src.prometheus.histograms-2026-09-29
+  title: Prometheus 官方 histogram 与 quantile 聚合文档（2026-09-29 读取）
+  url: https://prometheus.io/docs/practices/histograms/
+  kind: documentation
+  registered_at: '2026-09-30'
+  revision: retrieved 2026-09-29; dynamic current documentation
+  license:
+    status: partial
+    scopes:
+    - scope: prometheus/docs 仓库中的网站文档源码；main 为可变定位
+      identifier: Apache-2.0
+      url: https://github.com/prometheus/docs/blob/main/LICENSE
+    notes: 官方文档仓库 README 与 LICENSE 标为 Apache-2.0；本轮未把读取网页解析到固定源 commit。网站构建依赖、外链材料和 Prometheus 发行包不由此范围覆盖。
+  notes: 同时读取 https://prometheus.io/docs/prometheus/latest/querying/functions/#histogram_quantile 。仅用于 histogram bucket、rate
+    window、聚合维度、quantile 插值和“不可平均分位数”的统计边界；页面是动态 current/latest 文档，正式引用保留读取日期。
+- id: src.kueue.admission-v0.19.0
+  title: Kueue v0.19.0 准入、拓扑与 Workload 固定资料
+  url: https://github.com/kubernetes-sigs/kueue/tree/911a822a49bcfd99c9c62203a009efa4130ad604
+  kind: repository
+  registered_at: '2026-09-30'
+  revision: v0.19.0; commit 911a822a49bcfd99c9c62203a009efa4130ad604
+  license:
+    status: partial
+    scopes:
+    - scope: 固定仓库自有 API 代码与所引文档源码；第三方文件及独立站点资产另计
+      identifier: Apache-2.0
+      url: https://github.com/kubernetes-sigs/kueue/blob/911a822a49bcfd99c9c62203a009efa4130ad604/LICENSE
+    notes: 已读取根许可，仅链接和原创归纳；没有复制图、示例配置或代码，也未核查制品及第三方 notices。
+  notes: 实际读取 admission、workload、topology_aware_scheduling 文档与 v1beta1 Workload API；记录 admission 文档的 status.active 与 API spec.active 差异。第八批（2026-09-30）补充读取同一 commit：v1beta1 clusterqueue_types.go 与 v1beta2 workload_types.go（v1beta1 在该 commit 已标记 deprecated，文档示例使用 v1beta2）、pkg/scheduler 的 Workload 事件与回退 reason、pkg/features/kube_features.go（UnadmittedWorkloadsObservability 在 v0.19 为 Beta 且默认关闭，细分等待 reason 默认不可见，只见 Pending 回退）、jobframework events、troubleshooting 下 jobs/queues/pods/provreq 四篇、monitor_pending_workloads/pending_workloads_on_demand.md、tasks/run/topology_aware_scheduling.md 与 plain_pods.md、concepts/cluster_queue.md 与 cohort.md、reference/kubectl-kueue 文档树；troubleshooting_pods.md 存在 keueu 原文拼写错误。未部署或运行，不构成与 NPU、MindCluster 或 Volcano 的配套声明。
+- id: src.volcano.podgroup-gang-v1.15.0
+  title: Volcano v1.15.0 PodGroup 与 Gang 文档
+  url: https://volcano.sh/docs/v1.15.0/concepts/podgroup/
+  kind: documentation
+  registered_at: '2026-09-30'
+  revision: v1.15.0 documentation observed 2026-09-30
+  license:
+    status: unknown
+    scopes: []
+    notes: 网页版本已核对，未取得足以覆盖该网页的再分发许可；仅链接和原创摘要，不用代码许可证代替。
+  notes: 实际打开同版本 PodGroup 与 scheduler/plugins/gang 页面，只用最小组约束和状态概念；未固定二进制或实现，不推断与 MindCluster 的配套。
+- id: src.nvidia.dcgm-v3.3.9
+  title: NVIDIA DCGM v3.3.9 固定源码快照
+  url: https://github.com/NVIDIA/DCGM/tree/b0ec3c624ea21e688b0d93cf9b214ae0eeb6fe52
+  kind: repository
+  registered_at: '2026-09-30'
+  revision: v3.3.9; commit b0ec3c624ea21e688b0d93cf9b214ae0eeb6fe52
+  license:
+    status: partial
+    scopes:
+    - scope: 固定 commit 的仓库自有源码；二进制包、容器、文档和第三方内容另计
+      identifier: Apache-2.0
+      url: https://github.com/NVIDIA/DCGM/blob/b0ec3c624ea21e688b0d93cf9b214ae0eeb6fe52/LICENSE
+    notes: 仓库 README 将源码许可证与 NVIDIA DCGM 二进制 SLA 分开；本登记不把 Apache-2.0 扩张到二进制发行包、产品文档或第三方依赖。
+  notes: 用于固定字段标识、计数器类型及健康实现边界；未构建或运行，不代表当前 DCGM 文档、任一 GPU 型号或诊断插件的支持范围。第十批（2026-09-30）补充核对：dcgm_fields.h 的降频位图定义（L107–154）与 CLOCK_THROTTLE_REASONS 字段（L480–482，当前发生语义）、violation 计数器（L666–693，v3.3.9 注释为 usec——与 master 的 ns、nvidia-smi 文档的 microseconds 口径冲突，引用按固定版本）、dcgm_errors.h 的热/电源错误码、DcgmHealthWatch.cpp 的热/电源 watch 判定（violation 增量、30s 最小采样）。另注意：GitHub Web UI 对裸 commit 页面返回 404，tag v3.3.9 与 raw 链接可用。第十二批（2026-10-08）补充核对：nvvs/diag-skus.yaml.in 的按 SKU 测试配置块（targeted_power/targeted_stress/sm_stress/memory_bandwidth/pulse_test 等）与 nvvs/plugin_src 目录清单（contextcreate/diagnostic/memory/memtest/pcie/software/targetedpower/targetedstress；pulse/nvbandwidth/nccl_tests 不在该开源目录；sm_stress 在配置中出现但无同名插件目录，实现归属未追）。
+- id: src.nvidia.dcgm-health-monitoring-latest-2026-09-30
+  title: NVIDIA DCGM Health Monitoring（latest，2026-09-30 观察）
+  url: https://docs.nvidia.com/datacenter/dcgm/latest/learn/modules/health-monitoring.html
+  kind: documentation
+  registered_at: '2026-09-30'
+  revision: latest page observed 2026-09-30
+  license:
+    status: unknown
+    scopes: []
+    notes: 公开可读不等于允许全文再分发；本库只链接并作原创归纳，未把 DCGM 源码许可证扩张到网页内容。
+  notes: 用于区分被动 health watches、policy 与主动 diagnostics，并限定 Healthy 只覆盖已启用规则及保留样本；latest 页面可变，不作为冻结发行快照。第十批（2026-09-30）补充核对原文：热/电源 watch 选择子为 t；健康模块 "uses passive field watches … without running a dedicated workload"；"A Healthy result means that no enabled health rule found an incident in the retained data. It does not mean that every subsystem was watched or that an active stress test passed."；完整硬件验证需离线诊断（RMA 要求）。
+- id: src.nvidia.dcgm-diagnostics-latest-2026-09-30
+  title: NVIDIA DCGM Diagnostics（latest，2026-09-30 观察）
+  url: https://docs.nvidia.com/datacenter/dcgm/latest/learn/modules/dcgm-diagnostics.html
+  kind: documentation
+  registered_at: '2026-09-30'
+  revision: latest page observed 2026-09-30
+  license:
+    status: unknown
+    scopes: []
+    notes: 公开可读不等于允许全文再分发；本库只链接并作原创归纳，软件、插件和随附第三方内容另计。
+  notes: 用于主动诊断的资源占用、隔离、失败归因和型号/插件/权限边界；未执行任何诊断，latest 页面可变。第十批（2026-09-30）补充核对：targeted_power（达不到请求功率阈值或持续功率负载下出错）与 pulse_test（电流/功率需求快速变化暴露供电不稳）两测试的适用描述；"DCGM Diagnostics do not repair faults, replace NVIDIA offline field diagnostics, or determine RMA eligibility" 及失败可源于 host/权限/库/拓扑/冷却/供电/负载干扰的官方限定；侵入性测试只能在可移出服务的资源上运行。第十二批（2026-10-08）复读 learn 形态页：When diagnostics are useful 的级别定位（收工前就绪检查/失败作业后中等级别/隔离疑似故障选单项/返修回服前管理员级长测）、Preparing a Run（先 drain 应用、software/deployment 插件遇其他图形进程判失败）、Results and Logging（测试汇总+per-entity+Warning 组织、SKIPPED 态、非零退出码可含调用失败或诊断检出失败，必须结合结果本体，不能单独判硬件根因、JSON 无稳定 schema）、诊断消耗算力/显存/供电/散热的 Warning。级别-测试对照表与插件前提另见 user-guide 形态页（src.nvidia.dcgm-diag-user-guide-latest-2026-10-08）。
+- id: src.nvidia.dcgm-exporter-metrics-latest-2026-09-30
+  title: NVIDIA DCGM Exporter Metrics（latest，2026-09-30 观察）
+  url: https://docs.nvidia.com/datacenter/dcgm/latest/reference/dcgm-exporter-metrics.html
+  kind: documentation
+  registered_at: '2026-09-30'
+  revision: latest page observed 2026-09-30
+  license:
+    status: unknown
+    scopes: []
+    notes: 公开可读不等于允许全文再分发；本库只链接并作原创归纳，exporter 软件及镜像许可另行核验。
+  notes: 用于 XID/clock event 的时间窗语义、累计量重置边界和健康状态标签；未部署 exporter，latest 页面可变。第十批（2026-09-30）补充核对：慢 rank 相关字段清单（SM/MEM 时钟、GPU/显存温度、整板功耗、累计能耗 mJ、GPU_UTIL、PROF 比例字段 0–1、PROF_PCIE_TX/RX 方向语义、PCIE_REPLAY_COUNTER、NVLINK_BANDWIDTH_TOTAL）；violation 计数器与 DCGM_EXP_CLOCK_EVENTS_* 默认注释需显式开启；COUNT 为窗口内样本数非事件数；shipped CSV 无 MAX_SM_CLOCK；字段不保证运行时输出。
+- id: src.huawei.mindx-dl-60rc2-ascend-dmi-2026-09-29
+  title: MindX DL 6.0.RC2 ascend-dmi 故障诊断
+  url: https://www.hiascend.com/doc_center/source/zh/mindx-dl/60rc2/toolbox/ascenddmi/toolboxug_0020.html
+  kind: documentation
+  registered_at: '2026-09-29'
+  revision: MindX DL 6.0.RC2 page observed 2026-09-29
+  license:
+    status: unknown
+    scopes: []
+    notes: 厂商网页许可与 MindX/CANN/HDK 软件包条款未核验；公开可读不等于允许全文再分发，本库只链接并作原创归纳。
+  notes: 用于 ascend-dmi 主动诊断/压测的资源影响、产品与版本限制、SKIP/读取失败边界；页面 PRBS PASS/FAIL 描述存在内部冲突，未执行任何测试，也不与 MindCluster v26.1.1 拼成配套矩阵。第十二批（2026-10-08）复读参数表：-dg 检查项分软件类（cann/driver）与硬件类（device/network/bandwidth/aiflops/hbm/aicore/signalQuality/prbs），bandwidth 覆盖 H2D/D2H/D2D/P2P；network/hbm/aicore/prbs 有产品、root/特权容器与互斥限制；-s HBM/AICore 压测（-st 60–604800 秒、--sc 1–100、-qs 与 -st/--sc 互斥、防呆确认提示）；初次提取未取得页首及表4。2026-10-08 修订补读取得表1/2单项耗时、前提/限制与表4；AICore 诊断单轮 7–20 分钟、压测 15–40 分钟，上线/巡检建议诊断三轮全过；压测预留 HOST 约 20–40GB；页列 Atlas A2 配套 HDK 23.0.0+ MCU/驱动/固件、CANN 7.0.0+ toolkit 与 kernels、环境配置；诊断完成重启设备，压测后先分析定位再重启。PRBS 状态冲突仍存在，未获得 DCGM 式级别化套件，不声明工具覆盖等价或本地配套已验证。
+- id: src.nvidia.pytorch-container-25.01-release-notes-2026-09-30
+  title: NVIDIA PyTorch Container Release 25.01 Notes
+  url: https://docs.nvidia.com/deeplearning/frameworks/pytorch-release-notes/rel-25-01.html
+  kind: documentation
+  registered_at: '2026-09-30'
+  revision: Release 25.01; page last updated 2026-09-08; observed 2026-09-30
+  license:
+    status: unknown
+    scopes: []
+    notes: 公开可读不等于允许全文再分发；本库只链接并作原创归纳。容器、框架、CUDA 组件及第三方软件的许可和 notices 分别核验。
+  notes: E02 文档研究基线；用于容器内容、框架、CUDA/NCCL 和 driver 文本。页面同时存在 R545 前后冲突及 Python 3.10 路径与 Python 3.12 Contents 差异，不能当成已验证支持矩阵。
+- id: src.nvidia.ngc-pytorch-25.01-py3-catalog-2026-09-30
+  title: NGC PyTorch 25.01-py3 Catalog Layer Metadata
+  url: https://catalog.ngc.nvidia.com/orgs/nvidia/-/containers/pytorch/25.01-py3/layers
+  kind: documentation
+  registered_at: '2026-09-30'
+  revision: tag 25.01-py3; build id 134983853; build ref 3857cfd7a27acea1d4e19243329fcd1dae3b222e; observed 2026-09-30
+  license:
+    status: unknown
+    scopes: []
+    notes: NGC 页面、容器制品、软件 EULA 和第三方 notices 的许可范围未核验；本库只链接并记录可见元数据。
+  notes: 用于确认 tag、签名标记、build 元数据以及 PYVER=3.12/PYVER_MAJMIN=312。页面中的 layer SHA 未登记为 image manifest digest；未拉取、验签或运行镜像。
+- id: src.nvidia.cuda-compatibility-latest-2026-09-30
+  title: NVIDIA CUDA Minor Version Compatibility（latest，2026-09-30 观察）
+  url: https://docs.nvidia.com/deploy/cuda-compatibility/minor-version-compatibility.html
+  kind: documentation
+  registered_at: '2026-09-30'
+  revision: latest page observed 2026-09-30
+  license:
+    status: unknown
+    scopes: []
+    notes: 公开可读不等于允许全文再分发；本库只链接并作原创归纳。CUDA Toolkit 12.8 的归档和 EULA 已由另一来源登记。
+  notes: 用于 CUDA 12.x 的大类最低驱动与 minor compatibility 限制；当前可变页面不能消解 PyTorch 25.01 release notes 内部的 R545 冲突。
+- id: src.nvidia.framework-containers-user-guide-2026-09-30
+  title: NVIDIA Deep Learning Frameworks Containers User Guide（2026-09-30 观察）
+  url: https://docs.nvidia.com/deeplearning/frameworks/user-guide/index.html
+  kind: documentation
+  registered_at: '2026-09-30'
+  revision: current page observed 2026-09-30
+  license:
+    status: unknown
+    scopes: []
+    notes: 公开可读不等于允许全文再分发；本库只链接并作原创归纳。Docker、NVIDIA Container Toolkit、驱动、容器与第三方组件条款分别核验。
+  notes: 用于宿主驱动、容器引擎/Toolkit 与镜像的职责边界，以及不把驱动安装进镜像的原则；没有把当前指南倒推为 25.01 的精确 runtime/toolkit 版本。
+- id: src.vllm-ascend.issue-17443
+  title: 'vLLM Ascend #17443：A3 长上下文首输出延迟报告'
+  url: https://github.com/vllm-project/vllm-ascend/issues/17443
+  kind: issue
+  registered_at: '2026-09-30'
+  revision: opened 2026-09-24; observed Open 2026-09-30; body and empty comments list via GitHub connector
+  license:
+    status: unknown
+    scopes: []
+    notes: Issue、评论和日志不自动继承仓库代码许可；本库只链接并有限归纳事实，未复制全文或附件。
+  notes: T07-C 来源。两节点 A3 P/D 分离，报告者给出代码树、负载和客户端测量；跨构建输入长度不同。GitHub 连接器返回空评论列表；未取得同负载 A/B 或修复链，不采信作者的纯 prefill、无排队或 decode
+    完全健康等未证实归因。
+- id: src.vllm-ascend.issue-1188
+  title: 'vLLM Ascend Issue #1188：v0.9.0 与 torch 版本关系'
+  url: https://github.com/vllm-project/vllm-ascend/issues/1188
+  kind: issue
+  registered_at: '2026-09-30'
+  revision: issue opened 2025-06-12; maintainer comments and completed close observed 2026-09-30
+  license:
+    status: unknown
+    scopes: []
+    notes: GitHub Issue 正文与评论为用户生成内容；仓库根 Apache-2.0 不能自动覆盖讨论文本。本库只保存链接、短摘要和原创时间线，不复制长段正文。
+  notes: 核对报告者列出的 vLLM 0.9.0、vLLM Ascend 0.9.0、CANN 8.1.RC1 与 torch/torch_npu 2.5.1，项目成员 2025-06-15 的版本化安装建议及 completed 状态；没有报告者复验、硬件/HDK/OS/Python/wheel
+    摘要或关联修复 PR，不把关闭状态写成已复现修复。
+- id: src.vllm-ascend.issue-2557
+  title: 'vLLM Ascend Issue #2557：Kubernetes 容器中的物理与逻辑 NPU ID'
+  url: https://github.com/vllm-project/vllm-ascend/issues/2557
+  kind: issue
+  registered_at: '2026-09-30'
+  revision: issue opened 2025-08-26; comments, linked PR and completed close observed 2026-09-30
+  license:
+    status: unknown
+    scopes: []
+    notes: GitHub Issue 正文与评论为用户生成内容；仓库根 Apache-2.0 不能自动覆盖讨论文本。本库只保存链接、短摘要和原创时间线，不复制日志全文。
+  notes: 核对 Kubernetes 资源请求、容器内 npu-smi 的 0/3/4/7 设备、torch_npu 对逻辑范围 0-3 的错误、关键评论与 2025-12-18 completed close；页面没有同一现场合入后复验，不能声称
+    incident 已被发行版本修复，也不能把该 Mooncake 场景外推到所有框架。
+- id: src.vllm-ascend.pr-2541
+  title: 'vLLM Ascend PR #2541：Kubernetes Mooncake 初始化设备 ID 修正'
+  url: https://github.com/vllm-project/vllm-ascend/pull/2541
+  kind: repository
+  registered_at: '2026-09-30'
+  revision: merged 2025-09-03; merge commit 07d44ade194b018ae2cc172482d55cb746c5fd0e
+  license:
+    status: partial
+    scopes:
+    - scope: merge commit 07d44ade194b018ae2cc172482d55cb746c5fd0e 的仓库自有代码和文档；第三方文件另计
+      identifier: Apache-2.0
+      url: https://github.com/vllm-project/vllm-ascend/blob/07d44ade194b018ae2cc172482d55cb746c5fd0e/LICENSE
+    notes: 根 LICENSE 可支持该固定 commit 的仓库自有改动；PR/Issue 评论和审阅文本是用户生成内容，许可仍未知。本库只做短摘要和精确链接。
+  notes: 核对 PR 合入状态、25 checks passed、approval、PHYSICAL_DEVICES 定义、Mooncake connector 的 DP/TP 切片、部署指南和单元测试；审阅者明确称方案是 hack，且没有目标
+    Kubernetes/NPU 现场端到端复验，因此只作为当时实现修正，不作为通用 runtime 配置处方。
+- id: src.huawei.hccl-user-guide-cann-8.1-rc1-alpha001
+  title: CANN 社区版 8.1.RC1.alpha001 集合通信用户指南 01
+  url: https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/81RC1alpha001/devguide/hccl/hcclug/CANN%E7%A4%BE%E5%8C%BA%E7%89%88%208.1.RC1.alpha001%20%E9%9B%86%E5%90%88%E9%80%9A%E4%BF%A1%E7%94%A8%E6%88%B7%E6%8C%87%E5%8D%97%2001.pdf
+  kind: documentation
+  registered_at: '2026-09-30'
+  revision: CANN Community 8.1.RC1.alpha001; document 01; 2025-03-19
+  license:
+    status: unknown
+    scopes: []
+    notes: 厂商 PDF 的版权与再分发范围未核验；公开可读不等于允许全文再分发，本库只链接并作原创归纳，CANN/HCCL 软件包许可另计。
+  notes: T03-P/X 的版本化官方来源；重点使用印刷第 83–84 页（零基索引 88–89）9.1.2 的 EI0002、rank 进度、早期错误、设备和网络分支。未执行文档命令，不与 CANN 8.0 API 或 9.0.1 案例拼成支持矩阵。
+- id: src.vllm-ascend.issue-14296
+  title: 'vLLM Ascend #14296：DCP/MoE AIV 启动期 HCCL timeout 报告'
+  url: https://github.com/vllm-project/vllm-ascend/issues/14296
+  kind: issue
+  registered_at: '2026-09-30'
+  revision: opened 2026-08-14; completed close 2026-09-22; three comments read 2026-09-30; no verified fix chain
+  license:
+    status: unknown
+    scopes: []
+    notes: Issue 页面、评论、附件和日志的再分发范围未核验；仓库源码许可证不自动覆盖用户提交内容。本库只链接并作有限事实归纳。
+  notes: 正文与三条评论记录 AIV group 证据、报告者抢核初判及 AI_CPU 缓解反馈、自动回复和含糊 PR 提及；completed 关闭不证明修复。两个框架开关表述冲突保留；CANN 对应手册限制、质量性能结果与真实修复提交/版本未独立验证。
+- id: src.pytorch.processgroupnccl-env-2.8
+  title: PyTorch 2.8 ProcessGroupNCCL Environment Variables
+  url: https://docs.pytorch.org/docs/2.8/torch_nccl_environment_variables.html
+  kind: documentation
+  registered_at: '2026-09-30'
+  revision: PyTorch 2.8 documentation; page created/updated 2025-06-10
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.8.0 仓库自有文档源码；网站部署、商标和第三方内容另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/v2.8.0/LICENSE
+    notes: PyTorch 仓库许可证可覆盖其自有文档源码；不据此扩张到 NCCL、CUDA、网站基础设施或第三方内容。
+  notes: T04-P/X 的框架层观测来源；用于 dump-on-timeout、trace buffer、desync debug、timing 和 monitoring 的版本化语义。不能倒推到 PyTorch 2.1.2 案例或未经核对的其他版本。第十批（2026-09-30）补充核对：DESYNC_DEBUG 报告区分 never joined / joined but didn't finish / finished #N but didn't join #N+1 三类；DUMP_ON_TIMEOUT 需 TRACE_BUFFER_SIZE>0，dump 经 TCPStore 跨 rank 协调；2.8 没有 TORCH_NCCL_HEARTBEAT_MONITOR 变量，对应能力为 TORCH_NCCL_ENABLE_MONITORING 与 TORCH_NCCL_HEARTBEAT_TIMEOUT_SEC（监控 watchdog 线程本身卡死，区别于 watchdog 盯 work 超时）；WAIT_TIMEOUT_DUMP_MILSEC 为退出前等待 dump 的额外时间（v2.8.0 源码默认 15000ms，L1876 注释"one minute"陈旧以代码为准）。
+- id: src.pytorch.issue-118369
+  title: 'PyTorch #118369：Rank 0 缺席的 NCCL Broadcast watchdog timeout'
+  url: https://github.com/pytorch/pytorch/issues/118369
+  kind: issue
+  registered_at: '2026-09-30'
+  revision: opened 2024-01-26; automatically closed as stale/not planned 2026-05-05; no fix linked
+  license:
+    status: unknown
+    scopes: []
+    notes: Issue、评论和日志的再分发范围未核验；PyTorch 仓库 BSD-3-Clause 不自动覆盖用户提交内容。本库只链接并作有限事实归纳。
+  notes: T04-C 主案例；rank 1-7 在 SeqNum 880 Broadcast 超时、rank 0 缺少同类行且利用率快照为 0%，支持进度分叉假设。维护者未确认根因；stale 关闭不是修复。
+- id: src.ascend.msprobe-training-guide-2026-09-30
+  title: Ascend msprobe 固定训练精度定位与比对文档
+  url: https://github.com/Ascend/msprobe/tree/7783f6b2d0cbae0e2f6200b05e604a09d7820c50/docs/zh
+  kind: repository
+  registered_at: '2026-09-30'
+  revision: commit 7783f6b2d0cbae0e2f6200b05e604a09d7820c50; observed 2026-09-30
+  license:
+    status: partial
+    scopes:
+    - scope: 固定 commit 的 docs 自有文档；外链图片、用户日志与第三方内容另计
+      identifier: CC-BY-4.0
+      url: https://github.com/Ascend/msprobe/blob/7783f6b2d0cbae0e2f6200b05e604a09d7820c50/docs/LICENSE
+    - scope: 固定文档法律目录所声明的 msprobe 产品代码范围；wheel、安装分发、EULA 与第三方依赖另计
+      identifier: MulanPSL-2.0
+      url: https://github.com/Ascend/msprobe/blob/7783f6b2d0cbae0e2f6200b05e604a09d7820c50/docs/zh/legal/LICENSE
+    notes: 固定 license_notice 将文档与产品许可分开；没有把 CC-BY-4.0 扩张到产品代码，也没有把 MulanPSL-2.0 扩张到所有制品、外链或依赖。
+  notes: T05-P/X 的固定来源；核对 train_debug_guide、accuracy_compare、安装与许可页面。只支持版本内定位流程和工具字段，文档中的 1%/0.99 等规则不是通用验收阈值；未安装或运行工具。
+- id: src.ascend.pytorch-issue-17
+  title: 'Ascend PyTorch #17：V100 与 910B SFT 收敛差异报告'
+  url: https://github.com/Ascend/pytorch/issues/17
+  kind: issue
+  registered_at: '2026-09-30'
+  revision: opened 2023-12-19; observed Open 2026-09-30; no linked branch or pull request visible
+  license:
+    status: unknown
+    scopes: []
+    notes: Issue、评论、代码片段与日志的再分发范围未核验；仓库源码许可不自动覆盖用户提交内容。本库只链接并作有限原创归纳。
+  notes: T05-C 主案例；报告 NPU 环境和 loss 轨迹，但 GPU 栈、模型/数据/随机性/容差与复验不足。DDP stride warning 只支持性能怀疑，不证明数值根因；connector 取得一条要求固定输入/随机性并逐
+    step 对比的评论，没有修复或根因确认。
+- id: src.pytorch.dcp-issue-164257
+  title: 'PyTorch Issue #164257：unused parameter 的 optimizer state 恢复错误'
+  url: https://github.com/pytorch/pytorch/issues/164257
+  kind: issue
+  registered_at: '2026-09-30'
+  revision: issue opened 2025-09-30; closed status and body observed 2026-09-30
+  license:
+    status: unknown
+    scopes: []
+    notes: GitHub Issue 正文、日志和可能的评论属于用户生成内容；PyTorch 仓库 BSD-3-Clause 不自动覆盖讨论文本。本库只保留链接、必要短事实和原创分析，不复制完整脚本或日志。
+  notes: 核对 PyTorch 2.8.0、macOS 26/Apple M3 CPU、Python 3.13.1、单进程 DCP、未初始化 bias optimizer state、strict false 仍 KeyError、示例创建新对象却加载旧对象的
+    quirk，以及四条公开 Issue 评论；评论中的建议调用缺必需 state-dict 参数，贡献者称 key 存在性检查似乎可修复。本轮未运行脚本。
+- id: src.pytorch.dcp-fix-edd8d35
+  title: 'PyTorch PR #165228 与固定 optimizer state 恢复修订'
+  url: https://github.com/pytorch/pytorch/commit/edd8d356b6d9a00cfa34fa323578e5cf1c7e0463
+  kind: repository
+  registered_at: '2026-09-30'
+  revision: edd8d356b6d9a00cfa34fa323578e5cf1c7e0463
+  license:
+    status: partial
+    scopes:
+    - scope: 固定 commit 的 PyTorch 仓库自有代码；Issue/PR 讨论及第三方文件另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/edd8d356b6d9a00cfa34fa323578e5cf1c7e0463/LICENSE
+    notes: 根 LICENSE 支持固定 commit 的仓库自有代码范围；PR 评论和审阅文本许可未知。本库只作短事实摘要并链接精确 diff。
+  notes: 核对 PR 165228 在 2025-11-05 的 Merged 记录、固定提交及直接 parent 658c5f879c37142b1df51c7eb6c5a5bb06318597、缺失 optimizer FQN 的存在性检查和 strict true/false 分支；对照 v2.8.0 commit ba56102387ef21a3b04b357e5b183d48f0afefc7 的 state_dict.py 初始化/get/load 路径和 default_planner.py partial-load 分支，实验区分目标占位与真正缺失的分支输入。首个包含该提交的发行版本、backport、Issue 原环境复测和 GPU/NPU 行为未知。
+- id: src.huawei.cann-82rc1alpha001-acl-runtime-memory
+  title: CANN 社区版 8.2.RC1.alpha001 AscendCL 运行时内存管理页
+  url: https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/82RC1alpha001/API/appdevgapi/aclcppdevg_03_0094.html
+  kind: documentation
+  registered_at: '2026-09-30'
+  revision: CANN Community 8.2.RC1.alpha001（URL 路径 82RC1alpha001）；同目录 0096 页 HTML title 核对为该版本；0094 页头由 JS 渲染未直接核验；观察 2026-09-30
+  license:
+    status: unknown
+    scopes: []
+    notes: 厂商网页未见再分发许可；公开可读不等于允许全文再分发，本库只链接并作原创归纳。CANN 软件包与 EULA 另计。
+  notes: 核对内存管理总体说明（大页预留、aclrtGetMemInfo 的 ACL_HBM_MEM_HUGE 与 ACL_HBM_MEM_NORMAL、Ascend EP 形态下 AI CPU 算子缓存占用约 100M 至 200M 且仅 Device 重启释放）及同目录 aclrtMalloc（0095）、aclrtMallocAlign32（0096）的分配对齐与同步语义。83RC1 同路径 0094 页抓取失败、0095 页 title 为 8.3.RCX 与 URL 版本标识不一致，均不作不可变快照。
+- id: src.huawei.cann-82rc1-aclerror
+  title: CANN 社区版 aclError 错误码页（URL 路径 82RC1）
+  url: https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/82RC1/API/appdevgapi/aclpythondevg_01_0911.html
+  kind: documentation
+  registered_at: '2026-09-30'
+  revision: URL 路径 82RC1；页头版本由 JS 渲染未能核验；正文经原始 HTML 核对；观察 2026-09-30
+  license:
+    status: unknown
+    scopes: []
+    notes: 厂商网页未见再分发许可；本库只链接并作原创归纳，CANN 软件包与 EULA 另计。
+  notes: 核对 207001 内存申请失败、207002 内存释放失败、207003 aicore 算子运算溢出等错误码文本；页面位于 AscendCL Python API 文档树；版本标识未核验，不作为不可变快照。
+- id: src.pytorch.profiler-2.6
+  title: torch.profiler — PyTorch 2.6 documentation
+  url: https://docs.pytorch.org/docs/2.6/profiler.html
+  kind: documentation
+  registered_at: '2026-09-30'
+  revision: PyTorch 2.6 documentation; release tag v2.6.0 resolves to 1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库根 LICENSE；生成站点及第三方引用材料的具体范围另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 根许可沿用本库对 PyTorch v2.6.0 的已核对记录；本库只做短摘要与链接。
+  notes: 核对 activities（CPU/CUDA/XPU）、schedule 的 wait/warmup/active/repeat/skip_first、on_trace_ready、export_chrome_trace 只导出最后一个 cycle、key_averages、profile_memory 与 ProfilerActivity 成员（含 PrivateUse1；页面无 NPU 字样及使用说明）；record_function 不在本页。未运行任何 profiling。第十批（2026-09-30）补充核对：分布式场景唯一表述为 tensorboard_trace_handler 的 worker_name（默认 [hostname]_[pid]），页面无多进程 trace 聚合视图。
+- id: src.pytorch.dataloader-source-v2.6.0
+  title: PyTorch v2.6.0 DataLoader 固定源码
+  url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/torch/utils/data/dataloader.py
+  kind: repository
+  registered_at: '2026-09-30'
+  revision: 1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库根 LICENSE；第三方文件按各自声明核查
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 根 LICENSE 已由同 commit 的其他条目核对，沿用同样表述；本库只做短摘要与链接。
+  notes: 核对 worker 崩溃 RuntimeError（L1262-L1266）、_try_get_data 与 _get_data 超时分支（L1238、L1389-L1422）、prefetch_factor 校验与预填（L269-L277、L1234-L1236）、persistent_workers 迭代器复用（L478-L491）、DataLoader 迭代的 record_function 区间名（L680、L703-L704）、Linux FD 耗尽错误与 NOTE（L1280-L1320）；MP_STATUS_CHECK_INTERVAL=5.0 见 _utils/__init__.py L20。代审修订（2026-09-30）补充：_next_data 的按序返回与乱序等待实现（L1449–1480，乱序先完成的结果留在 _task_info 等待队首）。未运行任何代码。
+- id: src.vllm-ascend.issue-15920
+  title: 'vLLM Ascend #15920：910B2 长上下文 prefill OOM 报告（含报告者归因撤回）'
+  url: https://github.com/vllm-project/vllm-ascend/issues/15920
+  kind: issue
+  registered_at: '2026-09-30'
+  revision: opened 2026-09-07; reporter self-correction comment 2026-09-15; observed Open 2026-09-30 via gh API
+  license:
+    status: unknown
+    scopes: []
+    notes: Issue 正文与评论为用户生成内容；仓库根 Apache-2.0 不自动覆盖讨论文本。本库只保存链接、短摘要和事实归纳。
+  notes: 环境清单完整（910B2×8、driver 25.2.1、vLLM/vllm-ascend 0.9.1、CANN 8.1.RC1、torch/torch_npu 2.5.1、Qwen2.5-14B-Instruct-1M、gpu_memory_utilization=0.85、enforce_eager=True）；症状含 ~98K prompt prefill 分配 18.00 GiB 失败与 81K 时静默卡住两种形态。评论 2 条：维护者 ping 与报告者自我撤回原始根因（改称 L²×2B causal mask 不被 profile 形状覆盖）；两次归因均为报告者单方说法、维护者未确认；timeline 无关联修复 PR 链。
+- id: src.vllm-ascend.issue-12692
+  title: 'vLLM Ascend #12692：v0.20.2rc1 长序列多模负载约 37 分钟后 workspace 分配 OOM'
+  url: https://github.com/vllm-project/vllm-ascend/issues/12692
+  kind: issue
+  registered_at: '2026-09-30'
+  revision: opened 2026-07-23; observed Open 2026-09-30 via gh API
+  license:
+    status: unknown
+    scopes: []
+    notes: Issue 正文与评论为用户生成内容；仓库根 Apache-2.0 不自动覆盖讨论文本。本库只保存链接、短摘要和事实归纳。
+  notes: 环境含 qwen3-5-397b-a17b-w8a8-mtp、v0.20.2rc1、tp16、max-model-len 262144、FULL_DECODE_ONLY graph、expandable_segments:True、gpu-memory-utilization 0.90；症状为显存爬升后 NPUWorkspaceAllocator tried to allocate 216.00 MiB、torch.OutOfMemoryError、EL0004 Memory_Allocation_Failure。元数据 comments=2 与 API 实取 1 条不一致，已如实记录；timeline 无修复 PR 链；报告者的碎片化归因未经维护者确认。
+- id: src.huawei.hccl-perf-test-guide-cann-9.1.x
+  title: CANN 9.1.X 开发文档《HCCL性能测试工具》
+  url: https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/910/devaids/hccltool/HCCLpertest_16_0001.html
+  kind: documentation
+  registered_at: '2026-09-30'
+  revision: URL 路径 910；HTML title 为 "CANN9.1.X开发文档"；观察 2026-09-30；经 cann-hccl docs/README.md 的 redirect 链接解析落点，redirect 为可变定位
+  license:
+    status: unknown
+    scopes: []
+    notes: 厂商网页未见再分发许可；公开可读不等于允许全文再分发，本库只链接并作原创归纳。HCCL Test 工具随 CANN 安装包分发，制品许可另计。
+  notes: 核对 0001 工具介绍（算法带宽定义：集合通信数据量/耗时；只有算法带宽无 bus 带宽列）、0004 工具执行环境前提、0005 参数说明（-b/-e 默认 64M、-n 默认 20、-w 默认 10 不计入统计、-t onlydevicetime、-c 0/1/2）、0006 结果字段（data_size 为单个 NPU 数据量、alg_bandwidth、check_result 的 NULL 条件与可校验规模表）、0007 规格约束（-p 从 Device 0 连续启动，各产品取值范围）。avg_time 的计时实现（Host/Device、跨 rank 归约）未获取源码，标为未知。
+- id: src.ocp.sdc-in-ai-2025
+  title: OCP 白皮书 Silent Data Corruption in AI（2025-08-27）
+  url: https://www.opencompute.org/documents/sdc-in-ai-ocp-whitepaper-final-pdf
+  kind: paper
+  registered_at: '2026-09-30'
+  revision: 2025-08-27；Version History 页提取为空，精确版本号未知；已读印刷页 1–19/29
+  license:
+    status: identified
+    scopes:
+    - scope: 白皮书全文，页面明示 CC BY-SA 4.0 International
+      identifier: CC-BY-SA-4.0
+      url: https://www.opencompute.org/documents/sdc-in-ai-ocp-whitepaper-final-pdf
+    notes: CC BY-SA 4.0 要求署名与相同方式共享；本库仅作原创归纳与链接，不复制图表与长段正文。
+  notes: 多厂商（NVIDIA/Meta/Google/AMD/Intel/ARM/Microsoft 员工署名）白皮书。已核对：故障结局分类 benign / fault corrected / DUE（detected unrecoverable error）/ SDC 四类（图 1，p.8）；小延迟缺陷与 DVFS 裕量（§3.2.1，p.9，机制性陈述）；fault-masking 掩盖 SDC（执行摘要 p.3、§3.3 p.10）；Meta 同一检查六个月后失败的磨损案例（§5.0，p.15）；fleet 检测三法与 70% 重叠覆盖、分析法多检出 41%（§5.1，p.15–16）；训练侧 NaN 传播与梯度方差污染（§5.1.1，p.16–17）；Google Gemini 确定性重放+空闲扫描+热备（§5.1.4.1，p.19）。§5.2 之后未读。
+- id: src.kernel.docs-sysctl-vm-v6.16
+  title: Linux kernel v6.16 sysctl vm 文档（dirty/writeback 参数）
+  url: https://github.com/torvalds/linux/blob/038d61fd642278bab63ee8ef722c50d10ab01e8f/Documentation/admin-guide/sysctl/vm.rst
+  kind: documentation
+  registered_at: '2026-09-30'
+  revision: commit 038d61fd642278bab63ee8ef722c50d10ab01e8f（annotated tag v6.16 解引用，2026-09-30 经 GitHub API 核对）
+  license:
+    status: partial
+    scopes:
+    - scope: 固定 commit 内核树根 COPYING；Documentation 的许可细则未单独核验
+      identifier: GPL-2.0
+      url: https://github.com/torvalds/linux/blob/038d61fd642278bab63ee8ef722c50d10ab01e8f/COPYING
+    notes: 内核根 COPYING 为 GPL-2.0；文档具体许可未逐文件核验，本库仅作原创归纳与链接。
+  notes: 核对 dirty_background_ratio/dirty_background_bytes（L165–186，触发 flusher 后台 writeback 的脏页阈值，不是唯一写回条件）、dirty_ratio/dirty_bytes（L188–221，写者被拖入 writeout 的节流机制）、dirty_expire_centisecs 与 dirty_writeback_centisecs（L204–242）。docs.kernel.org 的 HTML 为动态 latest 且页头残留陈旧版本字样，不作不可变快照；固定引用以该 commit 为准。 B10-C02：writeback/写者节流定位的是等待层，不能排除后端消化速度不足；与同窗口后端吞吐/延迟/错误对照属于本库归因方法。
+- id: src.nvidia.nvidia-smi-docs-latest-2026-09-30
+  title: NVIDIA System Management Interface（nvidia-smi）文档（latest，2026-09-30 观察）
+  url: https://docs.nvidia.com/deploy/nvidia-smi/index.html
+  kind: documentation
+  registered_at: '2026-09-30'
+  revision: latest page observed 2026-09-30；页面多版本混排，含 v525→v530 变更日志
+  license:
+    status: unknown
+    scopes: []
+    notes: 公开可读不等于允许全文再分发；本库只链接并作原创归纳。
+  notes: 核对 Clocks Event Reasons 语义（"If all event reasons are returned as 'Not Active' it means that clocks are running as high as possible."）、Clock Event Reasons Counters（microseconds）、v525→v530 改名及兼容回填记录；latest 页面可变，正式引用保留观察日期。
+- id: src.nvidia.dcgm-field-identifiers-latest-2026-09-30
+  title: NVIDIA DCGM Field Identifiers（latest，2026-09-30 观察）
+  url: https://docs.nvidia.com/datacenter/dcgm/latest/dcgm-api/dcgm-api-field-ids.html
+  kind: documentation
+  registered_at: '2026-09-30'
+  revision: latest page observed 2026-09-30
+  license:
+    status: unknown
+    scopes: []
+    notes: 公开可读不等于允许全文再分发；本库只链接并作原创归纳。
+  notes: exporter 指标页指向的字段含义权威来源；核对 SM_CLOCK(100)、CLOCKS_EVENT_REASONS(112)、GPU_TEMP_CELSIUS(150)、BOARD_POWER_WATTS(155)、TOTAL_ENERGY_CONSUMPTION(156, mJ)、POWER/THERMAL_VIOLATION(240/241)、PCIE_REPLAY_TOTAL(202)、PROF_* 比例字段等条目；部分字段单位与描述在页面缺失（如 SM_CLOCK 的 MHz 为惯例未核实）。
+- id: src.huawei.npu-smi-atlas-a2-edge-24.1.rc1-pdf
+  title: Atlas A2 智能边缘硬件 24.1.RC1 npu-smi 命令参考 01
+  url: https://www.hiascend.com/doc_center/source/zh/Atlas%20200I%20A2/24.1.RC1/re/npu/Atlas%20A2%20智能边缘硬件%2024.1.RC1%20npu-smi%20命令参考%2001.pdf
+  kind: documentation
+  registered_at: '2026-09-30'
+  revision: 24.1.RC1 document 01（2024-04-23）；2026-09-30 读取目录
+  license:
+    status: unknown
+    scopes: []
+    notes: 厂商 PDF 声明非经书面许可不得摘抄复制；本库只链接并作原创归纳。
+  notes: 只核对目录与命令存在性（§4.16–4.17 温度、§4.18–4.19 功率、§4.20–4.21 电压、§4.22–4.23 健康状态、§4.58–4.59 风扇、§4.62 工作模式）；正文表格未逐字读取。该文档属边缘/推理产品线（Atlas 200I A2/500 A2），不能外推训练产品线（Atlas 800T/910）；训练线的 npu-smi 版本化页面未定位。
+- id: src.pytorch.tutorial-async-checkpoint-2026-09-30
+  title: PyTorch 教程 Asynchronous Saving with Distributed Checkpoint (DCP)（动态页，2026-09-30 观察）
+  url: https://docs.pytorch.org/tutorials/recipes/distributed_async_checkpoint_recipe.html
+  kind: documentation
+  registered_at: '2026-09-30'
+  revision: dynamic page; Created 2024-07-22, Last Updated 2026-02-03, observed 2026-09-30
+  license:
+    status: unknown
+    scopes: []
+    notes: 教程源码在 pytorch/tutorials 仓库，该页面许可未单独核验；本库只链接并作原创归纳。
+  notes: 页面已并入 2.9 的 DefaultStager/async_stager 内容，不能当作 2.6 功能证据；仅限定引用其 2.6 适用部分（异步保存把模型复制进 CPU buffer、staging 的 D2H 拷贝在主线程会阻塞训练循环、同一时刻只挂一个异步请求的建议）。
+- id: src.pytorch.elastic-2.6
+  title: PyTorch 2.6 Elastic（torchrun/torchelastic）文档
+  url: https://docs.pytorch.org/docs/2.6/elastic/run.html
+  kind: documentation
+  registered_at: '2026-10-08'
+  revision: PyTorch 2.6 documentation; source commit 1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 根 LICENSE；所列仓库自有代码和文档源码，独立网站资产和第三方材料另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 根许可沿用本库对 PyTorch v2.6.0 的已核对记录；本库仅链接并原创归纳。
+  notes: 核对 elastic/run.html（rendezvous 后端选择、失败模式、成员变更、min/max 与 max-restarts、重要须知）、elastic/rendezvous.html（五项功能与超时默认值）、elastic/errors.html（错误三分类与 ProcessFailure；注意 2.6 无 WorkerFailure 旧名）、elastic/agent.html（agent 职责、WorkerState、exit_barrier_timeout）、elastic/train_script.html（checkpoint 是恢复前提）。train_script 页与 src.pytorch.parallel-training-state-2.6 的覆盖有重叠，分工见各自 notes。 2026-10-08 修订 B11-C03：固定 run.py L490–497 的 torchrun CLI max-restarts 默认 0，elastic/agent/server/api.py L78–86 的 WorkerSpec API 默认 3；需区分入口并记录命令行/环境覆盖的实际值。该 commit 根 LICENSE 已直接核对，生成站点和第三方材料不据此概括。
+- id: src.pytorch.dispatcher-v2.6.0
+  title: PyTorch v2.6.0 Dispatcher OperatorEntry 固定源码
+  url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/aten/src/ATen/core/dispatch/OperatorEntry.cpp
+  kind: repository
+  registered_at: '2026-10-08'
+  revision: 1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库根 LICENSE；第三方文件按各自声明核查
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 根许可沿用本库对 PyTorch v2.6.0 的已核对记录；本库只做短摘要与链接。
+  notes: 核对 OperatorEntry.cpp L537–557 的两种 NotImplemented 报错形态：无 tensor 参数的缺 fallback 报错，以及 "Could not run '<op>' with arguments from the '<backend>' backend…is only available for these backends"（该次 dispatch 无可执行处理，需继续核对目标后端 kernel 与全局 fallback）；未运行代码。
+- id: src.nvidia.dcgm-diag-user-guide-latest-2026-10-08
+  title: NVIDIA DCGM Diagnostics User Guide 形态页（latest，2026-10-08 观察）
+  url: https://docs.nvidia.com/datacenter/dcgm/latest/user-guide/dcgm-diagnostics.html
+  kind: documentation
+  registered_at: '2026-10-08'
+  revision: latest page observed 2026-10-08
+  license:
+    status: unknown
+    scopes: []
+    notes: 公开可读不等于允许全文再分发；本库只链接并作原创归纳，软件、插件和随附第三方内容另计。
+  notes: 与 learn 形态页（src.nvidia.dcgm-diagnostics-latest-2026-09-30）同属 DCGM latest 文档但清单口径不同。核对 Run Levels and Tests 表（r1 software <2.5s；r2 加 pcie/memory/memory_bandwidth；r3 加 diagnostic/targeted_stress/targeted_power/nvbandwidth/nccl_tests；r4 加 memtest/pulse；表头注明 measured on Hopper GPU systems）、各插件小节的前提与判据（targeted_power 达 target_power 75% 判过、targeted_stress 默认达成 95% GFLOPS、pulse_test 供电脉冲、memory 默认 75% 显存 5 种 pattern、diagnostic 默认 180s、memtest 默认 test7+test10 交替 10 分钟、nvbandwidth 限定产品且 MCUTIL>10% 判失败、nccl_tests 单节点且需 DCGM_NCCL_TESTS_BIN_PATH）、Exit Codes 与 Automating Responses 的错误 ID/Severity/Category 枚举、pulse_test 的 service account 权限问题（标注 DCGM 2.4/3.0，修复状态未核实）。与 learn 页清单不一致（context_create/nccl_tests/sm_stress 差异）已记录；latest 页面可变。 2026-10-08 修订 B12-C01：Exit Codes 的 226/DCGM_ST_NVVS_ERROR 表示诊断执行后报错，205/DCGM_ST_NVVS_ISOLATE_ERROR 表示需要隔离；调用失败和诊断失败分开，仍须解析 per-test/per-entity 与 skipped，不能由非零码单独判硬件根因。
+- id: src.nvidia.gpu-node-triage-2026-10-08
+  title: NVIDIA GPU Node Triage and Systematic Debug Guidelines（latest，2026-10-08 观察）
+  url: https://docs.nvidia.com/deploy/gpu-debug-guidelines/gpu-node-triage.html
+  kind: documentation
+  registered_at: '2026-10-08'
+  revision: latest page observed 2026-10-08; 页面无可见版本号或更新日期
+  license:
+    status: unknown
+    scopes: []
+    notes: deploy 文档树未见再分发许可声明；本库只链接并作原创归纳。
+  notes: 核对官方故障节点排查结构：通知来源与三张流程图、上报厂商的数据清单（nvidia-bug-report.sh、fabric manager 日志、DCGM 日志）、常见 Xid 动作表（drain/cordon/reset/field diag/报 bug）、按架构/FM 状态/虚拟化分列的 GPU reset 能力限制；验收相关建议：dcgmi diag 套件 1–3（该页只提三级，long 约 30 分钟）作 prolog/收工前检查、"Field diagnostic is the authoritative and comprehensive NVIDIA tool…usually required before an RMA"（运行时机须咨询系统厂商）、投产前用 nccl-tests all_reduce_perf 逐对测并记录性能基线、多 rail 拓扑可按 rail 隔离。
+- id: src.huawei.mindx-dl-60rc2-ascend-dmi-display-2026-10-08
+  title: MindX DL 6.0.RC2 ascend-dmi 显示界面（toolboxug_0019，2026-10-08 观察）
+  url: https://www.hiascend.com/doc_center/source/zh/mindx-dl/60rc2/toolbox/ascenddmi/toolboxug_0019.html
+  kind: documentation
+  registered_at: '2026-10-08'
+  revision: MindX DL 6.0.RC2 page observed 2026-10-08
+  license:
+    status: unknown
+    scopes: []
+    notes: 厂商网页许可未核验；公开可读不等于允许全文再分发，本库只链接并作原创归纳。
+  notes: 核对 ascend-dmi 显示界面表2 的查询项：芯片型号、NPU 数量、实时功耗、AI Core/Cube/Vector 信息、AI CPU、内存容量与带宽使用率、温度、电压、health、PCIe 链路 LnkCap/LnkSta 速率宽度、错误计数、ECC 单/双 bit 计数（Atlas A2 训练系列不支持该 ECC 显示项）。与故障诊断页（src.huawei.mindx-dl-60rc2-ascend-dmi-2026-09-29）互补。
+- id: src.ceph.docs-scrubbing-latest-2026-10-08
+  title: Ceph 文档 scrubbing 与健康检查（latest，2026-10-08 观察）
+  url: https://docs.ceph.com/en/latest/rados/configuration/osd-config-ref/
+  kind: documentation
+  registered_at: '2026-10-08'
+  revision: latest pages observed 2026-10-08; 对应 Ceph main 分支（src/ceph_release 为 "21 umbrella dev"）
+  license:
+    status: identified
+    scopes:
+    - scope: Ceph 文档（doc/conf.py 版权声明行为 Creative Commons Attribution Share Alike 3.0）
+      identifier: CC-BY-SA-3.0
+      url: https://github.com/ceph/ceph/blob/caf3def8088a17706021a8fd68ee40f62beda519/doc/conf.py#L58-L61
+    notes: 许可依据为 ceph/ceph 仓库 doc/conf.py 的 copyright 行；网页页脚未被提取器捕获。本库只链接并作原创归纳，未复制原文图表。
+  notes: 同批读取三个页面：osd-config-ref 的 Scrubbing 节（light scrub 查对象大小/属性通常每日、deep scrub 读数据并用 checksum 通常每周；osd_scrub_min_interval 默认 1 day、max 7 days、osd_deep_scrub_interval 默认 7 days、osd_scrub_auto_repair 默认 false 且超 osd_scrub_auto_repair_num_errors 默认 5 不修）、operations/health-checks（PG_DAMAGED=scrub 发现数据一致性问题、OSD_SCRUB_ERRORS、OSD_TOO_MANY_REPAIRS、PG_NOT_SCRUBBED/PG_NOT_DEEP_SCRUBBED；latest 无名为 PG_INCONSISTENT 的健康检查，inconsistent 是 PG 状态标志）、operations/monitoring-osd-pg（PG 状态语义）。scrub 只覆盖 at-rest 数据；读路径错误在有可用副本时立即修复。版本化页面（/en/tentacle/ 等）内容未逐一核对。
+- id: src.ceph.repo-caf3def
+  title: ceph/ceph 固定 commit caf3def（man page 与发布标识）
+  url: https://github.com/ceph/ceph/tree/caf3def8088a17706021a8fd68ee40f62beda519
+  kind: repository
+  registered_at: '2026-10-08'
+  revision: main observed 2026-10-08; commit caf3def8088a17706021a8fd68ee40f62beda519 (2026-10-07)
+  license:
+    status: partial
+    scopes:
+    - scope: 固定 commit 的 doc/conf.py 文档版权声明
+      identifier: CC-BY-SA-3.0
+      url: https://github.com/ceph/ceph/blob/caf3def8088a17706021a8fd68ee40f62beda519/doc/conf.py#L58-L61
+    notes: 仅核对文档版权声明、man page 与发布标识；仓库代码许可（LGPL 系列）与其余文件未核查。仅链接与短摘要。
+  notes: 核对 doc/man/8/ceph.rst 的 pg 子命令（L1633 起：repair 对 <pgid> 启动修复，相邻有 scrub/deep-scrub 子命令）、doc/conf.py L58-61 的 CC BY-SA 3.0 声明、src/ceph_release 为 "21 umbrella dev"（佐证 latest 文档对应开发主线）。
+- id: src.python.zipfile-docs-2026-10-08
+  title: Python 3 文档 zipfile 模块（2026-10-08 观察）
+  url: https://docs.python.org/3/library/zipfile.html
+  kind: documentation
+  registered_at: '2026-10-08'
+  revision: Python 3 current docs observed 2026-10-08; 页面含 3.14 特性标注
+  license:
+    status: unknown
+    scopes: []
+    notes: 页面许可未逐字核对；本库只链接并作原创归纳。
+  notes: 核对 ZipInfo.CRC（"CRC-32 of the uncompressed file"，成员级校验）、ZipFile.testzip（读全部文件并校验 CRC 与文件头，返回首个坏文件名）、解压可因 CRC checksum 失败。torch.load 走自研 C++ reader 而非 Python zipfile，两者行为不可互推。

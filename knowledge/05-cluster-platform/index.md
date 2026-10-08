@@ -1,0 +1,95 @@
+---
+id: cluster-platform.index
+title: 05 集群平台与资源管理
+type: index
+domain: cluster-platform
+status: draft
+platforms:
+- generic
+source_refs:
+- src.ascend.mind-cluster
+- src.ascend.agent-skills
+- src.infrasys.aiinfra
+updated_at: '2026-09-30'
+summary: 组织容器、设备资源管理、调度、多租户和集群变更。
+related_ids:
+- cluster-platform.device-resource-chain
+- hardware.resource-topology
+- hardware.index
+- software-stack.index
+- training.index
+- inference.index
+- reliability.index
+- cluster-platform.admission-and-placement
+- cluster-platform.ascend-device-visibility-triage
+- cluster-platform.ascend-device-visibility-source-case
+- cluster-platform.ascend-device-visibility-experiment
+- cluster-platform.idle-resource-job-waiting-triage
+---
+
+# 05 集群平台与资源管理
+
+本页是内容导航草稿。已建设的正文见下方入口，其余二级主题仍待补充；正文均为草稿，未经本地环境实测。`generic` 表示跨平台导航，不表示所有环境兼容。
+
+## 已有正文
+
+[从物理设备到容器资源的状态链](device-resource-chain.md)：区分物理存在、驱动可见、插件上报、调度分配、容器访问和框架可用，并记录各阶段的证据边界。
+
+[作业准入、调度与拓扑放置](admission-and-placement.md)：区分队列配额、准入、组级约束、节点放置与设备分配，保留 NPU 型号差异。
+
+[空闲设备但作业等待诊断指南](idle-resource-job-waiting-triage.md)：以 Kueue v0.19.0 为样板，把“有空闲设备但作业不运行”定位到接管、配额、准入、拓扑、放置或设备分配的具体等待层。
+
+## 本章范围
+
+覆盖设备如何被平台发现、分配给任务、上报健康状态，以及作业如何被调度、运行和恢复。连接物理资源、平台资源对象与工作负载。
+
+## 场景指南、案例与实验
+
+以下均为来源整理草稿；公开案例不代表本库复现，实验仅为设计。
+
+| 主题 | 诊断指南 | 来源案例 | 实验设计 |
+|---|---|---|---|
+| 容器内 NPU 可见性 | [指南](ascend-device-visibility-triage.md) | [案例](ascend-device-visibility-source-case.md) | [实验设计](ascend-device-visibility-experiment.md) |
+
+
+## 二级主题地图
+
+- **05.1 容器、镜像、设备暴露与运行环境** — 已有[设备访问条件的概念草稿](device-resource-chain.md)，部署与实测待补充。
+- **05.2 Kubernetes、Slurm 等平台与作业生命周期** — 已有[Kueue/Volcano 状态边界](admission-and-placement.md)；Slurm 及完整生命周期待补充。
+- **05.3 设备发现、分配、健康上报与资源账本** — 已有[设备资源状态链](device-resource-chain.md)，已有容器内 NPU 可见性指南、公开案例和实验设计；现场验证待补充。
+- **05.4 配额、排队、gang、放置与拓扑亲和性** — 已有[准入与放置概念](admission-and-placement.md)和[空闲设备但作业等待诊断指南](idle-resource-job-waiting-triage.md)；现场配置与验证待补充。
+- **05.5 多租户、隔离、资源争用与容量管理** — 待建设。
+- **05.6 节点上下线、升级、发布与变更** — 待建设。
+- **05.7 调度失败、控制面异常与集群恢复** — 待建设。
+
+## 内容边界
+
+- 设备暴露、平台分配和容器配置归本章；驱动是否初始化及运行时配套归 02。
+- 调度和放置策略归本章；并行策略的训练语义归 06，服务流量策略归 07。
+- 节点回到可调度状态与任务恢复正确是不同判断；后者链接到工作负载章节。
+
+## NPU 内容位置
+
+Device Plugin、NPU Exporter、容器设备可见性和 MindCluster 的平台能力在本章定位；通过版本和部署方式区分具体实现。
+
+完整路径见[昇腾专题](../../paths/platforms/ascend.md)。其他平台入口见 [NVIDIA 专题](../../paths/platforms/nvidia.md)。
+
+## 关联章节
+
+- [01 物理设施与计算节点](../01-hardware/index.md)
+- [02 系统软件与加速器执行栈](../02-software-stack/index.md)
+- [06 训练与后训练系统](../06-training/index.md)
+- [07 推理与服务系统](../07-inference/index.md)
+- [08 可靠性与计算正确性方法](../08-reliability/index.md)
+
+## 已收集的原始资料入口
+
+以下链接指向厂商或项目自己的资料；引用或改编前仍需核对对应版本、来源许可和适用范围。
+
+- [MindCluster 官方仓库](https://github.com/Ascend/mind-cluster)：集群组件、设备管理和调度资料入口。
+- [Ascend Agent Skills](https://github.com/Ascend/agent-skills)：设备与容器环境相关任务的组织参考。
+- [AIInfra 项目仓库](https://github.com/Infrasys-AI/AIInfra)：云原生平台与资源管理的背景资料。
+
+## 首轮成果与后续
+
+已有设备状态链、准入放置，以及容器内 NPU 可见性指南、案例和实验设计；后续补调度失败、资源争用和节点生命周期。
