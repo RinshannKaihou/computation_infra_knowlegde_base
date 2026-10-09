@@ -6,9 +6,9 @@ domain: overview
 status: draft
 platforms: [generic]
 source_refs: [src.infrasys.aiinfra, src.stas.ml-engineering]
-updated_at: "2026-09-30"
+updated_at: "2026-10-08"
 summary: 建立系统全景、统一术语，并按任务与平台定位知识。
-related_ids: [hardware.index, software-stack.index, training.index, inference.index, reliability.index, overview.training-lifecycle, overview.inference-lifecycle]
+related_ids: [hardware.index, software-stack.index, training.index, inference.index, reliability.index, overview.training-lifecycle, overview.inference-lifecycle, overview.terms-and-system-boundaries]
 ---
 
 # 00 导读与系统全景
@@ -19,6 +19,7 @@ related_ids: [hardware.index, software-stack.index, training.index, inference.in
 
 - [一次训练任务的端到端路径](training-lifecycle.md)：沿资源、数据、训练状态和进展选择下一层知识。
 - [一次推理请求的端到端路径](inference-lifecycle.md)：连接请求、调度、缓存、输出与服务指标。
+- [统一术语、先修关系与系统责任边界](terms-and-system-boundaries.md)：九领域共用术语、同名异义与按症状定位责任领域的方法。
 
 ## 本章范围
 
@@ -26,7 +27,7 @@ related_ids: [hardware.index, software-stack.index, training.index, inference.in
 
 ## 二级主题地图
 
-- **00.1 范围、核心术语与系统边界** — 待建设。
+- **00.1 范围、核心术语与系统边界** — 已有[统一术语、先修关系与系统责任边界](terms-and-system-boundaries.md)。
 - **00.2 一次训练任务的端到端路径** — 已有[全流程导航](training-lifecycle.md)。
 - **00.3 一次推理请求的端到端路径** — 已有[全流程导航](inference-lifecycle.md)。
 - **00.4 单机、集群与超节点的参考架构** — 待建设。
@@ -61,4 +62,4 @@ related_ids: [hardware.index, software-stack.index, training.index, inference.in
 
 ## 首轮成果与后续
 
-已建立训练与推理端到端路径；后续补充术语、参考架构和不同角色的阅读顺序。
+已建立训练与推理端到端路径及统一术语与系统责任边界；后续补充参考架构和不同角色的阅读顺序。

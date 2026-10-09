@@ -5,14 +5,24 @@ type: reference
 domain: software-stack
 status: draft
 platforms: [generic]
-source_refs: [src.ascend.torch-npu-v7.2.0-pytorch2.6.0]
-updated_at: "2026-09-29"
-summary: 用两条独立证据轴判断软件栈版本配套，区分官方发行声明、源码分支范围、项目测试声明和限定环境中的本地验证。
-related_ids: [software-stack.layers-and-boundaries, software-stack.ascend-documented-profile]
+source_refs:
+  - src.ascend.torch-npu-v7.2.0-pytorch2.6.0
+  - src.nvidia.pytorch-container-25.01-release-notes-2026-09-30
+  - src.nvidia.frameworks-support-matrix-2026-10-09
+  - src.huawei.cann-83rcx-version-compatibility-2026-10-09
+  - src.pypi.torch-npu-2.6.0.post3-2026-10-09
+updated_at: "2026-10-09"
+summary: 用两条独立证据轴判断软件栈版本配套，区分官方发行声明、源码分支范围、项目测试声明和限定环境中的本地验证，并给出平台档案的读取与变化审计规则。
+related_ids: [software-stack.layers-and-boundaries, software-stack.ascend-documented-profile, software-stack.nvidia-documented-profile, software-stack.runtime-execution-and-library-loading]
 verification:
   status: source_checked
-  evidence_refs: [src.ascend.torch-npu-v7.2.0-pytorch2.6.0]
-  notes: "已核对 TorchNPU 官方 annotated tag 解引用 commit 中的英文版 README.md 与 version.txt 的文件存在性和版本含义，并确认该快照没有 COMPATIBILITY.md/COMPATIBILITY.en.md；未在 GPU/NPU 环境安装或运行，source_checked 不表示该组合已在本仓库复现。"
+  evidence_refs:
+    - src.ascend.torch-npu-v7.2.0-pytorch2.6.0
+    - src.nvidia.pytorch-container-25.01-release-notes-2026-09-30
+    - src.nvidia.frameworks-support-matrix-2026-10-09
+    - src.huawei.cann-83rcx-version-compatibility-2026-10-09
+    - src.pypi.torch-npu-2.6.0.post3-2026-10-09
+  notes: "已核对 TorchNPU 官方 annotated tag 解引用 commit 中的英文版 README.md 与 version.txt 的文件存在性和版本含义，并确认该快照没有 COMPATIBILITY.md/COMPATIBILITY.en.md；2026-10-09 补充平台档案读取与变化审计规则（制品四层区分、页面审计三件套、documented/unknown/未实测规则），规则实例取自第十五批取证记录；未在 GPU/NPU 环境安装或运行，source_checked 不表示任何组合已在本仓库复现。"
 ---
 
 # 如何判断版本配套是否有依据
@@ -89,6 +99,39 @@ verification:
 | Python 环境 | Python 实现与版本、ABI、直接相关包的完整版本和来源 | Python 与 wheel ABI 常是兼容矩阵的一部分 |
 | 时间与证据 | 环境采集时间、测试时间、来源发布日期或 revision、来源访问日期 | 文档和 `latest`/`master` 会变化 |
 
+## 平台档案的读取与变化审计规则
+
+平台配套档案（[NVIDIA 软件栈的文档配套档案](nvidia-documented-profile.md)、[昇腾软件栈的文档配套档案](ascend-documented-profile.md)；AMD 档案另行建立，适用同一规则）在读取与更新时遵守以下规则。规则实例与冲突原文见[第十五批取证记录](../../docs/research/batch-15-profile-intersection-sources.md)。
+
+### 制品身份的四层区分
+
+「版本相同」在四个层次是不同断言，档案必须分别记录各层身份：
+
+| 层 | 身份形式 | 示例 | 边界 |
+|---|---|---|---|
+| 构建源码 | 仓库 URL + 完整 commit（分支/tag 只作指针） | TorchNPU tag `v7.2.0-pytorch2.6.0` 固定到 commit `bc51ab84cc6f35c77aab1c59886e0ea43681a317`；release 页称 25.01 容器内含该版 PyTorch 完整源码于 `/opt/pytorch` | tag 可被重指；源码快照不证明发行 wheel 由其原样构建 |
+| wheel / 安装包 | 完整文件名 + 摘要（sha256）+ 来源索引与取得日期 | PyPI `torch_npu-2.6.0.post3` 六个 wheel 及索引声明 sha256（2026-10-09 取得） | 索引声明值未下载比对即不代表内容核验；abi0/abi1 等文件名无标记的变体需要独立身份 |
+| 容器层 | tag 只作指针；不可变身份是 manifest digest + 签名验证结果 | `nvcr.io/nvidia/pytorch:25.01-py3` 的 manifest digest 未取得，档案中标注 unknown，不以 tag 或 catalog 页 layer SHA 冒充 digest | tag 可被服务端重新关联 |
+| 实载库 | 进程运行期实际映射进地址空间的库文件 | `/proc/<pid>/maps` 的 pathname 列核对实载身份；`ldd` 是解析时视图，`dlopen` 装载的库只出现在 maps | 「磁盘已安装」「链接解析到」「进程实载」「调用成功」是四个不同问题，方法与边界见[驱动初始化、运行时执行同步与库装载](runtime-execution-and-library-loading.md) |
+
+### 页面变化审计
+
+厂商文档页会回写日期或演进内容。每次引用可变页面，记录三件套：**页脚/元数据日期 + 观察日期 + 关键字段抽查结果**。已观察到的实例：
+
+- NVIDIA release 25.01 页的页脚与 `nv-pub-date` 在 2026-09-30 登记时记录为「last updated 2026-09-08」，2026-10-09 复核时变为 2026-09-29；Support Matrix 与 Frameworks Containers User Guide 同为 2026-09-29。抽查的容器 Contents、驱动两段原文、`/usr/local/lib/python3.10/dist-packages/torch` 路径未变。
+- CUDA minor-version compatibility 页（页脚 2026-09-09）在 2026-10-09 观察时已含 CUDA 13.x 行（2026-09-30 登记时未记录），CUDA 12.x 最低驱动 >=525 行未变。
+- hiascend 文档树的页头版本口径可与 URL 路径段不一致（URL 含 `83RC1` 而表头为 `8.3.RCX`）；交互式「兼容性查询助手」与 JS 渲染页面静态抓取不可取结果，只能记录页面外壳与取得方式，查询结果不得代填。
+
+页面变化只触发重核，不自动使旧结论失效：旧登记按当时的观察保留，新旧差异写进取证记录。
+
+### 读取顺序与结论规则
+
+1. **先固定制品身份，再读约束链。** 依次记录源码 commit、wheel 文件名与摘要、容器 digest 状态，然后读官方矩阵或 release 页的约束链，最后读可变补充页；每一步记录出处、定位与观察日期。
+2. **交集有证据才 documented。** 只有同一官方来源（或同一发布主体同一版本列）明确给出的组合记为 documented；跨来源拼接、跨粒度（产品家族口径 vs 固定制品口径）的宽口径不能写进固定制品的组合。
+3. **未覆盖列保持 unknown。** 硬件 SKU、精确驱动/固件版本、OS×机型组合、容器运行层精确版本等未覆盖列不补齐、不推测。当前实例：Ascend 档案的 CANN 8.3.RC1 精确驱动/固件交集处于**阻塞**状态——CANN 版本兼容性页只有 HDK 系列级通配（25.3.X/25.2.X/25.0.X/24.1.X/24.1.RC3），不得以系列通配冒充精确配套；该补齐子项在取得精确来源前不得标为已覆盖。
+4. **冲突不拼成兼容。** 同一页或跨页的互斥声明（如 R545 驱动两段、Python 3.12 与 `python3.10` 路径、TensorRT Model Optimizer 0.21 与 0.17.1）双方位置同时保留，维持 `conflict`，等待同一发布主体的勘误或更高位证据；收窄性证据（如兼容包支持分支表）按其适用范围记录，不越界裁断。
+5. **满足文档条件仍标未实测。** 档案即使在文档层面凑齐完整交集，本地验证轴仍为 `not_run`，verification 状态保持 `source_checked`，不转为 `reproduced`；`reproduced` 需要另行记录环境快照、制品摘要与验证证据。
+
 ## 人与 Agent 共用的判定步骤
 
 1. **写出精确问题。** 用“制品 X 是否在环境 Y 中、为负载 Z 获得官方支持或本地验证”替代“这些版本兼容吗”。将“官方支持”和“本地能运行”拆成两个待回答问题。
@@ -106,7 +149,7 @@ verification:
 
 | 关系或主张 | 左侧对象 | 右侧对象 | 直接来源与定位 | 附加条件/缺失项 | 官方判定 | 本地证据 | 本地判定 | 解释 |
 |---|---|---|---|---|---|---|---|---|
-| 发行包与框架配套 | 文档中的包坐标 `torch-npu==2.6.0.post3` | PyTorch `2.6.0` | 固定英文 README 的二进制安装段与配套表；commit `bc51ab84cc6f35c77aab1c59886e0ea43681a317` | 实际 wheel 文件、架构、ABI 和摘要为 `unknown` | `supported` | `none` | `not_run` | `supported` 只表示该直接关系有官方文档声明，不表示某个本地 wheel 已确认 |
+| 发行包与框架配套 | 文档中的包坐标 `torch-npu==2.6.0.post3` | PyTorch `2.6.0` | 固定英文 README 的二进制安装段与配套表；commit `bc51ab84cc6f35c77aab1c59886e0ea43681a317` | 六个 wheel 的索引层身份（文件名/平台标签/sha256）已取得；未选择具体部署 wheel，下载字节、`METADATA` 与构建 commit/ABI 为 `unknown` | `supported` | `none` | `not_run` | `supported` 只表示该直接关系有官方文档声明，不表示某个本地 wheel 已确认 |
 | 发行包与平台套件配套 | 文档中的包坐标 `torch-npu==2.6.0.post3` | CANN `8.3.RC1` | 同一固定 README 的配套表 | CANN 补丁、固件、驱动和硬件为 `unknown` | `supported` | `none` | `not_run` | 精确已列关系保留为 `supported`；缺失的下游条件另记 `unknown` |
 | 框架与 Python 范围 | PyTorch `2.6.0` | Python `3.9.x`、`3.10.x`、`3.11.x` | 同一固定 README 的 PyTorch/Python 表 | 实际 Python、OS 和 ABI 为 `unknown` | `supported` | `none` | `not_run` | 文档列出的范围不等于三个环境均已在本仓库运行 |
 | 完整运行栈适用性 | 上述文档对象 | 某个实际硬件、固件、驱动、CANN 补丁、wheel 与目标负载 | 没有直接覆盖完整对象的来源 | 实际制品与环境均未提供 | `unknown` | `none` | `not_run` | 直接关系有支持声明，不足以推出整栈结论 |
@@ -155,4 +198,6 @@ verification:
 - [TorchNPU tag `v7.2.0-pytorch2.6.0` 的固定 commit](https://github.com/Ascend/pytorch/tree/bc51ab84cc6f35c77aab1c59886e0ea43681a317)：本例统一使用的历史快照；tag 是发布标识，正文链接固定到其解引用 commit。
 - [固定英文 `README.md`](https://github.com/Ascend/pytorch/blob/bc51ab84cc6f35c77aab1c59886e0ea43681a317/README.md)：二进制安装、源码构建入口、PyTorch/Python 表及 CANN/PyTorch/扩展/分支配套表。
 - [固定 `version.txt`](https://github.com/Ascend/pytorch/blob/bc51ab84cc6f35c77aab1c59886e0ea43681a317/version.txt)：该 commit 的扩展版本声明。
-- 待确认：本轮没有固定 wheel 文件名、构建标记、摘要、固件/驱动配套页或本地整栈实测证据；这些缺失项不能从 README 的版本交集推导。
+- [第十五批取证记录](../../docs/research/batch-15-profile-intersection-sources.md)：两平台约束链状态表、冲突原文、候选登记与缺口；「平台档案的读取与变化审计规则」一节的页面变化实例（nv-pub-date 回写、minor-version 页新增 CUDA 13.x 行）与 Ascend 精确 HDK 缺口出自该记录。
+- 平台档案实例：[昇腾软件栈的文档配套档案](ascend-documented-profile.md)、[NVIDIA 软件栈的文档配套档案](nvidia-documented-profile.md)；实载库层次的区分方法见[驱动初始化、运行时执行同步与库装载](runtime-execution-and-library-loading.md)。
+- 制品证据分层（与[昇腾软件栈的文档配套档案](ascend-documented-profile.md)的清单状态一致）：**已取得（索引声明层面）**——`torch-npu` 2.6.0.post3 六个 wheel 的完整文件名、平台标签（cp39/cp310/cp311 × manylinux x86_64/aarch64）与索引 sha256（2026-10-09 经 PyPI JSON API，见[第十五批取证记录](../../docs/research/batch-15-profile-intersection-sources.md)制品身份表）。**未取得**——下载字节的摘要比对（索引值未经下载核验）、wheel `METADATA` 与包元数据、构建 commit/ABI 身份（abi1 变体无独立清单）、CANN 8.3.RC1 精确驱动/固件配套页，以及任何本地整栈实测证据。这些未取得项不能从 README 的版本交集推导。
