@@ -2,6 +2,8 @@
 
 **当前审阅约定（2026-10-08 用户更新）：`gpt-6.1-sol / xhigh`。** batch 10、11、12 的审阅、修订和[定向复核](research/batch-10-11-12-codex-recheck.md)已完成，13 项发现全部关闭，三批在原范围内通过，见[三批审阅汇总](research/batch-10-11-12-codex-review-summary.md)。下文首轮模型配置与实际执行记录属于历史；当前及后续审阅按本段和[写作指南第 7 节](authoring-guide.md#7-批次审阅约定)执行。
 
+**当前后续规划（2026-10-08）：** [63 主题完整覆盖路线图](full-coverage-roadmap.md)与[执行清单](../plans/full-coverage-backlog.yaml)已排定 85 项内容任务、Batch 13–32；规划交付时所有任务为 planned，实际运行阶段须按交付/审阅记录更新。续作先读取[批次依赖与并行规则](batch-dependencies.md)，再核对新清单的目标、来源入口、具体任务前置和关闭条件；[补充来源](../plans/followup-source-acquisition.yaml)与[独立验证](../plans/validation-backlog.yaml)分别维护。以下首轮交接快照不覆盖新计划。
+
 交接时间：2026-09-30。以下主体保留首轮结束时的交接快照；后续批次实际交付见 README 和对应来源审计。四批补审状态（历史）：用户明确授权由本会话 Codex 替代 astra 补审 batch 01、02、08、09；[补审、修订和定向复核已完成](research/batch-01-02-08-09-codex-review-summary.md)，9 项唯一发现（5 P2、4 P3）全部关闭。续作应读取[最终复核记录](research/batch-02-08-09-codex-recheck.md)及各报告的最终状态；初审开放项保留为历史。正文仍为 draft，未做环境验证；当时的四批授权未自动改变后续批次模型约定，当前模型以本文件首段的用户更新为准。本文件本身不启动后台任务。
 
 ---

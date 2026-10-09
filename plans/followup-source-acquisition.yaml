@@ -1,0 +1,287 @@
+schema_version: 1
+plan_type: followup_source_acquisition
+created_at: '2026-10-08'
+status: planned
+parent_plan: plans/full-coverage-backlog.yaml
+notice: S21–S27 补充已有 A01–A20；这些是待获取工作包，不是新登记的证据。入口定位不等于技术核验或版本配套完成。
+existing_package_plan: plans/source-acquisition.yaml
+entry_checks:
+  checked_at: '2026-10-08'
+  scope: 仅核实官方入口能定位；未核查各任务完整主张、许可、支持矩阵与固定版本。Lustre HTML 手册直链读取失败，保留重新获取任务。
+  selected_revisions: 执行前逐包固定；当前全部 null
+ready_gate:
+- 取得与目标问题匹配的具体页面/源码/测试，固定 release/ref/commit 或页面日期和摘要
+- 记录硬件/软件/拓扑/负载边界、支持/不支持/未知；冲突与缺证据保留
+- 检查各范围许可和署名，正式使用前将精确材料登记 sources/registry.yaml
+- 给任务形成主张—来源定位表；批次审阅逐项重新读取正文与精确上游证据，抽查只作辅助复核；失败进入 blocked_on_evidence，不能用导航主页关闭。
+packages:
+- id: S21
+  title: AMD ROCm、HIP、RCCL 与设备样板
+  status: planned
+  target_domain_codes:
+  - '01'
+  - '02'
+  - '03'
+  - '06'
+  - '07'
+  selected_revision: null
+  discovery_entries:
+  - title: ROCm 兼容矩阵
+    url: https://rocm.docs.amd.com/en/latest/compatibility/compatibility-matrix.html
+    role: discovery_only
+  - title: RCCL 官方文档
+    url: https://rocmdocs.amd.com/projects/rccl/en/latest/
+    role: discovery_only
+  fetch_targets:
+  - 选择一套数据中心 AMD 硬件/OS/驱动/ROCm 样板，核对 HIP、框架与 RCCL 文档的实际版本交集
+  - 分别定位初始化、内存/同步、collective、错误/调试及支持矩阵原页；不继承 CUDA/NCCL 结论
+  task_refs:
+  - T01-01
+  - T01-03
+  - T01-04
+  - T01-05
+  - T01-06
+  - T01-07
+  - T01-08
+  - T02-01
+  - T02-02
+  - T02-04
+  - T02-05
+  - T02-06
+  - T02-07
+  - T02-08
+  - T02-09
+  - T02-10
+  - T03-05
+  - T03-06
+  - T03-07
+  - T03-08
+  - T06-01
+  - T06-02
+  - T06-03
+  - T06-04
+  - T06-05
+  - T06-06
+  - T06-08
+  - T07-01
+  - T07-02
+  - T07-04
+  - T07-06
+  - T07-07
+  - T07-09
+  - T07-11
+  - T00-02
+  - T08-01
+  - T08-04
+  - T07-12
+  - T02-12
+  - T00-04
+  - T00-08
+- id: S22
+  title: 互联、RDMA 与网络基线
+  status: planned
+  target_domain_codes:
+  - '01'
+  - '03'
+  selected_revision: null
+  discovery_entries:
+  - title: rdma-core 项目
+    url: https://github.com/linux-rdma/rdma-core
+    role: discovery_only
+  - title: MLNX_OFED RoCE 文档
+    url: https://networking-docs.nvidia.com/mlnxofedswum/586042lts/rdma-over-converged-ethernet-roce
+    role: discovery_only
+  fetch_targets:
+  - 固定 NIC/固件/内核/驱动/verbs/perftest 与交换网络文档，选择同代资料
+  - 获取 QP/CQ/MR、IB/RoCE 配置、计数器、rail/路由与拥塞资料；HCCS/xGMI/NVLink 另查对应机型官方资料
+  task_refs:
+  - T00-01
+  - T01-03
+  - T01-05
+  - T01-08
+  - T01-09
+  - T02-01
+  - T02-07
+  - T03-01
+  - T03-02
+  - T03-03
+  - T03-07
+  - T03-08
+  - T04-04
+  - T04-07
+  - T04-08
+  - T05-07
+  - T05-08
+  - T05-09
+  - T05-10
+  - T06-05
+  - T06-06
+  - T07-01
+  - T07-05
+  - T07-06
+  - T07-09
+  - T07-10
+  - T07-11
+  - T00-02
+  - T08-03
+  - T08-07
+  - T02-12
+- id: S23
+  title: 本地、共享、对象与并行存储样板
+  status: planned
+  target_domain_codes:
+  - '04'
+  selected_revision: null
+  discovery_entries:
+  - title: Linux 文件系统文档
+    url: https://docs.kernel.org/filesystems/index.html
+    role: discovery_only
+  - title: Ceph Object Gateway
+    url: https://docs.ceph.com/en/latest/radosgw/
+    role: discovery_only
+  - title: Amazon S3 用户指南（用于区分产品语义）
+    url: https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html
+    role: discovery_only
+  - title: Lustre 官方文档入口
+    url: https://www.lustre.org/documentation-/
+    role: discovery_only
+  fetch_targets:
+  - 正文样板为 Linux ext4/NVMe、Linux NFSv4.1、Ceph RGW/S3 接口、Lustre；逐项固定实现和文档版本
+  - 获取客户端/缓存/一致性/提交/持久性/错误/修复/基线原页与测试；不能由 S3 接口兼容推断 AWS S3 相同语义
+  - Lustre 手册入口已定位；HTML 直链本次读取失败，执行时重新获取手册与版本定位
+  task_refs:
+  - T04-02
+  - T04-03
+  - T04-04
+  - T04-05
+  - T04-06
+  - T04-07
+  - T04-08
+- id: S24
+  title: Slurm、容器运行层与集群生命周期
+  status: planned
+  target_domain_codes:
+  - '02'
+  - '05'
+  selected_revision: null
+  discovery_entries:
+  - title: Slurm 架构
+    url: https://slurm.schedmd.com/overview.html
+    role: discovery_only
+  - title: NVIDIA Container Toolkit
+    url: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/
+    role: discovery_only
+  - title: Linux cgroup v2
+    url: https://docs.kernel.org/admin-guide/cgroup-v2.html
+    role: discovery_only
+  fetch_targets:
+  - Slurm 选择官方版本归档及同版本 GRES、作业/节点状态、调度、升级和恢复文档
+  - Kubernetes/Kueue/Volcano/MindCluster、container runtime/CDI 分别固定版本和接口；不同平台 gang 等同名功能不强行等价
+  task_refs:
+  - T01-03
+  - T02-01
+  - T05-01
+  - T05-03
+  - T05-04
+  - T05-05
+  - T05-07
+  - T05-08
+  - T05-09
+  - T05-10
+- id: S25
+  title: 训练框架、微调与 RL rollout
+  status: planned
+  target_domain_codes:
+  - '06'
+  - '07'
+  selected_revision: null
+  discovery_entries:
+  - title: Megatron Core 官方指南
+    url: https://docs.nvidia.com/megatron-core/developer-guide/latest/
+    role: discovery_only
+  - title: verl 官方项目
+    url: https://github.com/verl-project/verl
+    role: discovery_only
+  fetch_targets:
+  - 核对 PyTorch/Megatron/MindSpeed 与微调方法的原始实现、配置、测试及版本边界
+  - RL 选 verl 与已有 MindSpeed 官方资料作职责/平台样板，固定 rollout、actor/critic/reward、权重同步、失败恢复与质量测量范围；不虚构所有平台支持
+  task_refs:
+  - T00-01
+  - T06-01
+  - T06-02
+  - T06-03
+  - T06-04
+  - T06-06
+  - T06-07
+  - T06-08
+  - T07-10
+  - T00-04
+- id: S26
+  title: 推理引擎与服务控制样板
+  status: planned
+  target_domain_codes:
+  - '07'
+  - '05'
+  selected_revision: null
+  discovery_entries:
+  - title: vLLM 官方文档
+    url: https://docs.vllm.ai/en/latest/
+    role: discovery_only
+  fetch_targets:
+  - 从已有 vLLM/vLLM Ascend/MindIE 来源包选择版本，另定位路由、排队、扩缩容、发布/摘除/回退与请求重试的原始实现
+  - 选择 Kubernetes 服务控制作公共样板，固定健康/ready/drain、SLO、模型与请求身份；引擎内机制与外部控制面分开
+  task_refs:
+  - T00-01
+  - T02-05
+  - T02-06
+  - T02-08
+  - T03-03
+  - T03-04
+  - T03-07
+  - T03-08
+  - T04-07
+  - T06-04
+  - T07-01
+  - T07-02
+  - T07-03
+  - T07-04
+  - T07-05
+  - T07-06
+  - T07-07
+  - T07-08
+  - T07-09
+  - T07-10
+  - T07-11
+  - T08-01
+  - T08-03
+  - T08-06
+  - T08-08
+  - T07-12
+  - T02-12
+  - T00-04
+  - T00-07
+- id: S27
+  title: 机柜、BMC、固件与健康关联
+  status: planned
+  target_domain_codes:
+  - '01'
+  - '00'
+  - 08
+  selected_revision: null
+  discovery_entries:
+  - title: DMTF Redfish 规范入口
+    url: https://www.dmtf.org/standards/redfish
+    role: discovery_only
+  fetch_targets:
+  - 从已有 DGX/Atlas 样板补充机柜级供电/散热、固件、带外事件和部件映射资料
+  - 规范/schema 与具体设备实际支持分开；核对选定机型文档、错误解释和工具版本，不把空模板记作真实环境档案
+  task_refs:
+  - T01-01
+  - T01-02
+  - T01-06
+  - T01-09
+  - T02-03
+  - T03-03
+  - T05-06
+  - T00-03
+  - T02-12

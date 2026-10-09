@@ -10,6 +10,10 @@
 
 2026-10-08 用户将当前及后续批次的审阅模型更新为 **`gpt-6.1-sol / xhigh`**。batch 10、11、12 的 9 篇正文已由该模型完成审阅，初审发现 13 项（1 P1、9 P2、3 P3），现经修订与[定向复核](docs/research/batch-10-11-12-codex-recheck.md)全部关闭，三批在原审阅范围内通过；见[三批审阅汇总](docs/research/batch-10-11-12-codex-review-summary.md)。正文仍为 `draft / source_checked`，本次未执行真实环境验证。历史报告保留实际模型记录，当前约定见[写作指南](docs/authoring-guide.md#7-批次审阅约定)。
 
+2026-10-08 已完成[原设计 63 个二级主题的覆盖盘点](docs/topic-coverage-audit.md)：12 个已覆盖基础范围、44 个部分覆盖、7 个尚无主干正文。逐主题依据、缺口与补齐建议见[机器可读清单](plans/topic-coverage.yaml)。两轮草稿交付完成与全部主题覆盖完成分别统计。后续已形成[完整覆盖规划](docs/full-coverage-roadmap.md)和[执行清单](plans/full-coverage-backlog.yaml)：85 项内容任务、Batch 13–32 共 20 个后续批次；规划交付时任务均为 planned；实际运行状态由对应交付与审阅记录更新。51 个待补主题与 12 个基础已覆盖主题均有本轮验收范围，141 条原盘点缺口逐项映射。运行前查看[批次依赖与并行规则](docs/batch-dependencies.md)，按具体前置验收解锁任务。
+
+2026-10-09，Batch 13 的四篇新正文与一篇修订完成补充审阅、修订及两轮 `gpt-6.1-sol / xhigh` 定向复核，R01–R06 全部关闭，在该审阅范围内通过；见[来源审计](docs/research/batch-13-source-audit.md)与[复核汇总](docs/research/batch-13-codex-rerecheck.md)。当前目录为 73 content entries / 123 sources；正文仍为 `draft / source_checked`，尚无真实硬件验证。
+
 ## 从这里开始
 
 | 目录 | 内容范围 |
@@ -94,7 +98,7 @@
 
 ## 添加内容
 
-具体来源、获取步骤和执行顺序见[详细填充计划](docs/population-plan.md)，配套[来源获取工作包](plans/source-acquisition.yaml)与[内容任务清单](plans/content-backlog.yaml)。任务状态随交付更新，只有已创建的正文才计入内容产量。
+首两轮记录见[详细填充计划](docs/population-plan.md)与[首轮内容任务清单](plans/content-backlog.yaml)。Batch 13 起按[完整覆盖路线图](docs/full-coverage-roadmap.md)与[执行清单](plans/full-coverage-backlog.yaml)推进，材料由[原来源工作包](plans/source-acquisition.yaml)和[补充工作包](plans/followup-source-acquisition.yaml)管理；真实证据单列[验证任务](plans/validation-backlog.yaml)。任务状态随交付更新，只有已创建的正文才计入内容产量。
 
 先读[写作指南](docs/authoring-guide.md)，再选择模板：
 
