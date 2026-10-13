@@ -4860,3 +4860,252 @@ sources:
     scopes: []
     notes: GitHub 页面未核对许可；仅链接并原创归纳。
   notes: Batch 19 取证轮实开：socket 线程/CPU 绑定、`--bind-to none` 一线排查；tree/ring 流量解释；修复进入 release 未核对（unknown）；TCP 路径结论不外推 IB。
+- id: src.kernel.docs-ext4-v6.16
+  title: Linux 内核文档 v6.16 ext4 文件系统说明
+  url: https://www.kernel.org/doc/html/v6.16/filesystems/ext4/index.html
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: kernel v6.16 HTML 文档；实开 index/overview/about/globals/dynamic（curl 200）
+  license:
+    status: unknown
+    scopes: []
+    notes: kernel.org 文档页未核对许可；仅链接并原创归纳。
+  notes: Batch 20 取证轮实开：overview 含 extents/flex_bg/metadata_csum/64bit/delayed allocation；不据此推断目标现场内核版本行为。
+- id: src.kernel.docs-nfs-v6.16
+  title: Linux 内核文档 v6.16 NFS 客户端/服务器说明
+  url: https://www.kernel.org/doc/html/v6.16/filesystems/nfs/index.html
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: kernel v6.16 HTML 文档；正文实际使用 nfs41-server（实现状态表）、knfsd-stats（pool_stats）、client-identifier（租约锁）；exporting/pnfs/localio/reexport 仅可达性核对，未用于主张
+  license:
+    status: unknown
+    scopes: []
+    notes: kernel.org 文档页未核对许可；仅链接并原创归纳。
+  notes: Batch 20 取证轮实开：内核 NFS 文档入口；挂载/导出选项语义以 nfs(5)/exports(5) 手册页为准，不混用协议规范与实现行为。
+- id: src.ietf.rfc-8881
+  title: RFC 8881 NFSv4.1 协议规范
+  url: https://datatracker.ietf.org/doc/html/rfc8881
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: RFC 8881（NFSv4.1）；实开全文 HTML（curl 200，约 2.6MB），核对 §2 core infra、§12 pNFS、§18 operations 锚点
+  license:
+    status: unknown
+    scopes: []
+    notes: IETF 文本许可未单独核对；仅链接并原创归纳。
+  notes: Batch 20 取证轮实开：协议规范与具体实现（内核客户端/nfs-utils）分开；pNFS 为 OPTIONAL；不以协议文本证明目标现场实现行为。
+- id: src.nfs-utils.nfs-5-man7
+  title: nfs(5) 手册页（nfs-utils，man7.org 快照）
+  url: https://man7.org/linux/man-pages/man5/nfs.5.html
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: 手册页日期 2012-10-09；HTML rendering 2026-09-09（与已登记 fsync-6.19 同快照）；COLOPHON 示上游 nfs-utils Git 快照 2026-08-04（最新提交 2026-07-23）；man-pages-6.19 源码包不含 nfs.5，归属 nfs-utils；release/commit 哈希记 unknown
+  license:
+    status: unknown
+    scopes: []
+    notes: man7 页面未核对许可；仅链接并原创归纳。
+  notes: Batch 20 取证轮实开：含 MOUNT OPTIONS、nfs4 文件系统类型、DATA AND METADATA COHERENCE、acregmin 等；挂载选项语义以此页为准，不外推服务器导出语义。
+- id: src.nfs-utils.exports-5-man7
+  title: exports(5) 手册页（nfs-utils，man7.org 快照）
+  url: https://man7.org/linux/man-pages/man5/exports.5.html
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: 手册页日期 2009-12-31；man7.org 快照，HTML rendering 2026-09-09；同 nfs-utils Git 快照；release/commit 哈希记 unknown
+  license:
+    status: unknown
+    scopes: []
+    notes: man7 页面未核对许可；仅链接并原创归纳。
+  notes: Batch 20 取证轮实开：含 fsid/nohide/crossmnt/subtree_check/async/pnfs 导出选项；服务器导出语义以此页为准，不与客户端挂载选项混用。
+- id: src.util-linux.mount-8-man7
+  title: mount(8) 手册页（util-linux，man7.org 快照）
+  url: https://man7.org/linux/man-pages/man8/mount.8.html
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: util-linux 2.43.devel-1062；手册页日期 2026-08-03；HTML rendering 2026-09-09
+  license:
+    status: unknown
+    scopes: []
+    notes: man7 页面未核对许可；仅链接并原创归纳。
+  notes: Batch 20 取证轮实开：通用挂载流程与文件系统无关选项；NFS 特定选项见 nfs(5)，不以通用页证明文件系统语义。
+- id: src.kernel.docs-nvme-v6.16
+  title: Linux 内核文档 v6.16 NVMe 主机驱动说明
+  url: https://www.kernel.org/doc/html/v6.16/nvme/index.html
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: kernel v6.16 HTML 文档；实开 index/feature-and-quirk-policy（curl 200）
+  license:
+    status: unknown
+    scopes: []
+    notes: kernel.org 文档页未核对许可；仅链接并原创归纳。
+  notes: Batch 20 取证轮实开：Linux NVMe 主机驱动支持 NVMe 规范族设备，quirk 按策略判定；NVMe 联盟规范原文未取（疑需会员登录），规范细节记 unknown。
+- id: src.kernel.admin-guide-ext4-v6.16
+  title: Linux 内核管理指南 v6.16 ext4 挂载选项说明
+  url: https://www.kernel.org/doc/html/v6.16/admin-guide/ext4.html
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: kernel v6.16 HTML 文档；实开全文（curl 200），核对 data=journal/ordered/writeback、commit= 默认 5 s、barrier、auto_da_alloc
+  license:
+    status: unknown
+    scopes: []
+    notes: kernel.org 文档页未核对许可；仅链接并原创归纳。
+  notes: Batch 20 取证轮实开：data=ordered 默认（数据直接写主文件系统、元数据随后提交入日志；数据入日志的是 journal 模式）、commit 默认 5 s（至多丢 5 s 元数据变更）、auto_da_alloc 为默认 ordered 下 replace-via-rename 与 replace-via-truncate 启发式（防 zero-length），不能替代文件与目录 fsync。
+- id: src.linux-man-pages.rename-6.19
+  title: Linux man-pages 6.19 rename(2)
+  url: https://man7.org/linux/man-pages/man2/rename.2.html
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: man-pages 6.19; manual date 2026-02-08; HTML generated 2026-09-09
+  license:
+    status: unknown
+    scopes: []
+    notes: man7 页面未核对许可；仅链接并原创归纳。
+  notes: Batch 20 取证轮实开：newpath 原子替换（存在 oldpath/newpath 同指窗口）；跨文件系统 EXDEV；NFS 上报错不代表未执行（重传）。
+- id: src.linux-man-pages.flock-6.19
+  title: Linux man-pages 6.19 flock(2)
+  url: https://man7.org/linux/man-pages/man2/flock.2.html
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: man-pages 6.19; manual date 2026-02-08; HTML generated 2026-09-09
+  license:
+    status: unknown
+    scopes: []
+    notes: man7 页面未核对许可；仅链接并原创归纳。
+  notes: Batch 20 取证轮实开：advisory 锁语义；NFS 客户端自 2.6.12 起把 flock 模拟为整文件 fcntl 字节范围锁，两类锁在 NFS 上互相作用（以 nfs(5)/fcntl_locking 为准）。
+- id: src.linux-man-pages.fcntl-6.19
+  title: Linux man-pages 6.19 fcntl(2)
+  url: https://man7.org/linux/man-pages/man2/fcntl.2.html
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: man-pages 6.19; manual date 2026-02-08; HTML generated 2026-09-09
+  license:
+    status: unknown
+    scopes: []
+    notes: man7 页面未核对许可；仅链接并原创归纳。
+  notes: Batch 20 取证轮实开：man-pages 6.19 中 fcntl(2) 仅为命令索引（Advisory record locking 下只列 F_SETLK(2const) 等链接），锁语义正文见 fcntl_locking(2)（另行登记 src.linux-man-pages.fcntl-locking-6.19）；本条目保留为索引定位，不作语义证据。
+- id: src.linux-man-pages.fcntl-locking-6.19
+  title: Linux man-pages 6.19 fcntl_locking(2) 记录锁语义
+  url: https://man7.org/linux/man-pages/man2/fcntl_locking.2.html
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: man-pages 6.19; manual date 2026-01-23; HTML generated 2026-09-09
+  license:
+    status: unknown
+    scopes: []
+    notes: man7 页面未核对许可；仅链接并原创归纳。
+  notes: Batch 20 取证轮实开：传统记录锁随进程，进程终止释放，关闭任一指向该文件的 fd 即释放该进程全部锁（OFD 锁仅最后关闭释放，不适用此条）；强制锁自 Linux 5.15 起不再支持；NFS 丢锁后 I/O 失败直至关闭重开（nfs.recover_lost_locks 可恢复旧行为）；Linux 服务器 nfsv4leasetime 默认 90 s。
+- id: src.ceph.docs-rgw-s3-squid
+  title: Ceph Squid RGW S3 API 文档（serviceops/bucketops/objectops）
+  url: https://docs.ceph.com/en/squid/radosgw/s3/
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: Ceph Squid（v19）分支文档（取证日 2026-10-13），点版本 unknown；实开 s3 索引/serviceops/bucketops/objectops（curl 200），核对 multipart/ETag/versionId/Retention 条目；点版本行为锚见 src.ceph.repo-v19.2.7
+  license:
+    status: identified
+    scopes:
+    - scope: 版本化文档页面；图片/第三方引用另计
+      identifier: CC-BY-SA-3.0
+      url: https://docs.ceph.com/en/squid/
+    notes: 页脚声明 CC BY-SA 3.0（Ceph authors）；本库只链接并原创归纳。
+  notes: Batch 20 取证轮实开：RGW S3 接口范围以 Squid 版文档为准；bucketops 把 List 结果 ETag 写为 "An MD-5 hash of the object"，本库不把它作内容哈希使用；latest/dev 文档不证明稳定版行为；兼容模型见正文 §2 末行（Features 表＋扩展），不等同 AWS S3。
+- id: src.lustre.ops-manual-2x
+  title: Lustre Operations Manual（Release 2.x，doc.lustre.org 快照）
+  url: https://doc.lustre.org/lustre_manual.xhtml
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: Release 2.x Operations Manual（Oracle/Intel 版权，2.x 滚动手册，含 Introduced in 2.5–2.17 逐特性标记）；快照实开全文约 2.4MB（curl 200），核对 striping/DoM/FLR/llite/ldlm 章节与 §23.5.1 Lustre Checksums（in-memory/wire 两类、读写两向、五次重试后 EIO、默认 adler32；ldiskfs 范围）；稳定锚取 LTS 2.15.x（见 src.lustre.release-info-wiki），本文主张只用 2.15.x 及以前引入特性
+  license:
+    status: unknown
+    scopes: []
+    notes: Oracle/Intel 版权声明；许可未核对，只链接并原创归纳。
+  notes: Batch 20 取证轮实开：命名空间/分条/元数据与数据路径/客户端缓存与锁/一致性以本手册为准；3FS 不在本期范围。
+- id: src.ceph.repo-v19.2.7
+  title: ceph/ceph 固定 tag v19.2.7（RGW 实现/测试定位）
+  url: https://github.com/ceph/ceph/tree/v19.2.7/src/rgw
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: tag v19.2.7（tag 对象 c24c6707，所指 commit 9ec952b9，经 ls-remote 两行核对；此前登记误把 tag 对象当 commit，已纠正）；实开核对 src/rgw/rgw_op.cc（RGWCompleteMultipart/MultipartUpload/etag）与 rgw_rest_s3.cc（versionId）；定位实现位置，未逐行审计
+  license:
+    status: unknown
+    scopes: []
+    notes: 仓库根 LICENSE 未在本轮核对；只链接并原创归纳，不复制源码。
+  notes: Batch 20 取证轮实开：Squid 点版本实现锚；文档行为仍以 Squid 分支文档为准；测试文件未定位（unknown）。
+- id: src.ceph.docs-rgw-index-squid
+  title: Ceph Squid RGW 总览与部署组成入口
+  url: https://docs.ceph.com/en/squid/radosgw/
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: Ceph Squid（v19）分支文档；实开索引（curl 200），核对 librados 网关定位、HTTP 前端、池配置、bucket 索引 resharding、multisite/zone 条目
+  license:
+    status: identified
+    scopes:
+    - scope: 版本化文档页面；图片/第三方引用另计
+      identifier: CC-BY-SA-3.0
+      url: https://docs.ceph.com/en/squid/
+    notes: 页脚声明 CC BY-SA 3.0；本库只链接并原创归纳。
+  notes: Batch 20 取证轮实开：部署组成入口；守护进程/池/索引细节未逐页核对处记 unknown。
+- id: src.ceph.docs-rgw-s3-latest-boundary
+  title: Ceph latest RGW S3 objectops（仅反例边界）
+  url: https://docs.ceph.com/en/latest/radosgw/s3/objectops/
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: latest 开发版文档；实开（curl 200），仅核对页首 development 提示与 Squid 文本分叉存在
+  license:
+    status: identified
+    scopes:
+    - scope: 版本化文档页面；图片/第三方引用另计
+      identifier: CC-BY-SA-3.0
+      url: https://docs.ceph.com/en/latest/
+    notes: 页脚声明 CC BY-SA 3.0；本库只链接并原创归纳。
+  notes: Batch 20 取证轮实开：仅用于"latest 不证明 Squid"边界；不作任何行为证据。
+- id: src.lustre.release-info-wiki
+  title: Lustre Release Information（LTS/主线版本映射）
+  url: http://wiki.lustre.org/Lustre_Release_Information
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: wiki 快照实开（curl 200）；核对 Current LTS Release 2.15.8（Released December 2, 2025）、Current Major 2.17.0
+  license:
+    status: unknown
+    scopes: []
+    notes: wiki 许可未核对；只链接并原创归纳。
+  notes: Batch 20 取证轮实开：仅用于 LTS 2.15.x 稳定锚映射；不作行为证据。
+- id: src.hf.huggingface-hub-v0.33.0
+  title: huggingface_hub v0.33.0（下载/缓存实现样板）
+  url: https://github.com/huggingface/huggingface_hub/tree/v0.33.0
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: tag v0.33.0（annotated tag 对象 feaa503a，所指 commit d5dff4ef）；LICENSE Apache-2.0 已核对；下载指南用 v0.33.0 版页面（[v0.33.0/en/guides/download](https://huggingface.co/docs/huggingface_hub/v0.33.0/en/guides/download)，横幅自述 v0.33.0；latest 页另有 dry_run，本版无），核对 snapshot_download/revision/缓存
+  license:
+    status: identified
+    scopes:
+    - scope: 仓库源码与文档；第三方依赖另计
+      identifier: Apache-2.0
+      url: https://github.com/huggingface/huggingface_hub/blob/v0.33.0/LICENSE
+    notes: LICENSE 原文已打开核对（Apache 2.0）；本库只链接并原创归纳。
+  notes: Batch 20 取证轮实开：revision 钉版本、snapshot 下载、本地缓存语义；实现层（file_download.py@commit，plain HTTP 路径）：续传默认开（Range L406-407、重试 5 次 L500-517、.incomplete L1160-1163、resume_download 已弃用 L942-947）、完成判据仅长度（L444-445/485/522，全文无 hashlib/fsync）、LFS ETag sha256 本地不重算（L232-234/1122）、快照按 commit 下载（_snapshot L283/305；50k 以上列表按原 revision，L264-267）、测试 L514/536/798-806（L804 缺 assert，只作行为样例）；磁盘空间不足仅警告（`warnings.warn` 在 L799，检查在下载前；L784-786 仅函数签名，非失败点）。
+- id: src.hf.safetensors-v0.7.0
+  title: safetensors v0.7.0（制品格式样板）
+  url: https://github.com/safetensors/safetensors/tree/v0.7.0
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: tag v0.7.0（轻量 tag，SHA fa27fa83；仓库已迁 safetensors/safetensors 组织，原地址 301 重定向；LICENSE Apache-2.0 已核对）；README 实开（curl 200），核对 8 字节头＋JSON header（仅 dtype/shape/data_offsets/__metadata__，无校验和字段）＋数据区；tensor.rs 错误枚举（MAX_HEADER_SIZE/InvalidHeaderStart/InvalidOffset/MetadataIncompleteBuffer L10/20-45/389）
+  license:
+    status: identified
+    scopes:
+    - scope: 仓库源码与文档；第三方依赖另计
+      identifier: Apache-2.0
+      url: https://github.com/safetensors/safetensors/blob/v0.7.0/LICENSE
+    notes: LICENSE 原文已打开核对（Apache 2.0）；本库只链接并原创归纳。
+  notes: Batch 20 取证轮实开：data_offsets 为单文件内张量区间（README 原文），跨文件分片索引关联未取源（unknown）；header 字段仅 dtype/shape/data_offsets/__metadata__，格式本身无校验和字段（库实现或外部工具另有校验仍 unknown）；读写实现测试未定位（unknown）。
+- id: src.ceph.docs-bluestore-squid
+  title: Ceph Squid BlueStore 配置参考（checksum 节）
+  url: https://docs.ceph.com/en/squid/rados/configuration/bluestore-config-ref/
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: Ceph Squid（v19）分支文档；实开（curl 200），核对 Checksums 节（全元数据＋全数据 checksum，默认 crc32c，32-bit 漏检约四十亿分之一表述）
+  license:
+    status: identified
+    scopes:
+    - scope: 版本化文档页面；图片/第三方引用另计
+      identifier: CC-BY-SA-3.0
+      url: https://docs.ceph.com/en/squid/
+    notes: 页脚声明 CC BY-SA 3.0；本库只链接并原创归纳。
+  notes: Batch 20 取证轮实开：随机错误漏检量级来源；读路径修复见 health-checks（已核对 OSD_TOO_MANY_REPAIRS/立即修复）；不证明 RGW 语义层。

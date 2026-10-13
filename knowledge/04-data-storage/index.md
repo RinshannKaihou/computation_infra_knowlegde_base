@@ -8,7 +8,7 @@ platforms: [generic]
 source_refs: [src.ascend.mind-cluster, src.stas.ml-engineering, src.infrasys.aiinfra]
 updated_at: "2026-10-08"
 summary: 组织数据加载、模型和 checkpoint I/O，以及完整性、持久化和存储异常。
-related_ids: [data-storage.training-data-path, hardware.resource-topology, cluster-platform.index, training.index, inference.index, reliability.index, data-storage.checkpoint-durability, data-storage.data-starvation-triage, data-storage.checkpoint-slow-io-triage, data-storage.checkpoint-integrity-evidence]
+related_ids: [data-storage.training-data-path, hardware.resource-topology, cluster-platform.index, training.index, inference.index, reliability.index, data-storage.checkpoint-durability, data-storage.data-starvation-triage, data-storage.checkpoint-slow-io-triage, data-storage.checkpoint-integrity-evidence, data-storage.local-and-shared-storage, data-storage.object-and-parallel-storage]
 ---
 
 # 04 数据路径与存储系统
@@ -25,7 +25,11 @@ related_ids: [data-storage.training-data-path, hardware.resource-topology, clust
 
 - [Checkpoint 慢写与恢复 I/O 诊断指南](checkpoint-slow-io-triage.md)：把保存/恢复慢定位到状态收集、staging 拷贝、后台写入、内核 writeback/fsync、存储后端或读路径。
 
-- [Checkpoint 完整性与校验证据](checkpoint-integrity-evidence.md)：容器格式、框架元数据、存储层 scrub、应用自检四层校验各自能发现什么；DCP 2.6 无应用层校验和、MindIO checker 校验文件个数、Ceph deep scrub 默认不自动修复。
+- [Checkpoint 完整性与校验证据](checkpoint-integrity-evidence.md)：容器格式、框架元数据、存储层 scrub、应用自检四层校验各自能发现什么，外加校验原语对照、选定后端读路径责任、验证链与官方反例（T04-05 修订，审阅中）；DCP 2.6 无应用层校验和、MindIO checker 校验文件个数、Ceph deep scrub 默认不自动修复。
+
+- [本地与共享文件存储版本化参考](local-and-shared-storage.md)：Linux v6.16 ext4/NVMe 与 NFSv4.1（RFC 8881＋nfs-utils 手册页）双样板，接口/缓存/一致性/持久性对照与负载选型。
+
+- [对象与并行存储版本化参考](object-and-parallel-storage.md)：Ceph Squid RGW S3 与 Lustre 2.x 双样板，对象语义/分条/锁/一致性对照与最小验证设计。
 
 ## 本章范围
 
@@ -34,8 +38,8 @@ related_ids: [data-storage.training-data-path, hardware.resource-topology, clust
 ## 二级主题地图
 
 - **04.1 数据集、预处理、加载与缓存** — 已有[训练数据路径草稿](training-data-path.md)，具体配置与验证待补充。
-- **04.2 本地、共享、对象与并行存储** — 待建设。
-- **04.3 模型与 Checkpoint 的读写、传输和持久化** — 已有[持久化边界](checkpoint-durability.md)与[慢写/恢复 I/O 诊断](checkpoint-slow-io-triage.md)，具体后端与操作验证待补。
+- **04.2 本地、共享、对象与并行存储** — 已有[本地与共享文件存储参考](local-and-shared-storage.md)（T04-02 已通过）与[对象与并行存储参考](object-and-parallel-storage.md)（T04-03 已交付草稿，审阅中）；主题验收留待 Batch 21。
+- **04.3 模型与 Checkpoint 的读写、传输和持久化** — 已有[持久化边界](checkpoint-durability.md)与[慢写/恢复 I/O 诊断](checkpoint-slow-io-triage.md)，新增[制品传输发布读回](artifact-transfer-and-publication.md)（T04-04 草稿，审阅中）；具体后端与操作验证待补。
 - **04.4 数据与文件完整性、版本和一致性** — 已有[Checkpoint 完整性与校验证据](checkpoint-integrity-evidence.md)（四层校验边界）；[持久化边界](checkpoint-durability.md)另有部分完整性说明，版本管理与一致性专题待补。
 - **04.5 I/O 性能、数据饥饿与长尾** — 已有[分阶段观测与判断](training-data-path.md)和[饥饿诊断指南](data-starvation-triage.md)；性能基线和案例待补充。
 - **04.6 存储异常、恢复与验证** — 待建设。
