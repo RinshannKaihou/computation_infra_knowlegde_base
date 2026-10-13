@@ -8,7 +8,7 @@ platforms: [generic]
 source_refs: [src.ascend.mind-cluster, src.stas.ml-engineering, src.infrasys.aiinfra]
 updated_at: "2026-10-08"
 summary: 组织数据加载、模型和 checkpoint I/O，以及完整性、持久化和存储异常。
-related_ids: [data-storage.training-data-path, hardware.resource-topology, cluster-platform.index, training.index, inference.index, reliability.index, data-storage.checkpoint-durability, data-storage.data-starvation-triage, data-storage.checkpoint-slow-io-triage, data-storage.checkpoint-integrity-evidence, data-storage.local-and-shared-storage, data-storage.object-and-parallel-storage]
+related_ids: [data-storage.training-data-path, hardware.resource-topology, cluster-platform.index, training.index, inference.index, reliability.index, data-storage.checkpoint-durability, data-storage.data-starvation-triage, data-storage.checkpoint-slow-io-triage, data-storage.checkpoint-integrity-evidence, data-storage.local-and-shared-storage, data-storage.object-and-parallel-storage, data-storage.storage-workload-baselines, data-storage.storage-client-backend-recovery]
 ---
 
 # 04 数据路径与存储系统
@@ -41,8 +41,8 @@ related_ids: [data-storage.training-data-path, hardware.resource-topology, clust
 - **04.2 本地、共享、对象与并行存储** — 已有[本地与共享文件存储参考](local-and-shared-storage.md)（T04-02 已通过）与[对象与并行存储参考](object-and-parallel-storage.md)（T04-03 已交付草稿，审阅中）；主题验收留待 Batch 21。
 - **04.3 模型与 Checkpoint 的读写、传输和持久化** — 已有[持久化边界](checkpoint-durability.md)与[慢写/恢复 I/O 诊断](checkpoint-slow-io-triage.md)，新增[制品传输发布读回](artifact-transfer-and-publication.md)（T04-04 草稿，审阅中）；具体后端与操作验证待补。
 - **04.4 数据与文件完整性、版本和一致性** — 已有[Checkpoint 完整性与校验证据](checkpoint-integrity-evidence.md)（四层校验边界）；[持久化边界](checkpoint-durability.md)另有部分完整性说明，版本管理与一致性专题待补。
-- **04.5 I/O 性能、数据饥饿与长尾** — 已有[分阶段观测与判断](training-data-path.md)和[饥饿诊断指南](data-starvation-triage.md)；性能基线和案例待补充。
-- **04.6 存储异常、恢复与验证** — 待建设。
+- **04.5 I/O 性能、数据饥饿与长尾** — 已有[分阶段观测与判断](training-data-path.md)和[饥饿诊断指南](data-starvation-triage.md)，新增[负载容量长尾基线口径](storage-workload-baselines.md)（T04-06 草稿，审阅中）；案例待补充。
+- **04.6 存储异常、恢复与验证** — 新增[存储客户端后端恢复](storage-client-backend-recovery.md)（T04-07 草稿，审阅中；与计划 target 对齐）。
 
 ## 内容边界
 

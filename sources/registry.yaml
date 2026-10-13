@@ -5109,3 +5109,95 @@ sources:
       url: https://docs.ceph.com/en/squid/
     notes: 页脚声明 CC BY-SA 3.0；本库只链接并原创归纳。
   notes: Batch 20 取证轮实开：随机错误漏检量级来源；读路径修复见 health-checks（已核对 OSD_TOO_MANY_REPAIRS/立即修复）；不证明 RGW 语义层。
+- id: src.fio.repo-3.43
+  title: fio fio-3.43（负载与计时/校验样板）
+  url: https://github.com/axboe/fio/tree/fio-3.43
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: tag fio-3.43（tag 对象 bef04e7b，所指 commit d2dcd7e0；LICENSE GPL-2.0 已核对）；HOWTO.rst 实开（curl 200），核对 http/rados 引擎、slat/clat、rate/latency_target、terse、client/server、元数据引擎条目；io_u.c 取样行 L2097/L2102
+  license:
+    status: identified
+    scopes:
+    - scope: 仓库源码与文档；第三方依赖另计
+      identifier: GPL-2.0
+      url: https://github.com/axboe/fio/blob/fio-3.43/COPYING
+    notes: COPYING 原文已打开核对（GPL v2）；本库只链接并原创归纳。
+  notes: Batch 21 取证轮实开：块/文件负载矩阵参数、verify 校验、延迟分布、预热与输出格式以 HOWTO 为准；工具跑通不构成训练端到端供给证据。
+- id: src.ceph.docs-rados-man-squid
+  title: Ceph Squid rados(8) 手册页（含 bench 选项）
+  url: https://docs.ceph.com/en/squid/man/8/rados/
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: Ceph Squid（v19）分支文档；实开（curl 200），核对 bench 写基准选项（block/object 大小、seq/rand、omap）
+  license:
+    status: identified
+    scopes:
+    - scope: 版本化文档页面；图片/第三方引用另计
+      identifier: CC-BY-SA-3.0
+      url: https://docs.ceph.com/en/squid/
+    notes: 页脚声明 CC BY-SA 3.0；本库只链接并原创归纳。
+  notes: Batch 21 取证轮实开：RADOS 级基准入口；RGW 侧官方负载基准文档未找到（unknown），第三方 S3 压测工具不引用。
+- id: src.ceph.docs-troubleshooting-pg-squid
+  title: Ceph Squid PG 故障排查（inconsistent 定位与修复）
+  url: https://docs.ceph.com/en/squid/rados/troubleshooting/troubleshooting-pg/
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: Ceph Squid（v19）分支文档；实开（curl 200），核对 list-inconsistent-pg/obj、pg repair、read_error 物理错误指向、auto_repair 条件
+  license:
+    status: identified
+    scopes:
+    - scope: 版本化文档页面；图片/第三方引用另计
+      identifier: CC-BY-SA-3.0
+      url: https://docs.ceph.com/en/squid/
+    notes: 页脚声明 CC BY-SA 3.0；本库只链接并原创归纳。
+  notes: Batch 21 取证轮实开：PG 不一致定位链与修复警告（覆盖写风险）；修复前证据保留要求见正文。
+- id: src.ceph.blog-manual-repair-object-2015
+  title: Ceph 官方博客手动修复对象案例（2015，digest 不一致）
+  url: https://ceph.com/en/news/blog/2015/ceph-manually-repair-object/
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: 2015-04-27 官方博客；实开（curl 200），核对 scrub 报错→health detail 定位→OSD 日志 digest 不一致→find 定位对象→停 OSD→flush journal→移走坏对象→pg repair 链条
+  license:
+    status: unknown
+    scopes: []
+    notes: 博客页许可未核对；只链接并原创归纳，不复制日志原文。
+  notes: Batch 21 取证轮实开：上游故障/修复案例样板（来源整理，非本库复现）；旧版本操作（flush-journal 等）只作流程参考，不当作现版本命令保证。
+- id: src.ceph.test-scrub-repair-v19.2.7
+  title: ceph/ceph v19.2.7 osd-scrub-repair.sh 回归测试
+  url: https://github.com/ceph/ceph/blob/v19.2.7/qa/standalone/scrub/osd-scrub-repair.sh
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: tag v19.2.7（所指 commit 9ec952b9）；实开（curl 200，6258 行，`wc -l`，原文以换行结尾），核对 TEST_corrupt_and_repair_replicated L93（#8914 注释 L106）与 corrupt_and_repair_one L225-244（删除→repair→list-attrs→get→diff）
+  license:
+    status: unknown
+    scopes: []
+    notes: 仓库根 LICENSE 未在本轮核对；只链接并原创归纳。
+  notes: Batch 21 取证轮实开：正式上游修复测试样板；其余测试函数未审计；tracker #8914 未打开。
+- id: src.ceph.docs-troubleshooting-osd-squid
+  title: Ceph Squid OSD 故障排查（FileStore 声明与维护流程）
+  url: https://docs.ceph.com/en/squid/rados/troubleshooting/troubleshooting-osd/
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: Ceph Squid（v19）分支文档；实开（curl 200），核对 FileStore 不支持声明、add-noout/set-group noout、集群级 noout 为 thought exercise、停止后 PG degraded
+  license:
+    status: identified
+    scopes:
+    - scope: 版本化文档页面；图片/第三方引用另计
+      identifier: CC-BY-SA-3.0
+      url: https://docs.ceph.com/en/squid/
+    notes: 页脚声明 CC BY-SA 3.0；本库只链接并原创归纳。
+  notes: Batch 21 取证轮实开：维护流程与 FileStore 边界；未验证 Squid release notes 原文。
+- id: src.ceph.docs-health-checks-squid
+  title: Ceph Squid 健康检查（含 OSD_FULL/PG_DAMAGED/修复计数）
+  url: https://docs.ceph.com/en/squid/rados/operations/health-checks/
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: Ceph Squid（v19）分支文档；实开（curl 200），核对 OSD_FULL/NEARFULL/POOL_FULL、PG_DAMAGED、OSD_TOO_MANY_REPAIRS
+  license:
+    status: identified
+    scopes:
+    - scope: 版本化文档页面；图片/第三方引用另计
+      identifier: CC-BY-SA-3.0
+      url: https://docs.ceph.com/en/squid/
+    notes: 页脚声明 CC BY-SA 3.0；本库只链接并原创归纳。
+  notes: Batch 21 取证轮实开：满/修复类健康检查入口；具体 thresholds 未逐项核对处 unknown。
