@@ -1,0 +1,95 @@
+---
+id: communication.interconnect-paths
+title: 节点内、节点间与超节点互联路径参考
+type: reference
+domain: communication
+status: draft
+platforms: [generic, nvidia, ascend]
+source_refs:
+  - src.nvidia.dgx-h100-h200-user-guide-2026-01-26
+  - src.nvidia.nvlink-nvswitch-page-2026-10-09
+  - src.nvidia.hopper-architecture-page-2026-10-09
+  - src.nvidia.h100-product-page-2026-10-09
+  - src.nvidia.dgx-superpod-h100-ra-arch-2026-10-09
+  - src.nvidia.dgx-superpod-h100-ra-fabrics-2026-10-09
+  - src.nvidia.nvidia-smi-manual-2026-10-09
+  - src.nvidia.nccl-user-guide-2.27.5
+  - src.huawei.atlas-800t-a2-product-2026-09-29
+  - src.ascend.cann-aclrt-devices-topo-2026-10-09
+  - src.ascend.mindcluster-affinity-principles-730-2026-10-09
+  - src.ascend.hccl-intro-link-types-2026-10-09
+  - src.ascend.mind-cluster-v26.1.1
+  - src.huawei.atlas-900-a3-superpod-product-2026-10-09
+  - src.huawei.atlas-900-a3-superpod-user-guide-13-2026-06-25
+  - src.huawei.atlas-900-a3-superpod-maintenance-guide-14-2026-08-18
+  - src.huawei.atlas-900-a3-superpod-brochure-26h1
+  - src.huawei.lingqu-630-v1-user-guide-03-2026-01-30
+updated_at: "2026-10-09"
+summary: "以 DGX H100（NVLink 4 代/NVSwitch）与 Atlas 800T A2 + Atlas 900 A3 SuperPoD 为两个独立样板，给出端口—设备—交换结构—网络路径—共享故障域的核对表、软件发现视图到资产记录的映射、异常候选与最小路径验证计划；文档带宽口径与作业可用带宽分开，Ascend 缺口如实保留 unknown。"
+related_ids:
+  - hardware.resource-topology
+  - communication.collectives-and-rank-progress
+  - communication.bandwidth-baselines
+  - communication.bandwidth-degradation-triage
+  - communication.rdma-baseline-and-congestion-triage
+  - communication.ethernet-ib-roce-rdma
+applicability:
+  environment_refs: []
+  notes: "尚无环境档案：DGX H100 样板固定用户指南（2026-01-26 更新）与 NVLink 产品页（2026-10-09 观察）；Ascend 样板固定 800T A2 产品页、A3 SuperPoD 用户指南组与 LingQu 630 V1 指南；目标机型/互联代次需另行固定。"
+verification:
+  status: source_checked
+  evidence_refs:
+    - src.nvidia.dgx-h100-h200-user-guide-2026-01-26
+    - src.ascend.mindcluster-affinity-principles-730-2026-10-09
+    - src.ascend.cann-aclrt-devices-topo-2026-10-09
+  notes: "对照第十八批取证记录（docs/research/batch-18-interconnect-paths-sources.md）所列固定版本来源核对；路径图为来源整理示意，未复制官方拓扑图；未在任何互联硬件上执行验证。"
+---
+
+# 节点内、节点间与超节点互联路径参考
+
+## 范围与阅读方式
+
+本文只做一件事：给出"作业 traffic 实际经过哪些物理段、每段归谁管、坏了看哪里"的核对表。两个样板各自独立——NVIDIA 侧 DGX H100（SXM 形态，NVLink 4 代/NVSwitch），Ascend 侧 800T A2 节点 + Atlas 900 A3 SuperPoD。分层见[板卡到超节点组成](../01-hardware/resource-topology.md)；集合通信语义见[集合通信与 rank 进度](collectives-and-rank-progress.md)；基线与退化诊断见[带宽基线](bandwidth-baselines.md)与[退化诊断](bandwidth-degradation-triage.md)。
+
+硬边界：**文档标称带宽 ≠ 作业可用带宽**。H100 SXM 版 NVLink 900GB/s 与 H100 NVL 版 600GB/s 是两种形态（[H100 产品页](https://www.nvidia.com/en-us/data-center/h100/)），DGX H100 样板只取前者；作业可用值归基线轨道（T03-03）的实测口径，本文只记录文档口径。
+
+## 样板 N：DGX H100（节点内 + 节点间 fabric）
+
+机型与互联代次固定：8×H100、节点内 900GB/s GPU-to-GPU、4×NVSwitch 芯片（[DGX H100/H200 用户指南](https://docs.nvidia.com/dgx/dgxh100-user-guide/introduction-to-dgxh100.html)，2026-01-26 更新；指南把 NVSwitch 行写成 "4 x 4th generation NVLinks"，引用时照录原文、不改写代次归属）。NVLink 代次锚定（4 代=900GB/s、18 links/GPU，页脚 preliminary 可变）见 [NVLink 产品页](https://www.nvidia.com/en-us/data-center/nvlink/)。
+
+| 段 | 路径 | 证据位置 |
+|---|---|---|
+| 设备直连/交换互联 | GPU0–7 ↔ 4×NVSwitch（节点内交换） | 指南组件表 + System Topology 图节 |
+| PCIe | GPU ↔ CPU（Xeon 8480C）经 PCIe Gen5（128GB/s） | [H100 产品页](https://www.nvidia.com/en-us/data-center/h100/) |
+| NIC/rail | GPU→CX 卡→OSFP 端口（Table 5 网络端口映射 + Table 6 Network Modules：OSFP/Slot/PCI Bus/IB/Eth/RDMA 四名并列，逐行引用） | 指南 Table 5/6 |
+| 节点间 fabric | compute IB / storage IB / in-band / OOB 四套 fabric 分立；每 32 节点 rail-aligned、同 SU 同 rail 一跳、跨 rail 过 spine | [SuperPOD RA Network Fabrics](https://docs.nvidia.com/dgx-superpod/reference-architecture-scalable-infrastructure-h100/latest/network-fabrics.html)（Last updated Nov 19, 2025） |
+| 超节点范围 | 4 SU=128 DGX 节点起，可扩至 64 SU/2000+ 节点（RA 示例规模，非固定定义） | [SuperPOD RA Architecture](https://docs.nvidia.com/dgx-superpod/reference-architecture-scalable-infrastructure-h100/latest/dgx-superpod-architecture.html) |
+
+共享故障域（候选，非根因）：单 NVSwitch 芯片；单 CX 卡（双 OSFP 端口共享，Table 6 CX0/CX1 复用行）；单 PSU 组（4+2）；storage fabric 约 4:3 轻超配（拥塞候选）。
+
+软件发现视图 → 资产记录：`nvidia-smi topo -m`（PCIe 路径/BDF/NUMA，不反推物理边）、`nvidia-smi nvlink --status`（链路 ID/两端/状态，协商值与标称分列）、`nvidia-smi -q` Platform Info（Chassis/Slot/Tray/Host ID/GPU Fabric GUID，稳定 ID 优先）、NCCL `NCCL_TOPO_DUMP_FILE` + /sys（虚拟拓扑降级为"次优假设"）、`lspci -vvv` ACS 检查（SrcValid+ 记异常候选）。依据分别为 [nvidia-smi 手册](https://docs.nvidia.com/deploy/nvidia-smi/index.html)（无版本号，引用带观察日期）与 [NCCL 2.27.5 troubleshooting](https://docs.nvidia.com/deeplearning/nccl/archives/nccl_2275/user-guide/docs/troubleshooting.html)（Topology detection/GPU Direct/env 三节；`topo -m` 语句不在 2.27.5 页内，不引用）。
+
+## 样板 A：800T A2 节点 + A3 SuperPoD（稀疏版）
+
+机型锚点：800T A2 主机/网络/供电规格（4×鲲鹏920、8×200GE QSFP RoCE、PCIe 4.0×3，[产品页](https://e.huawei.com/cn/products/computing/ascend/atlas-800t-a2)）；**NPU 数量、单 NPU 内存、NPU—CPU/HCCS 边未知**（产品页无，用户指南 support 页不可达）。
+
+| 段 | 路径 | 证据位置 |
+|---|---|---|
+| 主机扩展 | CPU — PCIe 4.0 — 8×200GE QSFP（RoCE） | 产品页技术规格区 |
+| 链路类型候选集 | HCCS / RoCE / PCIe / UB（类型分层，非某型号拓扑） | [HCCL 简介](https://www.hiascend.com/document/detail/en/CANNCommunityEdition/910/commlib/hcclug/docs/en/user_guide/hccl_intro.md)（A2 支持范围限三款硬件） |
+| 软件发现 | `aclrtGetDevicesTopo` 七值枚举 HCCS(0x01)/PIX/PHB/SYS/SIO/HCCS_SW(0x40)/PIB（保留不支持） | [CANN 900 aclrt API 页](https://www.hiascend.com:6066/doc_center/source/en/CANNCommunityEdition/900/API/runtimeapi/aclcppdevg_03_1895.html)（适用表含 A2/A3 全系） |
+| 超节点 | 12×计算柜 + 4×总线设备柜、384 NPU 物理上限、L1 总线板 / L2 LingQu 630 7 平面、"理论达到"双向 784GB/s | A3 SuperPoD 用户指南组（T01-05 已登记，复用不重取；"取决于冗余设计"限定必引） |
+| L2 端口 | LingQu 630 V1 48×QSFP-DD-400G（2×200G）、电源 1+1/风扇 3+1 | [LingQu 630 V1 用户指南 03](https://support.huawei.com/enterprise/zh/doc/EDOC1100463086)（T01-05 已登记；柜级 672×400G 口径并列不合并） |
+
+代际对照（灰色虚线，不可比）：910 代每设备 2×HCCS ring、各 ring 4 处理器、同 ring 可通/跨 ring 不可、单 pod ≤4 NPU 须同 ring；**800T A2 训练服务器与 900 A2 PoD 基本单元不支持 NPU 亲和调度**（[MindCluster 730 亲和原则页](https://www.hiascend.com/document/detail/en/mindcluster/730/clustersched/schedulingug/dl_affinity_0004.html)，肯定句限 910 代，否定句逐字引用）。910 代数字不得填入 A2 任何字段。
+
+## 最小路径验证计划（待执行）
+
+NVIDIA 侧：两节点 `ib_write_bw` + `nvidia-smi topo/nvlink` 快照 + NCCL TOPO dump 三件套。Ascend 侧：`aclrtGetDevicesTopo` 全对矩阵 + HCCL 性能测试工具（既有 CANN 9.1.X 登记）+ npu-smi 健康快照（不作拓扑证据）。放置取舍：同 rail/同 ring 共置降跳数 vs 爆炸半径集中；成本以 SU 整配、leaf-spine 预布线为准。不填执行结果。
+
+## 来源与更新范围
+
+- NVIDIA（固定机型与代次）：[DGX H100/H200 用户指南](https://docs.nvidia.com/dgx/dgxh100-user-guide/introduction-to-dgxh100.html)、[NVLink 页](https://www.nvidia.com/en-us/data-center/nvlink/)、[Hopper 架构页](https://www.nvidia.com/en-us/data-center/technologies/hopper-architecture/)、[H100 页](https://www.nvidia.com/en-us/data-center/h100/)、[SuperPOD RA 架构](https://docs.nvidia.com/dgx-superpod/reference-architecture-scalable-infrastructure-h100/latest/dgx-superpod-architecture.html)与[网络 fabric](https://docs.nvidia.com/dgx-superpod/reference-architecture-scalable-infrastructure-h100/latest/network-fabrics.html)、[nvidia-smi 手册](https://docs.nvidia.com/deploy/nvidia-smi/index.html)、[NCCL 2.27.5 troubleshooting](https://docs.nvidia.com/deeplearning/nccl/archives/nccl_2275/user-guide/docs/usage/troubleshooting.html)。
+- Ascend（各绑定机型/版本）：[800T A2 产品页](https://e.huawei.com/cn/products/computing/ascend/atlas-800t-a2)、[aclrtGetDevicesTopo](https://www.hiascend.com:6066/doc_center/source/en/CANNCommunityEdition/900/API/runtimeapi/aclcppdevg_03_1895.html)、[MindCluster 730 亲和原则](https://www.hiascend.com/document/detail/en/mindcluster/730/clustersched/schedulingug/dl_affinity_0004.html)、[HCCL 简介](https://www.hiascend.com/document/detail/en/CANNCommunityEdition/910/commlib/hcclug/docs/en/user_guide/hccl_intro.md)、A3 SuperPoD 用户指南组与 LingQu 指南（T01-05 登记）。
+- 逐条主张与证据定位见[第十八批互联路径来源记录](../../docs/research/batch-18-interconnect-paths-sources.md)。
+- 待确认：800T A2 的 NPU 数量/内存/互联边；是否含 HCCS 交换及端口带宽；A3 分档指标；DGX 官方拓扑矢量边清单；NVL72/GB200 代际隔离；两样板作业可用带宽（归 T03-03）。

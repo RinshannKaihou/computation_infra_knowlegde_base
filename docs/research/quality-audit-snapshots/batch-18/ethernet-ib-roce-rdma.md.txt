@@ -1,0 +1,110 @@
+---
+id: communication.ethernet-ib-roce-rdma
+title: Ethernet、IB、RoCE 与 RDMA 机制
+type: concept
+domain: communication
+status: draft
+platforms: [generic]
+source_refs:
+  - src.linux.rdma-core-v65.0
+  - src.linux.rdma-verbs-man-pages-2026-08-04
+  - src.kernel.infiniband-docs-v6.16
+  - src.nvidia.mlnx-ofed-586042lts-roce
+  - src.nvidia.mlnx-ofed-586042lts-ib
+  - src.nvidia.mlnx-ofed-586042lts-ecn
+  - src.nvidia.mlnx-ofed-586042lts-flow-control
+  - src.nvidia.mlnx-ofed-586042lts-secure-host
+  - src.nvidia.gpudirect-rdma-13.4
+  - src.ibta.specification-2.1
+updated_at: "2026-10-09"
+summary: "以 rdma-core v65.0 verbs man 页为准绳解释链路与网络协议、传输与 verbs 接口、注册内存、QP/CQ、完成和错误语义：Ethernet 与 IB 为不同协议栈，RoCE 是 IB 传输 over 以太网（v1 L2 封装 ethertype 0x8915，v2 L3 可路由 UDP dport 4791）；MR/PD/QP/CQ 分工、应用完成与远端持久化的区别、RDMA 非零成本与可靠性分档；加速器直连逐产品另核对，命令留待工具版本固定。"
+related_ids:
+  - communication.interconnect-paths
+  - communication.rdma-baseline-and-congestion-triage
+  - communication.collectives-and-rank-progress
+  - hardware.resource-topology
+applicability:
+  environment_refs: []
+  notes: "尚无环境档案：verbs 语义固定 rdma-core v65.0（man 页 2026-08-04 快照，起草时与 v65.0 源码对版）；内核侧固定 Linux v6.16；OFED 侧固定 MLNX_OFED 586042lts；GDR 固定 v13.4。目标 NIC/固件/驱动组合需另行固定。"
+verification:
+  status: source_checked
+  evidence_refs:
+    - src.linux.rdma-core-v65.0
+    - src.linux.rdma-verbs-man-pages-2026-08-04
+    - src.nvidia.mlnx-ofed-586042lts-roce
+  notes: "对照第十八批取证记录（docs/research/batch-18-rdma-mechanism-sources.md）所列固定版本来源核对；man 页与 v65.0 源码对版、IBTA 规范全文、计数器语义未逐项验收；未在任何 RDMA 硬件上执行验证。"
+---
+
+# Ethernet、IB、RoCE 与 RDMA 机制
+
+## 定义与要解决的问题
+
+RDMA 排障先分清三层：**链路与网络协议**（走什么线、谁寻址）、**传输与 verbs 接口**（谁发起、谁完成）、**内存与完成语义**（谁能碰哪块内存、完成意味着什么）。Ethernet 与 InfiniBand 是不同的协议栈；RoCE 是"IB 传输 over 以太网"（标准归属 IB 架构规范，2010 首版；规范本身会员门控未获取，只引用存在性与版本名）。
+
+## 机制与关键关系
+
+### 三柱图：IB 线缆 vs RoCEv1 vs RoCEv2
+
+IB 传输层（含 QP/verbs 语义）横跨三种承载：IB 线缆（LRH+GRH，需 SM/LID，APM 可选）、RoCEv1 L2（ETH ethertype **0x8915** [+VLAN] + IB 传输；无 SM、LID=0、无 APM）、RoCEv2 L3（ETH/IP/UDP **dport 4791** + IB 传输；UDP 源端口作 ECMP 流标识；IP 头替代 GRH 穿越 L3）。RoCE 建连要点：无需 SM；RC QP 无 alternate path 故 **APM 不支持**；查 path 不可能，建连前自填 path record，**建议用 RDMA-CM**；QP 的 GID index 决定 RoCE 模式；SL→PCP 映射。（[MLNX_OFED RoCE 章](https://networking-docs.nvidia.com/mlnxofedswum/586042lts/rdma-over-converged-ethernet-roce)，586042lts）
+
+GID 表由网卡以太网 IP 配置生成，每值占 v1+v2 双条目；IPv4 GID 为 IPv4-mapped IPv6；sysfs `gids/<i>`、`gid_attrs/types/<i>`（内核稳定 ABI 佐证路径）。
+
+### verbs：send/recv、read/write 与完成证据
+
+- **双边**：发送方 `ibv_post_send(SEND[WITH_IMM])` 必须配接收方预投 `ibv_post_recv`；UD QP 收包 GRH 占 scatter 首 40B；buffer 取回 CQE 前不可复用（INLINE 除外）。opcode×QP-type 表：READ/原子仅 RC/XRC 列有值，WRITE 无 UD 列。
+- **单边**：发起方 `post_send(RDMA_WRITE[/WITH_IMM]/RDMA_READ)` 携带 `remote_addr+rkey`，远端 CPU 不参与；**发起方完成 ≠ 远端持久**。
+- **MR**：`ibv_reg_mr(pd,addr,len,access)`；`REMOTE_WRITE`/`REMOTE_ATOMIC` 须连带 `LOCAL_WRITE`；local read 恒开；`lkey` 供本地、`rkey` 供远端；变体与 `FLUSH_GLOBAL/PERSISTENT` 均标 if supported。
+- **PD**：`ibv_alloc_pd(ctx)`；dealloc 在仍有资源关联时可失败——PD 是 MR/QP 关联分组，**不可写成"PD=网络租户隔离/加密"**。
+- **QP**：`create_qp`（cap、类型 RC/UC/UD/RAW_PACKET/DRIVER、sq_sig_all，实际 cap≥请求）与 `modify_qp` 状态机 **Reset→Init→RTR→RTS**（RC 需 AV/path_mtu/dest_qpn/PSN/重试参数；RoCE 时 GID index 进 AV）。
+- **CQ/完成**：`poll_cq→wc{wr_id,status,opcode,vendor_err,byte_len,qp_num,…}`；**非 SUCCESS 时仅 wr_id/status/qp_num/vendor_err 有效**；CQ overrun → `IBV_EVENT_CQ_ERR` 且 CQ 不可用；错误定位另看异步事件（QP_FATAL/REQ_ERR/ACCESS_ERR、PORT 事件）与 ack 义务。（以上 verbs 语义准绳：[man7 libibverbs 页组](https://man7.org/linux/man-pages/man3/ibv_post_send.3.html)，2026-08-04 快照，起草时与 v65.0 源码对版）
+- 用户态接入：慢路径经 `/dev/infiniband/uverbsN` write + ABI 头，快路径 mmap 寄存器直写；内核 idr 句柄隔离；`get_user_pages` pin + `pinned_vm`/`RLIMIT_MEMLOCK`（[内核 user_verbs](https://docs.kernel.org/infiniband/user_verbs.html)，v6.16；与 T02-01 主机资源模型衔接）。
+
+### 完成 ≠ 持久 ≠ 对端可见
+
+RELAXED_ORDERING 页明示 completion 仍保证数据可见但 write-after-write 次序不再保证；持久化需 FLUSH 放置类型（if supported）。GPUDirect RDMA 侧：并发运行的 GPU kernel 观察到的 RDMA 写可为 stale/乱序（数据竞争），须经 CPU 侧 CUDA 提交/同步定序（[GDR v13.4](https://docs.nvidia.com/cuda/gpudirect-rdma/)）。禁语："RDMA 完成即远端落盘/即 GPU 可见"。
+
+### RDMA ≠ 零成本/零拷贝/天然可靠
+
+pin 代价（内核 pin + `RLIMIT_MEMLOCK`；GDR pin 毫秒级 + BAR 有限 → lazy unpin/registration cache）；注册/建连/重传/拥塞控制皆成本；可靠性按 QP 类型与网络条件分档；RoCE 可靠运行要求无损以太网（PFC，[流控页](https://networking-docs.nvidia.com/mlnxofedswum/586042lts/flow-control)）+ ECN（[ECN 页](https://networking-docs.nvidia.com/mlnxofedswum/586042lts/explicit-congestion-notification-ecn)，限 RoCEv2、路径全节点支持）。
+
+### 工作负载与依赖条件
+
+RC QP 的 timeout/retry/rnr 参数为逐 QP 可配；PFC 按优先级、ECN 按设备/端口/优先级；观测点 `ibv_devinfo`/`link_layer`、`ibdev2netdev`、GID、`traffic_class/TTL` 只列存在性——**命令留到工具版本固定后写**。
+
+加速器直连逐产品另核对：PeerDirect/GDR 是"IB CORE↔peer-memory 客户端"API（`nvidia-peermem`，CX-3+，IB/RoCE 皆可），不是"装了 verbs 就有 GDR"；同 root complex、PCIe 拓扑、BAR、同步注册均为前提；**NPU 直连零证据**。
+
+## 适用边界
+
+-verbs 语义以 man 页 + v65.0 源码为准；OFED 行为以 586042lts 为准；IBTA 规范细节不转述。
+- fabric 级隔离（PKey/分区/租户/加密）官方证据未取得；Secure Host 页为 CX-3 代专属反例，不可泛化。
+- 计数器单位/方向语义留 T03-03；`ibv_*` 等命令一律不写。
+
+## 常见误解
+
+- **"RDMA 就是零拷贝不要钱"**：pin、注册、建连、重传都是成本，GDR pin 还是毫秒级。
+- **"收到完成就是对端落盘了"**：完成≠持久≠GPU 可见，三者各需证据。
+- **"PD 就是租户隔离"**：PD 只是关联分组；隔离另需 fabric 证据（未取得）。
+- **"RoCE 下 LID=0 是故障"**：正常现象，勿报故障；SM 缺失在 IB 侧才是故障。
+
+## 原语到观测和故障的映射
+
+| 原语 | 观测 | 故障信号 |
+|---|---|---|
+| `reg_mr` | 返回值/errno；对端 `ACCESS_ERR` 异步事件 | 远端不可读写；`QP_ACCESS_ERR` |
+| `create/modify_qp` | `modify_qp` errno；`QP_REQ_ERR` | 建连卡住；RoCE GID/AV 填错 |
+| `post_send/recv` | 发送侧 CQE / 接收侧 CQE 缺失 | SEND 无完成；UD GRH 偏移误读 |
+| `READ/WRITE` | 发起侧 `byte_len`/opcode CQE；`port_xmit/recv_data` | 全零/陈旧数据；RO 后写乱序 |
+| CQ 消费 | `IBV_EVENT_CQ_ERR` | 雪崩式完成丢失；恢复=重建 |
+| 链路/端口 | `state/phys_state/link_layer/lid/rate` | 见上条 RoCE/IB 区分 |
+| 拥塞/无损 | PFC prio 计数器、`port_xmit_wait`、ECN 参数 | 未端到端启用→丢包/长尾（阈值留 T03-03） |
+
+独立验证引用口径：固定 rdma-core v65.0 + 内核版本后，用最小 verbs 程序复现；命令与判据留 T03-03/V 轨。
+
+## 来源与待确认问题
+
+- [rdma-core v65.0](https://github.com/linux-rdma/rdma-core)（verbs 整体与源码锚点）；[man7 libibverbs 页组](https://man7.org/linux/man-pages/man3/ibv_post_send.3.html)（语义准绳，待与 v65.0 对版）。
+- [内核 InfiniBand 文档](https://docs.kernel.org/infiniband/index.html)（v6.16；接入模型与稳定 ABI）。
+- MLNX_OFED 586042lts：[RoCE](https://networking-docs.nvidia.com/mlnxofedswum/586042lts/rdma-over-converged-ethernet-roce)、[IB 索引](https://networking-docs.nvidia.com/mlnxofedswum/586042lts/infiniband-network)、[ECN](https://networking-docs.nvidia.com/mlnxofedswum/586042lts/explicit-congestion-notification-ecn)、[流控](https://networking-docs.nvidia.com/mlnxofedswum/586042lts/flow-control)、[Secure Host 反例](https://networking-docs.nvidia.com/mlnxofedswum/586042lts/secure-host)。
+- [GPUDirect RDMA v13.4](https://docs.nvidia.com/cuda/gpudirect-rdma/)（通用边界；具体型号另核对）；[IBTA 规范页](https://infinibandta.org/ibta-specification/)（存在性引用，未获取全文）。
+- 逐条主张与证据定位见[第十八批 RDMA 机制来源记录](../../docs/research/batch-18-rdma-mechanism-sources.md)。
+- 待确认：man 页与 v65.0 对版；IBTA 全文；计数器语义（归 T03-03）；安全/隔离通用机制；加速器直连（尤其 NPU）；命令（待工具版本固定）。

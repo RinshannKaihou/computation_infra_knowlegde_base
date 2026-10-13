@@ -8,7 +8,12 @@ platforms: [generic]
 source_refs:
   - src.nvidia.nccl-tests-b4d5beeb
   - src.ascend.cann-hccl-2d685b08
-updated_at: "2026-09-29"
+  - src.rocm.rocm-systems-therock-10.1
+  - src.nvidia.nccl-user-guide-2.27.5
+  - src.nvidia.dgx-superpod-h100-ra-fabrics-2026-10-09
+  - src.nvidia.gpu-node-triage-2026-10-08
+  - src.huawei.hccl-perf-test-guide-cann-9.1.x
+updated_at: "2026-10-14"
 summary: 区分集合通信的操作耗时、算法带宽、模型换算带宽与物理链路遥测，并给出建立可比较基线所需的消息、rank、缓冲区、计时、拓扑及正确性字段。
 related_ids:
   - communication.collectives-and-rank-progress
@@ -19,7 +24,7 @@ verification:
   evidence_refs:
     - src.nvidia.nccl-tests-b4d5beeb
     - src.ascend.cann-hccl-2d685b08
-  notes: 仅核对固定 NCCL-tests 与 cann-hccl 仓库快照中本文引用的 README、性能说明、实现和许可证；未运行工具、未访问 GPU/NPU，也未验证任何机型峰值或通用阈值。
+  notes: 仅核对固定 NCCL-tests 与 cann-hccl 仓库快照中本文引用的 README、性能说明、实现和许可证；2026-10-13 第二轮加法核对 rccl-tests therock-10.1（PERFORMANCE/参数/计时实现交叉；AllGather gin_sdma 系数经审阅方核对，角色已注；余算子实现未逐一回查）、NCCL 2.27.5 env（路径选择证据）、SuperPOD fabric（同 SU rail/超配）、GPU Node Triage（正确 URL 与 Network Testing 锚点已核对，可变页观察日期 2026-10-13）、CANN 9.1.X 指南 0001/0004–0007（算法带宽、参数契约、跨节点字段；计时实现 unknown；BLOCKED-1 交集保持 blocked）；审阅方独立取证见 [T03-07 加法初审](../../docs/research/batch-19-t03-07-codex-review.md)，不冒充作者当时已完成；未运行工具、未访问 GPU/NPU，也未验证任何机型峰值或通用阈值。
 ---
 
 # 通信带宽与性能基线口径
@@ -74,6 +79,15 @@ verification:
 
 对表外算子、工具新增实现、设备侧自定义实现或 offload 路径，不应自创“通用 bus factor”。应固定工具版本，读取该算子的 size 和 bandwidth 实现，并将公式作为基准定义的一部分保存。
 
+### RCCL-tests 的计时与换算（独立口径，therock-10.1；默认 host 模式）
+
+下述只适用于 rocm-systems tag `therock-10.1`（commit `7da4302`，RCCL 2.30.7 线）的 rccl-tests **默认 host 计时模式**，不与上表 NCCL 公式互换；CPU 显示、graph、device-only 为例外分支（见下）。
+
+- 修正因子（[`doc/PERFORMANCE.md`](https://github.com/ROCm/rocm-systems/blob/therock-10.1/projects/rccl-tests/doc/PERFORMANCE.md)）：`algbw=S/t`；busbw AllReduce `2(n-1)/n`、ReduceScatter/AllGather/AlltoAll `(n-1)/n`、Broadcast/Reduce `1`（busbw 对标硬件峰值、与 rank 数无关的设计目标；**普通 Broadcast 模式**，环境分支见下）。AllReduce 实现交叉核对：`baseBw = count·typesize/1.0E9/sec`，`busBw = baseBw·2(n-1)/n`（[`all_reduce.cu AllReduceGetBw` L78–84](https://github.com/ROCm/rocm-systems/blob/7da43026e4f2ef7600433c38c820732f7a205d22/projects/rccl-tests/src/all_reduce.cu#L78-L84)）；AllGather 实现 `gin_sdma_allgather::bandwidthGBps` 经审阅方核对为 `perRankCount·typeSize·n/1.0E9/sec` 与 `(n-1)/n` 系数（[`gin_sdma_allgather_policy.h` L145–155](https://github.com/ROCm/rocm-systems/blob/7da43026e4f2ef7600433c38c820732f7a205d22/projects/rccl-tests/src/gin_sdma_allgather_policy.h#L145-L155)，角色见注记），与 PERFORMANCE 页一致；其余算子实现未逐一回查。
+- Broadcast 环境分支：`RCCL_TESTS_ALLGATHERV_ENABLE=1` 时用 `count·nranks·typesize` 与 `(n-1)/n`；普通 Broadcast 用 `count·typesize` 与系数 1（[`broadcast.cu` L82–93](https://github.com/ROCm/rocm-systems/blob/7da43026e4f2ef7600433c38c820732f7a205d22/projects/rccl-tests/src/broadcast.cu#L82-L93)；[`README grouped-broadcast`](https://github.com/ROCm/rocm-systems/blob/therock-10.1/projects/rccl-tests/README.md#user-content-grouped-broadcast-allgatherv-mode)）。PERFORMANCE 六系数只覆盖普通模式。
+- 计时：报告 `time` 为 **us**（`deltaSec·1.0E6`，表头 `(us)`）；`getBw` 分母恒为 `deltaSec`；默认先按 `iters×agg_iters` 归一化（[`normalizeElapsedPerIter`](https://github.com/ROCm/rocm-systems/blob/7da43026e4f2ef7600433c38c820732f7a205d22/projects/rccl-tests/src/gin_sdma_devtime_host.h#L41-L51)），再按 graph launch 数缩放、按 `-a` 聚合。例外分支：`-C 1` 只有 `report_cputime && deviceImpl==0` 才显示 CPU 列（设备实现分支仍显示 deltaSec）；device-only 分支以设备 hook 返回时间替换 deltaSec；`-z 3` 报告时间排除 barrier。([common.cu L1070–1128](https://github.com/ROCm/rocm-systems/blob/7da43026e4f2ef7600433c38c820732f7a205d22/projects/rccl-tests/src/common.cu#L1070-L1128)、[L1259–1266](https://github.com/ROCm/rocm-systems/blob/7da43026e4f2ef7600433c38c820732f7a205d22/projects/rccl-tests/src/common.cu#L1259-L1266))
+- 默认参数：`-b/-e` 默认 32M（二进制 MiB）、`-n 20`、`-w 1`、`-m 1`、`-a 1`（[`README Arguments`](https://github.com/ROCm/rocm-systems/blob/therock-10.1/projects/rccl-tests/README.md#user-content-arguments)）；`-O` 控制 in/out-of-place 取舍；`-A 1` 记录 algo/proto/nchannels（经 `rcclGetAlgoInfo`）。不写任何 GB/s 阈值；页脚判据为**平均 busbw < `NCCL_TESTS_MIN_BW`×0.9**（环境未设时取 -1，不过滤），方向不得写反（[common.cu L2757–2788](https://github.com/ROCm/rocm-systems/blob/7da43026e4f2ef7600433c38c820732f7a205d22/projects/rccl-tests/src/common.cu#L2757-L2788)）。
+
 ## rank 数、进程布局和并发组
 
 固定 `nccl-tests` README 定义总 rank 数为：
@@ -127,6 +141,25 @@ n = MPI process 数 × 每进程 thread 数 × 每 thread GPU 数
 
 并发测试要分开回答两个问题：单个 communicator 在竞争下完成一次操作需要多久，以及共享系统在同一窗口承载了多少总流量。前者用每组操作耗时，后者需要各组时间对齐并结合链路计数器；把各组 `busbw` 相加只能得到模型值之和。
 
+### 跨节点矩阵与 rail 身份记录条件
+
+矩阵轴（记录项，非测量值）：消息大小（`-b/-e/-i/-f` 展开为精确 byte）× 节点数/每节点 rank × rank→设备→NIC/端口映射 × rail 身份（`NCCL_IB_HCA` 选择、`NCCL_CROSS_NIC` 取值及 fabric 是否 rail-optimized、SU/rail/路径记录）× 并发（SPLIT 分组、其他租户/计算/IO 负载）× 健康（错误/重试/超时）。
+
+请求配置、实际库端点/映射证据、IB/RoCE 路径、同窗端口计数器四列分开记录：`NCCL_IB_HCA` 过滤与 `NCCL_CROSS_NIC` 意图（0 同 rail / 1 允许跨 rail / 2 默认兼顾，[NCCL 2.27.5 env](https://docs.nvidia.com/deeplearning/nccl/archives/nccl_2275/user-guide/docs/env.html#nccl-cross-nic)）**不等于**实际选中 NIC/端口及其 fabric 映射——`CROSS_NIC=0` 有例外：各节点 communicator GPU 成员不同时仍可能跨 NIC；algo/proto/channel 数也不代替实际映射。HCCL 的 host socket 选择（`HCCL_SOCKET_IFNAME`）只记录 bootstrap 路径，不证明设备侧 RDMA rail。实际路径缺失时记 unknown。
+
+SU 边界：SuperPOD 一跳事实限**同一 SU 内对应 rail**（[Compute IB fabric](https://docs.nvidia.com/dgx-superpod/reference-architecture-scalable-infrastructure-h100/latest/network-fabrics.html#computeinfiniband-fabric)）；跨 SU 的同 rail 也可能经过 spine；storage fabric 约 4:3 超配（拥塞候选，非路径证据）。
+
+四类候选判据（最小输入/观察/对照/无法判断；复用[T03-03](../../knowledge/03-communication/rdma-baseline-and-congestion-triage.md)“计数器语义”与“停止条件与恢复安排”两节，不重复其内容）：
+
+| 候选 | 输入 | 观察与对照 | 无法判断 |
+|---|---|---|---|
+| 路径选择/均衡 | 已映射 rail、algo/proto/channel 记录、`NCCL_IB_HCA`/CROSS_NIC 取值 | 按已映射 rail 的预期负载比较方向一致的同窗遥测 | 实际映射缺失时不判路径 |
+| 热点 | 多 rank/多节点同条件基线 | 热点**不由单列 busbw 证明**；须同窗端口计数器定位到链路 | 无同窗遥测时不定位链路/rail |
+| 多租户争用 | 同条件隔离轮 vs 背景负载轮 | 争用须与同条件隔离/背景负载对照；SPLIT 分组带宽按组解释 | 无对照轮时不判争用 |
+| 协议重试 | 已核对含义/范围的重试计数器（T03-03 重传表；validator retries 不互换） | 只用计数器增量判读 | 无计数器时**不得凭吞吐下降推出重试**；单一响应计数不判根因 |
+
+路径选择证据三分：库侧（上表字段）→ RDMA 侧（T03-03 perftest/GID/路由/计数器，见[RDMA 诊断](rdma-baseline-and-congestion-triage.md)）→ 物理侧（UFM/mlx5/Cumulus 同窗 delta＋[成对建基线/换节点隔离/按 rail 隔离](https://docs.nvidia.com/deploy/gpu-debug-guidelines/gpu-node-triage.html#network-testing)对照，可变页，观察日期 2026-10-13）。
+
 ## 正确性是性能基线的准入条件
 
 一个性能数值必须先通过该工具在该模式下定义的结果检查，且没有超时、异步错误或被跳过的 rank。固定 `nccl-tests` 默认 `--check 1`，会初始化输入和期望值，在性能测量之外执行检查迭代，统计错误元素；实现把各线程/进程的错误数汇总后写入结果（[`README.md` `--check`](https://github.com/NVIDIA/nccl-tests/blob/b4d5beebca8a76cf01335f724d154b9b9d394d96/README.md#arguments)、[`src/common.cu` data check](https://github.com/NVIDIA/nccl-tests/blob/b4d5beebca8a76cf01335f724d154b9b9d394d96/src/common.cu#L828-L883)）。这只能证明工具生成的该组输入、数据类型、规约操作和检查迭代在当次运行中匹配期望，不等于训练模型数值正确，也不覆盖未检查的性能迭代。
@@ -139,6 +172,10 @@ n = MPI process 数 × 每进程 thread 数 × 每 thread GPU 数
 - 只得到部分 size 或部分 rank 的输出，却将缺失行填为 0；
 - 同一表混入不同 datatype、root、算子、缓冲区模式或拓扑条件。
 
+### 六信号同记（无阈值；完成率与恢复按 T03-03 限定）
+
+正确性（`#wrong`/`check_result`/perftest errors）、错误（异步错误/abort、IB 异步事件）、完成率（分子＝按计划完成的运行/矩阵单元/操作数，分母＝计划尝试数；超时、缺行、跳过、不支持、未校验分开记录——清理残留进程不代表计划测试已完成；分母/证据缺失记 unknown）、时延分布（`-I/-K`；HCCL 在本次所选文档未定义逐次分布，不宣称所有实现都不存在）、吞吐（algbw/busbw 或 alg-only，不互换）、恢复（记录起止事件/观察窗口；零新增**仅限已定义错误列**，正常流量/流控响应按同窗基线带比较，校验须满足覆盖门禁——见[T03-03“停止条件与恢复安排”节](../../knowledge/03-communication/rdma-baseline-and-congestion-triage.md)，仅适用 RDMA 分支的门槛明确限定并链接，collective/应用恢复不由进程退出或计数器一项代替）。MI300X ≥304 GB/s 等厂商门槛**不得**写入本节；如提及仅作"厂商验收示例反例"并标注非本库判据。
+
 ## HCCL 输出只能按其自身来源解释
 
 固定 cann-hccl commit `2d685b084a60366b47ad8e50a563ee5c4dbef7fe` 的 README 给出一项 HCCL Test 示例，并明确：`data_size` 是**单个 NPU 上参与集合通信的数据量**，单位 byte；`aveg_time` 是集合通信算子执行耗时，单位 μs；`alg_bandwidth` 单位 GB/s；`check_result=success` 表示示例 AllReduce 功能结果正确（[固定 README“上板测试”](https://gitee.com/ascend/cann-hccl/blob/2d685b084a60366b47ad8e50a563ee5c4dbef7fe/README.md#上板测试)）。同一示例展示单节点 8 NPU、AllReduce、fp32、sum 和消息扫描参数，但它是使用示例，不是本文环境的实测结果或推荐阈值。
@@ -148,6 +185,14 @@ n = MPI process 数 × 每进程 thread 数 × 每 thread GPU 数
 同一 cann-hccl README 的 α–β 模型把 α 定义为节点间固定时延、β 定义为每 byte 传输时间、γ 定义为每 byte 规约计算时间，并写出单步模型。为避免与前文 rank 数 `n` 混淆，本页将原文数据量符号改为 `m`，即 `D = α + mβ + mγ`；`m` 的单位是 byte，原文节点数另用 `p`。这可用于理解“固定开销 + 随消息量增长的传输/规约成本”，但不能从一条 HCCL Test 输出反推出通用 α、β、γ，也不能代替目标拓扑上的拟合和验证（[固定 README“算法介绍”](https://gitee.com/ascend/cann-hccl/blob/2d685b084a60366b47ad8e50a563ee5c4dbef7fe/README.md#alg_desc)）。
 
 本文不知道任何目标 NPU 机型的链路数、链路速率、端口聚合方式、协议效率或“应达带宽”。这些参数必须来自具体机型与拓扑资料、目标版本文档和现场遥测，不能从 GPU 数值或另一个 Ascend 型号推算。
+
+### HCCL Test 跨节点与计时条件（9.1.X 指南独立口径）
+
+下述只适用于 CANN 9.1.X《HCCL 性能测试工具》指南（0001/0004/0005/0006/0007），不与 NCCL/RCCL 公式互换；凡涉及"HCCL Test × CANN/HDK/机型可运行组合"处记 `blocked_on_evidence/open`（BLOCKED-1），不得用本节参数表关闭。
+
+- 只有算法带宽（[0001](https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/910/devaids/hccltool/HCCLpertest_16_0001.html)：带宽＝数据量/耗时，无 bus 列）；`data_size` 为**单个 NPU 数据量**（[0006](https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/910/devaids/hccltool/HCCLpertest_16_0006.html)）；`avg_time` 单位 us（0006）；`-b/-e` 默认 64M、`-w 10` 不计统计（[0005](https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/910/devaids/hccltool/HCCLpertest_16_0005.html)）；`-n` 有两处不同角色：`mpirun -n <number>` 为 MPI launcher 进程数，工具 `-n <iters_count>` 为迭代次数（0005 命令格式与 MPI/工具两表，不可混用）；`-t/--onlydevicetime` 默认 0 计全部耗时（含 Host 软件与 kernel 加载），置 1 仅计 Device 侧（开启三条件：展开模式 AIV/CCU、`HCCL_BUFFSIZE`>100MB、`-w/-n`≤100；0005）；`-c 0/1/2`（默认 1；0005）与 `check_result`（success/failed/NULL；NULL 两类未校验分支：`-c 0` 未开启，或溢出/超精确表达范围不开启——后者附分算子/数据类型最大卡数表，0006；**NULL 不得洗为正确性通过，通过须 `-c 1/2` 且 success**）；`-p` 从 Device 0 连续选择为 [0007 规格约束](https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/910/devaids/hccltool/HCCLpertest_16_0007.html)所述常规分支，另有 [0004](https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/910/devaids/hccltool/HCCLpertest_16_0004.html) `HCCL_TEST_USE_DEVS` 指定设备例外；对齐/rank-size 微调警告（0005）。
+- 跨节点四字段：总规模由 `mpirun -n <number>`（MPI 进程数）与工具 `-p <npus>`（单节点参与 NPU 数）共同决定；工具 `-n <iters_count>` 仅为迭代次数（与 MPI `-n` 区分，三处一致）；hostfile 双格式（MPICH/OpenMPI）与 A3 超节点集中配置约束；`HCCL_SOCKET_IFNAME` 4 格式（建链网卡，Host 侧，不等于 RDMA rail 身份）；`HCCL_CONNECT_TIMEOUT` 默认 120s（指南示例建议：3K 卡→240s、5K 卡→600s）；`HCCL_BUFFSIZE` 建议大于测试数据量（0004/0005）。
+- 计时实现 unknown 收窄为：实现中的具体计时点与跨 rank 归约方式未给出，不得按 NCCL `deltaSec`/`-a` 或 RCCL `×1.0E6` 推定（`-t` 文档契约本身不在 unknown 内）。
 
 ## 建立一条可比较基线的最小记录
 
@@ -169,9 +214,21 @@ n = MPI process 数 × 每进程 thread 数 × 每 thread GPU 数
 
 基线应是带环境标签的分布，而不是一个全局常数。建议分别保存小消息操作时间曲线、大消息带宽平台区、重复运行的中位数与尾部、rank/节点扩展曲线，以及对应的错误与链路遥测。报警或验收阈值只能从同机型、同拓扑、同软件和同负载目的的参考分布推导，并记录样本期和变更历史；本文没有给出任何百分比、GB/s 或 μs 的通用及格线。
 
+### 应用→库→RDMA→物理链路工具矩阵（记录口径；参数逐工具归属）
+
+| 层级 | 工具（固定版本，各不互拼） | 记录字段 |
+|---|---|---|
+| 应用/库 NCCL | nccl-tests b4d5beeb | 每 size 原始 `t/algbw/busbw`、`-a` rank 聚合（0/1/2/3）、`-I/-K` 分布、`NCCL_TESTS_SPLIT` 分组；`-A/-X/-Z` **本快照无此参数**（属 rccl-tests，见下行） |
+| 应用/库 RCCL | rccl-tests therock-10.1 | 每 size 原始 `t/algbw/busbw`、`-a` 聚合、`-I/-K` 分布、`-A` 算法身份、`-X/-Z` 机器可读行、SPLIT 分组 |
+| 应用/库 HCCL | HCCL Test 9.1.X | 原字段（`data_size/avg_time/alg_bandwidth/check_result`）；`-a` 在此为**特定产品 accelerator 选择**，不得按 NCCL/RCCL 的 rank average 解释；`NCCL_TESTS_SPLIT` 不外推 HCCL；逐次分布在本次所选文档未定义（记 unknown，不宣称所有实现都不存在）；缺字段记 unknown |
+| RDMA（verbs/传输） | perftest 26.07.8（T03-03 固定行号；host 后端覆盖门禁，操作数口径） | 两节点/多节点、单流/多流、隔离/争用对照；errors/skips/stale 覆盖门禁（门禁属 perftest host 后端，不作三 collective 工具通用输出） |
+| 物理链路 | UFM 4.18.15 / mlx5 v6.16 计数器 / Cumulus 4.3 / netdev ABI（T03-03 已审阅口径） | 同窗 delta、方向/聚合层级、采样窗口、回绕 unknown |
+| 主机/设备路径 | [T03-01 互联路径](interconnect-paths.md)（Table 6 GPU-CX-mlx5 联合身份、`nvidia-smi topo`/`aclrtGetDevicesTopo`；版本边界见 [T03-05 正文](rccl-runtime-and-verification.md)、[T03-06 正文](communication-library-profiles.md)及本页[作者来源记录](../../docs/research/batch-19-t03-07-sources.md)）＋ NCCL_TOPO_DUMP_FILE（可选） | rank→设备→NUMA/PCIe/NIC 全链 |
+
 ## 来源范围与仍需补齐的证据
 
 - [NVIDIA nccl-tests 固定 README](https://github.com/NVIDIA/nccl-tests/blob/b4d5beebca8a76cf01335f724d154b9b9d394d96/README.md)、[性能说明](https://github.com/NVIDIA/nccl-tests/blob/b4d5beebca8a76cf01335f724d154b9b9d394d96/doc/PERFORMANCE.md)及本文链接的实现文件：核对 rank 计算、单位、算子公式、in/out-of-place 调用、warm-up/iteration、计时同步和 correctness check。固定 commit 是 2026-09-29 对官方 `master` 的只读解析结果；它是证据快照，不是部署版本推荐。
 - [Ascend cann-hccl 固定 README](https://gitee.com/ascend/cann-hccl/blob/2d685b084a60366b47ad8e50a563ee5c4dbef7fe/README.md)：核对 HCCL Test 示例输出字段和 α–β 模型；该 commit 同样是官方 `master` 的固定快照。README 自身警告 master 可能与 CANN 版本不配套，因此本文不据此声明任何可运行组合。
+- 2026-10-14 加法：[rccl-tests PERFORMANCE](https://github.com/ROCm/rocm-systems/blob/therock-10.1/projects/rccl-tests/doc/PERFORMANCE.md)（六算子修正因子；首段 ms 与实现 us 冲突已标注）、[rccl-tests README 参数节](https://github.com/ROCm/rocm-systems/blob/therock-10.1/projects/rccl-tests/README.md#user-content-arguments)（默认值与聚合口径）、[NCCL 2.27.5 env](https://docs.nvidia.com/deeplearning/nccl/archives/nccl_2275/user-guide/docs/env.html)（`NCCL_CROSS_NIC`/`NCCL_IB_HCA`/多 QP/ALGO-PROTO 调试类）、[SuperPOD fabric](https://docs.nvidia.com/dgx-superpod/reference-architecture-scalable-infrastructure-h100/latest/network-fabrics.html)（rail-aligned/超配）、CANN 9.1.X 指南 0001/0004/0005/0006/0007（算法带宽与跨节点字段；计时实现 unknown；BLOCKED-1 交集保持 blocked）。
 
 仍需补齐：与目标 CANN/HCCL 配套的固定 HCCL Test 文档或实现、目标 GPU/NPU 机型的精确互联规格、端口到 rank 的现场映射、物理链路遥测定义、并发负载和重复样本。本库没有运行 nccl-tests/HCCL Test，没有安装或构建上游项目，也没有产生 GPU/NPU 的 latency、bandwidth、正确性或阈值结果。

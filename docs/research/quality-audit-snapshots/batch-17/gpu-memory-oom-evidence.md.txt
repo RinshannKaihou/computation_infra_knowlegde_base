@@ -1,0 +1,136 @@
+---
+id: software-stack.gpu-memory-oom-evidence
+title: GPU 分配器、保留内存与 OOM 证据
+type: concept
+domain: software-stack
+status: draft
+platforms: [generic, nvidia, amd]
+source_refs:
+  - src.pytorch.cuda-semantics-2.6
+  - src.pytorch.torch-cuda-memory-api-2.6
+  - src.pytorch.torch-cuda-memory-stats-2.6
+  - src.pytorch.torch-cuda-memory-usage-2.6
+  - src.pytorch.torch-cuda-memory-source-v2.6.0
+  - src.pytorch.cuda-caching-allocator-v2.6.0
+  - src.pytorch.cudagraph-api-2.6
+  - src.pytorch.profiler-2.6
+  - src.pytorch.hip-notes-2.6
+  - src.nvidia.cuda-12-8-runtime-memory
+  - src.nvidia.cuda-12-8-stream-ordered-alloc
+  - src.nvidia.cuda-12-8-graph-mgmt
+  - src.amd.hip-memory-7.14.0
+  - src.amd.hip-stream-ordered-alloc-7.14.0
+  - src.amd.pytorch-rocm-fork
+updated_at: "2026-10-09"
+summary: "补齐 CUDA/PyTorch GPU 内存管理证据：设备总量与可用量、框架 allocated/reserved、缓存分配器双池与碎片键、workspace 与外部库独立账户、graph capture 私有池；给出按进程、rank、设备身份和阶段对齐的记录表与固定负载/单变量/恢复三对照；AMD（HIP 7.14.60850）能力与字段独立核对，不与 CUDA 合并阈值或 API。"
+related_ids:
+  - software-stack.ascend-memory-oom-evidence
+  - software-stack.runtime-execution-and-library-loading
+  - software-stack.gpu-op-graph-failure-triage
+  - software-stack.layers-and-boundaries
+applicability:
+  environment_refs: []
+  notes: "尚无环境档案：CUDA 侧固定 PyTorch v2.6.0（commit 1eba9b3）与 CUDA 12.8.0 归档；AMD 侧固定 docs-7.14.0（ROCm Core SDK 7.14.0，站标 HIP 7.14.60850），docs-10.1.0 样板仅作配套档案引用、内存语义不跨线混用。目标环境的框架/驱动/分配器组合需另行固定。"
+verification:
+  status: source_checked
+  evidence_refs:
+    - src.pytorch.cuda-caching-allocator-v2.6.0
+    - src.pytorch.torch-cuda-memory-source-v2.6.0
+    - src.nvidia.cuda-12-8-stream-ordered-alloc
+    - src.pytorch.hip-notes-2.6
+  notes: "对照第十七批取证记录（docs/research/batch-17-gpu-memory-sources.md）所列固定版本来源核对；HIP 流序分配器 7.14.0 页执行时须逐条重核（取证以 6.3.3 同路径页过渡对照）；ROCm 构建默认 backend 与 fork/上游 allocator diff 未取得；未在任何 GPU 环境运行代码。"
+---
+
+# GPU 分配器、保留内存与 OOM 证据
+
+## 定义与要解决的问题
+
+“CUDA out of memory”是一条分配器错误文本，不直接等于“整卡物理内存被张量用完”。与[昇腾 NPU 内存与 OOM 证据](ascend-memory-oom-evidence.md)的四层模型对应，GPU 路径同样至少分开四层：物理设备内存、框架分配器（allocated/reserved）、算子 workspace 与外部库缓存、graph capture 私有池，外加异步执行的时间错位。两文术语槽位可对照，但**阈值、API 与选项集不合并**——`PYTORCH_CUDA_ALLOC_CONF` 与 `PYTORCH_NPU_ALLOC_CONF` 名称相似但集合、默认值与互斥关系各自独立。
+
+本文 CUDA 侧固定 PyTorch v2.6.0（commit `1eba9b3`）与 CUDA 12.8.0 归档；AMD 侧固定 docs-7.14.0（HIP 7.14.60850）。不构成任何生产环境的内存配置建议。
+
+## 机制与关键关系
+
+### 设备总量与可用量
+
+运行时口径是 [`cudaMemGetInfo(free, total)`](https://docs.nvidia.com/cuda/archive/12.8.0/cuda-runtime-api/group__CUDART__MEMORY.html) / [`hipMemGetInfo(free, total)`](https://rocm.docs.amd.com/projects/HIP/en/docs-7.14.0/reference/hip_runtime_api/modules/memory_management.html)；PyTorch 侧 [`torch.cuda.mem_get_info`](https://docs.pytorch.org/docs/2.6/cuda.html) 即前者的直接封装（[`memory.py`](https://raw.githubusercontent.com/pytorch/pytorch/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/torch/cuda/memory.py)）。三者函数名相似但分属三栈文档，不合并为同一 API。`nvidia-smi`/`rocm-smi` 显示口径是另一账户：caching allocator 持有的未用缓存仍计入 SMI，`memory_allocated < SMI used` 为正常现象（[CUDA semantics](https://docs.pytorch.org/docs/2.6/notes/cuda.html#memory-management)；HIP 侧同理见 [HIP semantics](https://docs.pytorch.org/docs/2.6/notes/hip.html#memory-management)）。
+
+### 框架分配器：allocated、reserved 与碎片
+
+`memory_allocated` = `allocated_bytes.all.current`（张量实际占用），`memory_reserved` = `reserved_bytes.all.current`（分配器从运行时取得并管理的总量）（[memory.py @1eba9b3](https://raw.githubusercontent.com/pytorch/pytorch/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/torch/cuda/memory.py)）。reserved 与 allocated 的差包含空闲缓存块和不可释放碎片；碎片的确证键是 [`memory_stats`](https://docs.pytorch.org/docs/2.6/generated/torch.cuda.memory_stats.html) 的 `inactive_split(_bytes)`，辅以 `oversize_*` 与 `requested_bytes`（rounding 开销对照分母）。
+
+**禁单值断言**：`reserved − allocated` 大不等于碎片确诊，更不等于泄漏。v2.6.0 分配器为 small/large 双池（2MiB/20MiB，最小块 512B），失败走复用→回调→申请→放缓存的重试链；OOM 文案为 `CUDA out of memory. Tried to allocate …`，另有 ≥1EB 请求的防御分支与真实耗尽无关（[`CUDACachingAllocator.cpp` @1eba9b3](https://raw.githubusercontent.com/pytorch/pytorch/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/c10/cuda/CUDACachingAllocator.cpp)）。
+
+`PYTORCH_CUDA_ALLOC_CONF` 在 v2.6.0 的完整选项集以源码解析为准（`CUDAAllocatorConfig`：backend、max_split_size_mb、roundup_power2_divisions、max_non_split_rounding_mb、garbage_collection_threshold、expandable_segments、pinned_* 三项），**无 HIP 专用变量名**。`backend:cudaMallocAsync`（需 CUDA≥11.4）切换底层为 CUDA 内建异步分配器，此模式下 max_split/gc/roundup 被忽略、部分 stats 恒零（[CUDA semantics](https://docs.pytorch.org/docs/2.6/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf) + memory_stats 页 Note）。该 backend 在 ROCm 构建的可用性 unknown。
+
+进程额度是独立 OOM 成因：[`set_per_process_memory_fraction`](https://docs.pytorch.org/docs/2.6/cuda.html)（fraction × total）超额即 OOM——“设备仍有空闲却报 OOM”的第一嫌疑项。Ascend 侧 `set_fraction/allowed` 机制为平行证据，数值语义不合并。
+
+### 外部库与 graph capture 是独立账户
+
+cuBLAS workspace 按 handle+stream 缓存、不随常规释放（须 `_cuda_clearCublasWorkspaces`），大小由 `CUBLAS_WORKSPACE_CONFIG` 控制；cuFFT plan cache 另有 LRU（[CUDA semantics](https://docs.pytorch.org/docs/2.6/notes/cuda.html#cublas-workspaces)）。workspace 与张量分配器不是同一账户——这与昇腾侧 `NPUWorkspaceAllocator` 独立文案平行对照。MIOpen/rocBLAS 对应机制待 AMD 侧取证（unknown）。
+
+capture 期分配走 graph-private pool，高水位被该 graph 预留至 `CUDAGraph` 对象与 capture 期 tensor 全部释放；`cudaMalloc` 在 capture 中可能 unsafe（`capture_error_mode` 三档）（[CUDA semantics 图节](https://docs.pytorch.org/docs/2.6/notes/cuda.html) + [CUDAGraph](https://docs.pytorch.org/docs/2.6/generated/torch.cuda.CUDAGraph.html) + allocator 源码 `Note [Interaction with CUDA graph capture]`）。运行时侧 mem alloc/free node 语义见 [Graph Management 6.30](https://docs.nvidia.com/cuda/archive/12.8.0/cuda-runtime-api/group__CUDART__GRAPH.html)（取证轮仅确认模块存在，执行引用前逐节核对）。
+
+### 流序分配器（CUDA 侧底层语义）
+
+[`cudaMallocAsync/FreeAsync`](https://docs.nvidia.com/cuda/archive/12.8.0/cuda-runtime-api/group__CUDART__MEMORY__POOLS.html)：分配后须等分配操作完成才可访问、free 到达后访问即 UB；capture 期间生成 allocation/free node 归 graph 而非 pool 所有；pool 属性含 `ReleaseThreshold`、三项 Reuse 开关、`ReservedMem/UsedMem` 当前与高水位四水位；能力查询 `cudaDevAttrMemoryPoolsSupported`。
+
+### AMD 侧独立证据
+
+- HIP malloc/free 与属性 API 见 [Memory management（docs-7.14.0）](https://rocm.docs.amd.com/projects/HIP/en/docs-7.14.0/reference/hip_runtime_api/modules/memory_management.html)：`hipFree/hipFreeHost` **隐式 `hipDeviceSynchronize()`**（CUDA `cudaFree` 无此表述）；`hipPointerGetAttributes` 页 Note 对应 11.0 之前的 CUDA 行为，不可与现行 CUDA 属性 API 对读。
+- 流序分配器：`hipMallocAsync/FreeAsync + hipMemPool*` 全套存在、标 Beta、Linux 已实现（[7.14.0 页](https://rocm.docs.amd.com/projects/HIP/en/docs-7.14.0/reference/hip_runtime_api/modules/memory_management/stream_ordered_memory_allocator.html)，取证以 6.3.3 同路径页过渡对照、7.14.0 逐条重核后引用）。
+- ROCm PyTorch 分叉定位：上游已上游化、AMD 另维护 [ROCm/pytorch](https://github.com/ROCm/pytorch) 分叉、HIP 代码由 CUDA 经 HIPIFY 生成；v2.6.0 同一套 `CUDACachingAllocator` 在 ROCm 构建生效（`USE_ROCM` 仅 driver-API 守卫）——“同一套代码编译”≠“同一行为”（无 driver API 平台 expandable_segments 熄火）；fork 与上游在 v2.6.0 时刻的 allocator diff、默认 backend 均 unknown。
+- `list_gpu_processes` 在 CUDA 走 pynvml、在 ROCm 走 amdsmi（`memory.py` 双分支实测：`usedGpuMemory` vs `vram_mem`），记录表须保留“来源工具”列，不直接对齐数值。
+
+## 适用边界
+
+- 全部 API 行号、选项集、文案与错误语义仅对 PyTorch v2.6.0（commit `1eba9b3`）与 CUDA 12.8.0 归档负责；HIP 侧仅对 docs-7.14.0 负责（另有说明除外）。
+- `torch/cuda/graphs.py @v2.6.0` 全文无 ROCm/HIP 字样：CUDA 图内存结论不套 HIP。
+- profiler 分布式唯一表述是 `tensorboard_trace_handler` 的 `worker_name=[hostname]_[pid]`（[profiler](https://docs.pytorch.org/docs/2.6/profiler.html)），无多进程聚合视图——跨进程/跨 rank 对齐须外部拼表。
+- 本文没有覆盖 SMI 计数器语义细节、NCCL/集合通信的设备内存占用、以及任何实测数值。
+
+## 常见误解
+
+- **“reserved − allocated 单值能确诊碎片/泄漏”**：不能。须 `inactive_split_bytes` + `requested_bytes` + snapshot event 历史三方互证；`max_split_size_mb` 只是 OOM 文案内置提示。
+- **“empty_cache() 能把内存还给别的进程救急”**：它只释放分配器持有的未使用缓存；已分配张量、workspace、graph 私有池都不受影响。
+- **“CUDA 的分配器选项照搬到 ROCm/NPU”**：`PYTORCH_CUDA_ALLOC_CONF` 的 backend、roundup、pinned_* 等选项在 TorchNPU 快照中不存在；ROCm 构建是否同名变量生效待实测。
+- **“报错栈位置就是耗尽位置”**：异步执行下设备错误在触发调用之后浮现；`cudaFree/hipFree`、event 查询、SMI 采样与 allocator 计数器分属不同步点，须以 snapshot event 历史 + 同步点复测对齐。
+
+## 记录表与对照方法
+
+按进程、rank、设备身份和阶段对齐的记录表（每行一次采样；阶段枚举 `init / warmup / steady / checkpoint / oom-event / recovery`；设备身份三键 `hostname, gpu_uuid_or_bdf, cuda_visible_index↔smi_index 映射`）：
+
+| 列 | 内容 | 来源口径 |
+|---|---|---|
+| ts_wall / ts_monotonic | wall 时间与单调时钟双记（防 NTP 跳变） | 通用 |
+| hostname / pid / rank / local_rank | 进程与分布式身份（profiler 侧 `worker_name`） | profiler-2.6 |
+| device_identity | 设备属性 + SMI UUID/BDF + 可见设备变量当时值 | 12.8 / 7.14.0 device 页（执行时补定位） |
+| stage / step / iter | 阶段标签与训练步号；OOM 行另记触发算子/分配点栈 | snapshot TraceEntry frames |
+| mem_get_info_free / total | 物理视角（当时值） | 主张：运行时口径 |
+| allocated / reserved（current + peak） | 张量占用 / allocator 管理总量 | memory_stats 键 |
+| inactive_split_bytes / requested_bytes | 碎片确诊键 / rounding 对照分母 | memory_stats 键 |
+| num_ooms / num_alloc_retries / num_device_alloc-free | 事件计数器（看斜率不看绝对值） | memory_stats 键 |
+| allocator 设置当时值 | backend / max_split_size / expandable_segments 等 | `_get_allocator_settings` 或 env 快照 |
+| workspace_estimate | 外部库 workspace 侧写（不在上表账户内） | cuBLAS/MIOpen 节（AMD 侧待补） |
+| graph_pool_reserved | 存活 graph 私有池高水位估计 | CUDAGraph pool + snapshot 归属 |
+| external_procs + smi_used / smi_free | 他进程表（注明 pynvml/amdsmi 分支）与 SMI 整卡口径（与 mem_get_info 并列，不相减） | memory.py 双分支 |
+
+**解释行 A（不可归属显存）**：`total − (allocated + 驱动/固件常驻 + 他进程 + 外部库 workspace/plan-cache + graph 私有池) = 不可归属余量`，余量本身不是泄漏证据；CUDA/AMD 侧常驻项须逐项取证后才可列入。
+
+**解释行 B（观测不同步）**：同一时刻的 `reserved − allocated` 单值、单次 SMI 读数、报错栈位置三者不得单独作为碎片/泄漏/根因位置的断言。
+
+对照实验（只定义输入与判据，不填结果）：**固定负载基线 F0**（单进程单卡、确定性最小负载、关 graph capture、默认 backend，预热后 `reset_peak_memory_stats`，全表记录，重复 3 次取中位）；**单变量对照 F1**（每次只改一个分配器选项或开关：max_split_size、backend、expandable_segments、GC threshold、进程额度）；**恢复对照 F2**（OOM 后 `empty_cache` + 同负载复跑，对比 reserved.peak 与 num_ooms 增量，区分容量、峰值、分配失败与泄漏）。
+
+## 例子与相关知识
+
+典型误归因链条：训练中途报 `CUDA out of memory`，先读文案区分抛出层（分配器同步抛错 vs 下发路径 vs 1EB 防御分支），再取 `memory_stats` 的 allocated/reserved/inactive_split/num_ooms 并对照 `mem_get_info` 物理视角；若怀疑碎片，取 `_dump_snapshot` 经 memory_viz 看 segment/block 三态与 event 历史；最后才评估异步错位。本文未提供可执行命令。
+
+相关条目：[昇腾 NPU 内存与 OOM 证据](ascend-memory-oom-evidence.md)（四层模型对照）、[驱动初始化、运行时执行同步与库装载](runtime-execution-and-library-loading.md)、[GPU 算子、编译和图执行失败的定向诊断](gpu-op-graph-failure-triage.md)。
+
+## 来源与待确认问题
+
+- PyTorch 2.6（固定文档 + v2.6.0 源码 `1eba9b3`）：[CUDA semantics](https://docs.pytorch.org/docs/2.6/notes/cuda.html)、[torch.cuda 内存 API](https://docs.pytorch.org/docs/2.6/cuda.html)、[memory_stats](https://docs.pytorch.org/docs/2.6/generated/torch.cuda.memory_stats.html)、[Understanding CUDA Memory Usage](https://docs.pytorch.org/docs/2.6/torch_cuda_memory.html)（snapshot/dump）、[CUDAGraph](https://docs.pytorch.org/docs/2.6/generated/torch.cuda.CUDAGraph.html)、[profiler](https://docs.pytorch.org/docs/2.6/profiler.html)、[HIP semantics](https://docs.pytorch.org/docs/2.6/notes/hip.html)；源码 [memory.py](https://raw.githubusercontent.com/pytorch/pytorch/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/torch/cuda/memory.py)、[CUDACachingAllocator.cpp](https://raw.githubusercontent.com/pytorch/pytorch/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/c10/cuda/CUDACachingAllocator.cpp)。
+- NVIDIA（12.8.0 归档）：[Memory Management 6.11](https://docs.nvidia.com/cuda/archive/12.8.0/cuda-runtime-api/group__CUDART__MEMORY.html)、[Stream Ordered Allocator 6.13](https://docs.nvidia.com/cuda/archive/12.8.0/cuda-runtime-api/group__CUDART__MEMORY__POOLS.html)、[Graph Management 6.30](https://docs.nvidia.com/cuda/archive/12.8.0/cuda-runtime-api/group__CUDART__GRAPH.html)。
+- AMD（docs-7.14.0）：[HIP Memory management](https://rocm.docs.amd.com/projects/HIP/en/docs-7.14.0/reference/hip_runtime_api/modules/memory_management.html)、[Stream ordered allocator](https://rocm.docs.amd.com/projects/HIP/en/docs-7.14.0/reference/hip_runtime_api/modules/memory_management/stream_ordered_memory_allocator.html)、[ROCm/pytorch fork](https://github.com/ROCm/pytorch)。
+- 逐条主张与证据定位见[第十七批 GPU 内存来源记录](../../docs/research/batch-17-gpu-memory-sources.md)。
+- 待确认：HIP 7.14.0 流序分配器逐条重核；CUDA Graph Management 6.30 逐节核对；MIOpen/rocBLAS workspace 对应机制；ROCm 构建默认 backend 与 fork/上游 allocator diff；HIP 错误码（hipErrorOutOfMemory 等）定位；任何实测数值。

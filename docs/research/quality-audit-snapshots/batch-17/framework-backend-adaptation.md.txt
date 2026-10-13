@@ -1,0 +1,105 @@
+---
+id: software-stack.framework-backend-adaptation
+title: 框架到设备后端的适配与能力核对
+type: reference
+domain: software-stack
+status: draft
+platforms: [generic, nvidia, amd, ascend, other]
+source_refs:
+  - src.pytorch.privateuseone-tutorial-2026-10-09
+  - src.pytorch.dispatcher-v2.6.0
+  - src.pytorch.extending-autograd-2.6
+  - src.pytorch.library-custom-ops-2.6
+  - src.pytorch.hip-notes-2.6
+  - src.pytorch.torch-compiler-custom-backend-2.6
+  - src.pytorch.distributed-backend-2.6
+  - src.ascend.torch-npu-v7.2.0-pytorch2.6.0
+  - src.ascend.torchnpu-device-registration-7.2.0
+  - src.ascend.torchnpu-stream-event-7.2.0
+  - src.ascend.torchnpu-amp-7.2.0
+  - src.ascend.torchnpu-graphs-7.2.0
+  - src.mindspore.pluggable-device-2.5.0
+  - src.vllm.platform-interface-0.14
+  - src.vllm.plugin-system-v0-14
+updated_at: "2026-10-09"
+summary: "以 PyTorch PrivateUse1 树外后端机制为责任清单主干，按设备选择、forward/backward、dtype/layout、算子覆盖与 fallback、编译、并行与引擎插件六项逐项核对 PyTorch CUDA/ROCm 内置路径与 TorchNPU 扩展后端（v7.2.0-pytorch2.6.0 固定快照），并以 MindSpore 可插拔设备（r2.5.0）与 vLLM 平台接口（v0.14.0）作第三方抽象责任对照；适配成功以任务级结果验证为准，不以 import 成功为准。"
+related_ids:
+  - software-stack.layers-and-boundaries
+  - software-stack.operators-compilers-and-graphs
+  - software-stack.runtime-execution-and-library-loading
+  - software-stack.ascend-op-graph-failure-triage
+  - software-stack.gpu-op-graph-failure-triage
+applicability:
+  environment_refs: []
+  notes: "尚无环境档案：本文为文档级适配责任与能力核对表，未对准任何具体集群/版本组合。PyTorch 侧固定 v2.6 文档与 v2.6.0 源码（commit 1eba9b3）；TorchNPU 侧固定 v7.2.0-pytorch2.6.0（commit bc51ab84）；vLLM 侧固定 v0.14.0（commit b17039b）；MindSpore 侧为 r2.5.0 设计文档。目标环境的框架/后端组合需另行固定，不能据此认定适用。"
+verification:
+  status: source_checked
+  evidence_refs:
+    - src.pytorch.privateuseone-tutorial-2026-10-09
+    - src.pytorch.dispatcher-v2.6.0
+    - src.pytorch.hip-notes-2.6
+    - src.ascend.torchnpu-device-registration-7.2.0
+    - src.mindspore.pluggable-device-2.5.0
+    - src.vllm.platform-interface-0.14
+  notes: "对照第十七批取证记录（docs/research/batch-17-framework-backend-sources.md）所列固定版本来源核对；TorchNPU test/npu 用例树未取得（504），正文不虚构其用例名；未在任何 GPU/NPU 环境安装或运行代码。"
+---
+
+# 框架到设备后端的适配与能力核对
+
+## 范围与阅读方式
+
+本文回答：一个加速器后端要被主流框架真正用起来，需要实现哪些责任面，以及如何逐项核对它是否真的可用。主干是 PyTorch 的 PrivateUse1 树外后端机制（[教程](https://docs.pytorch.org/tutorials/advanced/privateuseone.html)）；核对对象是三条固定路径——PyTorch CUDA/ROCm 内置路径（PyTorch 2.6 文档）、TorchNPU 扩展后端（固定快照 `bc51ab84`）；第三方对照是 MindSpore 可插拔设备（r2.5.0 设计文档）与 vLLM 平台接口（v0.14.0 源码）。
+
+分工：组件职责分层见[软件栈分层](layers-and-boundaries.md)；编译栈内部机制见[算子分发、编译与计算图执行机制](operators-compilers-and-graphs.md)；初始化与同步语义见[驱动初始化、运行时执行同步与库装载](runtime-execution-and-library-loading.md)。本文只保留适配责任清单与核对方法，不重复上述机制正文。
+
+硬边界：**适配成功 = 任务级结果验证通过**（forward/backward 数值对照、opcheck + gradcheck、编译缓存身份、集合通信可跑通），`import torch_npu` 成功、`torch.cuda.is_available()` 为 True 都不算数。
+
+## 适配责任清单（PrivateUse1 主干）
+
+| 责任面 | 上游机制要求 | TorchNPU 快照实现证据 | 核对点 |
+|---|---|---|---|
+| 设备选择与注册 | `rename_privateuse1_backend` + `_register_device_module` + `generate_methods_for_privateuse1_backend`（[教程 How to Improve User Experience](https://docs.pytorch.org/tutorials/advanced/privateuseone.html)） | [`torch_npu/__init__.py @bc51ab84`](https://raw.githubusercontent.com/Ascend/pytorch/bc51ab84cc6f35c77aab1c59886e0ea43681a317/torch_npu/__init__.py)：`rename_privateuse1_backend("npu")`、`_register_device_module('npu', …)`、`generate_methods_for_privateuse1_backend`；`TORCH_DEVICE_BACKEND_AUTOLOAD` 开关与双加速器互斥报错 | `.npu()` 建张量并跑通 `mm`（厂商 README Quick Verification 最小例，需扩展为数值对照） |
+| forward/backward | 经 `AutogradPrivateUse1` 注册 `torch::autograd::Function` 的 forward/backward（[教程 Register kernels](https://docs.pytorch.org/tutorials/advanced/privateuseone.html)）；自定义 autograd 写法见 [Extending torch.autograd](https://docs.pytorch.org/docs/2.6/notes/extending.html) | 快照内 autograd 桥接以教程机制为准，不另立实现断言 | `gradcheck` 测数学正确（见下节 qopcheck/gradcheck 分工） |
+| dtype/layout | 后端模块五接口含 AMP dtype 面（教程 Other Modules 前后文） | [`autocast_utils.py @bc51ab84`](https://raw.githubusercontent.com/Ascend/pytorch/bc51ab84cc6f35c77aab1c59886e0ea43681a317/torch_npu/npu/autocast_utils.py)：`get_amp_supported_dtype`（bf16 支持则 `[float16, bfloat16]` 否则 `[float16]`）；`__init__.py` 内 `unsupported_dtype = [quint8, quint4x2, quint2x4, qint32, qint8]` | 否定清单只适用于该快照；其余 dtype/layout/format 组合按能力表逐项核对 |
+| 算子覆盖与 fallback | `TORCH_LIBRARY_IMPL(aten, PrivateUse1)` 注册算子 + `TORCH_LIBRARY_IMPL(_, PrivateUse1)` 注册 CPU fallback（教程）；无实现时 dispatcher 给出两种 `NotImplementedError`（[OperatorEntry.cpp L537–557 @1eba9b3](https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/aten/src/ATen/core/dispatch/OperatorEntry.cpp#L537-L557)） | 同教程机制；昇腾侧 fallback 判定见[昇腾算子不支持与图编译失败诊断](ascend-op-graph-failure-triage.md) | 报错文本 + 可用后端清单 + 输入形态 → 注册/覆盖缺口结论只到这一层 |
+| 内存与 stream | 后端须提供 stream/event 同步原语 | [`streams.py @bc51ab84`](https://raw.githubusercontent.com/Ascend/pytorch/bc51ab84cc6f35c77aab1c59886e0ea43681a317/torch_npu/npu/streams.py)：`Stream/Event/SyncLaunchStream/ExternalEvent` 与 `wait_event/wait_stream/record_event/query/synchronize` | API 存在 ≠ 无 race；跨 stream 正确性需任务级验证 |
+| 编译接口 | custom backend 契约 `(GraphModule, example_inputs) -> Callable`，经 `register_backend`/entry_points 注册；AOTAutograd 版只需支持 core Aten 子集（[Custom Backends](https://docs.pytorch.org/docs/2.6/torch.compiler_custom_backends.html)） | [`graphs.py @bc51ab84`](https://raw.githubusercontent.com/Ascend/pytorch/bc51ab84cc6f35c77aab1c59886e0ea43681a317/torch_npu/npu/graphs.py)：`NPUGraph`（capture/replay/pool/update，beta）、`make_graphed_callables` 前向+反向双图捕获 | TorchNPU 的 TorchAir 后端是否满足该契约以其文档为准，不据上游页推断 |
+| 并行接口 | 第三方通信后端经 `Backend.register_backend(name, func, extended_api, devices)` 注册（[torch.distributed](https://docs.pytorch.org/docs/2.6/distributed.html)，experimental） | `torch_npu/__init__.py`：`Backend.register_backend("lccl"/"hccl", devices=["npu"])`（hccl 最后注册） | HCCL 语义与版本配套以 HCCL/CANN 文档为准 |
+| 引擎插件 | 平台类须实现设备能力/内存/通信器/编译后端/配置校验等方法；OOT 平台用 `PlatformEnum.OOT`（[`interface.py @b17039b`](https://raw.githubusercontent.com/vllm-project/vllm/b17039bccc17b94a2ea107272ad7bc93508708df/vllm/platforms/interface.py) + [插件文档](https://docs.vllm.ai/en/latest/design/plugin_system.html)） | vLLM Ascend 快照配套（CANN 8.5.0/torch 2.9.0）与昇腾档案基线非同一组合，不可拼接 | 插件侧自保兼容（Compatibility Guarantee）不代替目标组合验证 |
+
+## ROCm 内置路径的对照位置
+
+PyTorch for HIP 有意复用 `torch.cuda` 接口（`device('cuda')` 写法、`is_available()` 同值），判别用 `torch.version.hip`（[HIP semantics](https://docs.pytorch.org/docs/2.6/notes/hip.html)）。但该页同时列出实质差异：ROCm 不支持 TF32；内存走 caching allocator 调试开关为 `PYTORCH_NO_HIP_MEMORY_CACHING`；hipBLAS workspace 经 `HIPBLAS_WORKSPACE_CONFIG`；分布式仅 nccl/gloo；版本检查宏须加 `USE_ROCM` 守卫；未列节回指 CUDA 文档。
+
+**硬边界**：“复用接口 ≠ 语义等价”。`torch/cuda/graphs.py @v2.6.0` 全文无 ROCm/HIP 字样（见机制文）；任何 CUDA 页结论搬运到 ROCm 前须在 HIP 文档中找到对应陈述，否则记 unknown。
+
+## 最小测试与观察点
+
+逐能力最小测试按“存在性 → 注册正确性 → 数学正确性 → 性能/完整性对照”四层排：
+
+1. **存在性**：设备建张量、前向可跑（`.npu()`/`device('cuda')` 最小例）。
+2. **注册正确性**：[`torch.library.opcheck`](https://docs.pytorch.org/docs/2.6/library.html)（test_schema/test_autograd_registration/test_faketensor/test_aot_dispatch_dynamic）——测 API 用法正确。
+3. **数学正确性**：[`gradcheck`](https://docs.pytorch.org/docs/2.6/notes/extending.html) ——测数值正确。文档 Warning 段明示两者测不同东西，**须都跑**，不以其一代替另一。
+4. **编译与缓存身份**：上游接口测试例 `test/inductor/test_codecache.py::test_cache_guard @1eba9b3`（L779–799）：`f(x, val)` 在 val=6→4（连带分支 sin→cos）时 `miss==1, hit==0` 且结果不等——证明图变化时不误复用缓存产物；同时给出反面约束：guard 值独立进入 key 的隔离证据未取得，不能简化为“guard 值不同即不同 key”（见机制文）。
+5. **并行与引擎**：集合通信最小用例 + vLLM 平台 `verify_model_arch/verify_quantization` 路径；预期失败（含 fallback 缺失的 `NotImplementedError` 形态）与回退行为一并记录。
+
+## 第三方框架对照：MindSpore 可插拔设备
+
+[Third-Party Hardware Interconnection（r2.5.0）](https://www.mindspore.cn/docs/en/r2.5.0/design/pluggable_device.html) 给出另一套职责划分，可与 PrivateUse1 互证抽象责任：上层统一运行时（GraphCompiler：控制流/异构切图/分阶段图优化 + 调用抽象层做算子选择编译/内存分配/stream 分配；GraphScheduler：Actor 化与线程池调度）vs 硬件抽象层（厂商实现面）；Kernel 模式（图切分/图优化/算子选择编译/DeviceAddress 内存 + Host/Device 拷贝 + 申请销毁/stream 创建销毁，附公共内存池与 SOMAS 复用算法）vs Graph 模式（整图 SuperKernel：图编译 ANF IR→第三方 IR→可执行；图执行：Tensor 格式理解/转换 + 调用执行 + 结果转回）；插件封动态库、运行时加载。
+
+对照用途仅限“抽象责任有哪些”；不预设 MindSpore 支持本文任何目标版本，不引用其性能数字。
+
+## 使用与解释注意事项
+
+- 教程页（PrivateUse1、MindSpore 设计文档）是机制声明，不是能力承诺；`custom_cpu_fallback` 的存在不保证某算子在某后端真有 fallback。
+- `unsupported_dtype` 否定清单、`get_amp_supported_dtype` 分支、`register_backend` 的 experimental 标记都是快照/版本绑定的，换版本重核。
+- `test_privateuseone_python_backend.py` 在 `1eba9b3` 是否存在未核实（main 存在，固定 commit 下 raw 404、blob 页 503），不作为固定版本证据引用；TorchNPU `test/npu` 目录树页取证轮 504，未取得前不得虚构其用例名。
+- CANN 侧与 HCCL 配套、TorchNPU 算子覆盖逐项表沿用分层文跟踪缺口（U1/U2/U6），本文不从快照外推。
+
+## 来源与更新范围
+
+- PyTorch 2.6（固定文档 + v2.6.0 源码 commit `1eba9b3`）：[PrivateUse1 教程](https://docs.pytorch.org/tutorials/advanced/privateuseone.html)、[Extending torch.autograd](https://docs.pytorch.org/docs/2.6/notes/extending.html)、[torch.library](https://docs.pytorch.org/docs/2.6/library.html)（opcheck）、[HIP semantics](https://docs.pytorch.org/docs/2.6/notes/hip.html)、[Custom Backends](https://docs.pytorch.org/docs/2.6/torch.compiler_custom_backends.html)、[torch.distributed](https://docs.pytorch.org/docs/2.6/distributed.html)；源码 [OperatorEntry.cpp](https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/aten/src/ATen/core/dispatch/OperatorEntry.cpp#L537-L557)、[test_codecache.py](https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/test/inductor/test_codecache.py)。
+- TorchNPU 固定快照（`bc51ab84`）：[`__init__.py`](https://raw.githubusercontent.com/Ascend/pytorch/bc51ab84cc6f35c77aab1c59886e0ea43681a317/torch_npu/__init__.py)、[`streams.py`](https://raw.githubusercontent.com/Ascend/pytorch/bc51ab84cc6f35c77aab1c59886e0ea43681a317/torch_npu/npu/streams.py)、[`autocast_utils.py`](https://raw.githubusercontent.com/Ascend/pytorch/bc51ab84cc6f35c77aab1c59886e0ea43681a317/torch_npu/npu/autocast_utils.py)、[`graphs.py`](https://raw.githubusercontent.com/Ascend/pytorch/bc51ab84cc6f35c77aab1c59886e0ea43681a317/torch_npu/npu/graphs.py)。
+- 第三方对照：[MindSpore pluggable device（r2.5.0）](https://www.mindspore.cn/docs/en/r2.5.0/design/pluggable_device.html)、[vLLM interface.py @b17039b](https://raw.githubusercontent.com/vllm-project/vllm/b17039bccc17b94a2ea107272ad7bc93508708df/vllm/platforms/interface.py)。
+- 逐条主张与证据定位见[第十七批框架后端来源记录](../../docs/research/batch-17-framework-backend-sources.md)。
+- 待确认：TorchNPU 固定 commit 的 `test/npu/*` 用例名（blocked，目录页 504）；CANN/HDK 精确交集与 HCCL 配套（unknown，沿用分层文缺口）；vLLM 树内 CUDA/ROCm 平台职责页（unknown）；ROCm 文档站文本许可（unknown）。

@@ -3505,3 +3505,1358 @@ sources:
     scopes: []
     notes: Issue、评论和日志的再分发范围未核验；仓库许可不自动覆盖用户提交内容（同 src.pytorch.issue-118369 先例）。本库只链接并作有限事实归纳。
   notes: 通信域旁证：捕获集合通信（capture 期间集合通信原语）报 hipErrorStreamCaptureUnsupported；AMD 工程师定位为 RCCL 惰性初始化在捕获期调用 hipFree()，并称与 CUDA 行为一致（报告者在 B200 上复验 NCCL 同样不可捕获）。无代码修复链接；「ROCm 7.0 起捕获期行为对齐 CUDA」属工程师在 issue 内的陈述，不是版本化文档承诺（HIP 错误码页数值对齐不等于行为对齐，见 src.amd.hip-error-codes-7.14.0）。旧 ROCm/rccl 仓库问题已迁往 ROCm/rocm-systems（后续在 rocm-systems#2785），与 RCCL 公开仓库迁移口径一致。
+- id: src.pytorch.extending-autograd-2.6
+  title: PyTorch 2.6 Extending torch.autograd 文档
+  url: https://docs.pytorch.org/docs/2.6/notes/extending.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: PyTorch 2.6 文档；源码 commit 1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库根 LICENSE；文档站资产另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 根许可沿用本库对 PyTorch v2.6.0 的已核对记录；本库只做短摘要与链接。
+  notes: Batch 17 取证轮实开核对（docs/research/batch-17-framework-backend-sources.md）；集成者复核 URL 精确性与 HTTP 200 可达。核对 Extending torch.autograd 节（Function 子类、forward/setup_context/backward、save_for_backward/mark_dirty、gradcheck 校验步骤），支撑 T02-08 forward/backward 责任与任务级结果验证。官方声明，非测试。
+- id: src.pytorch.library-custom-ops-2.6
+  title: PyTorch 2.6 torch.library 文档
+  url: https://docs.pytorch.org/docs/2.6/library.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: PyTorch 2.6 文档；源码 commit 1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库根 LICENSE；文档站资产另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 根许可沿用本库对 PyTorch v2.6.0 的已核对记录；本库只做短摘要与链接。
+  notes: Batch 17 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 torch.library.opcheck 四项（test_schema/test_autograd_registration/test_faketensor/test_aot_dispatch_dynamic）与 register_kernel/register_autograd/register_fake，支撑 T02-08 算子覆盖/fallback 与逐能力最小测试。文档内示例，非独立测试文件。
+- id: src.pytorch.hip-notes-2.6
+  title: PyTorch 2.6 HIP (ROCm) semantics 文档
+  url: https://docs.pytorch.org/docs/2.6/notes/hip.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: PyTorch 2.6 文档；2026-10-09 观察
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库根 LICENSE；文档站资产另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 根许可沿用本库对 PyTorch v2.6.0 的已核对记录；本库只做短摘要与链接。
+  notes: 集成者本轮实开全文核对。核对 HIP Interfaces Reuse the CUDA Interfaces（复用 torch.cuda 接口、device('cuda') 写法）、Checking for HIP（torch.version.hip 判别）、Memory management（caching allocator、PYTORCH_NO_HIP_MEMORY_CACHING；rocm-smi 显示口径）、hipBLAS workspaces（HIPBLAS_WORKSPACE_CONFIG、MI300+ 默认 128MiB）、torch.distributed backends（ROCm 仅 nccl/gloo）、TF32 on ROCm 不支持、USE_ROCM 版本检查宏、Refer to CUDA Semantics。关键边界：未列节回指 CUDA 文档，CUDA 结论不自动继承到 ROCm。
+- id: src.pytorch.torch-compiler-custom-backend-2.6
+  title: PyTorch 2.6 torch.compiler Custom Backends 文档
+  url: https://docs.pytorch.org/docs/2.6/torch.compiler_custom_backends.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: PyTorch 2.6 文档；源码 commit 1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库根 LICENSE；文档站资产另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 根许可沿用本库对 PyTorch v2.6.0 的已核对记录；本库只做短摘要与链接。
+  notes: Batch 17 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 backend 契约 (gm, example_inputs) -> Callable、register_backend 与 entry_points、AOTAutograd 后 custom backend 只需支持 core Aten 子集，支撑 T02-08 编译接口与抽象责任对照。编译语义细节仍归 T02-06，不重复。
+- id: src.pytorch.distributed-backend-2.6
+  title: PyTorch 2.6 torch.distributed 后端文档
+  url: https://docs.pytorch.org/docs/2.6/distributed.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: PyTorch 2.6 文档；页内源码链指向 v2.6.0
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库根 LICENSE；文档站资产另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 根许可沿用本库对 PyTorch v2.6.0 的已核对记录；本库只做短摘要与链接。
+  notes: Batch 17 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 Backends 表（gloo/mpi/nccl×CPU/GPU 函数矩阵）、Backend.register_backend 第三方扩展点（experimental）、init_process_group device_id 默认映射、DeviceMesh。边界：PrivateUse1 分布式集成为未来工作，不据此页推断 NPU 后端可用 backend。
+- id: src.ascend.torchnpu-device-registration-7.2.0
+  title: TorchNPU v7.2.0 torch_npu/__init__.py 设备注册固定快照
+  url: https://raw.githubusercontent.com/Ascend/pytorch/bc51ab84cc6f35c77aab1c59886e0ea43681a317/torch_npu/__init__.py
+  kind: repository
+  registered_at: '2026-10-09'
+  revision: bc51ab84cc6f35c77aab1c59886e0ea43681a317
+  license:
+    status: partial
+    scopes:
+    - scope: Ascend/pytorch 固定 commit 根 LICENSE；第三方文件按各自声明核查
+      identifier: BSD-3-Clause
+      url: https://github.com/Ascend/pytorch/blob/bc51ab84cc6f35c77aab1c59886e0ea43681a317/LICENSE
+    notes: 取证轮 raw 直读核对许可页为 BSD 三条款；本库只做短摘要与链接。
+  notes: Batch 17 取证轮 raw 直读全文核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 rename_privateuse1_backend("npu")、_register_device_module、generate_methods_for_privateuse1_backend（__init__.py L203–205 以 for_storage=True 传入 unsupported_dtype 五项；按上游 backend_registration.py L318–319 该列表仅在生成 Storage 方法时生效，约束自动生成的 NPU Storage 转移方法，不覆盖 tensor/算子/AMP 能力）、TORCH_DEVICE_BACKEND_AUTOLOAD 开关、Backend.register_backend("lccl"/"hccl")、DefaultDeviceType。existing src.ascend.torch-npu-v7.2.0-pytorch2.6.0 的文件级定位。
+- id: src.ascend.torchnpu-stream-event-7.2.0
+  title: TorchNPU v7.2.0 torch_npu/npu/streams.py 固定快照
+  url: https://raw.githubusercontent.com/Ascend/pytorch/bc51ab84cc6f35c77aab1c59886e0ea43681a317/torch_npu/npu/streams.py
+  kind: repository
+  registered_at: '2026-10-09'
+  revision: bc51ab84cc6f35c77aab1c59886e0ea43681a317
+  license:
+    status: partial
+    scopes:
+    - scope: Ascend/pytorch 固定 commit 根 LICENSE；第三方文件按各自声明核查
+      identifier: BSD-3-Clause
+      url: https://github.com/Ascend/pytorch/blob/bc51ab84cc6f35c77aab1c59886e0ea43681a317/LICENSE
+    notes: 根许可沿用取证轮已核对记录；本库只做短摘要与链接。
+  notes: Batch 17 取证轮 raw 直读全文核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 Stream/Event/SyncLaunchStream/ExternalEvent 四类与 wait_event/wait_stream/record_event/query/synchronize 语义，支撑 T02-08 内存/stream 责任与 T02-11 stream 封装对照。
+- id: src.ascend.torchnpu-amp-7.2.0
+  title: TorchNPU v7.2.0 torch_npu/npu/autocast_utils.py 固定快照
+  url: https://raw.githubusercontent.com/Ascend/pytorch/bc51ab84cc6f35c77aab1c59886e0ea43681a317/torch_npu/npu/autocast_utils.py
+  kind: repository
+  registered_at: '2026-10-09'
+  revision: bc51ab84cc6f35c77aab1c59886e0ea43681a317
+  license:
+    status: partial
+    scopes:
+    - scope: Ascend/pytorch 固定 commit 根 LICENSE；第三方文件按各自声明核查
+      identifier: BSD-3-Clause
+      url: https://github.com/Ascend/pytorch/blob/bc51ab84cc6f35c77aab1c59886e0ea43681a317/LICENSE
+    notes: 根许可沿用取证轮已核对记录；本库只做短摘要与链接。
+  notes: Batch 17 取证轮 raw 直读全文（5 函数）核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 get_amp_supported_dtype（bf16 支持则 [float16, bfloat16] 否则 [float16]）、is/set_autocast_enabled、get/set_autocast_dtype。仅证明接口存在，不证明任意模型 AMP 精度。
+- id: src.ascend.torchnpu-graphs-7.2.0
+  title: TorchNPU v7.2.0 torch_npu/npu/graphs.py 固定快照
+  url: https://raw.githubusercontent.com/Ascend/pytorch/bc51ab84cc6f35c77aab1c59886e0ea43681a317/torch_npu/npu/graphs.py
+  kind: repository
+  registered_at: '2026-10-09'
+  revision: bc51ab84cc6f35c77aab1c59886e0ea43681a317
+  license:
+    status: partial
+    scopes:
+    - scope: Ascend/pytorch 固定 commit 根 LICENSE；第三方文件按各自声明核查
+      identifier: BSD-3-Clause
+      url: https://github.com/Ascend/pytorch/blob/bc51ab84cc6f35c77aab1c59886e0ea43681a317/LICENSE
+    notes: 根许可沿用取证轮已核对记录；本库只做短摘要与链接。
+  notes: Batch 17 取证轮 raw 直读全文核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 NPUGraph capture_begin（capture_error_mode 三档）、replay/reset/pool/update、beta 警告、make_graphed_callables 前向+反向双图捕获与 autocast-cache 互斥。CANN 试验特性与产品矩阵仍以 CANN 页为准。
+- id: src.mindspore.pluggable-device-2.5.0
+  title: MindSpore 2.5.0 Third-Party Hardware Interconnection 文档
+  url: https://www.mindspore.cn/docs/en/r2.5.0/design/pluggable_device.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: MindSpore 文档版本线 r2.5.0；2026-10-09 观察
+  license:
+    status: partial
+    scopes:
+    - scope: mindspore-ai/mindspore 仓库代码许可（master 分支核对；r2.5.0 tag LICENSE 本次 404）
+      identifier: Apache-2.0
+      url: https://raw.githubusercontent.com/mindspore-ai/mindspore/master/LICENSE
+    notes: 文档页正文再分发许可 unknown；本库只链接并原创归纳，不复制长段。
+  notes: 集成者本轮实开全文核对。核对 GraphCompiler/GraphScheduler 调用硬件抽象层、Kernel 模式（图切分/图优化/算子选择编译、DeviceAddress 内存与 Host/Device 拷贝、stream 创建销毁、SOMAS 内存复用）与 Graph 模式（整图 SuperKernel：图编译+图执行、Tensor 格式转换）、插件动态库运行时加载。作为 T02-08 第三方框架对照例；不预设 MindSpore 支持本文任何目标版本，只取抽象责任对照。
+- id: src.vllm.platform-interface-0.14
+  title: vLLM v0.14.0 vllm/platforms/interface.py 固定快照
+  url: https://raw.githubusercontent.com/vllm-project/vllm/b17039bccc17b94a2ea107272ad7bc93508708df/vllm/platforms/interface.py
+  kind: repository
+  registered_at: '2026-10-09'
+  revision: b17039bccc17b94a2ea107272ad7bc93508708df
+  license:
+    status: partial
+    scopes:
+    - scope: vLLM 固定 commit 根 LICENSE；文件头 SPDX Apache-2.0
+      identifier: Apache-2.0
+      url: https://github.com/vllm-project/vllm/blob/b17039bccc17b94a2ea107272ad7bc93508708df/LICENSE
+    notes: 取证轮 raw 直读核对许可；本库只做短摘要与链接。
+  notes: Batch 17 取证轮 raw 直读全文核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 PlatformEnum、device_control_env_var、simple_compile_backend/dist_backend/supported_quantization、supported_dtypes、get_device_capability/get_device_total_memory、check_and_update_config/verify_model_arch/verify_quantization、get_device_communicator_cls、is_cuda_alike。与 existing src.vllm.plugin-system-v0-14（插件文档讲扩展点）互补：本文件讲平台必须实现的责任面。
+- id: src.pytorch.torch-cuda-memory-api-2.6
+  title: PyTorch 2.6 torch.cuda 内存管理 API 文档
+  url: https://docs.pytorch.org/docs/2.6/cuda.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: PyTorch 2.6 文档；2026-10-09 观察（docs/2.6/torch.cuda.html 实测 404，正确路径为 docs/2.6/cuda.html）
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库根 LICENSE；文档站资产另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 根许可沿用本库对 PyTorch v2.6.0 的已核对记录；本库只做短摘要与链接。
+  notes: Batch 17 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 Memory management 表（mem_get_info、memory_allocated/reserved 与 max 系列、memory_stats/summary/snapshot、empty_cache、set/get_per_process_memory_fraction、list_gpu_processes、get_allocator_backend、MemPool 系列、CUDAPluggableAllocator）。
+- id: src.pytorch.torch-cuda-memory-stats-2.6
+  title: PyTorch 2.6 torch.cuda.memory_stats 文档
+  url: https://docs.pytorch.org/docs/2.6/generated/torch.cuda.memory_stats.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: PyTorch 2.6 文档；2026-10-09 观察
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库根 LICENSE；文档站资产另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 根许可沿用本库对 PyTorch v2.6.0 的已核对记录；本库只做短摘要与链接。
+  notes: Batch 17 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 allocated/reserved/active/inactive_split 等键 × {all,large_pool,small_pool} × {current,peak,allocated,freed}、num_alloc_retries/num_ooms 等计数器、oversize/requested_bytes、backend:cudaMallocAsync 下部分 stats 恒零的 Note。碎片证据的官方键定义。
+- id: src.pytorch.torch-cuda-memory-usage-2.6
+  title: PyTorch 2.6 Understanding CUDA Memory Usage 文档
+  url: https://docs.pytorch.org/docs/2.6/torch_cuda_memory.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: PyTorch 2.6 文档；内链源码 torch/cuda/memory.py @ v2.6.0
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库根 LICENSE；文档站资产另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 根许可沿用本库对 PyTorch v2.6.0 的已核对记录；本库只做短摘要与链接。
+  notes: Batch 17 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 snapshot/dump 三件套（_record_memory_history、_snapshot 的 Segment/Block/Frame/TraceEntry schema、_dump_snapshot 经 pickle 到 memory_viz）与 Active Memory Timeline / Allocator State History 两视图。
+- id: src.pytorch.torch-cuda-memory-source-v2.6.0
+  title: PyTorch v2.6.0 torch/cuda/memory.py 固定源码
+  url: https://raw.githubusercontent.com/pytorch/pytorch/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/torch/cuda/memory.py
+  kind: repository
+  registered_at: '2026-10-09'
+  revision: 1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库根 LICENSE；第三方文件按各自声明核查
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 根许可沿用本库对 PyTorch v2.6.0 的已核对记录；本库只做短摘要与链接。
+  notes: Batch 17 取证轮 raw 直读核对；修订轮复核确认固定 memory.py 无 _get_allocator_settings（仅 _set_allocator_settings 与 get_allocator_backend）；第二轮复核纠正：get_allocator_backend 经 C++ getter 查询的是 active allocator backend（memory.py L925–934 原文 "Return a string describing the active allocator backend as set by PYTORCH_CUDA_ALLOC_CONF"），不是读取当前 env 快照——env 单列请求配置；两者都不代表已取得全部选项的生效值；集成者复核 URL 精确性与 HTTP 200 可达。核对 mem_get_info 经 cudart cudaMemGetInfo、memory_allocated/reserved 定义、set_per_process_memory_fraction、list_gpu_processes 双路径（非 HIP 走 pynvml、HIP 走 amdsmi）、_set_allocator_settings 经 PYTORCH_CUDA_ALLOC_CONF。注意文件头 docstring 自称 CUDA 实现，HIP 侧引用只认函数实现不认措辞。
+- id: src.pytorch.cuda-caching-allocator-v2.6.0
+  title: PyTorch v2.6.0 CUDACachingAllocator 固定源码
+  url: https://raw.githubusercontent.com/pytorch/pytorch/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/c10/cuda/CUDACachingAllocator.cpp
+  kind: repository
+  registered_at: '2026-10-09'
+  revision: 1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库根 LICENSE；第三方文件按各自声明核查
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 根许可沿用本库对 PyTorch v2.6.0 的已核对记录；本库只做短摘要与链接。
+  notes: Batch 17 取证轮 raw 直读全文（4056 行）核对；修订轮复核活跃统计 L1443–1448（active 块插入即增 allocated_bytes/active，graph 池分配在 aggregate 内）、expandable 条件 L1410–1423（inactive_split 累加仅非 expandable 路径）、graph 池 L2775–2784（total_allocated_memory 与 reserved_bytes 照常增加）与 CUDAAllocatorConfig 解析（含 release_lock_on_cudamalloc 及 release_lock_on_hipmalloc/pinned_use_hip_host_register 选项名拼写别名，非新环境变量）；集成者复核 URL 精确性与 HTTP 200 可达。核对 small/large 双池、分配失败重试链、OOM 文案与 1EB 防御分支、Note Interaction with CUDA graph capture、CUDAAllocatorConfig 只读 PYTORCH_CUDA_ALLOC_CONF（无 HIP 专用变量名）、全文 USE_ROCM 仅 2 处（同一套 allocator 经 HIPIFY 在 ROCm 构建编译，行为等价性仍须 ROCm 侧证据，不得倒填）。
+- id: src.pytorch.cudagraph-api-2.6
+  title: PyTorch 2.6 torch.cuda.CUDAGraph 文档
+  url: https://docs.pytorch.org/docs/2.6/generated/torch.cuda.CUDAGraph.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: PyTorch 2.6 文档；beta 标注；2026-10-09 观察
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库根 LICENSE；文档站资产另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 根许可沿用本库对 PyTorch v2.6.0 的已核对记录；本库只做短摘要与链接。
+  notes: Batch 17 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 capture_begin(pool, capture_error_mode 三档对应 cudaStreamCaptureMode)、pool/replay/reset。torch/cuda/graphs.py @v2.6.0 全文无 ROCm/HIP 字样（沿用 T02-06 边界：不得从 CUDA 文档宣称 HIP 适用）。
+- id: src.nvidia.cuda-12-8-runtime-memory
+  title: CUDA Runtime API 12.8 Memory Management（6.11）
+  url: https://docs.nvidia.com/cuda/archive/12.8.0/cuda-runtime-api/group__CUDART__MEMORY.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: 12.8.0 归档；页尾 Last updated 2025-01-23；2026-10-09 观察
+  license:
+    status: partial
+    scopes:
+    - scope: CUDA Toolkit 12.8 归档 EULA（沿用既有 src.nvidia.cuda-toolkit-12-8 登记口径）
+      identifier: NVIDIA-CUDA-Toolkit-EULA
+      url: https://docs.nvidia.com/cuda/archive/12.8.0/eula/index.html
+    notes: 未复制正文；本库只做短摘要与链接。
+  notes: Batch 17 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 cudaMalloc/Free、cudaMemGetInfo(free,total) 设备总量/可用量口径、cudaPointerAttributes、host pinned（cudaHostAlloc/Register）、各函数页 previous async errors 注记（观测不同步的运行时侧证据）。
+- id: src.nvidia.cuda-12-8-stream-ordered-alloc
+  title: CUDA Runtime API 12.8 Stream Ordered Memory Allocator（6.13）
+  url: https://docs.nvidia.com/cuda/archive/12.8.0/cuda-runtime-api/group__CUDART__MEMORY__POOLS.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: 12.8.0 归档；2026-10-09 观察
+  license:
+    status: partial
+    scopes:
+    - scope: CUDA Toolkit 12.8 归档 EULA（沿用既有 src.nvidia.cuda-toolkit-12-8 登记口径）
+      identifier: NVIDIA-CUDA-Toolkit-EULA
+      url: https://docs.nvidia.com/cuda/archive/12.8.0/eula/index.html
+    notes: 未复制正文；本库只做短摘要与链接。
+  notes: 集成者本轮实开全文核对。核对流序语义（分配后须等分配操作完成才可访问、free 到达后访问即 UB）、capture 期间生成 allocation/free node 归 graph 所有、pool 属性（ReleaseThreshold/Reuse 三开关/ReservedMem/UsedMem 四水位）、cudaDevAttrMemoryPoolsSupported 能力查询、cudaMallocAsync/FreeAsync 与 MemPool 全套函数。对应 PyTorch backend:cudaMallocAsync 的底层语义。
+- id: src.nvidia.cuda-12-8-graph-mgmt
+  title: CUDA Runtime API 12.8 Graph Management（6.30）
+  url: https://docs.nvidia.com/cuda/archive/12.8.0/cuda-runtime-api/group__CUDART__GRAPH.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: 12.8.0 归档；2026-10-09 观察（本轮仅确认模块存在与 cudaMemAllocNodeParams/cudaMemFreeNodeParams 结构清单，未逐节读）
+  license:
+    status: partial
+    scopes:
+    - scope: CUDA Toolkit 12.8 归档 EULA（沿用既有 src.nvidia.cuda-toolkit-12-8 登记口径）
+      identifier: NVIDIA-CUDA-Toolkit-EULA
+      url: https://docs.nvidia.com/cuda/archive/12.8.0/eula/index.html
+    notes: 未复制正文；本库只做短摘要与链接。
+  notes: Batch 17 取证轮确认模块存在；集成者复核 URL 精确性与 HTTP 200 可达。graph capture 内存的运行时侧占位：mem alloc/free node 参数结构。T02-09 执行时须逐节核对 capture 约束与内存节点语义，此处不预引结论。
+- id: src.amd.hip-memory-7.14.0
+  title: HIP 7.14.60850 Memory management 文档（docs-7.14.0）
+  url: https://rocm.docs.amd.com/projects/HIP/en/docs-7.14.0/reference/hip_runtime_api/modules/memory_management.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: docs-7.14.0（站标 HIP 7.14.60850）；2026-10-09 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: HIP 文档 license 页待执行时重开复核（Batch-16 记录 HIP 文档为 MIT，沿用预期但以实测为准）；本库只链接并原创归纳。
+  notes: Batch 17 取证轮实开核对（与 6.3.3 页逐项对照一致）；集成者复核 URL 精确性与 HTTP 200 可达。核对 hipMalloc/hipFree（hipFree/hipFreeHost 隐式 hipDeviceSynchronize，与 CUDA 关键差异）、hipExtMallocWithFlags、hipMemGetInfo(size_t*free,size_t*total)、hipPointerGetAttributes（Note 对应 11.0 之前 CUDA 行为，不可与现行 CUDA 对读）、host pinned 系列。
+- id: src.amd.hip-stream-ordered-alloc-7.14.0
+  title: HIP Stream ordered memory allocator 文档（docs-7.14.0）
+  url: https://rocm.docs.amd.com/projects/HIP/en/docs-7.14.0/reference/hip_runtime_api/modules/memory_management/stream_ordered_memory_allocator.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: docs-7.14.0；2026-10-09 观察（取证轮实开 docs-6.3.3 同路径页作过渡对照，7.14.0 页集成者复核 HTTP 200 可达，执行时逐条重核）
+  license:
+    status: unknown
+    scopes: []
+    notes: HIP 文档 license 页待执行时重开复核；本库只链接并原创归纳。
+  notes: 6.3.3 实测内容：hipMallocAsync/MallocFromPoolAsync/hipFreeAsync、hipMemPool 全套，全部标 Beta、Linux 已实现/Windows under development；capture 期间同样生成 allocation node 归 graph 所有。版本线不可混：T02-02 的 HIP 6.3.42134 证据只作历史对照，T02-09 AMD 侧统一用 7.14.0 线，差异逐条记录。
+- id: src.amd.pytorch-rocm-fork
+  title: ROCm/pytorch fork 仓库与 ROCm PyTorch 安装指引
+  url: https://github.com/ROCm/pytorch
+  kind: repository
+  registered_at: '2026-10-09'
+  revision: fork develop 可变分支（本轮仅确认存在性与派生关系；执行时固定 commit）
+  license:
+    status: partial
+    scopes:
+    - scope: fork 根 LICENSE（页面列 License；执行时固定 commit 打开核对，沿 PyTorch BSD-3-Clause 预期但以实测为准）
+      identifier: BSD-3-Clause
+      url: https://github.com/ROCm/pytorch
+    notes: 执行时固定 commit 后复核；本库只做短摘要与链接。
+  notes: Batch 17 取证轮确认 fork 存在性；集成者复核 URL 精确性与 HTTP 200 可达。ROCm PyTorch allocator 分叉说明：上游已上游化 + AMD 另维护分叉、HIP 代码由 CUDA 经 HIPIFY 生成（见已登记 7.2.3 兼容页）。缺口：v2.6.0 时刻 fork 与上游 allocator 差异 diff、ROCm 构建默认 backend 均 unknown。
+- id: src.pytorch.tensor-attributes-2.6
+  title: PyTorch 2.6 Tensor Attributes 文档
+  url: https://docs.pytorch.org/docs/2.6/tensor_attributes.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: PyTorch 2.6 文档；源码 tag v2.6.0 对应 commit 1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库根 LICENSE；文档站资产另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 根许可沿用本库对 PyTorch v2.6.0 的已核对记录；本库只做短摘要与链接。
+  notes: Batch 17 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 12 种 dtype 表、fp16/bf16 位宽语义、type promotion 三规则与输出 cast 三禁、torch.layout 与 torch.memory_format 正交枚举。注：notes/type_promotion.html、notes/memory_format.html、notes/amp.html 实测 404，避免误引。
+- id: src.pytorch.amp-2.6
+  title: PyTorch 2.6 torch.amp 文档
+  url: https://docs.pytorch.org/docs/2.6/amp.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: PyTorch 2.6 文档；源码 commit 1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库根 LICENSE；文档站资产另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 根许可沿用本库对 PyTorch v2.6.0 的已核对记录；本库只做短摘要与链接。
+  notes: Batch 17 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 autocast 只包 forward（含 loss）、backward 沿用 forward dtype、op 三类表、GradScaler 三步责任。torch.cuda.amp.* 已 deprecated，以 torch.autocast(device_type=…) 为准。
+- id: src.pytorch.amp-examples-2.6
+  title: PyTorch 2.6 AMP Examples 文档
+  url: https://docs.pytorch.org/docs/2.6/notes/amp_examples.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: PyTorch 2.6 文档；源码 commit 1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库根 LICENSE；文档站资产另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 根许可沿用本库对 PyTorch v2.6.0 的已核对记录；本库只做短摘要与链接。
+  notes: Batch 17 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 GradScaler 使用模式：unscale_ 后再 clip、梯度累加期间保持 scaled 且 update 只在有效 batch 步调、每 loss 独立 scale。只讲机制，不含收敛判据（归 06.5）。
+- id: src.pytorch.set-float32-matmul-precision-2.6
+  title: PyTorch 2.6 torch.set_float32_matmul_precision 文档
+  url: https://docs.pytorch.org/docs/2.6/generated/torch.set_float32_matmul_precision.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: PyTorch 2.6 文档；页内源码链指向 v2.6.0
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库根 LICENSE；文档站资产另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 根许可沿用本库对 PyTorch v2.6.0 的已核对记录；本库只做短摘要与链接。
+  notes: Batch 17 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 highest/high/medium 三档内部精度语义；明确只改内部计算、不改输出 dtype、不改卷积精度、当前只影响 CUDA。跨平台不互推的关键边界句。
+- id: src.pytorch.testing-assert-close-2.6
+  title: PyTorch 2.6 torch.testing 文档（assert_close）
+  url: https://docs.pytorch.org/docs/2.6/testing.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: PyTorch 2.6 文档；页内源码链指向 v2.6.0
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库根 LICENSE；文档站资产另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 根许可沿用本库对 PyTorch v2.6.0 的已核对记录；本库只做短摘要与链接。
+  notes: Batch 17 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达，并与既有 src.pytorch.numerical-verification-2.6 登记的容差表复核一致。核对 |actual−expected| ≤ atol+rtol·|expected|、按 dtype 默认容差表、check_device/dtype/layout/stride 四开关、equal_nan 默认 False。默认容差表只作比较起点，不作验收阈值。
+- id: src.pytorch.channels-last-tutorial
+  title: PyTorch Channels Last Memory Format 教程
+  url: https://docs.pytorch.org/tutorials/intermediate/memory_format_tutorial.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: tutorials 站浮动版本；页标 Last Verified 2024-11-05；2026-10-09 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: tutorials 仓库许可未核对，仅链接并原创归纳，不复制代码长段。
+  notes: Batch 17 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 NHWC stride 实例、to 与 contiguous 在 C==1 歧义形状下行为差异、clone/like/逐点算子保持格式、conv 以 channels_last 为主导。性能数字为作者环境实测，只作方向证据，不作阈值。
+- id: src.nvidia.cublas-12.8-math-repro
+  title: cuBLAS 12.8 数学模式与结果可复现性文档
+  url: https://docs.nvidia.com/cuda/archive/12.8.0/cublas/index.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: CUDA 12.8.0 归档；2026-10-09 观察
+  license:
+    status: partial
+    scopes:
+    - scope: CUDA 12.8 归档 EULA（沿用既有 src.nvidia.cuda-toolkit-12-8 登记口径；具体文件再分发条件另计）
+      identifier: NVIDIA-CUDA-Toolkit-EULA
+      url: https://docs.nvidia.com/cuda/archive/12.8.0/eula/index.html
+    notes: 未复制正文；本库只做短摘要与链接。
+  notes: Batch 17 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 §2.1.4 单 stream 同架构同 SM 数 bitwise 保证与多 stream 非确定四种规避、§2.1.10 GEMM K 切分累加与 CUBLAS_MATH_DISALLOW_REDUCED_PRECISION_REDUCTION、§2.1.11 Tensor Core 使用与对齐条件、§2.2.10 cublasMath_t、§3.1.4 FP8（含 block scaling）。
+- id: src.nvidia.cuda-math-api-fp8-12.8
+  title: CUDA Math API 12.8 FP8 intrinsics 文档
+  url: https://docs.nvidia.com/cuda/archive/12.8.0/cuda-math-api/cuda_math_api/group__CUDA__MATH__INTRINSIC__FP8.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: CUDA 12.8.0 归档（Last updated 2025-01-21）；2026-10-09 观察
+  license:
+    status: partial
+    scopes:
+    - scope: CUDA 12.8 归档 EULA（沿用既有 src.nvidia.cuda-toolkit-12-8 登记口径；具体文件再分发条件另计）
+      identifier: NVIDIA-CUDA-Toolkit-EULA
+      url: https://docs.nvidia.com/cuda/archive/12.8.0/eula/index.html
+    notes: 未复制正文；本库只做短摘要与链接。
+  notes: Batch 17 取证轮实开核对（含索引页同轮实开）；集成者复核 URL 精确性与 HTTP 200 可达。核对 e4m3/e5m2（含 x2/x4 向量与 e8m0 scale）与 cuda_fp8.h、转换宏开关。只证明格式与转换入口存在；框架侧 autocast 是否覆盖以 PyTorch 2.6 amp 页为准（2.6 页未列 FP8，记 unknown，不推断）。
+- id: src.nvidia.cudnn-890-mathtype
+  title: cuDNN 8.9.0 API 数学类型与张量格式文档（归档）
+  url: https://docs.nvidia.com/deeplearning/cudnn/archives/cudnn-890/api/index.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: cuDNN 8.9.0 归档（页头明示 archived、Last updated 2024-04-20）；2026-10-09 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: 归档页许可与再分发范围未确认；仅链接并原创归纳。
+  notes: Batch 17 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 cudnnMathType_t、cudnnDataType_t（含 CUDNN_DATA_FAST_FLOAT_FOR_FP8）、cudnnTensorFormat_t、cudnnSet/GetConvolutionMathType。与 CUDA 12.8 的配套组合未经验证，不得拼成已验证环境。
+- id: src.ascend.cann-82rc1alpha001-aol-index
+  title: CANN 8.2.RC1.alpha001 AOL 算子加速库与基础数据结构入口
+  url: https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/82RC1alpha001/API/aolapi/operatorlist_00001.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: CANN 8.2.RC1.alpha001；2026-10-09 观察（简介页静态正文已取得：AOL 结构与未审明支持场景边界句；逐算子页仍只返回站点外壳）
+  license:
+    status: unknown
+    scopes: []
+    notes: 华为版权所有、未见再分发许可（与既有 CANN 登记口径一致）；仅登记链接并原创归纳。
+  notes: Batch 17 取证轮定位版本化入口；第二轮复核经静态内容地址实开简介页正文，确认 AOL 结构（公共 Meta 接口/aclnn NN 算子/融合/DVPP）与官方边界句（未审明支持的产品型号、数据类型、数据格式、数据维度场景不推荐使用、不保证调用效果）。逐算子 compute dtype/累加精度/dtype-format 表均未取得（仍只返回站点外壳），正文引用前须浏览器/PDF 二次核对；不得用 TorchNPU 或 CUDA 语义补写。
+- id: src.amd.rocm-precision-7.14.0
+  title: ROCm 7.14.0 Data types and precision support 文档
+  url: https://rocm.docs.amd.com/en/docs-7.14.0/reference/precision-support.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: docs-7.14.0；2026-10-09 观察（伴页 HIP low_fp_types 同轮定位）
+  license:
+    status: unknown
+    scopes: []
+    notes: ROCm licensing 页未核对；仅链接并原创归纳。
+  notes: Batch 17 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达（含伴页 https://rocm.docs.amd.com/projects/HIP/en/docs-7.14.0/reference/low_fp_types.html）。核对 HIP 类型与硬件架构支持矩阵（FP8 FNUZ 仅 CDNA3、OCP 仅 CDNA4/RDNA4）、matrix-core 支持表、各库输入/输出支持表；伴页 HIP FP4/FP6/FP8（E4M3/E5M2、FNUZ vs OCP）格式位布局、饱和/舍入语义与设备兼容表。库页声明所列为库支持、硬件支持另计，正文须保留该条件句。
+- id: src.amd.rocblas-precision-7.14.0
+  title: rocBLAS 5.5.0 precision support 文档（docs-7.14.0）
+  url: https://rocm.docs.amd.com/projects/rocBLAS/en/docs-7.14.0/reference/data-type-support.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: docs-7.14.0；rocBLAS 5.5.0；2026-10-09 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: ROCm licensing 页待补；仅链接并原创归纳。
+  notes: Batch 17 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 Level 1–3 逐函数 dtype 矩阵、GEMV fp16/bf16 仅 batched/strided-batched 脚注。伴随实开 env-variables 页（ROCBLAS_USE_HIPBLASLT、atomics、logging）备选，需要时再登记。
+- id: src.amd.miopen-precision-7.14.0
+  title: MIOpen 3.5.2 精度与确定性文档组（docs-7.14.0）
+  url: https://rocm.docs.amd.com/projects/MIOpen/en/docs-7.14.0/reference/data_type_support.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: docs-7.14.0；MIOpen 3.5.2；2026-10-09 观察（同组 MI200 alt-impl 与 env 页备选）
+  license:
+    status: unknown
+    scopes: []
+    notes: ROCm licensing 页待补；仅链接并原创归纳。
+  notes: Batch 17 取证轮实开三页核对；集成者复核主 URL 精确性与 HTTP 200 可达。核对 miopenDataType_t 枚举与支持矩阵（仅 miopenFloat/Half 全支持；卷积要求输入/输出 dtype 与 layout 一致）、MI200 MFMA subnormal flush-to-zero 与 FP16 alt-impl 前后向默认及覆盖开关、MIOPEN_DEBUG_CONVOLUTION_DETERMINISTIC。NHWC batchnorm 页（PYTORCH_MIOPEN_SUGGEST_NHWC_BATCHNORM）为 memory-format 跨平台对照备选，未另立 ID。
+- id: src.huawei.cann-82rc1alpha001-acl-host-mem
+  title: CANN 8.2.RC1.alpha001 aclrtMallocHost/aclrtFreeHost API 页
+  url: https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/82RC1alpha001/API/appdevgapi/aclcppdevg_03_0101.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: CANN 8.2.RC1.alpha001（URL 路径版本；静态页内版本号字符串仅 1 处；页头 JS title 未直接核验）；FreeHost 为同目录 aclcppdevg_03_0102.html
+  license:
+    status: unknown
+    scopes: []
+    notes: 厂商页无再分发许可；仅链接并原创归纳（与既有 CANN 登记口径一致）。
+  notes: Batch 17 取证轮经静态内容地址实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对锁页内存、64B 对齐首址、内部无隐式同步、成败立即返回、配对 FreeHost、禁频繁申请；RC 形态下实际申请的是 Device 内存。释放前提：FreeHost 立刻释放、内部无隐式同步，调用后不得再访问。
+- id: src.huawei.cann-82rc1alpha001-acl-memcpy-sync
+  title: CANN 8.2.RC1.alpha001 aclrtMemcpy 同步 API 页
+  url: https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/82RC1alpha001/API/appdevgapi/aclcppdevg_03_0105.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: CANN 8.2.RC1.alpha001（URL 路径版本；静态含 1 处版本串；页头未核验）
+  license:
+    status: unknown
+    scopes: []
+    notes: 厂商页无再分发许可；仅链接并原创归纳。
+  notes: Batch 17 取证轮经静态内容地址实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对同步复制立刻执行、内部无隐式同步；kind 为预留参数（系统按源/目的指针自判方向）；Device 间复制须先 DeviceCanAccessPeer + DeviceEnablePeerAccess。既有 src.huawei.cann-82rc1alpha001-acl-memcpy-2026-10-08 已覆盖 0105/0106，加法引用时可复用该 ID。
+- id: src.huawei.cann-82rc1alpha001-acl-memcpy-async
+  title: CANN 8.2.RC1.alpha001 aclrtMemcpyAsync 异步 API 页
+  url: https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/82RC1alpha001/API/appdevgapi/aclcppdevg_03_0106.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: CANN 8.2.RC1.alpha001（URL 路径版本；静态含 1 处版本串；页头未核验）
+  license:
+    status: unknown
+    scopes: []
+    notes: 厂商页无再分发许可；仅链接并原创归纳。
+  notes: Batch 17 取证轮经静态内容地址实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 async 成功仅代表下发成功、须调同步等待接口否则可致业务异常乃至 Device 断链掉卡；源/目的地址须 64B 对齐；H2D/D2H 若 Host 内存非 aclrtMallocHost 申请则不报错但业务行为不可预知；EP 形态 H2H 异步返回 FEATURE_NOT_SUPPORT；RC 形态 H2D/D2H/H2H 内部按 D2D 执行。
+- id: src.huawei.cann-82rc1alpha001-acl-memcpy-kind
+  title: CANN 8.2.RC1.alpha001 aclrtMemcpyKind 枚举页
+  url: https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/82RC1alpha001/API/appdevgapi/aclcppdevg_03_1807.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: CANN 8.2.RC1.alpha001（URL 路径版本）
+  license:
+    status: unknown
+    scopes: []
+    notes: 厂商页无再分发许可；仅链接并原创归纳。
+  notes: Batch 17 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达。修订轮经静态原文逐项计数确认为 8 个枚举（HOST_TO_HOST/HOST_TO_DEVICE/DEVICE_TO_HOST/DEVICE_TO_DEVICE/DEFAULT/HOST_TO_BUF_TO_DEVICE/INNER_DEVICE_TO_DEVICE/INTER_DEVICE_TO_DEVICE），原登记“九项”为计数错误已更正；HOST_TO_BUF_TO_DEVICE 允许接口成功后即释放 Host 内存（释放前提的例外分支）；DEFAULT 由系统自判方向。页内 ACL_MEMCPY_DEFAULT 后为全角逗号（系来源笔误，照录，不补成员）。
+- id: src.huawei.cann-82rc1alpha001-acl-stream-sync
+  title: CANN 8.2.RC1.alpha001 stream 同步与查询 API 页组
+  url: https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/82RC1alpha001/API/appdevgapi/aclcppdevg_03_0076.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: CANN 8.2.RC1.alpha001（0076/0075 静态各含 1 处版本串；0020 静态页无版本串与交叉链接，版本绑定弱；页头未核验）
+  license:
+    status: unknown
+    scopes: []
+    notes: 厂商页无再分发许可；仅链接并原创归纳。
+  notes: Batch 17 取证轮经静态内容地址实开核对；集成者复核主 URL 精确性与 HTTP 200 可达。同目录 0075（StreamQuery）、1395（StreamStatus）、0020（同步&异步说明）。核对 SynchronizeStream 阻塞至指定 stream 全部任务完成、StreamQuery 出参枚举（COMPLETE=0/NOT_READY=1/RESERVED=0xFFFF）、三类显式同步与异步返回成功≠执行成功。0020 页引用须保留版本绑定弱限定。
+- id: src.huawei.cann-82rc1alpha001-acl-event-sync
+  title: CANN 8.2.RC1.alpha001 event 同步 API 页组
+  url: https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/82RC1alpha001/API/appdevgapi/aclcppdevg_03_0079.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: CANN 8.2.RC1.alpha001（0086 静态页内未检索到版本串，版本绑定弱于他页；页头未核验）
+  license:
+    status: unknown
+    scopes: []
+    notes: 厂商页无再分发许可；仅链接并原创归纳。
+  notes: Batch 17 取证轮经静态内容地址实开核对；集成者复核主 URL 精确性与 HTTP 200 可达。同目录 0083（RecordEvent）、0086（QueryEventStatus）、0091（StreamWaitEvent）、0088（SynchronizeEvent）。核对 Event 资源首次 Record 才申请、Record/StreamWait 均为异步、Create→Record→Wait→Reset 顺序、未 record 查询返回 COMPLETE、多线程 Record/Query 可乱序。CANN 无 aclrtQueryEvent（只有 aclrtQueryEventStatus）。0088/0089 正文尚未细读，不得引用超时语义。
+- id: src.huawei.cann-82rc1alpha001-acl-data-transfer-guide
+  title: CANN 8.2.RC1.alpha001 应用开发指南数据传输节
+  url: https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/82RC1alpha001/appdevg/aclcppdevg/aclcppdevg_000010.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: CANN 8.2.RC1.alpha001（appdevg 树；974 行实开）
+  license:
+    status: unknown
+    scopes: []
+    notes: 厂商页无再分发许可；仅链接并原创归纳。
+  notes: Batch 17 取证轮实开 974 行核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 H2D/D2H 样例固定顺序 MemcpyAsync→SynchronizeStream→DestroyStream→FreeHost/Free（释放顺序证据）、aclrtMallocHost 申请物理连续内存且 H2D 性能更优、示例不可直接拷贝编译运行。另含 SynchronizeDevice（0056：阻塞至当前 Context 对应 Device 完成运算）。
+- id: src.ascend.torch-npu-v7.2.0-copy-nonblocking
+  title: TorchNPU v7.2.0 CopyKernel host/device 拷贝与 non_blocking 分支
+  url: https://github.com/Ascend/pytorch/blob/bc51ab84cc6f35c77aab1c59886e0ea43681a317/torch_npu/csrc/aten/common/CopyKernel.cpp
+  kind: repository
+  registered_at: '2026-10-09'
+  revision: bc51ab84cc6f35c77aab1c59886e0ea43681a317
+  license:
+    status: partial
+    scopes:
+    - scope: Ascend/pytorch 固定 commit 根 LICENSE；第三方文件按各自声明核查
+      identifier: BSD-3-Clause
+      url: https://github.com/Ascend/pytorch/blob/bc51ab84cc6f35c77aab1c59886e0ea43681a317/LICENSE
+    notes: 根许可沿用取证轮已核对记录；本库只做短摘要与链接。
+  notes: Batch 17 取证轮经 raw 与 git fetch 双重核对；修订轮 raw 实测复核（copy_between_host_and_device 定义 L88、分支区 L88–115）并核对 CachingHostAllocator.cpp L181–207：recordEvent 对非 blocks 内 host 指针仅在条件接口存在且 D2H 时提前返回，否则同步等待——non_blocking=True 仍可能同步。分列：管理内存登记不阻塞；非管理内存 D2H+条件接口存在不阻塞；非管理内存 H2D 或条件接口不存在则同步。条件接口存在是分支存在性证据，不作运行能力断言。此为 NPU 快照代码实证，不得与 CUDA non_blocking 语义互证或互否。
+- id: src.ascend.torch-npu-v7.2.0-pinned-host-alloc
+  title: TorchNPU v7.2.0 锁页内存与 CachingHostAllocator 固定快照
+  url: https://github.com/Ascend/pytorch/blob/bc51ab84cc6f35c77aab1c59886e0ea43681a317/torch_npu/csrc/core/npu/CachingHostAllocator.cpp
+  kind: repository
+  registered_at: '2026-10-09'
+  revision: bc51ab84cc6f35c77aab1c59886e0ea43681a317
+  license:
+    status: partial
+    scopes:
+    - scope: Ascend/pytorch 固定 commit 根 LICENSE；第三方文件按各自声明核查
+      identifier: BSD-3-Clause
+      url: https://github.com/Ascend/pytorch/blob/bc51ab84cc6f35c77aab1c59886e0ea43681a317/LICENSE
+    notes: 根许可沿用取证轮已核对记录；本库只做短摘要与链接。
+  notes: Batch 17 取证轮经 git fetch 实取核对（malloc 约 L110–150、free/insertEvents 约 L152–180、recordEvent 约 L181–212、processEvents/emptyCache 约 L214–260，共 398 行，执行轮复核行号）；集成者复核 URL 精确性与 HTTP 200 可达。核对 is_pinned 仅 CPU 张量可为真、底层 aclrtMallocHost 按 2 的幂取整、free 不立即释放（insertEvents 给相关 stream 插 event，无 outstanding event 才可重用）、recordEvent 对非分配器内存 D2H 时直接同步等待。apis 表 Tensor.pin_memory NPU 列留空（未承诺）、Tensor.is_pinned 为 Y。
+- id: src.ascend.torch-npu-v7.2.0-stream-event
+  title: TorchNPU v7.2.0 stream/event 封装固定快照
+  url: https://github.com/Ascend/pytorch/blob/bc51ab84cc6f35c77aab1c59886e0ea43681a317/torch_npu/npu/streams.py
+  kind: repository
+  registered_at: '2026-10-09'
+  revision: bc51ab84cc6f35c77aab1c59886e0ea43681a317
+  license:
+    status: partial
+    scopes:
+    - scope: Ascend/pytorch 固定 commit 根 LICENSE；第三方文件按各自声明核查
+      identifier: BSD-3-Clause
+      url: https://github.com/Ascend/pytorch/blob/bc51ab84cc6f35c77aab1c59886e0ea43681a317/LICENSE
+    notes: 根许可沿用取证轮已核对记录；本库只做短摘要与链接。
+  notes: Batch 17 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 torch_npu.npu.synchronize() 等待该 device 全 stream 完成、Stream.synchronize/query 直通 AclrtSynchronizeStreamWithTimeout/AclrtStreamQuery、SyncLaunchStream 关闭 taskqueue（同步发射显式反例）、Event.reset 前须确认 stream 任务完成。apis 对照表无 torch.npu.synchronize/current_stream/default_stream 行（缺席≠否定，读作未在该表声明）。
+- id: src.ascend.torchnpu-format-cast-7.2.0
+  title: TorchNPU v7.2.0 格式转换 FormatCastHelper 与 FormatCastKernel 固定快照
+  url: https://raw.githubusercontent.com/Ascend/pytorch/bc51ab84cc6f35c77aab1c59886e0ea43681a317/torch_npu/csrc/aten/common/FormatCastKernelNpu.cpp
+  kind: repository
+  registered_at: '2026-10-09'
+  revision: bc51ab84cc6f35c77aab1c59886e0ea43681a317
+  license:
+    status: partial
+    scopes:
+    - scope: Ascend/pytorch 固定 commit 根 LICENSE；第三方文件按各自声明核查
+      identifier: BSD-3-Clause
+      url: https://github.com/Ascend/pytorch/blob/bc51ab84cc6f35c77aab1c59886e0ea43681a317/LICENSE
+    notes: 根许可沿用本库对 Ascend/pytorch 固定 commit 的已核对记录；本库只做短摘要与链接。
+  notes: 第二轮复核 raw 直读核对。核对 FormatCastHelper.h（29 行接口声明）与 FormatCastKernelNpu.cpp（287 行）（MaybeUseAclnnNpuFormatCast L39–85，文件注释明示未来功能保留）分支：aclnn-only 缺接口报 NOT_SUPPORT（L50–52）；jit-disable 接口存在尺寸失败无 customize_dtype（L54–62）、接口缺失无 customize_dtype（L70–75）、jit 未禁用无 customize_dtype（L78–83）返回 false；带 customize_dtype 分支另有报错条件。返回值只说明候选函数自身契约；已核验 NPUNativeFunctions 入口体（L155–284）未调用该候选函数。公开入口体有限路径（短路/base 快径/通用调用）已核验，不扩大为全绑定链。注释原文 format cast 只改变物理排布、view 元数据不变。调用点 dtype 到 aclDataType 转换存在（映射表内容未核对）。定义存在不证明 aclnn 内核可用性或版本交集已验收。
+- id: src.huawei.cann-82rc1alpha001-aclnn-add
+  title: CANN 8.2.RC1.alpha001 aclnnAdd/aclnnInplaceAdd API 文档
+  url: https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/82RC1alpha001/API/aolapi/context/aclnnAdd&aclnnInplaceAdd.md
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: CANN 8.2.RC1.alpha001；静态 markdown 正文已取得；2026-10-09 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: 厂商页无再分发许可；仅链接并原创归纳。
+  notes: 修订轮经静态内容地址实开全文核对。核对支持产品（Atlas 训练系列；Atlas A2 训练系列/800I A2 推理/A200I A2 异构组件）、self/other/alpha/out 逐项数据类型表（A2 比训练系列多 BFLOAT16）、数据类型互推导规则引用、ND 数据格式、broadcast、ACLNN_ERR_PARAM_INVALID 错误条件。逐参数 dtype 存在性样板；不含计算/累加精度陈述。
+- id: src.huawei.cann-82rc1alpha001-aclnn-matmul
+  title: CANN 8.2.RC1.alpha001 aclnnMatmul API 文档
+  url: https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/82RC1alpha001/API/aolapi/context/aclnnMatmul.md
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: CANN 8.2.RC1.alpha001；静态 markdown 正文已取得；2026-10-09 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: 厂商页无再分发许可；仅链接并原创归纳。
+  notes: 修订轮经静态内容地址实开全文核对。核对 self/mat2/out 逐项数据类型表（训练/推理系列 FLOAT16/FLOAT32；A2 系列加 BFLOAT16）、ND 格式、1–6 维与 broadcast、cubeMathType（INT8）四选项计算逻辑（互推导存在时处理推导后类型、out 须与推导后类型一致；KEEP_DTYPE 但训练/推理 F32 输入不支持；ALLOW_FP32_DOWN_PRECISION 即训练/推理 F32→F16、A2 F32→HF32；USE_FP16 但 A2 BFLOAT16 输入不支持；USE_HF32 限 A2 且仅 F32 输入）、A2 BFLOAT16 混合输入推导排除、双一维输入 cubeMathType 不生效。两段式接口与 workspace 另见该页。累加精度未陈述，保持 unknown。
+- id: src.huawei.cann-82rc1alpha001-acl-datatype
+  title: CANN 8.2.RC1.alpha001 aclTensor 数据类型简写表
+  url: https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/82RC1alpha001/API/aolapi/context/common/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.md
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: CANN 8.2.RC1.alpha001；静态 markdown 正文已取得；2026-10-09 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: 厂商页无再分发许可；仅链接并原创归纳。
+  notes: 修订轮经静态内容地址实开核对。该页 L3 将完整类型引向 AscendCL aclDataType 文档（未取得）；L7–27 为原始名/简写名两列简写表，共 19 行（含 ACL_STRING），无 torch 对应列。有限简写表，不补推完整枚举或映射，不作算子支持或精度断言。
+- id: src.huawei.cann-82rc1alpha001-acl-promotion
+  title: CANN 8.2.RC1.alpha001 aclnn 数据类型互推导关系
+  url: https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/82RC1alpha001/API/aolapi/context/common/%E4%BA%92%E6%8E%A8%E5%AF%BC%E5%85%B3%E7%B3%BB.md
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: CANN 8.2.RC1.alpha001；静态 markdown 正文已取得；2026-10-09 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: 厂商页无再分发许可；仅链接并原创归纳。
+  notes: 修订轮经静态内容地址实开核对。核对 aclnn 输入 dtype 不一致时的内部推导规则（推导原理类似 PyTorch Type Promotion），输入先转推导类型再计算。规则存在性证据；逐算子例外以各算子页约束为准。
+- id: src.ascend.torchnpu-autocast-ops-7.2.0
+  title: TorchNPU v7.2.0 AutoCastOps 算子级 autocast 归属固定快照
+  url: https://raw.githubusercontent.com/Ascend/pytorch/bc51ab84cc6f35c77aab1c59886e0ea43681a317/torch_npu/csrc/aten/AutoCastOps.cpp
+  kind: repository
+  registered_at: '2026-10-09'
+  revision: bc51ab84cc6f35c77aab1c59886e0ea43681a317
+  license:
+    status: partial
+    scopes:
+    - scope: Ascend/pytorch 固定 commit 根 LICENSE；第三方文件按各自声明核查
+      identifier: BSD-3-Clause
+      url: https://github.com/Ascend/pytorch/blob/bc51ab84cc6f35c77aab1c59886e0ea43681a317/LICENSE
+    notes: 根许可沿用本库对 Ascend/pytorch 固定 commit 的已核对记录；本库只做短摘要与链接。
+  notes: 修订轮 raw 直读全文（159 行）核对。核对逐算子 autocast 归属：普通 KERNEL_PRIVATEUSEONE 宏四族（lower_precision_fp/fp32/fp32_set_opt_dtype/promote）+ KERNEL_DIFFERENT_REDISPATCH_SIGNATURE_PRIVATEUSEONE 宏的 fp32_append_dtype（norm 三重载，L128–142）+ binary_cross_entropy 显式禁用。“四族”限定为普通注册宏。归属策略不等于逐算子计算/累加精度证据，不关闭 C08 必交子项。
+- id: src.ascend.torchnpu-format-helper-7.2.0
+  title: TorchNPU v7.2.0 FormatHelper base 格式判定固定快照
+  url: https://raw.githubusercontent.com/Ascend/pytorch/bc51ab84cc6f35c77aab1c59886e0ea43681a317/torch_npu/csrc/framework/FormatHelper.cpp
+  kind: repository
+  registered_at: '2026-10-09'
+  revision: bc51ab84cc6f35c77aab1c59886e0ea43681a317
+  license:
+    status: partial
+    scopes:
+    - scope: Ascend/pytorch 固定 commit 根 LICENSE；第三方文件按各自声明核查
+      identifier: BSD-3-Clause
+      url: https://github.com/Ascend/pytorch/blob/bc51ab84cc6f35c77aab1c59886e0ea43681a317/LICENSE
+    notes: 根许可沿用本库对 Ascend/pytorch 固定 commit 的已核对记录；本库只做短摘要与链接。
+  notes: 第二轮复核 raw 直读核对。核对 GetBaseFormat 经 info 映射表（FormatHelper.cpp L96–110）、IsBaseFormatType 定义（L117–126）、未知格式 AT_ERROR("unknown format type")；配套 FormatHelper.h（79 行）接口声明。映射表逐项内容未核对。
+- id: src.ascend.torchnpu-npu-format-7.2.0
+  title: TorchNPU v7.2.0 torch_npu/npu/_format.py 存储格式枚举固定快照
+  url: https://raw.githubusercontent.com/Ascend/pytorch/bc51ab84cc6f35c77aab1c59886e0ea43681a317/torch_npu/npu/_format.py
+  kind: repository
+  registered_at: '2026-10-09'
+  revision: bc51ab84cc6f35c77aab1c59886e0ea43681a317
+  license:
+    status: partial
+    scopes:
+    - scope: Ascend/pytorch 固定 commit 根 LICENSE；第三方文件按各自声明核查
+      identifier: BSD-3-Clause
+      url: https://github.com/Ascend/pytorch/blob/bc51ab84cc6f35c77aab1c59886e0ea43681a317/LICENSE
+    notes: 根许可沿用本库对 Ascend/pytorch 固定 commit 的已核对记录；本库只做短摘要与链接。
+  notes: 修订轮 raw 直读全文（38 行）核对。核对 NPU 存储格式 Format 枚举 15 成员（UNDEFINED/NCHW/NHWC/ND/NC1HWC0/FRACTAL_Z/NC1HWC0_C04/HWCN/NDHWC/FRACTAL_NZ/NCDHW/NDC1HWC0/FRACTAL_Z_3D/NC/NCL）与 _apply_npu_format_patch（get_npu_format 返回值包成该枚举）。与 torch.memory_format 是另一套存储格式面，不得混读；各成员适用算子/硬件条件 unknown。
+- id: src.pytorch.cublas-handle-pool-v2.6.0
+  title: PyTorch v2.6.0 cuBLAS handle/stream workspace 固定实现
+  url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/aten/src/ATen/cuda/CublasHandlePool.cpp
+  kind: repository
+  registered_at: '2026-10-09'
+  revision: 1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 根 LICENSE；第三方文件与网站资产另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 沿用已登记同 commit 根许可的核对记录，本次未重新全量审查许可；只保留链接与原创摘要。
+  notes: Batch 17 初审独立取得 raw 原文件。L166–167 getNewWorkspace 经 CUDACachingAllocator 分配，L212–217 以 handle/stream 为键持有 workspace；结合同 commit allocator 的 aggregate allocated/reserved 统计，反证 workspace 必然是统计外独立账户的说法（B17-C01）。不对任意外部库推断；未执行代码。
+- id: src.pytorch.cuda-allocator-config-v2.6.0
+  title: PyTorch v2.6.0 CUDAAllocatorConfig 固定解析实现
+  url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/c10/cuda/CUDAAllocatorConfig.cpp
+  kind: repository
+  registered_at: '2026-10-09'
+  revision: 1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 根 LICENSE；第三方文件与网站资产另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 沿用已登记同 commit 根许可的核对记录，本次未重新全量审查许可；只保留链接与原创摘要。
+  notes: Batch 17 初审独立取得 cpp 与同目录 CUDAAllocatorConfig.h raw。parseArgs L280–336 包含 release_lock_on_cudamalloc，接受 release_lock_on_hipmalloc 与 pinned_use_hip_host_register 拼写；这里是选项别名，不证明新 HIP 环境变量或目标 wheel 的全部运行行为（B17-C03）。未执行解析或更改分配器。
+- id: src.pytorch.backend-registration-v2.6.0
+  title: PyTorch v2.6.0 PrivateUse1 方法生成固定实现
+  url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/torch/utils/backend_registration.py
+  kind: repository
+  registered_at: '2026-10-09'
+  revision: 1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 根 LICENSE；第三方文件与网站资产另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 沿用已登记同 commit 根许可的核对记录，本次未重新全量审查许可；只保留链接与原创摘要。
+  notes: Batch 17 初审独立取得 raw。generate_methods_for_privateuse1_backend 的 unsupported_dtype 在 L318–319 明确只对 Storage 方法生成生效，L333–340 分别调用 tensor/module/storage 方法生成；与 TorchNPU __init__.py 的调用对照，不能扩大为整个后端 dtype 否定清单（B17-C09）。未执行后端注册。
+- id: src.pytorch.scalar-type-v2.6.0
+  title: PyTorch v2.6.0 ScalarType 固定类型枚举
+  url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/c10/core/ScalarType.h
+  kind: repository
+  registered_at: '2026-10-09'
+  revision: 1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 根 LICENSE；第三方文件与网站资产另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 沿用已登记同 commit 根许可的核对记录，本次未重新全量审查许可；只保留链接与原创摘要。
+  notes: Batch 17 初审独立取得 raw。L60–91 类型枚举含四种 Float8、ComplexHalf、量化和 UInt16/32/64 等，2.6 Tensor Attributes 页面列出的十二种不能当成固定实现的完整集合（B17-C13）。枚举存在不证明任何设备/算子组合支持，也不证明 FP8 autocast 支持。
+- id: src.pytorch.gradcheck-source-v2.6.0
+  title: PyTorch v2.6.0 gradcheck 固定实现与适用前提
+  url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/torch/autograd/gradcheck.py
+  kind: repository
+  registered_at: '2026-10-09'
+  revision: 1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 根 LICENSE；第三方文件与网站资产另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 沿用已登记同 commit 根许可的核对记录，本次未重新全量审查许可；只保留链接与原创摘要。
+  notes: Batch 17 初审独立取得 raw。gradcheck L1987–2004 的默认设置按 double precision 设计；低精度、不可微点和输入内存重叠均可影响判读。结合 torch.library 2.6 的 Warning，只将 opcheck+gradcheck 联合义务用于支持梯度的自定义算子，不能作所有训练/推理适配的通用门槛（B17-C10）；未运行检查。
+- id: src.pytorch.caching-device-allocator-stats-v2.6.0
+  title: PyTorch v2.6.0 CachingDeviceAllocator 统计重置固定实现
+  url: https://raw.githubusercontent.com/pytorch/pytorch/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/c10/core/CachingDeviceAllocator.h
+  kind: repository
+  registered_at: '2026-10-09'
+  revision: 1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 根 LICENSE；第三方文件与网站资产另计
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/LICENSE
+    notes: 沿用已登记同 commit 根许可的核对记录，本次未重新全量审查许可；只保留链接与原创摘要。
+  notes: Batch 17 第二次定向复核独立取得固定 raw 原文件。Stat::reset_accumulated L25–28 将 allocated/freed 历史累计量归零，Stat::reset_peak L30–32 将 peak 设为 current，而非零。CUDACachingAllocator.cpp L1637–1679 分别调用这些方法，并在累计重置中将 num_ooms 等事件计数归零。适用于本次核对的 native allocator 统计路径，不扩大为所有 backend 的实现保证；未运行设备代码（B17-C11）。
+- id: src.nvidia.nvlink-nvswitch-page-2026-10-09
+  title: NVIDIA NVLink 与 NVLink Switch 产品页
+  url: https://www.nvidia.com/en-us/data-center/nvlink/
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: 可变网页；2026-10-09 观察（页脚 preliminary 可变声明）
+  license:
+    status: unknown
+    scopes: []
+    notes: NVIDIA 产品页，无再分发许可；仅链接并原创归纳。
+  notes: Batch 18 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 4 代 NVLink 900GB/s、18 links/GPU、Hopper；NVLink 4 Switch 域 8 GPU、聚合 7.2TB/s。仅作代次锚定，不作作业可用带宽证据。
+- id: src.nvidia.hopper-architecture-page-2026-10-09
+  title: NVIDIA Hopper Architecture 产品页
+  url: https://www.nvidia.com/en-us/data-center/technologies/hopper-architecture/
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: 可变网页；2026-10-09 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: NVIDIA 产品页，无再分发许可；仅链接并原创归纳。
+  notes: Batch 18 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 4 代 NVLink 900GB/s 双向、3 代 NVSwitch SHARP 网内计算与 8 卡 all-reduce 2×、DGX GH200 NVLink Switch System 至多 256 GPU。营销口径，引用标厂商宣称。
+- id: src.nvidia.h100-product-page-2026-10-09
+  title: NVIDIA H100 GPU 产品页
+  url: https://www.nvidia.com/en-us/data-center/h100/
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: 可变网页；2026-10-09 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: NVIDIA 产品页，无再分发许可；仅链接并原创归纳。
+  notes: Batch 18 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 H100 SXM 版 NVLink 900GB/s、H100 NVL 版 600GB/s、PCIe Gen5 128GB/s、NDR Quantum-2 IB。SXM/NVL 差值为营销总带宽与作业可用带宽区分的关键对照；营销倍率另计。
+- id: src.nvidia.dgx-superpod-h100-ra-arch-2026-10-09
+  title: DGX SuperPOD H100 参考架构：架构页
+  url: https://docs.nvidia.com/dgx-superpod/reference-architecture-scalable-infrastructure-h100/latest/dgx-superpod-architecture.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: latest 可变页；页脚 Last updated Nov 19, 2025；2026-10-09 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: NVIDIA 文档版权；仅链接并原创归纳。
+  notes: Batch 18 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 SU 组合、4 SU=128 DGX 节点、扩展至 64 SU/2000+ 节点的 Leaf/Spine/Core 规模表。RA 示例规模，非固定定义。
+- id: src.nvidia.dgx-superpod-h100-ra-fabrics-2026-10-09
+  title: DGX SuperPOD H100 参考架构：网络 fabric 页
+  url: https://docs.nvidia.com/dgx-superpod/reference-architecture-scalable-infrastructure-h100/latest/network-fabrics.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: latest 可变页；页脚 Last updated Nov 19, 2025；2026-10-09 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: NVIDIA 文档版权；仅链接并原创归纳。
+  notes: Batch 18 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 4 套 fabric（compute IB/storage IB/in-band/OOB）、每 32 节点 rail-aligned、同 SU 同 rail 一跳、跨 rail 过 spine、storage fabric 约 4:3 轻超配。rail 与超配口径的官方出处。
+- id: src.nvidia.nvidia-smi-manual-2026-10-09
+  title: Nvidia-smi Manual（工具手册）
+  url: https://docs.nvidia.com/deploy/nvidia-smi/index.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: 未标版本的可变页；2026-10-09 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: NVIDIA 文档版权；仅链接并原创归纳。
+  notes: Batch 18 取证轮实开全文核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 topo/nvlink 子命令入口（Linux only）、NVSMI 输出不保证向后兼容（NVML/Python 绑定向后兼容）、Platform Info 字段、Hopper+ NVSwitch 系统 reset 语义。软件发现视图的主来源。
+- id: src.ascend.cann-aclrt-devices-topo-2026-10-09
+  title: CANN aclrtGetDevicesTopo API 页
+  url: https://www.hiascend.com:6066/doc_center/source/en/CANNCommunityEdition/900/API/runtimeapi/aclcppdevg_03_1895.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: CANNCommunityEdition 900 静态页；2026-10-09 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: 华为版权；仅链接并原创归纳。
+  notes: Batch 18 取证轮实开核对；2026-10-10 修订轮复核 canonical 与 :6066 页字节一致（12307 B）并逐行转录适用表：Atlas 350 卡 √；A3 training/inference 合并行 √；A2 training/inference 合并行 √；200I/500 A2 推理 √；Atlas 推理 √；Atlas 训练 √；Note 排除 200I/500 A2 Ascend RC 形态。作者分歧注记保留：初审复核记训练行 `/`，修订抓取均为合并行 `√`。2026-10-09 定向复核确认初审原始与本轮两页均为 12307 B、SHA-256 e0fbe17136873bafe7fac1352eb8fc06b0347df5ebaf556d640025c6a0844f39；tr/td 解析证实斜杠在 Product 列，六行 Supported 都是 √，初审反证属审阅者错读并撤销，非页面变更。合并行明确含 training/inference 两名称，不能以缺少训练单列否定其文档声明；具体 SKU/目标形态仍未实测。返回值枚举 HCCS(0x01)/PIX/PHB/SYS/SIO/HCCS_SW(0x40)/PIB（保留不支持）及宏定义照录。
+- id: src.ascend.mindcluster-affinity-principles-730-2026-10-09
+  title: MindCluster 730 Atlas training product 亲和原则页
+  url: https://www.hiascend.com/document/detail/en/mindcluster/730/clustersched/schedulingug/dl_affinity_0004.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: MindCluster 730 文档；2026-10-09 观察
+  license:
+    status: partial
+    scopes:
+    - scope: MindCluster docs 目录许可（沿用既有登记；本页单独许可未逐页确认）
+      identifier: CC-BY-4.0
+      url: https://github.com/Ascend/mind-cluster/blob/master/docs/LICENSE
+    notes: 本页单独许可未逐页确认；仅链接并原创归纳。
+  notes: 集成者本轮实开全文复核。核对 910 代每设备 2×HCCS ring、各 ring 4 处理器、同 ring 可通信/跨 ring 不可、单 pod ≤4 NPU 须同 ring；关键否定句（800T A2 训练服务器与 900 A2 PoD 基本单元不支持 NPU 亲和调度）逐字引用。910 代证据不得填入 A2。
+- id: src.ascend.hccl-intro-link-types-2026-10-09
+  title: CANN HCCL 简介（链路类型）
+  url: https://www.hiascend.com/document/detail/en/CANNCommunityEdition/910/commlib/hcclug/docs/en/user_guide/hccl_intro.md
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: CANNCommunityEdition 910；2026-10-09 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: 华为版权；仅链接并原创归纳。
+  notes: Batch 18 取证轮实开核对；集成者复核 URL 精确性。核对 HCCL 支持 HCCS/RoCE/PCIe/UB 四种高速链路、Ring/Mesh/RHD 算法、支持产品含 Atlas A2 三款硬件。不含任一型号拓扑图。
+- id: src.linux.rdma-core-v65.0
+  title: linux-rdma/rdma-core v65.0 固定仓库
+  url: https://github.com/linux-rdma/rdma-core
+  kind: repository
+  registered_at: '2026-10-09'
+  revision: v65.0（58e4080，2026-09-06 发布；stable 最低维护 v33.X）；2026-10-09 观察
+  license:
+    status: partial
+    scopes:
+    - scope: 仓库 COPYING.md 默认双许可（取证轮已打开核对）
+      identifier: BSD-2-Clause
+      url: https://github.com/linux-rdma/rdma-core/blob/master/COPYING.md
+    notes: OpenIB.org BSD（MIT variant）或 GPLv2 按文件/目录覆盖，providers 例外；本库只做短摘要与链接。
+  notes: Batch 18 取证轮实开主页/Releases/COPYING 核对；集成者复核 URL 精确性与 HTTP 200 可达。verbs 接口整体与源码取证锚点；master 可变分支不直接引用。
+- id: src.linux.rdma-verbs-man-pages-2026-08-04
+  title: rdma-core libibverbs man pages 组（man7 快照）
+  url: https://man7.org/linux/man-pages/man3/ibv_post_send.3.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: man7 快照（取自上游 git，取得日期 2026-08-04，当时最近 commit 2026-07-22；HTML 渲染 2026-09-09）；起草时以 v65.0 源码 man 页对版
+  license:
+    status: partial
+    scopes:
+    - scope: 随 rdma-core 项目许可；man7 页面本身未给出独立再分发许可
+      identifier: BSD-2-Clause
+      url: https://github.com/linux-rdma/rdma-core/blob/master/COPYING.md
+    notes: 仅原创归纳加链接。
+  notes: Batch 18 取证轮实开 9 页核对（post_send/post_recv/reg_mr/create_qp/modify_qp/create_cq/poll_cq/alloc_pd/get_async_event）；集成者复核 URL 精确性。man7 为 2026-08-04 快照可读入口，与 v65.0 固定 commit 的九页完整逐字差分未做；正文逐条语义以固定 man 源文件（src.linux.rdma-core-verbs-man-v65.0-fixed）为准。页首 2006 旧戳以 COLOPHON 快照为准。
+- id: src.kernel.infiniband-docs-v6.16
+  title: Linux v6.16 InfiniBand 内核文档
+  url: https://docs.kernel.org/infiniband/index.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: Linux v6.16（沿用 T02-01 固定基线；页面观察有 7.3.0-rc6 快照页眉，未采用）
+  license:
+    status: unknown
+    scopes: []
+    notes: 页内未给出内容许可；仅链接并原创归纳。
+  notes: Batch 18 取证轮定位（index/user_verbs/stable ABI）；docs.kernel.org 为浮动入口，不作 v6.16 版本证据。正文引用以 v6.16 tag 固定文件（src.kernel.infiniband-user-verbs-v6.16-fixed、src.kernel.infiniband-sysfs-abi-v6.16-fixed）为准：uverbs 慢路径 + mmap 快路径、pinned_vm/RLIMIT_MEMLOCK、state/counters/GID 路径存在性。计数器单位/方向语义留 T03-03。
+- id: src.nvidia.mlnx-ofed-586042lts-roce
+  title: MLNX_OFED 586042lts RoCE 章
+  url: https://networking-docs.nvidia.com/mlnxofedswum/586042lts/rdma-over-converged-ethernet-roce
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: 24.10-5.1.6.1 LTS（2024 LTS U5；经 586042lts 入口取得，2026-10-09 观察）
+  license:
+    status: unknown
+    scopes: []
+    notes: NVIDIA 文档版权；公开可读不等于可再分发，仅链接并原创归纳。
+  notes: Batch 18 取证轮实开核对；2026-10-10 修订轮确认页内版本选择器当前默认 24.10-5.1.6.1 LTS（2024 LTS U5），页 JSON canonical 含 24.10-5.1.6.1lts。核对 RoCEv1（ethertype 0x8915）/v2（UDP dport 4791）边界、GID 表填充与 sysfs 路径、QP GID index 决定模式、SL→PCP、offload 流量不关联主机侧以太网驱动计数器（三层分开，见诊断文）。lossless/lossy 条件见 Cumulus 样板，不作全 RoCE 要求。
+- id: src.nvidia.mlnx-ofed-586042lts-ib
+  title: MLNX_OFED 586042lts IB 章索引与 PeerDirect 页
+  url: https://networking-docs.nvidia.com/mlnxofedswum/586042lts/infiniband-network
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: 24.10-5.1.6.1 LTS（2024 LTS U5；经 586042lts 入口取得，2026-10-09 观察）
+  license:
+    status: unknown
+    scopes: []
+    notes: NVIDIA 文档版权；仅链接并原创归纳。
+  notes: Batch 18 取证轮实开核对；集成者复核 URL 精确性。核对 IB 章节清单与 PeerDirect（IB CORE 与 peer-memory 客户端间 API，GPUDirect RDMA 用例；CX-5+ RSYNC 回调）。版本按同入口默认 24.10-5.1.6.1 LTS 引用，canonical 未逐页确认。PEER_MEMORY_API.txt 随 OFED 安装，未获取记 unknown。 第五次复核（2026-10-10）只读取得 https://networking-docs.nvidia.com/mlnxofedswum/24.10-5.1.6.1lts/infiniband-network，HTML canonical 同地址，57634 B，SHA-256 5af8ca90f3091721106abbf5451d799ab1e45c19609049d27cfece9b666476a6；父页仅为章节索引，不以它证明子页计数器语义已核对，本轮未重新获取全部子页。 第六次复核（2026-10-10）从页面树区分 IB QoS - Quality of Service 与 Ethernet Quality of Service 两页；只读取得 IB 页 https://networking-docs.nvidia.com/mlnxofedswum/24.10-5.1.6.1lts/qos-quality-of-service，68398 B，HTML canonical 同地址，SHA-256 65e00862fbe82af4c88bfa536c7b93518fcc93179dbed745a024e325bde75a2e。本文为 SL/VL、SM/SA 与 QoS 策略边界，不混作 mlnx_qos/tc_wrap 配置页，不据页面树或此页关闭缺失的统计字段。
+- id: src.nvidia.mlnx-ofed-586042lts-ecn
+  title: MLNX_OFED 586042lts ECN 页
+  url: https://networking-docs.nvidia.com/mlnxofedswum/586042lts/explicit-congestion-notification-ecn
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: 24.10-5.1.6.1 LTS（2024 LTS U5；经 586042lts 入口取得，2026-10-09 观察）
+  license:
+    status: unknown
+    scopes: []
+    notes: NVIDIA 文档版权；仅链接并原创归纳。
+  notes: Batch 18 取证轮实开核对；集成者复核 URL 精确性。核对 ECN 限 RoCEv2、路径全节点须支持、sysfs ecn/roce_rp|roce_np 参数。版本按同入口默认 24.10-5.1.6.1 LTS 引用，canonical 未逐页确认（当时记录）。第三次复核（2026-10-10）只读重抓 https://networking-docs.nvidia.com/mlnxofedswum/24.10-5.1.6.1lts/explicit-congestion-notification-ecn，HTML canonical 同地址，SHA-256 9f73ad85ddff6b50397eb11ffae2e3524035b7f3179700c2e310b676a7f11979；Enabling ECN 区分 enable/X（优先级 0..7）与 params/requested_attribute（参数名），不能合写 params/X。设备/端口/优先级参数和统计范围存在，不据此补造未转录的统计字段或标记率。 第四次复核（2026-10-10）重读上述 canonical 快照，接受正文 enable/X 与 params/属性名分开；ECN 逐统计字段仍缺，C10 不因配置路径纠正而关闭。 第五次复核（2026-10-10）只读重抓上述精确 canonical，66959 B，SHA 与第三次一致；静态正文未交付 ECN 逐统计字段，Next Slide 未附可用统计表静态载荷。C10 必交字段仍缺，不将配置/范围声明替代实际统计。
+- id: src.nvidia.mlnx-ofed-586042lts-flow-control
+  title: MLNX_OFED 586042lts 流控（PFC）页
+  url: https://networking-docs.nvidia.com/mlnxofedswum/586042lts/flow-control
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: 24.10-5.1.6.1 LTS（2024 LTS U5；经 586042lts 入口取得，2026-10-09 观察）
+  license:
+    status: unknown
+    scopes: []
+    notes: NVIDIA 文档版权；仅链接并原创归纳。
+  notes: Batch 18 取证轮实开核对；集成者复核 URL 精确性。核对 PFC 按优先级 pause、lossless 模式靠 PFC、mlnx_qos/prio 计数器、PFC storm prevention、dropless RQ。版本按同入口默认 24.10-5.1.6.1 LTS 引用，canonical 未逐页确认（当时记录）。交换机侧配置引社区页，不当证据。不作全 RoCE 必须 PFC 断言（见 Cumulus lossy 模式）。第三次复核（2026-10-10）只读重抓 https://networking-docs.nvidia.com/mlnxofedswum/24.10-5.1.6.1lts/flow-control，HTML canonical 同地址，SHA-256 3f2659ad47f6f333bc24793afdb598e9a7c7aab578cdb0997f4fa3658051dc6a；PFC 配置小节为 ConnectX-4 and above，Priority Counters 小节为 ConnectX-4 Counters，ethtool 示例为 prio4 收发字段，pause 类仅使能优先级可见。时长单位未核定，不自动推广为所有后续型号计数器支持。 第五次复核（2026-10-10）只读重抓上述精确 canonical，90744 B，SHA 与第三次一致；Dropless Receive Queue 节将 dropless_rq 用作 priv-flag 开关，out_of_buffer 则是等待后仍未补 WQE、包被丢弃时增长的计数器。研究记录的合并归类待纠正；该局部丢包语义不等于传输重试，也不补造此节未给齐的具体采集范围/路径。 第六次复核（2026-10-10）重抓同 canonical，90744 B，SHA 与第五次一致；接受正文 L104–105/研究 L45 将 dropless_rq 配置开关与 out_of_buffer 局部丢包计数拆分，未核定采集信息继续 unknown。另只读取得同版本页面树（https://networking-docs.nvidia.com/mlnxofedswum/24.10-5.1.6.1lts/__pagetree.json，18674 B，SHA-256 89dfbf674e10c2db1575d45fdc42169ce83472ff3b459ade395446dbbc8b5615）与 Ethernet QoS（https://networking-docs.nvidia.com/mlnxofedswum/24.10-5.1.6.1lts/quality-of-service-qos，105314 B，SHA-256 e05972a5810c055e2f50c317ed07e0770b5d82879853cd665d6531da057d2ff3）；树含 99 个页面标题，未列 counter/statistic 标题的独立页，不据此证明章节内部没有计数器。QoS 页仅支持配置/属性范围，未交付本批所缺三类统计字段；C10 必交缺口仍 OPEN。
+- id: src.nvidia.mlnx-ofed-586042lts-secure-host
+  title: MLNX_OFED 586042lts Secure Host 页（反例）
+  url: https://networking-docs.nvidia.com/mlnxofedswum/586042lts/secure-host
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: 24.10-5.1.6.1 LTS（2024 LTS U5；经 586042lts 入口取得，2026-10-09 观察）
+  license:
+    status: unknown
+    scopes: []
+    notes: NVIDIA 文档版权；仅链接并原创归纳。
+  notes: Batch 18 取证轮实开核对；集成者复核 URL 精确性。明确仅 ConnectX-3/3 Pro（SMP 防火墙/M_Key/GUID0）。版本按同入口默认 24.10-5.1.6.1 LTS 引用，canonical 未逐页确认。正文不得以此页论证通用 IB 安全/隔离；通用隔离仅 UFM 分区计数器样板，其余记 unknown。
+- id: src.nvidia.gpudirect-rdma-13.4
+  title: NVIDIA GPUDirect RDMA 文档 v13.4
+  url: https://docs.nvidia.com/cuda/gpudirect-rdma/
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: v13.4（页眉；含 CUDA 13.0 changelog）；2026-10-09 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: CUDA 文档 EULA 另计，未核对；仅链接并原创归纳。
+  notes: Batch 18 取证轮实开核对；集成者复核 URL 精确性。核对同 root complex 要求、IOMMU 1:1/passthrough、pin 开销与 lazy unpinning、BAR 粒度与空间有限、SYNC_MEMOPS 一致性、GPU kernel 并发写数据竞争、nvidia-peermem（CX-3+，IB/RoCE 均可）。逐产品支持矩阵不在此展开。
+- id: src.ibta.specification-2.1
+  title: IBTA 规范存在性引用（Vol.1/Vol.2 R2.1）
+  url: https://infinibandta.org/ibta-specification/
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: Volume 1 Release 2.1 / Volume 2 Release 2.1（页内 available now）；会员门控未获取全文；2026-10-09 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: 未获取全文，仅作存在性与版本名引用。
+  notes: Batch 18 取证轮实开 IBTA 页核对；集成者复核 URL 精确性与 HTTP 200 可达。仅引用规范存在性、版本名与 RoCE 归属 IB 规范；不引用章节号、不转述规范细节。旧复数 URL 已 404，以新 URL 为准。
+- id: src.linux.perftest-26.07.8
+  title: linux-rdma/perftest 26.07.8 仓库
+  url: https://github.com/linux-rdma/perftest
+  kind: repository
+  registered_at: '2026-10-09'
+  revision: 26.07.8（a31f9ea，2026-09-28）；2026-10-09 观察（drafting 时源码行号按该 commit 重核）
+  license:
+    status: unknown
+    scopes: []
+    notes: COPYING 待固定 commit 打开核对；本库只做短摘要与链接。
+  notes: Batch 18 取证轮实开 README/Releases 核对；2026-10-10 修订轮按 commit a31f9ea 固定行号并分拆登记（src.linux.perftest-readme-26.07.8-fixed、src.linux.perftest-parameters-26.07.8-fixed）：计时 L59–81（取时间戳避免上下文切换开销）、NUMA L376–401（numa_node 分别与另两项互斥；显式参数覆盖外部绑定）、开销 L472–490、互斥 L515–523、计数器 L536–563。man 页固定 ref 待补。第三次复核（2026-10-10）补读同 commit 固定 src/host_validation.h（SHA-256 ee14b6ea013d0e9e2701e3555b03cd0533a5c82903f0d0710ade89a3d720afe6）、src/host_validation.c（c53f23f73e9a015740bc5990d77e18566cc4a86e6fc88e75edcdc33f1110a199）与 src/perftest_resources.c（d2db8a306e22144930d26d33818e19b8c0b62494282740548ff5eea0bf496eb5）；精确文件链接见 batch-18-codex-third-recheck.md。host L600–602 skipped_steps 为 marker 跳步，L681–695 与 L1127–1154 按 ops_per_chunk 累计操作/字节；resources L7360–7363 无数据校验返回失败，L7374–7379 输出 skips/stale_work 等字段。只做静态核对，未编译、运行或核验 GPU 校验器全部统计实现。 第四次复核（2026-10-10）重抓 host_validation.c，SHA 与第三次一致；接受 C12 的有限 host 操作计数、独立 marker 步比较及零校验量失败门禁。device 输出字段未核定，未运行校验，不把工作量比值当作全操作或全字节已可靠核验的证明。 C12 技术主体已接受，现行研究记录将 chunks_validated>0 写成无数据失败条件，与实现 ==0 相反，剩余记录同步为 P3 OPEN。 第五次复核（2026-10-10）重读同 commit resources L7360–7363，研究记录已同步 chunks_validated==0 的无数据失败条件，C12 CLOSED；host 主体保持第四次接受范围，未运行工具或验证 device 后端。
+- id: src.nvidia.ufm-41815-port-counters
+  title: NVIDIA UFM Enterprise 4.18.15 IB 端口计数器页
+  url: https://networking-docs.nvidia.com/ufmsdnappswum/41815/infiniband-port-counters
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: 4.18.15-LTS-2024-U5；2026-10-09 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: NVIDIA 文档版权；仅链接并原创归纳。
+  notes: Batch 18 取证轮实开核对；2026-10-10 修订轮转录全表逐项语义（版本选择器 4.18.15-LTS-2024-U5）：Xmit/Rcv Data 为 octets/4（含错包、不含 link 包），Packets 为包数（与字节单位分开）；XmitDiscards 多因（down/拥塞/MTU/lifetime）；XmitWait 为信用/仲裁等待 tick（非丢包数，tick 时长未知不换算）；Normalized 三项为 UFM 显示口径（不作通用可计算量）与直连接收主机端口条件；Constraint Error 多因（FilterRaw/PartitionEnforcement/IP version，需结合分区配置定位）。
+- id: src.nvidia.cumulus-43-roce
+  title: NVIDIA Cumulus Linux 4.3 RoCE 页
+  url: https://docs.nvidia.com/networking-ethernet-software/cumulus-linux-43/Network-Solutions/RDMA-over-Converged-Ethernet-RoCE/
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: Cumulus Linux 4.3；2026-10-09 观察（另有 5.x 新版，drafting 时二选一固定）
+  license:
+    status: unknown
+    scopes: []
+    notes: NVIDIA 文档版权；仅链接并原创归纳。
+  notes: Batch 18 取证轮实开核对；集成者复核 URL 精确性与 HTTP 200 可达。核对 net add roce lossless（PFC+ECN）vs lossy（ECN）、RoCEv1 需 trunk、Spectrum ASIC 限定。一种 RoCE 官方拓扑/拥塞配置示例；不泛化。；2026-10-10 第七次定向复核另取得同版本统计页（不把统计内容归到本 RoCE 配置页）：https://docs.nvidia.com/networking-ethernet-software/cumulus-linux-43/Monitoring-and-Troubleshooting/Monitoring-Best-Practices/（71791 B，SHA d1ce189bcb654d4789db2308849e61e3f5d9322b4ebed38dda3ba4dcaa7eb472）的 Layer 1 Protocols and Interfaces 列 sysfs statistics/ethtool 入口及内核汇总；https://docs.nvidia.com/networking-ethernet-software/cumulus-linux-43/Monitoring-and-Troubleshooting/Troubleshooting-Network-Interfaces/Monitoring-Interfaces-and-Transceivers-Using-ethtool/（53576 B，SHA 4ce2af2e00cd4bcab173ad814929d9cac0d21f261ffeea2d23e3753caac11332）的 View and Clear Interface Counters 说明 Mellanox 物理统计通常每 2 秒向内核更新，高负载可能更慢；cl-netstat 清除的是工具保存值，不清内核/硬件。正文统计行仍需同步这些引证与范围，不认定实际交换机内核为 v6.16。两页 HTTP 200，原文未入库，无实机验证。
+- id: src.paper.thakur-collective-mpich-2005
+  title: Optimization of Collective Communication Operations in MPICH（Thakur/Rabenseifner/Gropp 2005）
+  url: https://fs.hlrs.de/projects/par/rab/publ/HPCA_collectives.pdf
+  kind: paper
+  registered_at: '2026-10-09'
+  revision: IJHPCA 19(1):49–66, 2005；DOI 10.1177/1094342005051521；2026-10-09 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: 出版商版权；仅链接并原创归纳方法结论。
+  notes: Batch 18 取证轮实开核对（摘要页 + 全文镜像索引）；集成者未独立打开全文。取 α–β 代价模型及其假设、各原语短/长消息算法分野、no single best。历史 cutoff 数值不移植为 NCCL/HCCL 阈值。
+- id: src.paper.patarasuk-allreduce-2009
+  title: Bandwidth Optimal All-reduce Algorithms for Clusters of Workstations（Patarasuk/Yuan 2009）
+  url: https://cs.fsu.edu/~xyuan/paper/09jpdc.pdf
+  kind: paper
+  registered_at: '2026-10-09'
+  revision: JPDC 69(2):117–124, 2009；DOI 10.1016/j.jpdc.2008.09.002；2026-10-09 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: 出版商版权；仅链接并原创归纳方法结论。
+  notes: Batch 18 取证轮实开核对；集成者未独立打开全文。取 ring all-reduce 带宽最优适用边界（大消息、结合律+交换律、无竞争环）与 latency 非最优、轮数 ∝p。不宣称为所有 (p,n) 最优。
+- id: src.openmpi.mpi-man-4.1
+  title: Open MPI v4.1 man pages（MPI_Allreduce/Alltoallv）
+  url: https://open-mpi.org/doc/v4.1/man3/MPI_Allreduce.3.php
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: Open MPI v4.1；2026-10-09 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: 开源项目文档；仅链接并原创归纳。
+  notes: Batch 18 取证轮实开两页核对；集成者复核 Allreduce 页 HTTP 200 可达。取等长（Allreduce 同 count/datatype/op）vs 变长（Alltoallv counts/displs 逐对）规范行为样板；v 后缀即变长命名证据。不等同 NCCL/PyTorch/HCCL 同名语义。
+- id: src.nvidia.megatron-core-dev-guide
+  title: Megatron-Core developer guide（latest）
+  url: https://docs.nvidia.com/megatron-core/developer-guide/latest/
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: latest 可变文档线；2026-10-09 观察（drafting 前必须固定 commit/tag）
+  license:
+    status: unknown
+    scopes: []
+    notes: NVIDIA 文档版权；仅链接并原创归纳。
+  notes: Batch 18 取证轮实开核对 latest 浮动线；2026-10-10 修订轮冻结实现改用 tag core_v0.19.2（src.nvidia.megatron-lm-core-v0.19.2），本条目保留为文档入口，不作实现证据。DeepSpeed 组网表引用已移除（未独立登记不引用）。
+- id: src.linux.rdma-core-verbs-man-v65.0-fixed
+  title: rdma-core v65.0 libibverbs 固定 man 源文件组
+  url: https://github.com/linux-rdma/rdma-core/blob/58e40801bfed5a8befc0881594820fa0a0baa4a1/libibverbs/man/ibv_post_send.3
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: v65.0; commit 58e40801bfed5a8befc0881594820fa0a0baa4a1
+  license:
+    status: partial
+    scopes:
+    - scope: 固定 COPYING.md 的默认双许可，文件或目录声明优先
+      identifier: GPL-2.0-only OR BSD-2-Clause
+      url: https://github.com/linux-rdma/rdma-core/blob/58e40801bfed5a8befc0881594820fa0a0baa4a1/COPYING.md
+    notes: 默认另一选项为 OpenIB.org BSD MIT variant；man 文件独立许可未逐一确认，只链接并原创归纳，不镜像。
+  notes: Batch 18 初审读取 post_send/post_recv/reg_mr/create_qp/modify_qp/create_cq/poll_cq/alloc_pd/get_async_event 九个源文件；post_send L140–150 核对 signaled/inline，poll_cq L67–71 核对错误 WC 字段有效性。取证不证明 man7 快照与该 ref 全部逐字相同。
+- id: src.linux.rdma-core-mlx5-cq-v65.0
+  title: rdma-core v65.0 mlx5 CQ 完成解析
+  url: https://github.com/linux-rdma/rdma-core/blob/58e40801bfed5a8befc0881594820fa0a0baa4a1/providers/mlx5/cq.c
+  kind: repository
+  registered_at: '2026-10-09'
+  revision: v65.0; commit 58e40801bfed5a8befc0881594820fa0a0baa4a1
+  license:
+    status: identified
+    scopes:
+    - scope: cq.c 文件头双许可
+      identifier: GPL-2.0-only OR BSD-2-Clause
+      url: https://github.com/linux-rdma/rdma-core/blob/58e40801bfed5a8befc0881594820fa0a0baa4a1/providers/mlx5/cq.c
+    notes: 文件头为 GPLv2 或 OpenIB.org BSD；只链接并原创归纳。
+  notes: Batch 18 初审独立读取 L164–193 handle_good_req；WRITE 与 SEND 分支不填 byte_len，READ 分支填入。仅说明此 provider 的字段赋值，未执行，不能升级为所有 provider 的行为保证。
+- id: src.linux.perftest-readme-26.07.8-fixed
+  title: perftest 26.07.8 固定 README
+  url: https://github.com/linux-rdma/perftest/blob/a31f9ea9df720ee68f941e55f75fec31349fcd35/README
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: 26.07.8; commit a31f9ea9df720ee68f941e55f75fec31349fcd35
+  license:
+    status: partial
+    scopes:
+    - scope: 固定仓库 COPYING 双许可；README 独立声明未确认
+      identifier: GPL-2.0-only OR BSD-2-Clause
+      url: https://github.com/linux-rdma/perftest/blob/a31f9ea9df720ee68f941e55f75fec31349fcd35/COPYING
+    notes: 另一选项为 OpenIB.org BSD；只链接并原创归纳，不镜像。
+  notes: Batch 18 初审独立读取；L376–401 NUMA 优先级，L472–490 校验开销与多进程覆盖率，L515–523 不兼容参数，L536–563 错误/竞争/跳过/重试语义；多 QP 校验示例存在，不将 q>1 误判为不支持。
+- id: src.linux.perftest-parameters-26.07.8-fixed
+  title: perftest 26.07.8 固定参数校验实现
+  url: https://github.com/linux-rdma/perftest/blob/a31f9ea9df720ee68f941e55f75fec31349fcd35/src/perftest_parameters.c
+  kind: repository
+  registered_at: '2026-10-09'
+  revision: 26.07.8; commit a31f9ea9df720ee68f941e55f75fec31349fcd35
+  license:
+    status: partial
+    scopes:
+    - scope: 固定仓库 COPYING 双许可；按文件头声明优先
+      identifier: GPL-2.0-only OR BSD-2-Clause
+      url: https://github.com/linux-rdma/perftest/blob/a31f9ea9df720ee68f941e55f75fec31349fcd35/COPYING
+    notes: 只链接并原创归纳，不引入代码或依赖。
+  notes: Batch 18 初审独立读取 data_validation 参数检查及 L2463–2471 NUMA 互斥检查；numa_node 分别与 pin_cores、disable_numa 互斥，不是三者两两互斥。第二次定向复核（2026-10-09）补读同 commit 的 src/perftest_parameters.h（https://github.com/linux-rdma/perftest/blob/a31f9ea9df720ee68f941e55f75fec31349fcd35/src/perftest_parameters.h，SHA-256 0f2622cd9e4230e68bb2e315d5532238ed1192be84e87b3c619d92da8b5d6638）；L105–106 定义 DEF_ITERS=1000、DEF_ITERS_WB=5000，与 .c L1030–1031 联合确认 BW 的 WRITE/WRITE_IMM 默认 5000。另核 .c L4809/L4829–4831 的 BW average/peak/MsgRate 输出，不能假设单轮默认 BW median。未编译或运行。
+- id: src.kernel.infiniband-user-verbs-v6.16-fixed
+  title: Linux v6.16 Userspace verbs access 固定文档
+  url: https://github.com/torvalds/linux/blob/v6.16/Documentation/infiniband/user_verbs.rst
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: v6.16 tag
+  license:
+    status: unknown
+    scopes: []
+    notes: 文档文件未见独立许可声明；不以仓库代码许可代替文档再分发判定，只链接并原创归纳。
+  notes: Batch 18 初审读取固定 tag 原文件，核对 uverbs 接入和 pin/memlock 文档；docs.kernel.org 当前页未固定为 v6.16，不据此建立任意发行版实现保证。
+- id: src.kernel.infiniband-sysfs-abi-v6.16-fixed
+  title: Linux v6.16 InfiniBand sysfs 稳定 ABI 固定文件
+  url: https://github.com/torvalds/linux/blob/v6.16/Documentation/ABI/stable/sysfs-class-infiniband
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: v6.16 tag
+  license:
+    status: unknown
+    scopes: []
+    notes: 文件未见独立许可声明；仅链接并原创归纳。
+  notes: Batch 18 初审独立读取 GID、state、counters/hw_counters 等路径定义；不由 ABI 位置推导选定 NIC/交换机的全部计数器单位或恢复门槛。；2026-10-10 第七次定向复核重抓 raw 200，SHA 04e19b90171502f140496137f1be0a6c0ec5c34195d673fccfaeae4155dc4512：L199–216 说明 hw_counters 可在 device/port 层及 lifespan 更新间隔；它不提供 mlx5e ethtool 字段到 IB sysfs 的对应保证。
+- id: src.nvidia.rdma-aware-networks-guide-3.5.0
+  title: RDMA-aware Networks Programming Guide（DOCA 3.5.0 归档）
+  url: https://networking-docs.nvidia.com/doca/archive/3-5-0/rdma-aware-networks-programming-guide
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: DOCA archive 3-5-0; observed 2026-10-09
+  license:
+    status: unknown
+    scopes: []
+    notes: NVIDIA 文档版权；仅链接并原创归纳。
+  notes: Batch 18 初审读取 Glossary 的 SM 主备边界、4.1.4 WRITE_WITH_IMM 通知、4.3.2 RR/RNR 与 ibv_post_recv 章节的 RR 消耗条件。只用作局部机制反证，不将归档全部旧 API/硬件能力当成 v65.0 支持矩阵或 OFED 配套证明。
+- id: src.pytorch.fsdp-notes-2.8
+  title: PyTorch 2.8 FSDP Notes
+  url: https://docs.pytorch.org/docs/2.8/notes/fsdp.html
+  kind: documentation
+  registered_at: '2026-10-09'
+  revision: PyTorch 2.8 documentation; observed 2026-10-09
+  license:
+    status: unknown
+    scopes: []
+    notes: 未独立核对该网页内容许可；仅链接并原创归纳。
+  notes: Batch 18 初审读取 all-gather 输入 chunk、完整输出和 FSDP unit 的通信说明；每 rank 的分片输入字节数不能直接代表全部通信量。未执行 FSDP。
+- id: src.nvidia.megatron-lm-core-v0.19.2
+  title: NVIDIA Megatron-LM tag core_v0.19.2（Megatron-Core 冻结实现）
+  url: https://github.com/NVIDIA/Megatron-LM/tree/core_v0.19.2/megatron/core
+  kind: repository
+  registered_at: '2026-10-10'
+  revision: tag core_v0.19.2（latest 浮动线不用作实现证据）
+  license:
+    status: unknown
+    scopes: []
+    notes: Apache-2.0 为仓库主许可（本轮未逐文件核对头声明）；仅链接并原创归纳。
+  notes: Batch 18 修订轮独立核对（raw 200）：megatron/core/tensor_parallel/mappings.py（六函数 forward/backward 阶段语义 L201–297；sp2hp/hp2sp 文档 shape L566–621）、megatron/core/pipeline_parallel/p2p_communication.py（is_single_shape 仅 Python 形状检查 L131–137，真实 shape 通信限 variable_seq_lengths/mtp_standalone L322–328）、megatron/core/parallel_state.py（四组 getter）、megatron/core/transformer/moe/token_dispatcher.py（MoEAlltoAllTokenDispatcher 工作流 L372–383、ep_group 归属、A2A dispatch 调用 L690–720；同 tag 新增冻结文件，不新增登记 ID）。frozen 路径存在性不升级为映射全部 source_checked；EP 具体路由值由调用方决定。作者第三轮称公式结构冻结，第三次复核（2026-10-10）继续 OPEN：独立取得同 tag token_dispatcher.py（SHA-256 7af2746153268f5c5f7f03d7a340092541b633fbc8faa10f666d6ddbdf98be0a）和 moe_utils.py（b20192e71b54ed07b00f9e3d0bbd7daf470cb9ea3dc3037c20f544528e56f14f）；utils L423–467 非 fused 分支 tokens 为 m×hidden、probs 为 m，不共享 hidden 宽度；dispatcher L817–826 TP>1 的 combine 前有 RS，L857–862 combine A2A 交换 input/output splits。未执行任何配置，物理总通信量、未核定 fused/padding 布局不补写。作者第四轮独立核对同 tag moe_utils.py L423–467（non-fused：tokens [m,H] 行选、probs 一维 [m]）、dispatcher combine RS（L817–826）与 split 交换（L855–863），正文 EP 行改 tokens/probs 各自表达式与 TP 条件分支。 第四次复核（2026-10-10）重抓 token_dispatcher.py，SHA 与第三次一致；接受非 fused、非 padding 分支 tokens/probs 逐对逻辑字节、combine split 交换及 metadata 边界。C14 继续 OPEN，L734–744 的 tokens/probs AG 仅由 tp_size>1 决定，L750 的 num_local_experts>1 限排序；正文仍将后者附到 AG。TP=1 的有限字节分支已接受，未知配置与物理总量不补造。 第五次复核（2026-10-10）重读第四次固定 dispatcher 快照（SHA 未变）L734–750/L817–826，正文和 verification/研究记录已正确分开 AG(tokens/probs) 的 tp_size>1 与排序的 num_local_experts>1，C14 CLOSED。output_split_sizes 为 None 或由 output_splits_tp 转列表；combine RS 仍限 TP>1。关闭限已声明有限映射，具体路由、fused/padding 和物理总通信量仍 unknown，未实跑。
+- id: src.kernel.mlx5-en-stats-v6.16
+  title: Linux v6.16 mlx5 以太网驱动计数器表（en_stats.c）
+  url: https://github.com/torvalds/linux/blob/v6.16/drivers/net/ethernet/mellanox/mlx5/core/en_stats.c
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: v6.16 tag
+  license:
+    status: unknown
+    scopes: []
+    notes: 内核代码文件许可（GPL-2.0）不等同文档再分发判定；仅链接并原创归纳字段名与读出路径，不引入代码。
+  notes: Batch 18 第七轮独立核对（raw 200）：rx_prio{N}_marked（ecn_marked_tc，HW PPCNT per-TC-congest 组）/cong_discard/buf_discard、rx/tx_prio{N}_packets/bytes、prio pause/pause_duration/pause_transition、tx_pause_storm_warning/error_events、rx_out_of_buffer（qcounter 组 q_stats_desc，FW QUERY_Q_COUNTER 读出，经 ethtool -S，非 IB sysfs）、sw rx_ecn_mark。第八轮追加 counters.rst 语义：priority 端口计数器为物理端口 per-L2-priority；marked=设备因 per-host 拥塞而标记的包；pause_duration 单位微秒。单位计数/包数按名义含义，FW 事件细则未取。；2026-10-10 第七次定向复核 raw 200，en_stats.c SHA 9f5eea7c1b082983ec36c6a09e5ea9599575c83fdcec039ef06cee3bfd9a5a06：L552–634 的 rx_out_of_buffer 由 ethtool 统计导出，非 IB sysfs；L1679–1793 marked/cong 组受 sbcam_reg 门控，L1811–1817 为 prio packets/bytes。辅助同 tag 官方语义文件 https://github.com/torvalds/linux/blob/v6.16/Documentation/networking/device_drivers/ethernet/mellanox/mlx5/counters.rst（SHA 838baabf8e0d91539db795bbeebdaeca5e2d79067648bd7c246577a999a3d482）L1206–1282 确认 L2 priority 与本机因 per-host 拥塞执行的标记，不能仅由 PPCNT 组名判定优先级不一致，也不将 marked/packets 泛化为网络 CE 收包率；同 tag https://github.com/torvalds/linux/blob/v6.16/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c（SHA d753fd21f57283a30fbfd169bf57ede90fd412c791e4bbf14f0a69aed75c060a）L318–340 确认 ethtool 接入。原文未入库，无实机验证。；2026-10-10 第八次定向复核重抓 raw 200，95081 B、SHA 9f5eea7c1b082983ec36c6a09e5ea9599575c83fdcec039ef06cee3bfd9a5a06 与第七次相同；正文已将 rx_out_of_buffer 拆为 mlx5e qcounter/ethtool 路径，不与 IB vport/sysfs 值声明相同；本机标记占比限定同设备端口优先级窗口及有效 delta 分母，未知分支保持无法判断。C10 在有限文档范围 CLOSED，无实机验证。
+- id: src.kernel.mlx5-ib-counters-v6.16
+  title: Linux v6.16 mlx5 IB 驱动计数器表（counters.c）
+  url: https://github.com/torvalds/linux/blob/v6.16/drivers/infiniband/hw/mlx5/counters.c
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: v6.16 tag
+  license:
+    status: unknown
+    scopes: []
+    notes: 同上，仅链接并原创归纳字段名与读出路径。
+  notes: Batch 18 第七轮独立核对（raw 200）：retrans 表、exhaustion、RoCE ACCL、cong 表（cc_query_allowed 门控；vport 分支不提供 device cong 表）、vport basic。第八轮修正：vport 字段名附 vport_ 前缀（如 vport_out_of_buffer，经 sysfs hw_counters）；opcounters 完整字段名 cc_rx_ce_pkts/cc_rx_cnp_pkts/cc_tx_cnp_pkts，per-QP 经内核 rdma_counter QP 绑定（mlx5_ib_counter_bind_qp→mlx5r_fs_bind_op_fc，bind_opcnt 门控），不是用户态 ibv_create/read_counters（ib_counters flow 对象）；用户态管理/读取入口未交付，per-QP 判读待核定。FW 事件细则超出名义部分 unknown。；2026-10-10 第七次定向复核 raw 200，SHA 292177935746d101ab81811cccbc5d49a833a30eb90c793353f1340d79686246：重试/耗尽/ACCL 名字及 cap L38–96、700–728 已确认；vport 字段宏附 vport_ 前缀（L22–24）。cong 表受 cc_query_allowed 门控且不暴露于 vport 分支（L400–402、730–738）。前述 per-QP 经 verbs flow counters 的摘要须区分两套对象：L448–480、578–642、1196–1208 为 rdma_counter QP 绑定和更新，L150–208、994–1026 的 ib_counters create/read 仅提供 flow packets/bytes description/index。辅助同 tag https://github.com/torvalds/linux/blob/v6.16/drivers/infiniband/hw/mlx5/fs.c（SHA fcfd60b23b532ad9b920795f2cee5a8985a75a6e31779d89a461e77d4f43cc62）L1066–1130、1400–1435 核对 CE/CNP 方向、QP 匹配与 optional 绑定条件；不据函数相邻推定同一个采集 API。原文未入库，无实机验证。；2026-10-10 第八次定向复核重抓 raw 200，34987 B、SHA 292177935746d101ab81811cccbc5d49a833a30eb90c793353f1340d79686246 与第七次相同；正文 vport_out_of_buffer 前缀/作用域已纠正，per-QP rdma_counter QP 绑定与 ib_counters flow create/read 已区分，用户态管理读取入口仍待核定。L131–141 三个 cc_* 字段分别在 basic_op_cnts、rdmarx_cnp_op_cnts、rdmatx_cnp_op_cnts，不将简称表名解释为共用 cap 条件；该定位提示不改变正文 per-QP 判读待核定分支。C10 在原有限文档范围 CLOSED，无实机验证。
+- id: src.kernel.net-statistics-abi-v6.16
+  title: Linux v6.16 netdev 统计 ABI（sysfs-class-net-statistics）
+  url: https://github.com/torvalds/linux/blob/v6.16/Documentation/ABI/testing/sysfs-class-net-statistics
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: v6.16 tag
+  license:
+    status: unknown
+    scopes: []
+    notes: testing ABI 文件未见独立许可声明；仅链接并原创归纳。
+  notes: Batch 18 第七轮独立核对（raw 200）：/sys/class/net/<iface>/statistics/ 下 rx/tx packets/bytes/errors/dropped 等字段存在性与计数语义；Cumulus 交换机 swpX 端口以 netdev 形式适用；ASIC 内部超出 netdev 视图部分 unknown。；2026-10-10 第七次定向复核 raw 200，SHA b6d77eab5d6a59ca25aca74cf7be5af8efa926baeb0188f64f6b58457efb2fb9：通用 netdev 路径与 RX/TX 包、字节、错误、丢弃名义定义已确认；rx_dropped/rx_errors 等要求按驱动确定具体含义。Cumulus 4.3 的入口/汇总与刷新范围须另引用其版本化统计页（复核报告及 src.nvidia.cumulus-43-roce 本轮 notes），不由此宣称 Cumulus 实际运行 v6.16 或得到完整 ASIC 内部丢包量。
+- id: src.kernel.mlx5-counters-doc-v6.16
+  title: Linux v6.16 mlx5 计数器语义文档（counters.rst）
+  url: https://github.com/torvalds/linux/blob/v6.16/Documentation/networking/device_drivers/ethernet/mellanox/mlx5/counters.rst
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: v6.16 tag
+  license:
+    status: unknown
+    scopes: []
+    notes: 文档文件未见独立许可声明；仅链接并原创归纳。
+  notes: Batch 18 第八轮独立核对（raw 只读）：priority 端口计数器为物理端口 per-L2-priority（0–7）；marked/cong_discard/buf_discard 的 per-host 拥塞语义；pause_duration 微秒单位与 PFC 使能条件； Informative 类型含义按页内声明。；2026-10-10 第八次定向复核重抓 raw 200，48415 B、SHA 838baabf8e0d91539db795bbeebdaeca5e2d79067648bd7c246577a999a3d482 与第七次相同；L1206–1225、1271–1282 确认 L2 priority、物理端口包数和本机 per-host 拥塞标记语义；L1243–1249、1265–1268 确认 pause_duration 微秒与 PFC 使能条件，正文已修正。不推广为网络 CE 收包比例或任意型号全字段支持，C10 有限范围 CLOSED。
+- id: src.nvidia.cumulus-43-monitoring-ethtool
+  title: NVIDIA Cumulus Linux 4.3 ethtool 接口监控页
+  url: https://docs.nvidia.com/networking-ethernet-software/cumulus-linux-43/Monitoring-and-Troubleshooting/Troubleshooting-Network-Interfaces/Monitoring-Interfaces-and-Transceivers-Using-ethtool/
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: Cumulus Linux 4.3；2026-10-14 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: NVIDIA 文档版权；仅链接并原创归纳。
+  notes: Batch 18 第八轮独立核对：Mellanox 交换机物理计数器向内核每 2 秒更新（虚接口 10 秒，高负载更长）；ethtool -S swpX HwIfInOctets/UcastPkts/Discards/BufferDrops/AclDrops 等字段；cl-netstat -c 不清内核/硬件计数器。ASIC 内部超出 netdev 视图部分 unknown。；2026-10-10 第八次定向复核重抓 HTTP 200，53576 B、SHA 4ce2af2e00cd4bcab173ad814929d9cac0d21f261ffeea2d23e3753caac11332 与第七次相同；实际统计示例与 View and Clear Interface Counters 的更新/工具清除边界已就近引证并用于采样设计，不把未更新快照当成零新增，不认定完整 ASIC 内部可见；C10 在 netdev 有限视图 CLOSED，无实机验证。
+- id: src.nvidia.cumulus-43-monitoring-best-practices
+  title: NVIDIA Cumulus Linux 4.3 监控最佳实践页
+  url: https://docs.nvidia.com/networking-ethernet-software/cumulus-linux-43/Monitoring-and-Troubleshooting/Monitoring-Best-Practices/
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: Cumulus Linux 4.3；2026-10-14 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: NVIDIA 文档版权；仅链接并原创归纳。
+  notes: Batch 18 第八轮独立核对：接口计数器来自硬件或内核（内核汇总硬件）；入口 cat /sys/class/net/[iface]/statistics/[stat_name]（该表轮询 10 秒）。与 v6.16 net-statistics ABI 组成引用链；不认定交换机运行 v6.16。；2026-10-10 第八次定向复核重抓 HTTP 200，71791 B、SHA d1ce189bcb654d4789db2308849e61e3f5d9322b4ebed38dda3ba4dcaa7eb472 与第七次相同；Layer 1 Protocols and Interfaces 入口/内核汇总已引证，表内 10 秒为建议轮询，另与硬件到内核的刷新间隔分开；不据 v6.16 通用 ABI 宣称交换机实际运行 v6.16，C10 有限文档范围 CLOSED。
+- id: src.rocm.rocm-systems-therock-10.1
+  title: ROCm rocm-systems tag therock-10.1（RCCL/rccl-tests 固定源码）
+  url: https://github.com/ROCm/rocm-systems/tree/therock-10.1/projects/rccl
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: tag therock-10.1（commit 7da4302，2026-10-05；RCCL 2.30.7 线）
+  license:
+    status: partial
+    scopes:
+    - scope: projects/rccl 与 projects/rccl-tests 各自 LICENSE.txt（BSD 三条款式，取证轮 raw 核对）
+      identifier: BSD-3-Clause
+      url: https://github.com/ROCm/rocm-systems/blob/therock-10.1/projects/rccl/LICENSE.txt
+    notes: 仓库根无 LICENSE 文件（404 已核对，记 unknown）；只链接并原创归纳，不镜像。
+  notes: Batch 19 取证轮实开核对（tree 页 200；CHANGELOG 2.30.7 标题与 10.1.0 组件表冲突照录；RegisterTests.cpp 行号见研究报告；rccl-tests timer.cc/PERFORMANCE.md 口径）。latest 与 docs-10.1.0 未 diff，引用须带版本线。
+- id: src.rocm.rocm-systems-pr-9745
+  title: rocm-systems PR #9745（WindowRegister hang→skip，主案例）
+  url: https://github.com/ROCm/rocm-systems/pull/9745
+  kind: issue
+  registered_at: '2026-10-14'
+  revision: PR merged 2026-08-09（state closed；修复在 therock-10.1 样本存在，最早入版 release 未证）
+  license:
+    status: unknown
+    scopes: []
+    notes: Issue/PR 正文再分发范围未核验；仅链接并原创归纳观测/原因/反例/修复。
+  notes: Batch 19 取证轮 API 全文核对（gfx908/MI100 非对称路径 hang、bisect 反例、allowlist skip 修复；hang 机理调用栈未给，记 unknown）。
+- id: src.pytorch.sampler-source-v2.6.0
+  title: PyTorch v2.6.0 torch/utils/data/sampler.py 固定源码
+  url: https://github.com/pytorch/pytorch/blob/v2.6.0/torch/utils/data/sampler.py
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: tag v2.6.0（raw 200 已复核）
+  license:
+    status: partial
+    scopes:
+    - scope: 仓库根 BSD-3-Clause
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/v2.6.0/LICENSE
+    notes: 只链接并原创归纳。
+  notes: Batch 19 取证轮 raw 实开：Sampler 基类仅要求 __iter__；RandomSampler generator 可空；BatchSampler drop_last 尾批语义。
+- id: src.pytorch.distributed-sampler-source-v2.6.0
+  title: PyTorch v2.6.0 torch/utils/data/distributed.py 固定源码
+  url: https://github.com/pytorch/pytorch/blob/v2.6.0/torch/utils/data/distributed.py
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: tag v2.6.0（raw 200 已复核）
+  license:
+    status: partial
+    scopes:
+    - scope: 仓库根 BSD-3-Clause
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/v2.6.0/LICENSE
+    notes: 只链接并原创归纳。
+  notes: Batch 19 取证轮 raw 实开：seed+epoch 确定性 shuffle、set_epoch 必调警告、数据集恒定假设、drop_last 补齐/截尾、rank 切片。
+- id: src.torchdata.stateful-dataloader-0.11.0
+  title: TorchData StatefulDataLoader 0.11.0（版本化文档 + 固定实现）
+  url: https://docs.pytorch.org/data/0.11/
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: 文档 0.11.0；实现 tag v0.11.0（commit 377e64c1，raw 200 已复核）
+  license:
+    status: partial
+    scopes:
+    - scope: pytorch/data 仓库根 BSD-3-Clause
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/data/blob/v0.11.0/LICENSE
+    notes: 只链接并原创归纳。
+  notes: Batch 19 取证轮实开版本化文档 + 固定 tag 实现：state_dict/load_state_dict、非 stateful naive fast-forward、snapshot_every_n_steps；只聚合 worker 不跨 rank；load 要求相同 num_workers；与 torch 2.6 配套未验证。
+- id: src.nvidia.nccl-issue-2409
+  title: NCCL Issue #2409（2x8 H100 RoCE AllReduce 带宽退化，双因确证）
+  url: https://github.com/NVIDIA/nccl/issues/2409
+  kind: issue
+  registered_at: '2026-10-14'
+  revision: 2026-09-14 开，2026-09-16 关闭；NCCL 2.31.2-1+cuda13.3（亦复现 2.29.7）、nccl-tests master a0b82b2、CX-7 fw 28.43.8016
+  license:
+    status: unknown
+    scopes: []
+    notes: GitHub 页面未核对许可；仅链接并原创归纳环境/证据/反证/原因/修复。
+  notes: Batch 19 取证轮实开全文：2x8 H100 SXM + 8x CX-7 400G RoCE；ib_write_bw 同条件线速反证；双因确证（PCIe ACS+IOMMU 平台侧 + SPLIT_DATA_ON_QPS=0 配置侧）；~470GB/s 期望为报告者引用值（nccl-tests#309 未实开，unknown）；交换机侧计数器原文未给出。
+- id: src.nvidia.nccl-issue-814
+  title: NCCL Issue #814（P2P/AllReduce 带宽不一致，PHB/SYS 拓扑个案）
+  url: https://github.com/NVIDIA/nccl/issues/814
+  kind: issue
+  registered_at: '2026-10-14'
+  revision: 2023-03-31 开，sjeaugey 回复后关闭；6x RTX 4090 PHB/SYS 混合拓扑
+  license:
+    status: unknown
+    scopes: []
+    notes: 同上，仅链接并原创归纳。
+  notes: Batch 19 取证轮实开全文：p2pBandwidthLatencyTest 矩阵 + pairwise all_reduce 矩阵 + NCCL topo XML；维护者 AMD CPU 多流解释（推断强度）；作者 ring 调整未果；最慢链路因果无原文支持，已删除归属；个案不泛化。
+- id: src.nvidia.nccl-issue-209
+  title: NCCL Issue #209（TCP 高带宽 socket 回归，CPU/亲和个案）
+  url: https://github.com/NVIDIA/nccl/issues/209
+  kind: issue
+  registered_at: '2026-10-14'
+  revision: 2019-04-19 开，2019-06-25 关闭；NCCL 2.3.7/2.4.x、GCE V100/AWS p3dn TCP 路径
+  license:
+    status: unknown
+    scopes: []
+    notes: GitHub 页面未核对许可；仅链接并原创归纳。
+  notes: Batch 19 取证轮实开：socket 线程/CPU 绑定、`--bind-to none` 一线排查；tree/ring 流量解释；修复进入 release 未核对（unknown）；TCP 路径结论不外推 IB。

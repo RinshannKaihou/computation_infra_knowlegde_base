@@ -19,7 +19,7 @@ related_ids: [data-storage.training-data-path, hardware.resource-topology, clust
 
 - [Checkpoint 写入与持久化边界](checkpoint-durability.md)：区分暂存、后台写入、提交、持久化和恢复验证。
 
-- [训练数据供给路径与等待](training-data-path.md)：连接存储、缓存、加载、主机内存与设备消费，区分数据等待、传输等待和计算或通信等待的证据。
+- [训练数据供给路径与等待](training-data-path.md)：连接存储、缓存、加载、主机内存与设备消费，区分数据等待、传输等待和计算或通信等待的证据；已补数据集身份/游标契约（§A/§B）、NPU 传输分列与对照矩阵（§C）。
 
 - [训练数据加载饥饿诊断指南](data-starvation-triage.md)：把取 batch 等待定位到存储、CPU 处理、队列、传输或消费的首个边界；以 PyTorch 2.6 DataLoader 与 profiler 为证据样板。
 

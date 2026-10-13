@@ -4666,6 +4666,10 @@ tasks:
   - T02-04
   context_topic_refs: []
   evidence_blockers: []
+  acceptance_exception:
+    record: docs/research/batch-17-t02-10-exception.md
+    date: '2026-10-14'
+    scope: 12/13 项发现关闭；C08（逐算子累加精度 + TorchNPU cubeMathType 透传）长期 open 并具名跟踪，不视为关闭
   work_units: 2
 - id: T02-11
   title: Ascend 主机传输、stream 与同步证据补齐
@@ -4941,6 +4945,10 @@ tasks:
   context_topic_refs:
   - '02.7'
   evidence_blockers: []
+  acceptance_exception:
+    record: docs/research/batch-19-blocked-1-exception.md
+    date: '2026-10-14'
+    scope: 除 acceptance 5 外通过；BLOCKED-1（HCCL Test × 目标 CANN/HDK/机型官方交集）长期 open 并具名跟踪，不视为关闭
   work_units: 1
 - id: T03-07
   title: 扩展跨节点、rail 与拥塞性能基线口径
@@ -4982,6 +4990,7 @@ tasks:
   - T03-06
   context_topic_refs: []
   evidence_blockers: []
+  depends_on_note: 对 T03-06 的依赖按例外清单视为条件满足（见 docs/research/batch-19-blocked-1-exception.md）；不得把 HCCL Test × 目标环境交集当作已确立条件引用，涉及处记 unknown
   work_units: 1
 - id: T03-08
   title: 带宽退化、通信热点与来源案例补齐
@@ -5063,6 +5072,7 @@ tasks:
   - '02.6'
   - '06.1'
   evidence_blockers: []
+  depends_on_note: 对 T02-10 的依赖按例外清单视为条件满足（见 docs/research/batch-17-t02-10-exception.md）；不得把逐算子累加精度或 cubeMathType 透传行为当作已确立契约引用，涉及处记 unknown
   work_units: 2
 - id: T04-02
   title: 本地与共享文件存储的版本化参考

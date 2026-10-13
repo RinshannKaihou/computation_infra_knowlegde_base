@@ -10,8 +10,18 @@ source_refs:
   - src.huawei.cann-82rc1alpha001-acl-runtime-memory
   - src.huawei.cann-82rc1-aclerror
   - src.pytorch.cuda-semantics-2.6
-updated_at: "2026-09-30"
-summary: 区分昇腾 NPU 的物理设备内存、框架分配/保留、算子 workspace 与碎片证据；固定 TorchNPU/CANN 来源版本，说明 OOM 报错的抛出层与异步执行的归因边界。
+  - src.huawei.cann-82rc1alpha001-acl-host-mem
+  - src.huawei.cann-82rc1alpha001-acl-memcpy-sync
+  - src.huawei.cann-82rc1alpha001-acl-memcpy-async
+  - src.huawei.cann-82rc1alpha001-acl-memcpy-kind
+  - src.huawei.cann-82rc1alpha001-acl-stream-sync
+  - src.huawei.cann-82rc1alpha001-acl-event-sync
+  - src.huawei.cann-82rc1alpha001-acl-data-transfer-guide
+  - src.ascend.torch-npu-v7.2.0-copy-nonblocking
+  - src.ascend.torch-npu-v7.2.0-pinned-host-alloc
+  - src.ascend.torch-npu-v7.2.0-stream-event
+updated_at: "2026-10-09"
+summary: 区分昇腾 NPU 的物理设备内存、框架分配/保留、算子 workspace 与碎片证据；固定 TorchNPU/CANN 来源版本，说明 OOM 报错的抛出层与异步执行的归因边界；补齐主机内存与 H2D/D2H 传输、stream/event 三类同步、TorchNPU non_blocking 原生语义与 host buffer 生命周期（CUDA 同名语义明确不作 NPU 证据）。
 related_ids:
   - software-stack.layers-and-boundaries
   - software-stack.ascend-documented-profile
@@ -24,7 +34,7 @@ verification:
     - src.ascend.torch-npu-v7.2.0-pytorch2.6.0
     - src.huawei.cann-82rc1alpha001-acl-runtime-memory
     - src.huawei.cann-82rc1-aclerror
-  notes: 核对 TorchNPU v7.2.0-pytorch2.6.0 固定 commit 的内存 API、分配器与 workspace 实现、选项解析和 OOM 文案，CANN 8.2.RC1.alpha001 内存管理页与 82RC1 错误码页，以及 PyTorch 2.6 CUDA 语义页的对照小节；未在 NPU 环境安装或运行任何代码。
+  notes: 核对 TorchNPU v7.2.0-pytorch2.6.0 固定 commit 的内存 API、分配器与 workspace 实现、选项解析和 OOM 文案，CANN 8.2.RC1.alpha001 内存管理页与 82RC1 错误码页，以及 PyTorch 2.6 CUDA 语义页的对照小节；2026-10-09 加法补齐主机传输（0101/0102/0105/0106/1807/数据传输节）、stream/event 三类同步（0075/0076/0079/0083/0086/0091/1395/0020）与 TorchNPU 拷贝 non_blocking 及 CachingHostAllocator 生命周期（CopyKernel.cpp、CachingHostAllocator.cpp、streams.py 固定快照），行号以执行轮复核为准；未在 NPU 环境安装或运行任何代码。
 ---
 
 # 昇腾 NPU 内存与 OOM 证据
@@ -108,9 +118,36 @@ CUDA 对照（仅限 CUDA，不作 NPU 证据）：PyTorch 2.6 的 [CUDA 语义�
 
 NPU 侧在固定快照中只有间接证据：`TASK_QUEUE_ENABLE` 默认 1 表明算子经任务队列异步下发；下发路径的 OOM 有“清缓存重试”；统一错误文本在检查点抛出。**“OOM 或设备错误报在与根因无关的位置”这一具体错位陈述在该快照代码中没有直接表述**——本文把它作为机制推断保留：分配类 OOM 的抛出点可信（host 侧同步），但设备执行期错误的上报位置与真实耗尽时刻仍需目标版本的 CANN 日志机制文档或现场证据确认。
 
+### 主机内存与 H2D/D2H 传输（CANN 8.2.RC1.alpha001）
+
+`aclrtMallocHost` 申请的是锁页 Host 内存（首址 64B 对齐），内部无隐式同步、成败立即返回；必须配对 `aclrtFreeHost`，且 Free 后不得再访问（[0101](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/82RC1alpha001/API/appdevgapi/aclcppdevg_03_0101.html) 功能/约束说明 + 0102 同目录页）；RC 形态下实际申请的是 Device 内存。`aclrtMemcpy`（同步）是“立刻复制”，`kind` 为预留参数、系统按指针自判方向；Device 间复制须先 `aclrtDeviceCanAccessPeer` + `aclrtDeviceEnablePeerAccess`（[0105](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/82RC1alpha001/API/appdevgapi/aclcppdevg_03_0105.html)）。
+
+`aclrtMemcpyAsync` 成功仅代表下发成功，必须显式同步，否则可致业务异常乃至 Device 断链掉卡；源/目的地址须 64B 对齐；H2D/D2H 若 Host 内存不是 `aclrtMallocHost` 申请的，接口不报错但“实际执行业务时发生不可预知的错误”（静默错误行为）；EP 形态 H2H 异步返回 `ACL_ERROR_RT_FEATURE_NOT_SUPPORT`；RC 形态 H2D/D2H/H2H 内部按 D2D 执行（[0106](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/82RC1alpha001/API/appdevgapi/aclcppdevg_03_0106.html)）。
+
+`aclrtMemcpyKind` 共 8 个枚举（[1807 原文](https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/82RC1alpha001/API/appdevgapi/aclcppdevg_03_1807.html)逐项计数：HOST_TO_HOST、HOST_TO_DEVICE、DEVICE_TO_HOST、DEVICE_TO_DEVICE、DEFAULT、HOST_TO_BUF_TO_DEVICE、INNER_DEVICE_TO_DEVICE、INTER_DEVICE_TO_DEVICE）；其中 `ACL_MEMCPY_HOST_TO_BUF_TO_DEVICE` 允许“接口成功后即释放 Host 内存”（释放前提的例外分支），`DEFAULT` 由系统自判方向（页内 `ACL_MEMCPY_DEFAULT` 后为全角逗号，系来源笔误，照录，不据此补成员）。
+
+官方 H2D/D2H 样例顺序固定为 `MemcpyAsync → SynchronizeStream → DestroyStream → FreeHost/Free`；指南示例“不可直接拷贝编译运行，仅供参考”（[数据传输节](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/82RC1alpha001/appdevg/aclcppdevg/aclcppdevg_000010.html)）。
+
+### stream / event 与三类同步的运行时分工（CANN 8.2.RC1.alpha001）
+
+三类显式同步分工：`aclrtSynchronizeStream`（阻塞至指定 stream 全部任务完成，[0076](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/82RC1alpha001/API/appdevgapi/aclcppdevg_03_0076.html)）/ `aclrtSynchronizeDevice`（当前 Context 对应 Device，尽量少用）/ `SynchronizeEvent`（最细粒度）；状态查询一律出参枚举、函数返回 aclError（`aclrtStreamQuery` 出参 `COMPLETE=0/NOT_READY=1/RESERVED=0xFFFF`）；三类显式同步 + “异步返回成功≠执行成功，不同步可致断链掉卡” + 少用 Device 级同步（同步&异步说明 0020，同树页）。
+
+Event 资源在首次 Record 时才申请（受单 Device 上限约束）；Record/StreamWait 均为异步接口；顺序 Create→Record→Wait→Reset；未 record 查询返回 COMPLETE；多线程 Record 与 Query 可乱序导致状态不符合预期（[0079](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/82RC1alpha001/API/appdevgapi/aclcppdevg_03_0079.html) + 同目录 0083/0086/0091）。CANN 无 `aclrtQueryEvent`（只有 `aclrtQueryEventStatus`）。`aclrtSynchronizeEvent/WithTimeout`（0088/0089）仅核对页名存在，正文尚未细读，不得引用其超时语义。
+
+### TorchNPU 拷贝路径的 non_blocking 与 host buffer 生命周期（快照代码实证）
+
+`copy_between_host_and_device`（[`CopyKernel.cpp` L88–115 分支区](https://github.com/Ascend/pytorch/blob/bc51ab84cc6f35c77aab1c59886e0ea43681a317/torch_npu/csrc/aten/common/CopyKernel.cpp)，行号 2026-10-09 raw 实测复核）：`non_blocking=True` 走当前 stream 异步下发 + `CachingHostAllocator_recordEvent` 登记；`False` 走先同步当前 stream 再同步 memcpy。**但 `True` 分支仍可能同步**：`recordEvent` 对不在 allocator blocks 中的 host 指针——仅当条件接口存在**且**方向为 D2H 时提前返回，否则走 `AclrtSynchronizeStreamWithTimeout` 阻塞等待（[`CachingHostAllocator.cpp` L181–207](https://github.com/Ascend/pytorch/blob/bc51ab84cc6f35c77aab1c59886e0ea43681a317/torch_npu/csrc/core/npu/CachingHostAllocator.cpp#L181-L207)；“Sync when host memory is allocated by malloc”）。分列如下：allocator 管理的 host 内存（经 `CachingHostAllocator` 分配）→ 登记 event，不阻塞调用；非管理内存（直接 `aclrtMallocHost`/malloc）+ D2H + 条件接口存在 → 提前返回，不阻塞；非管理内存 + H2D，或条件接口不存在 → 同步当前 stream（调用阻塞）。**异步下发、调用是否阻塞、结果可读、buffer 可复用是四件不同的事**，不得由“走了异步下发”推出“不阻塞/结果立即可读”。直接由 `aclrtMallocHost` 取得内存不自动说明它属于 TorchNPU 这个 allocator 的 blocks。条件接口存在是代码分支存在性证据，不解释成已验证运行能力。**CUDA 文档中同名参数的语义明确不作为 NPU 证据，正文任何地方不得交叉引用。**
+
+锁页内存由 `CachingHostAllocator` 二次管理（[`CachingHostAllocator.cpp`](https://github.com/Ascend/pytorch/blob/bc51ab84cc6f35c77aab1c59886e0ea43681a317/torch_npu/csrc/core/npu/CachingHostAllocator.cpp)，底层 `aclrtMallocHost`，按 2 的幂取整）：`free` 只是标记 + 给用过该块的 stream 插 event，有 outstanding event 的块不可重用；`malloc` 先 `processEvents` 回收；host buffer 的“可释放/可重用”由 event 完成状态决定，而非 `free` 调用时刻。`is_pinned` 仅 CPU 张量可为真；apis 对照表 `Tensor.pin_memory` NPU 列留空（未承诺）、`Tensor.is_pinned` 为 Y。
+
+`torch_npu.npu.synchronize()` 等待该 device 全 stream 完成；`Stream.synchronize/query` 直通 `AclrtSynchronizeStreamWithTimeout/AclrtStreamQuery`；`SyncLaunchStream` 关闭 taskqueue（同步发射的显式反例）；`Event.reset` 前须确认 stream 任务完成（[`streams.py`](https://github.com/Ascend/pytorch/bc51ab84cc6f35c77aab1c59886e0ea43681a317/torch_npu/npu/streams.py)）。
+
+最小复制→算子→同步→结果比对的待执行验证（未执行）：host（`aclrtMallocHost`/`pin_memory=True` 张量）→ `aclrtMemcpyAsync(H2D)` 或 `to('npu', non_blocking=True)` → 同一 stream 下发确定性最小算子 → `aclrtSynchronizeStream`/`torch_npu.npu.synchronize()` → `aclrtMemcpyAsync(D2H)` + 同步后拷回比对（容差规则引用 PyTorch 2.6 `assert_close` 口径，阈值自行记录）。失败分支：F1 异步未同步读结果；F2 host buffer 提前释放（同步完成前 Free/复用未回收块）；F3 统计时点错位（事后 `memory_stats` 不得反推触发时刻占用）。环境前提：TorchNPU v7.2.0-pytorch2.6.0 + 执行时固定配套 CANN（不得默认 8.2.RC1.alpha001 文档树即配套）。
+
 ## 适用边界
 
 - 全部 API 行号、选项集、文案和错误码仅对 TorchNPU `v7.2.0-pytorch2.6.0`（commit `bc51ab84`）负责；master 与历史版本均可能不同。
+- 本节新增的 CANN 接口语义仅对 8.2.RC1.alpha001 文档树负责；0020/0086 页的版本绑定弱于他页（静态页无版本串/页头未核验），引用时保留该限定。`non_blocking` 的 NPU 语义完全由本快照代码定义；CUDA 文档中同名参数的语义明确不作为 NPU 证据。
 - CANN 内存页为 8.2.RC1.alpha001 版本化页面；`aclrtGetMemInfo` 的 HBM huge/normal 语义、AI CPU 缓存 100M–200M 占用按该页陈述；83RC1 同路径页面版本标识不一致且部分抓取失败，未采用。
 - vendored CANN 头文件随 TorchNPU 快照固定，其与任一 CANN 发行版的对应关系未核验。
 - 本文没有覆盖 npu-smi 等系统工具口径、CANN 算子 workspace 的版本化文档章节、以及任何实测数值。
@@ -137,3 +174,5 @@ NPU 侧在固定快照中只有间接证据：`TASK_QUEUE_ENABLE` 默认 1 表�
 - [PyTorch 2.6 CUDA 语义页](https://docs.pytorch.org/docs/2.6/notes/cuda.html)：仅作 CUDA 对照。
 - 逐文件读取范围与失败记录见[第八批内存来源记录](../../docs/research/batch-08-memory-sources.md)。
 - 待确认：npu-smi 口径；workspace 与张量池相互挤压的量化关系；expandable_segments 的生产效果；CANN 算子 workspace 的版本化文档章节；异步错位的直接官方证据；其他 TorchNPU/CANN 版本的选项集与文案。
+- 待确认（2026-10-09 加法）：`aclrtSynchronizeEvent/WithTimeout` 正文细读；`aclrtSetOpWaitTimeout` 与 StreamWait 联动语义；`HOST_TO_BUF_TO_DEVICE` 是否被 TorchNPU 拷贝路径使用；`AclrtMemcpyAsyncWithConditionExist` 条件含义；四步待执行验证与三失败分支的实机执行。
+- 修订记录：2026-10-09 按初审 B17-C02/C12 修订（`non_blocking` 条件同步分列；枚举计数 9→8；见 [batch-17-review-fixes.md](../../docs/research/batch-17-review-fixes.md)），定向复核待执行。

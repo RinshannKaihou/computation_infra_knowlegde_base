@@ -31,6 +31,9 @@ related_ids:
 - software-stack.amd-rocm-documented-profile
 - software-stack.operators-compilers-and-graphs
 - software-stack.gpu-op-graph-failure-triage
+- software-stack.framework-backend-adaptation
+- software-stack.gpu-memory-oom-evidence
+- software-stack.dtype-layout-and-precision-semantics
 ---
 
 # 02 系统软件与加速器执行栈
@@ -50,6 +53,9 @@ related_ids:
 8. [AMD ROCm 软件栈的文档配套档案](amd-rocm-documented-profile.md)：ROCm 10.1.0 × MI300X × Ubuntu 24.04.5 样板的组件版本、兼容矩阵、PyTorch 构建关系与验证入口。
 9. [算子分发、编译与计算图执行机制](operators-compilers-and-graphs.md)：四种「图」的区分、Dynamo/Inductor、TorchAir/aclgraph、HIP graphs 的固定样板对照与缓存身份方法。
 10. [GPU 算子、编译和图执行失败的定向诊断](gpu-op-graph-failure-triage.md)：NVIDIA/AMD 路径的四分支取证、诊断工具与 eager/compile/cache 对照。
+11. [框架到设备后端的适配与能力核对](framework-backend-adaptation.md)：PrivateUse1 责任清单、三路径核对表、opcheck/gradcheck 与编译缓存身份测试。
+12. [GPU 分配器、保留内存与 OOM 证据](gpu-memory-oom-evidence.md)：allocated/reserved、碎片键、workspace 独立账户、记录表与三对照。
+13. [dtype、layout、格式转换与有限精度语义](dtype-layout-and-precision-semantics.md)：五层语义区分、三平台精度开关条件句与最小检查四步。
 
 两份平台档案都是文档研究基线；实际部署和诊断仍需补齐目标环境信息。
 
@@ -73,8 +79,8 @@ related_ids:
 - **02.2 驱动、运行时与基础库** — 已有[分层概念草稿](layers-and-boundaries.md)与[驱动初始化、运行时执行同步与库装载](runtime-execution-and-library-loading.md)。
 - **02.3 CUDA、ROCm、CANN 等平台软件栈** — 已有[跨平台分层入口](layers-and-boundaries.md)（三栈职责对照）、[昇腾档案](ascend-documented-profile.md)、[NVIDIA 档案](nvidia-documented-profile.md)与[AMD ROCm 档案](amd-rocm-documented-profile.md)。
 - **02.4 算子、编译器、计算图与执行模式** — 已有[算子分发、编译与计算图执行机制](operators-compilers-and-graphs.md)（四层区分+三平台固定样板）、[昇腾算子不支持与图编译失败诊断](ascend-op-graph-failure-triage.md)与[GPU 算子、编译和图执行失败的定向诊断](gpu-op-graph-failure-triage.md)。
-- **02.5 框架与设备后端适配** — 已有[职责边界草稿](layers-and-boundaries.md)，适配实践待补充。
-- **02.6 内存管理、数据格式与精度语义** — 已有[昇腾 NPU 内存与 OOM 证据](ascend-memory-oom-evidence.md)（固定 TorchNPU/CANN 版本）；CUDA 侧与其他平台细节待补充。
+- **02.5 框架与设备后端适配** — 已有[职责边界草稿](layers-and-boundaries.md)与[框架到设备后端的适配与能力核对](framework-backend-adaptation.md)（PrivateUse1 责任清单 + 三路径核对 + MindSpore/vLLM 对照）。
+- **02.6 内存管理、数据格式与精度语义** — 已有[昇腾 NPU 内存与 OOM 证据](ascend-memory-oom-evidence.md)（固定 TorchNPU/CANN 版本，2026-10-09 补齐主机传输/stream 同步/non_blocking 原生语义）、[GPU 分配器、保留内存与 OOM 证据](gpu-memory-oom-evidence.md)与[dtype、layout、格式转换与有限精度语义](dtype-layout-and-precision-semantics.md)。
 - **02.7 环境配套、安装验证、迁移与升级** — 已有[配套证据方法](compatibility-evidence.md)、[昇腾档案](ascend-documented-profile.md)和[NVIDIA 档案](nvidia-documented-profile.md)；已有[版本配套诊断](ascend-version-mismatch-triage.md)、案例与实验设计，真实安装/升级验证待补。
 
 ## 内容边界
@@ -106,4 +112,4 @@ CANN、驱动、框架与 torch_npu、算子包和执行模式均在本章定位
 
 ## 首轮成果与后续
 
-已有分层（含三栈职责对照）、配套证据、三平台文档档案（NVIDIA/昇腾/AMD ROCm）、运行时初始化/同步/库装载参考、主机资源与设备访问诊断、算子/编译/图执行机制与 GPU 侧排障指南，以及昇腾配套失败指南、案例和实验设计；后续补框架后端适配、内存管理/精度语义、安装和升级验证。
+已有分层（含三栈职责对照）、配套证据、三平台文档档案（NVIDIA/昇腾/AMD ROCm）、运行时初始化/同步/库装载参考、主机资源与设备访问诊断、算子/编译/图执行机制与 GPU 侧排障指南、框架后端适配核对、GPU 内存与 OOM 证据、精度语义基础，以及昇腾配套失败指南、案例和实验设计；后续补安装和升级验证。

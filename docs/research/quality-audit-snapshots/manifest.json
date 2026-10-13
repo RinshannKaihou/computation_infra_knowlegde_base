@@ -1,0 +1,66 @@
+[
+  {
+    "batch": 17,
+    "path": "knowledge/02-software-stack/framework-backend-adaptation.md",
+    "git_blob": "f519f7be70ac66004d867ca76f4f0795161f90c1",
+    "sha256": "1cdb9b18f46f47bcba66c96cbe80aef8ef69f7757f50eb60520edeac2b010c56",
+    "bytes": 14219,
+    "snapshot_path": "docs/research/quality-audit-snapshots/batch-17/framework-backend-adaptation.md.txt"
+  },
+  {
+    "batch": 17,
+    "path": "knowledge/02-software-stack/gpu-memory-oom-evidence.md",
+    "git_blob": "83ac57153c91f4606baa6fbea00ef33e2e7b8f1a",
+    "sha256": "2b40cfff9c208530bf9bf169e97c14a179e11c31053bd112e54a875acca6cb35",
+    "bytes": 16532,
+    "snapshot_path": "docs/research/quality-audit-snapshots/batch-17/gpu-memory-oom-evidence.md.txt"
+  },
+  {
+    "batch": 17,
+    "path": "knowledge/02-software-stack/dtype-layout-and-precision-semantics.md",
+    "git_blob": "553c4a80c7dbca7df5a00385e71ef15d25321d7f",
+    "sha256": "952a5f8fd518aef7d66ad99be63b23a1642df9263c99457bb621d6ffb2620035",
+    "bytes": 14398,
+    "snapshot_path": "docs/research/quality-audit-snapshots/batch-17/dtype-layout-and-precision-semantics.md.txt"
+  },
+  {
+    "batch": 17,
+    "path": "knowledge/02-software-stack/ascend-memory-oom-evidence.md",
+    "git_blob": "eae8249d482bedec6732be2354ccde75925dc715",
+    "sha256": "77f7f55f78ea2b3674c59d04c2bb286968a57467fcc199b2635d863120acdb49",
+    "bytes": 28213,
+    "snapshot_path": "docs/research/quality-audit-snapshots/batch-17/ascend-memory-oom-evidence.md.txt"
+  },
+  {
+    "batch": 18,
+    "path": "knowledge/03-communication/interconnect-paths.md",
+    "git_blob": "923b701d636cbc7af5937e2c4c9f926d4c7662ab",
+    "sha256": "f74324f886837041fc3ca111093b24663fe5e6e944a21eabce902a4b52910d58",
+    "bytes": 10495,
+    "snapshot_path": "docs/research/quality-audit-snapshots/batch-18/interconnect-paths.md.txt"
+  },
+  {
+    "batch": 18,
+    "path": "knowledge/03-communication/ethernet-ib-roce-rdma.md",
+    "git_blob": "d9c98878d5781af9472cef45a5005f9baa33582b",
+    "sha256": "65fed21af7eebdc86fe683d7abba6d08855e9d6daf772d25973066b84be06ac4",
+    "bytes": 9949,
+    "snapshot_path": "docs/research/quality-audit-snapshots/batch-18/ethernet-ib-roce-rdma.md.txt"
+  },
+  {
+    "batch": 18,
+    "path": "knowledge/03-communication/rdma-baseline-and-congestion-triage.md",
+    "git_blob": "a2f83e7108c050a0b078800a2e73bc3c064f3aa0",
+    "sha256": "93cf4c7b31a2161b22dd7aa4fd7952a8f2bf1b88aefbcd20aebee10da9e43cae",
+    "bytes": 8532,
+    "snapshot_path": "docs/research/quality-audit-snapshots/batch-18/rdma-baseline-and-congestion-triage.md.txt"
+  },
+  {
+    "batch": 18,
+    "path": "knowledge/03-communication/collectives-and-rank-progress.md",
+    "git_blob": "93fe80b5f82308da9ba9b4fea96c0e05946a169e",
+    "sha256": "a4405d656a3095afd883833ebede40b9c9cfb74aeec33f15dfd684ebcd38dc1e",
+    "bytes": 24204,
+    "snapshot_path": "docs/research/quality-audit-snapshots/batch-18/collectives-and-rank-progress.md.txt"
+  }
+]

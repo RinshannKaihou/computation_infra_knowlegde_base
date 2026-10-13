@@ -1,0 +1,130 @@
+---
+id: software-stack.dtype-layout-and-precision-semantics
+title: dtype、layout、格式转换与有限精度语义
+type: concept
+domain: software-stack
+status: draft
+platforms: [generic, nvidia, amd, ascend]
+source_refs:
+  - src.pytorch.tensor-attributes-2.6
+  - src.pytorch.amp-2.6
+  - src.pytorch.amp-examples-2.6
+  - src.pytorch.cuda-semantics-2.6
+  - src.pytorch.set-float32-matmul-precision-2.6
+  - src.pytorch.testing-assert-close-2.6
+  - src.pytorch.numerical-verification-2.6
+  - src.pytorch.channels-last-tutorial
+  - src.nvidia.cublas-12.8-math-repro
+  - src.nvidia.cuda-math-api-fp8-12.8
+  - src.nvidia.cudnn-890-mathtype
+  - src.amd.rocm-precision-7.14.0
+  - src.amd.rocblas-precision-7.14.0
+  - src.amd.miopen-precision-7.14.0
+  - src.ascend.cann-82rc1alpha001-aol-index
+  - src.ascend.torch-npu-v7.2.0-pytorch2.6.0
+  - src.ascend.msprobe-training-guide-2026-09-30
+updated_at: "2026-10-09"
+summary: "区分 tensor dtype、布局与内存格式、内部格式、算子计算与累加精度、类型转换与特殊值五层语义，给出三平台精度开关的条件句（PyTorch 2.6、CUDA 12.8 库侧、ROCm docs-7.14.0、CANN 8.2.RC1.alpha001 入口级），只讲 autocast/累加/loss scaling 的基础责任，并给出同字节输入、固定权重、同平台重复与第一稳定差异的最小检查方法；训练收敛判据归 06.5、推理量化质量归 07.4。"
+related_ids:
+  - software-stack.layers-and-boundaries
+  - software-stack.operators-compilers-and-graphs
+  - software-stack.framework-backend-adaptation
+  - software-stack.ascend-memory-oom-evidence
+applicability:
+  environment_refs: []
+  notes: "尚无环境档案：PyTorch 侧固定 2.6 文档与 v2.6.0 源码（commit 1eba9b3）；CUDA 库侧固定 12.8.0 归档（cuDNN 例外为 8.9.0 归档，与 12.8 配套未经验证）；AMD 侧固定 docs-7.14.0；CANN 侧仅定位 8.2.RC1.alpha001 入口（正文未抽取，逐算子表待二次核对）。目标环境的 dtype/精度组合需另行固定。"
+verification:
+  status: source_checked
+  evidence_refs:
+    - src.pytorch.tensor-attributes-2.6
+    - src.pytorch.amp-2.6
+    - src.pytorch.testing-assert-close-2.6
+    - src.amd.rocm-precision-7.14.0
+  notes: "对照第十七批取证记录（docs/research/batch-17-dtype-precision-sources.md）所列固定版本来源核对；CANN 逐算子 compute dtype/累加精度表未取得（AOL 页仅返回站点外壳）；cuDNN 8.9.0 与 CUDA 12.8 配套未经验证；未运行任何数值实验。"
+---
+
+# dtype、layout、格式转换与有限精度语义
+
+## 定义与要解决的问题
+
+数值问题调查第一步是把五个易混概念分开，再谈“误差是否正常”：
+
+1. **tensor dtype**：元素存储类型（如 fp32/fp16/bf16/int8），共 12 种（[Tensor Attributes](https://docs.pytorch.org/docs/2.6/tensor_attributes.html)）；fp16 = 1-5-10、bf16 = 1-8-7，bf16 与 fp32 同指数位宽故保范围。
+2. **布局（layout）**：内存寻址方式（`torch.layout`：strided/sparse）。
+3. **内存格式（memory format）**：分配与访问格式（`torch.memory_format`：contiguous/channels_last/channels_last_3d/preserve）。layout 与 memory_format 是两个正交概念。
+4. **内部格式**：硬件/库侧的实际计算排布（如 Tensor Core 要求的对齐、block scaling），用户 dtype 不直接等于计算格式。
+5. **计算与累加精度**：算子内部以何精度计算、以何精度累加（如 fp16 输入 + fp32 累加），以及转换、舍入、特殊值（NaN/inf、subnormal）的处理。
+
+本文只到基础语义 + 检查方法。混合精度只讲 autocast/累加/loss scaling 的基础责任；训练收敛与任务质量判据归 06.5，推理量化方法与质量验证归 07.4，不在本文展开。
+
+## 机制与关键关系
+
+### 类型提升与内存格式
+
+算术 type promotion 三规则（scalar 高类别 / 0-dim 高类别 / 同类别 dimensioned）与输出 tensor 三禁（int 不收 float、bool 不收非 bool、非复不收复）（[Tensor Attributes](https://docs.pytorch.org/docs/2.6/tensor_attributes.html)）。注意 `notes/type_promotion.html`、`notes/memory_format.html`、`notes/amp.html` 在 2.6 下实测 404，以 tensor_attributes 页正文为准，避免误引。
+
+channels_last 用 stride 表达 NHWC（如 `(3072,1,96,3)`）；`to` 与 `contiguous` 在 `C==1` 等歧义形状下行为不同，推荐用 `to`；`clone`/like/逐点算子保持格式，conv 以 channels_last 为主导（[Channels Last 教程](https://docs.pytorch.org/tutorials/intermediate/memory_format_tutorial.html)，浮动版本、Last Verified 2024-11-05；性能数字只作方向证据）。
+
+### 混合精度基础责任（只到机制）
+
+autocast 只包 forward（含 loss），backward 不推荐包、沿用 forward dtype；CUDA 可 cast fp16 表 / 强制 fp32 表 / 按最宽输入提升表；未列出 op 不走 autocast（[torch.amp](https://docs.pytorch.org/docs/2.6/amp.html)）。`torch.cuda.amp.*` 已 deprecated，以 `torch.autocast(device_type=…)` 为准。
+
+GradScaler 三步责任：scale 防 fp16 underflow → `unscale_` 后再检查/裁剪 → `step` 遇 inf/NaN 跳过 → `update`；梯度累加期间保持 scaled 且 `update` 只在有效 batch 步调；每 loss 独立 scale（[torch.amp](https://docs.pytorch.org/docs/2.6/amp.html) + [AMP Examples](https://docs.pytorch.org/docs/2.6/notes/amp_examples.html)）。bf16 预训练模型用 fp16 scaler 可能反向 overflow（amp 页 Note 原文）。
+
+### NVIDIA 侧精度开关（条件句）
+
+- PyTorch 侧：`matmul.allow_tf32`（1.12+，默认 False）、`cudnn.allow_tf32`（默认 True），关断需两开关同关；`allow_fp16/bf16_reduced_precision_reduction`（BF16 默认开）；A100 示例 TF32 相对误差约大两量级（仅方向证据，不作阈值）（[CUDA semantics TF32 节](https://docs.pytorch.org/docs/2.6/notes/cuda.html)）。
+- [`set_float32_matmul_precision`](https://docs.pytorch.org/docs/2.6/generated/torch.set_float32_matmul_precision.html)：highest/high/medium 三档只改内部计算精度、不改输出 dtype、不改卷积精度；**当前只影响 CUDA**（NVIDIA-only，正文保留该限定）。
+- 库侧：cuBLAS 单 stream + 同架构同 SM 数 bitwise 保证，多 stream 非确定（四种规避）；GEMM K 切分在 compute 精度高于 output 时可中间溢出（`CUBLAS_MATH_DISALLOW_REDUCED_PRECISION_REDUCTION` 可控）；Tensor Core 使用与对齐条件；FP8/block-scaling 在 Lt §3.1.4（[cuBLAS 12.8](https://docs.nvidia.com/cuda/archive/12.8.0/cublas/index.html)）。cuDNN：`cudnnMathType_t`（DEFAULT/FMA/TENSOR_OP/ALLOW_CONVERSION）、`NVIDIA_TF32_OVERRIDE=0`（[cuDNN 8.9.0 归档 API](https://docs.nvidia.com/deeplearning/cudnn/archives/cudnn-890/api/index.html)，与 CUDA 12.8 配套未经验证）。CUDA FP8 格式（e4m3/e5m2、e8m0 scale）见 [Math API](https://docs.nvidia.com/cuda/archive/12.8.0/cuda-math-api/cuda_math_api/group__CUDA__MATH__INTRINSIC__FP8.html)；PyTorch 2.6 amp 页未列 FP8，不推断框架覆盖。
+
+### AMD 侧精度开关（条件句）
+
+[ROCm 精度总表（docs-7.14.0）](https://rocm.docs.amd.com/en/docs-7.14.0/reference/precision-support.html)：HIP 类型与硬件架构支持矩阵（FP8 FNUZ 仅 CDNA3、OCP 仅 CDNA4/RDNA4）、matrix-core 支持表、各库输入/输出支持表；库页声明“所列为库支持、硬件支持另计”，正文保留该条件句。[rocBLAS 精度页](https://rocm.docs.amd.com/projects/rocBLAS/en/docs-7.14.0/reference/data-type-support.html)：Level 1–3 逐函数 dtype 矩阵（fp16/bf16 多为受限或不支持，GEMV fp16/bf16 仅 batched/strided-batched 脚注）。[MIOpen 精度页](https://rocm.docs.amd.com/projects/MIOpen/en/docs-7.14.0/reference/data_type_support.html)：`miopenDataType_t` 仅 Float/Half 全支持，卷积要求输入/输出 dtype 与 layout 一致；MI200 MFMA flush denormal，训练 backward 默认 alt-impl（forward 原实现），覆盖开关 `MIOPEN_DEBUG_CONVOLUTION_ATTRIB_FP16_ALT_IMPL`。
+
+### Ascend 侧（入口级，未展开）
+
+CANN 8.2.RC1.alpha001 的 AOL 算子加速库与基础数据结构入口已定位（[operatorlist](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/82RC1alpha001/API/aolapi/operatorlist_00001.html)），但页面抓取仅返回站点外壳——逐算子 compute dtype/累加精度/dtype-format 表均未取得，正文引用前须浏览器/PDF 二次核对；不得用 TorchNPU 或 CUDA 语义补写。TorchNPU 快照内 dtype/format 转换与计算精度的文件级定位同样待补。
+
+### 比较方法：assert_close 与重复性
+
+数值比较用 [`assert_close`](https://docs.pytorch.org/docs/2.6/testing.html)：`|actual−expected| ≤ atol + rtol·|expected|`，按 dtype 默认容差表（fp16 1e-3/1e-5、bf16 1.6e-2/1e-5、fp32 1.3e-6/1e-5），`check_dtype/layout/device/stride` 默认前三开，NaN 默认不等。**默认容差表只作比较起点，任务验收阈值须按任务预设**（msprobe 的 1%/0.99 为工具内规则，同样不作通用阈值）。
+
+同平台重复三件套（[Reproducibility](https://docs.pytorch.org/docs/2.6/notes/randomness.html)）：`manual_seed` 全设备、cuDNN `benchmark=False`（选算法确定）vs `deterministic=True`（算法自身确定）分工、`CUBLAS_WORKSPACE_CONFIG`；首段“跨 release/commit/平台不保证复现，CPU↔GPU 可不同”是跨平台比较的上限声明。
+
+浮点非结合、CPU↔GPU 同字节输入也可不同、batch/slice 与逐元素结果可不同、linalg 非有限输入无保证与病态矩阵可静默错（`svdvals`/`cond` 排查）见既有数值验证登记（`src.pytorch.numerical-verification-2.6`，本轮复核）。
+
+## 适用边界
+
+- 三平台开关不互推：TF32、`set_float32_matmul_precision`、alt-impl、aclnn 精度各自只在其来源支持范围成立。
+- `assert_close` 默认容差、msprobe 工具内规则、TF32 示例误差均为方向证据；任何通用数值验收阈值都不存在，阈值必须按任务预设。
+- cuDNN 8.9.0 与 CUDA 12.8 的配套组合未经验证，不得拼成已验证环境。
+- 本文不含任何“某模型收敛/不收敛”“某量化方法质量好坏”结论；不含实测数值。
+
+## 常见误解
+
+- **“输出 dtype 相同即计算精度相同”**：错。计算精度（TF32/reduced reduction/alt-impl）与累加精度独立于输出 dtype，须查开关当时值。
+- **“开了 autocast 误差就可接受”**：错。可接受与否由任务预设容差判定；autocast 只决定算子归属表，不给出正确性保证。
+- **“跨平台同输入应同输出”**：错。跨平台/跨版本不保证复现是官方上限声明；比较前先做同平台重复性，再谈差异。
+- **“assert_close 通过即任务正确”**：错。它只证明在给定容差下数值接近；dtype 未对齐（默认 `check_dtype=True` 直接失败）与病态输入静默错是两类反例（见下节）。
+
+## 最小检查方法
+
+顺序不可换：
+
+1. **同字节输入**：固定输入字节（含 dtype、shape、stride/memory_format、NaN/inf 分布），记录 `dtype/strides/is_contiguous(memory_format=…)` 快照。
+2. **已固定权重**：同一 checkpoint 同一加载路径；先 assert shape + dtype + layout 一致，再谈数值（`check_dtype/check_layout` 默认开做门禁）。
+3. **同平台重复性**：同机同卡同版本跑两次（`manual_seed` + `benchmark=False`）；bitwise 比较哈希/逐字节。开 `benchmark=True` 或用非确定算法时两次可不同——记为“正常非确定”，不是错误。
+4. **第一稳定差异**：逐层/逐算子二分，每次只改一个变量（TF32 / reduction / autocast / alt-impl 开关），用 `assert_close` 以任务预设 `rtol/atol` 判定；首个超差点即第一稳定差异，向上追溯到开关 + 算子 + 输入分布。
+
+**正常误差例**：开 TF32 的 fp32 matmul vs 关 TF32（或 fp64 参考），相对误差大 1–2 量级但随开关可解释、可复现；MI200 fp16 卷积 forward 原实现 vs alt-impl 小幅差异。属有限精度语义内。
+
+**错误反例**：① `assert_close(fp16_tensor, fp32_tensor)` 在默认 `check_dtype=True` 下直接失败——错在比较前提，不是数值错误，先统一 dtype 再设容差；② linalg 在病态/非有限输入下静默返回错误结果且换设备可变——须判错，并用 `isfinite` + `cond/svdvals` 前置排查。
+
+## 来源与待确认问题
+
+- PyTorch 2.6：[Tensor Attributes](https://docs.pytorch.org/docs/2.6/tensor_attributes.html)、[torch.amp](https://docs.pytorch.org/docs/2.6/amp.html)、[AMP Examples](https://docs.pytorch.org/docs/2.6/notes/amp_examples.html)、[CUDA semantics](https://docs.pytorch.org/docs/2.6/notes/cuda.html)（TF32/reduction 节）、[set_float32_matmul_precision](https://docs.pytorch.org/docs/2.6/generated/torch.set_float32_matmul_precision.html)、[torch.testing](https://docs.pytorch.org/docs/2.6/testing.html)、[Reproducibility](https://docs.pytorch.org/docs/2.6/notes/randomness.html)、[Channels Last 教程](https://docs.pytorch.org/tutorials/intermediate/memory_format_tutorial.html)。
+- NVIDIA（12.8.0 归档，cuDNN 例外 8.9.0）：[cuBLAS](https://docs.nvidia.com/cuda/archive/12.8.0/cublas/index.html)、[CUDA Math FP8](https://docs.nvidia.com/cuda/archive/12.8.0/cuda-math-api/cuda_math_api/group__CUDA__MATH__INTRINSIC__FP8.html)、[cuDNN 8.9.0 API](https://docs.nvidia.com/deeplearning/cudnn/archives/cudnn-890/api/index.html)。
+- AMD（docs-7.14.0）：[精度总表](https://rocm.docs.amd.com/en/docs-7.14.0/reference/precision-support.html)、[rocBLAS 精度](https://rocm.docs.amd.com/projects/rocBLAS/en/docs-7.14.0/reference/data-type-support.html)、[MIOpen 精度](https://rocm.docs.amd.com/projects/MIOpen/en/docs-7.14.0/reference/data_type_support.html)。
+- Ascend：[CANN AOL 入口](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/82RC1alpha001/API/aolapi/operatorlist_00001.html)（入口级）。
+- 逐条主张与证据定位见[第十七批精度语义来源记录](../../docs/research/batch-17-dtype-precision-sources.md)。
+- 待确认：CANN 逐算子精度表（blocked，须二次核对）；TorchNPU dtype/format 文件级定位；PyTorch 2.6 autocast 对 FP8 覆盖；ROCm 各页许可；任何通用数值验收阈值。
