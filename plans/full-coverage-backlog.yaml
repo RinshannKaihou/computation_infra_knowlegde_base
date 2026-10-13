@@ -21,6 +21,7 @@ policy:
   review_model: gpt-6.1-sol
   review_effort: xhigh
   reviewer_role: 独立于撰写；发现修订后定向复核，实际模型/角色如实记录。
+  review_fallback: 2026-10-13 起试用 claude-opus-5-5 优先审阅；出现 fallback（[frontier_llm] 标记、模型不一致或认证/路由失败）则该轮弃用并切回本约定模型；每轮核验元数据与标记并记入审计。详见 docs/authoring-guide.md 第 7 节。
   source_readiness: 技术内容任务必须固定精确来源与版本/许可/边界才进入 drafting；导航任务核对已验收正文、路径目标和阅读次序，不强制新增外部来源。不将主页登记、发现入口或当前计划当作已核验材料。
   task_statuses:
   - planned
