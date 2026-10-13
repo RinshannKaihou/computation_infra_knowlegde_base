@@ -67,3 +67,5 @@ C13 关闭后，`verification.status: source_checked` 不再有本组发现的�
 本复核只覆盖编辑与来源层面，不构成硬件或现场验证。
 
 `make check`：PASS（93 content entries / 417 sources，作者复核报告交付后运行；只校验结构与本地链接）。
+
+`make check`：PASS（93 content entries / 417 sources，作者复核报告交付后运行；只校验结构与本地链接）。
