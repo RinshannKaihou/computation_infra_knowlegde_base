@@ -428,3 +428,11 @@
 - C33-2b：源路径→root 坐标换算——P_src→宿主 mountinfo 最长前缀挂载点 M_host（st_dev）→R＝P_src 相对 M_host 子路径；容器条目须 field 3＝M_host.st_dev 且 field 4＝R（field 4 为源文件系统内部路径，不等于宿主绝对路径），两者一致才记来源关联成立。
 - C33-3：§3 口径句 M-LIB 描述同步为"目录父挂载/遮蔽处理与 root 坐标换算判据"；缺项分类补"有效父挂载缺失或遮蔽未判明（K2）"。
 - 登记：syft 条目 revision 补 dpkg.go L55–70。
+
+## T05-01 第三十二轮修订（2026-10-17，本会话作者角色；处理 codex 第 31 次复核 C33 剩余子项；C32/C34 已 CLOSED 不动）
+
+- C33-2a 遮蔽可达性：覆盖挂载选择在"最长前缀＋同位置 top-most"后补可达性前提——候选的最长前缀祖先挂载未被同位置堆叠隐藏（proc_pid_mountinfo(5) field 2 注），被隐藏祖先下的旧子挂载即使路径字面更长也不作有效覆盖；可达性证据不足 K2、超出可判情形（祖先链不完整/命名空间外父挂载不可见）单列 K1。
+- C33-2a 路径基准：先拼完整目标 `D/r`（同一参照系）再选覆盖挂载，库在覆盖挂载内的相对路径＝`D/r` 去掉挂载点前缀；明确禁止以 r 二次拼接到更具体挂载点后（路径段重复/遗漏）。
+- C33-2b root 换算：纳入宿主条目自身 field 4——R_fs＝`join(M_host.field4, relative(P_src, M_host.field5))`，附反例（field4=`/drivers`＋relative=`lib64`→`/drivers/lib64`）；容器条目须 field 3＝M_host.st_dev 且 field 4＝R_fs；注明该式为字段语义推论非手册原文。
+- C33-3：§3 口径句、待确认清单、来源记录 unknown 清单同步"遮蔽/可达性超出可判情形"K1 与 field 4 换算表述。
+- 登记无新增（mountinfo 页已在第 30 轮登记）。
