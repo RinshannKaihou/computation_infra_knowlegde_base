@@ -1,0 +1,26 @@
+# 第二十二批 T05-02 来源记录
+
+任务：T05-02（新建 `knowledge/05-cluster-platform/kubernetes-job-lifecycle.md`，concept）。作者取证轮次：首轮（K8s v1.32 版本化文档七页＋Kueue v0.19.0 固定 commit 六处＋双方测试路径存在性），由两名只读取证角色并行完成，作者抽查 K8s Job 页与版本切换器确认 v1.32 快照身份。
+
+取证方式说明：本机 curl 对 `raw.githubusercontent.com` 解析失败（DNS exit 6），未做字节级取回；正文核对经 `webfetch` 只读读取版本化页面正文与 GitHub 固定 commit 原文件完成。替代通道成功不冒充 curl 成功；网页缓存/转换文本的时间标记已在审阅约束中声明。
+
+## 主张—来源定位表（ID—精确页面/节—字段/支持范围）
+
+| 主张 | 登记 ID | 精确页面/节 | 支持范围 / 未覆盖 |
+|---|---|---|---|
+| Job 语义/重试/清理 | src.kubernetes.job-lifecycle-v1-32 | [Job 页](https://v1-32.docs.kubernetes.io/docs/concepts/workloads/controllers/job/)（completions/parallelism/backoffLimit 默认 6/指数退避/activeDeadlineSeconds/podFailurePolicy/backoffLimitPerIndex/successPolicy/TTL/finalizer/managedBy/应用自理临时文件） | 作业语义层；UID/generation/attempt 计数器、配额撤销、训练恢复无证据 |
+| Pod 阶段/探针/ready | src.kubernetes.job-lifecycle-v1-32 | [Pod 生命周期页](https://v1-32.docs.kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/)（五 phase、conditions、restartPolicy、readinessGates、liveness/readiness/startup） | Ready≠Running≠应用持续进展；Job 级完成计数不在此页 |
+| 属主/GC/对象元数据 | src.kubernetes.api-gc-v1-32 | [ObjectMeta 页](https://v1-32.docs.kubernetes.io/docs/reference/kubernetes-api/common-definitions/object-meta/)（uid/generation 定义）/[GC 页](https://v1-32.docs.kubernetes.io/docs/concepts/architecture/garbage-collection/)（前台/后台/孤立级联）/[owners-dependents](https://v1-32.docs.kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/) | 属主跨 namespace 规则、前台阻塞条件见正文 |
+| 完成清理/删除语义 | src.kubernetes.job-lifecycle-v1-32 | [TTL-after-finished](https://v1-32.docs.kubernetes.io/docs/concepts/workloads/controllers/ttlafterfinished/)（仅 Job、时钟 skew 注意）/[finalizers](https://v1-32.docs.kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/)/[owners-dependents](https://v1-32.docs.kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/)（foreground/orphan）/[Job v1 API](https://v1-32.docs.kubernetes.io/docs/reference/kubernetes-api/workload-resources/job-v1/)（JobSpec/JobStatus 字段与 conditions） | CronJob/任意资源 TTL 不支持；propagationPolicy 参数细节未展开 |
+| Kueue 集成/准入/状态 | src.kueue.job-lifecycle-v0.19.0（复用 src.kueue.admission-v0.19.0 两阶段/类型原文；复用 src.kubernetes.device-plugins-v1-32 设备侧入口） | 同 commit [run/jobs.md](https://github.com/kubernetes-sigs/kueue/blob/911a822a49bcfd99c9c62203a009efa4130ad604/site/content/en/docs/tasks/run/jobs.md)（queue-name label、事件链、PartialAdmission/ElasticJob）/workload 与 admission 两阶段/AdmissionCheck 状态机/stopPolicy（None/Hold/HoldAndDrain）/[troubleshooting_jobs](https://github.com/kubernetes-sigs/kueue/blob/911a822a49bcfd99c9c62203a009efa4130ad604/site/content/en/docs/tasks/troubleshooting/troubleshooting_jobs.md)（job-uid 反查、suspend/QuotaReserved/Admitted 判读）/v1beta2 workload_types.go（本文用到的条件子集；v1beta1 已弃用）/[setup_failure_recovery](https://github.com/kubernetes-sigs/kueue/blob/911a822a49bcfd99c9c62203a009efa4130ad604/site/content/en/docs/tasks/manage/setup_failure_recovery.md)/[setup_wait_for_pods_ready](https://github.com/kubernetes-sigs/kueue/blob/911a822a49bcfd99c9c62203a009efa4130ad604/site/content/en/docs/tasks/manage/setup_wait_for_pods_ready.md)/[setup_object_retention_policy](https://github.com/kubernetes-sigs/kueue/blob/911a822a49bcfd99c9c62203a009efa4130ad604/site/content/en/docs/tasks/manage/setup_object_retention_policy.md)（recovery/重排退避/保留策略）/metrics 与 cluster_queue（账本字段与指标）/kube_features.go 与 pkg/workload（门控阶段/默认值、reason 回退） | Kueue×Volcano/MindCluster 共部署未知；backoffLimit/activeDeadlineSeconds 叠加语义无证据 |
+| 官方测试入口（上游行为样本，非现场验证；断言未审计、CI 未查） | src.kubernetes.job-controller-tests-v1.32.0（含 `strategy.go` L62–74 删除默认孤立、`storage.go` L56–57 默认保留子 Pod，均归本条目） | [pkg/controller/job](https://github.com/kubernetes/kubernetes/tree/v1.32.0/pkg/controller/job) 与 [test/integration/job/job_test.go](https://github.com/kubernetes/kubernetes/blob/v1.32.0/test/integration/job/job_test.go)（TestJobPodFailurePolicy L260、TestDelayTerminalPhaseCondition L1236、TestJobPodReplacementPolicy L2889/3154 等）；Kueue [job_controller_test.go](https://github.com/kubernetes-sigs/kueue/blob/911a822a49bcfd99c9c62203a009efa4130ad604/test/integration/singlecluster/controller/jobs/job/job_controller_test.go)（finalizer L2365、reclaim L2416、Active=false L2707、PodsReady 重排 L3388、retention L3916/4042、无配额泄漏 L5306）；Kueue [reconciler.go L1476](https://github.com/kubernetes-sigs/kueue/blob/911a822a49bcfd99c9c62203a009efa4130ad604/pkg/controller/jobframework/reconciler.go)（`SetControllerReference`，Workload controller owner 为 Job，归 src.kueue.job-lifecycle-v0.19.0） | 上游行为样本，非现场验证；断言未审计、CI 未查 |
+
+## unknown 清单
+
+1. ~~Job/Pod/Workload `generation/attempt` 无官方字段证据~~（初审纠正，见正文身份对照表：generation 为 spec 修订、重试分散在各字段，无统一计数器）；“持续进展”无平台探针（只有 Kueue PodsReady 条件＋K8s probes，无阈值）。
+2. TTL 级联删除与 ClusterQueue 配额释放时序、`reclaimablePods` 计入时机无直接语句。
+3. `activeDeadlineSeconds` 与 Kueue `maximumExecutionTimeSeconds` 叠加语义无证据。
+4. 控制面/节点/进程三视图无现成对照表（正文为组装表）；tracking finalizer 常驻、Job backoff 与 Workload requeue 退避参数、TTL skew/finalizer 阻塞的量化阈值缺失。
+5. ~~终止/重试/取消后资源账本口径本轮未读 cluster_queue/metrics 页~~（已补读：clusterqueue_types.go L362–392、metrics reservation/usage/evicted reason；ResourceQuota 不在范围）。
+6. 应用结果核对（CompletedIndexes vs 业务 checkpoint）无官方例子；仅能定性“恢复归应用”。
+7. 全部实测（未部署集群、未提交 Job）。

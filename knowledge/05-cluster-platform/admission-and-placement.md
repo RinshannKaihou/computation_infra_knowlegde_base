@@ -7,11 +7,18 @@ status: draft
 platforms: [generic]
 source_refs:
   - src.kueue.admission-v0.19.0
+  - src.kueue.cluster-queue-v0.19.0
   - src.volcano.podgroup-gang-v1.15.0
+  - src.volcano.gang-plugin-v1.15.0
   - src.ascend.mind-cluster-v26.1.1
-updated_at: "2026-09-30"
+  - src.slurm.docs-24.11.7
+  - src.slurm.gres-tres-cgroup-24.11.7
+updated_at: "2026-10-14"
 summary: 区分配额、准入、组调度、节点放置与设备分配，按状态证据判断等待位置，并保留 GPU/NPU 拓扑和实现边界。
 related_ids:
+  - cluster-platform.kubernetes-job-lifecycle
+  - cluster-platform.slurm-jobs-and-device-resources
+  - cluster-platform.idle-resource-job-waiting-triage
   - cluster-platform.device-resource-chain
   - hardware.resource-topology
   - communication.collectives-and-rank-progress
@@ -20,9 +27,15 @@ verification:
   status: source_checked
   evidence_refs:
     - src.kueue.admission-v0.19.0
+    - src.kueue.cluster-queue-v0.19.0
     - src.volcano.podgroup-gang-v1.15.0
+    - src.volcano.gang-plugin-v1.15.0
+    - src.volcano.scheduler-actions-v1.15.0
+    - src.volcano.job-controller-v1.15.0
+    - src.slurm.docs-24.11.7
+    - src.slurm.gres-tres-cgroup-24.11.7
     - src.ascend.mind-cluster-v26.1.1
-  notes: 核对固定 Kueue 和 MindCluster 文档/API 及 Volcano 版本化概念页；未部署调度器、提交任务、修改集群或执行 GPU/NPU 验证。
+  notes: "核对固定 Kueue 文档/API（含 ClusterQueue 借用/抢占样板）、MindCluster 文档及 Volcano 版本化概念页与 gang 插件实现（valid/preempt/ready/pipelined/条件上报），复用 T05-03 Slurm 归档；未部署调度器、提交任务、修改集群或执行 GPU/NPU 验证；Volcano job 控制器 handler 事件路径未覆盖（unknown）；调度动作与控制器 running/restarting/policy 已读。"
 ---
 
 # 作业准入、调度与拓扑放置
@@ -66,9 +79,25 @@ Kueue v0.19.0 用 Workload 表达准入对象及 PodSet 资源需求；逻辑配
 
 拓扑判断不总发生在同一个阶段。这个固定版本的 TAS 文档对 Provisioning AdmissionCheck 另列了配额预留、等待外部资源检查、再完成 topology assignment 的流程。因此，调查应看实际条件和配置，不强制把上图作为控制器的执行顺序（[固定 TAS 文档的 ClusterAutoscaler support](https://github.com/kubernetes-sigs/kueue/blob/911a822a49bcfd99c9c62203a009efa4130ad604/site/content/en/docs/concepts/topology_aware_scheduling.md#clusterautoscaler-support)）。
 
-## Gang 约束不是应用同步屏障
+## Gang 约束不是应用同步屏障（Volcano 实现样板，以实现为准，文档差异另注）
 
-Volcano v1.15.0 的 PodGroup 以 `minMember`、`minResources` 等字段表达组级最低条件，Gang 插件据此避免不满足最小规模的任意部分分配。这个最低规模不必等于作业定义中的全部副本数。满足它也不保证进程同时执行到同一行代码，或都成功加入了应用通信组（[PodGroup](https://volcano.sh/docs/v1.15.0/concepts/podgroup/)、[Gang](https://volcano.sh/docs/v1.15.0/scheduler/plugins/gang/)）。
+Volcano v1.15.0 的 PodGroup 以 `minMember`、`minResources` 等字段表达组级最低条件（[PodGroup](https://volcano.sh/docs/v1.15.0/concepts/podgroup/)、[Gang](https://volcano.sh/docs/v1.15.0/scheduler/plugins/gang/)）。这个最低规模不必等于作业定义中的全部副本数。满足它也不保证进程同时执行到同一行代码，或都成功加入了应用通信组。
+
+
+
+Volcano v1.15.0 gang 插件（[`gang.go@v1.15.0`](https://github.com/volcano-sh/volcano/blob/8fc394c11e8db0d0ada5c17816b58bced9d7213d/pkg/scheduler/plugins/gang/gang.go)，只读未执行）按会话阶段做成组决策：`validJobFn` 按任务有效性（`CheckTaskValid`/`CheckSubJobValid`，`ValidTaskNum < MinAvailable`）拒绝并给出 `NotEnoughPodsOfTaskReason`/`NotEnoughPodsReason`（后者表示作业已有 Pod 对象不够，如控制器尚未创建或重建，不等于资源不足）；`AddJobReadyFn`/`AddJobPipelinedFn`（[`gang.go` L191–211@`8fc394c1`](https://github.com/volcano-sh/volcano/blob/8fc394c11e8db0d0ada5c17816b58bced9d7213d/pkg/scheduler/plugins/gang/gang.go)）决定作业可调度与可放行；会话关闭时对未就绪作业写 `PodGroupUnschedulableType` 条件（reason `NotEnoughResourcesReason`，消息 `x/y tasks in gang unschedulable` 中 x 为 `MinAvailable` 减可调度数，y 为全部任务数），就绪则写 `PodGroupScheduled`（reason 为 `tasks in gang are ready to be scheduled`，只表示可调度，不表示已运行）。调度器 Ready 实现口径（[`job_info.go` L877–886、L1202–1204@`8fc394c1`](https://github.com/volcano-sh/volcano/blob/8fc394c11e8db0d0ada5c17816b58bced9d7213d/pkg/scheduler/api/job_info.go)：`ReadyTaskNum` 计 Bound/Binding/Running/Allocated/Succeeded，不计 Pipelined；`IsReady` 另加 Pending 的 BestEffort 任务；Gang 文档把 Pipelined 列入 Ready，与实现不一致，以实现为准。注意 `minMember` 由 gang 插件在会话内判定，`minResources` 不在该插件内（全文无引用），而在入队阶段由 enqueue 动作与配额类插件使用（`enqueue.go` 已核；proportion/capacity/overcommit 判定公式未审计，unknown）；job 控制器按 `minAvailable` 计算并同步 PodGroup 的 `minMember`/`minResources`（[`job_controller_actions.go` L813–816、L877–880@`8fc394c1`](https://github.com/volcano-sh/volcano/blob/8fc394c11e8db0d0ada5c17816b58bced9d7213d/pkg/controllers/job/job_controller_actions.go)）。抢占保护按动作分：旧 preempt/reclaim 动作（[`gang.go` L97–137@`8fc394c1`](https://github.com/volcano-sh/volcano/blob/8fc394c11e8db0d0ada5c17816b58bced9d7213d/pkg/scheduler/plugins/gang/gang.go) `preemptableFn`，统一驱逐入口 `AddUnifiedEvictableFn` 对 GangReclaim/GangPreempt 直接放行）只在被抢作业 ready 数高于 `MinAvailable` 时逐个放行；gangpreempt/gangreclaim 采用 bundle 模型，`allowWholeBundle` 默认 `true`（[`gangpreempt.go` L32–52、L248](https://github.com/volcano-sh/volcano/blob/8fc394c11e8db0d0ada5c17816b58bced9d7213d/pkg/scheduler/actions/gangpreempt/gangpreempt.go) 与 [`gangreclaim.go` L32–52、L247](https://github.com/volcano-sh/volcano/blob/8fc394c11e8db0d0ada5c17816b58bced9d7213d/pkg/scheduler/actions/gangreclaim/gangreclaim.go) 同默认值，仅显式关闭时跳过 whole bundle），被抢作业可能整体被驱逐；启用哪些动作取决于站点调度器配置（unknown）。
+
+### 失败与回退分层（只读未执行；job 控制器重排队逻辑的 handler 事件路径未覆盖，unknown）
+
+| 层 | 行为 | 证据位置 |
+|---|---|---|
+| 入队 | `MinResources == nil` 或 `JobEnqueueable` 时转 `PodGroupInqueue`；由哪些插件提供判定取决于调度器配置 | [`enqueue.go` L95–99@`8fc394c1`](https://github.com/volcano-sh/volcano/blob/8fc394c11e8db0d0ada5c17816b58bced9d7213d/pkg/scheduler/actions/enqueue/enqueue.go) |
+| 会话内成组决策 | `JobValid` 不通过则跳过 allocate；配置了 enqueue 动作时仍 Pending 的作业跳过 allocate（L152–169），未配置时就地转 Inqueue 继续；只有 `JobReady` 才 `Commit`（L313–336，pipelined 不提交），`minAvailable < replicas` 时放回队列；SubJob 不 ready 不 pipelined 则 `Discard`（L832–844） | [`allocate.go`@`8fc394c1`](https://github.com/volcano-sh/volcano/blob/8fc394c11e8db0d0ada5c17816b58bced9d7213d/pkg/scheduler/actions/allocate/allocate.go) |
+| 会话关闭 | 写 Unschedulable/Scheduled 条件；对 gang 不可调度作业计调度重试（`RegisterJobRetries`，非控制器 `RetryCount`） | [`gang.go` L229–297](https://github.com/volcano-sh/volcano/blob/8fc394c11e8db0d0ada5c17816b58bced9d7213d/pkg/scheduler/plugins/gang/gang.go) |
+| 控制器 | Pod 事件/退出码按 task/job 级 policy 映射到 Restart*/Abort（默认只 `SyncJobAction`，`PodPendingEvent` 须配 `Timeout`）；Restart* 杀 Pod 转 Restarting，`RetryCount++`；达 `maxRetry` 转 Failed，否则回 Pending（`restarting.go` L35–49，`total − Terminating >= MinAvailable` 才回 Pending）；Running 中 Pending 超 `replicas − minAvailable` 回落 Pending | [`running.go` L35–46/L107–110](https://github.com/volcano-sh/volcano/blob/8fc394c11e8db0d0ada5c17816b58bced9d7213d/pkg/controllers/job/state/running.go)/[`restarting.go` L35–49](https://github.com/volcano-sh/volcano/blob/8fc394c11e8db0d0ada5c17816b58bced9d7213d/pkg/controllers/job/state/restarting.go)/[`job_controller_util.go` L182–196/L286–288](https://github.com/volcano-sh/volcano/blob/8fc394c11e8db0d0ada5c17816b58bced9d7213d/pkg/controllers/job/job_controller_util.go)（`applyPolicies`） |
+| 应用 rendezvous | 不在 Volcano 范围 | — |
+
+Kueue 侧对应机制：PodsReady 超时驱逐与指数退避重排（`requeueState`），见 [T05-02](kubernetes-job-lifecycle.md) L115 与 workload.md。
 
 读到“all or nothing”时，应明确 all 指什么：全部资源请求、最低成员集合、一个 PodSet，还是特定实现中的调度决策。调度器内部的 Ready、Pod condition 与应用 rendezvous 不共享同一语义。启动失败、拉取镜像失败、设备分配失败和进程退出仍需在对应层观察。
 
@@ -107,4 +136,42 @@ MindCluster v26.1.1 固定[调度流程](https://github.com/Ascend/mind-cluster/
 
 这些信息应来自同一次调度尝试。历史事件与当前状态可能属于不同 generation，实时资源占用也会变化。下一项检查应先区分等待发生在哪层，不因一个 Pending 或 Running 状态直接修改资源申请、亲和规则或驱逐其他作业。
 
-尚缺目标环境、实际调度配置、物理拓扑与运行证据。本文没有提交任务、变更队列或运行验证；来源差异、固定版本与许可范围见[本批 F12 研究记录](../../docs/research/batch-05-f12-sources.md)。
+尚缺目标环境、实际调度配置、物理拓扑与运行证据。本文没有提交任务、变更队列或运行验证；来源差异、固定版本见[本批 T05-05 来源记录](../../docs/research/batch-22-t05-05-sources.md)，许可范围见来源登记条目。
+
+## 两个独立的配额/调度样板（不互套）
+
+### 样板 A：Kueue quota/flavor/cohort/borrow（v0.19.0，只读未执行）
+
+适用前提：工作负载在 Kubernetes 上，已有 Kueue 队列/账户体系，需要配额借用或抢占语义（两平台共有的能力如抢占不作区分依据；不是产品推荐）。公平性代价：`reclaimWithinCohort` 非 `Never` 时借用方在对方需要时被收回（三个抢占字段默认全 `Never`，此时 cohort 只优先接纳 nominalQuota 内新负载）；Fair Sharing 与 `borrowWithinCohort` 互斥；启用 Fair Sharing 后 cohort 内回收改按 Fair Sharing 抢占策略执行（cluster_queue.md L444–452，具体策略未取证，unknown）；`StrictFIFO` 队头阻塞后续，默认 `BestEffortFIFO` 不阻塞。
+
+| 维度 | 观测字段/命令 | 来源 | 不能推出什么 | 失败或不适用反例 |
+|---|---|---|---|---|
+| 资源向量 | PodSet count × 每 Pod 多资源请求；resourceGroup `coveredResources` 要求同组同 flavor | [cluster_queue.md](https://github.com/kubernetes-sigs/kueue/blob/911a822a49bcfd99c9c62203a009efa4130ad604/site/content/en/docs/concepts/cluster_queue.md) | 节点无碎片 | 本 CQ 名额被借出且在使用＋`lendingLimit` 未设→新负载 Pending（`reclaimWithinCohort=Never` 时等待，否则可回收抢占；细分 reason 需开门控 `UnadmittedWorkloadsObservability`（v0.19 Beta，默认关），否则只见 `Pending`，unknown） |
+| 拓扑 | TAS required/preferred 标签层级；`TopologyPlacementFailed`（[v1beta2 workload_types.go L956–958](https://github.com/kubernetes-sigs/kueue/blob/911a822a49bcfd99c9c62203a009efa4130ad604/apis/kueue/v1beta2/workload_types.go#L956-L958)，需开门控 `UnadmittedWorkloadsObservability`（v0.19 Beta，默认关）才可见） | 同上＋TAS 文档 | NVLink/HCCS 健康 | required 不满足→不准入；preferred 退到上层 |
+| 碎片 | 配额 fit ≠ 节点无碎片（见本页数量示例节） | 本页例子 | 可放置 | 名额够但无满足拓扑的组合→Pending |
+| 配额 | `flavorsReservation`/`flavorsUsage`、指标 reservation/usage、evicted reason | [metrics.md](https://github.com/kubernetes-sigs/kueue/blob/911a822a49bcfd99c9c62203a009efa4130ad604/site/content/en/docs/reference/metrics.md) | 物理容量 | 请求超 nominal＋borrowingLimit→永不满足（`ExceedsMaxQuota`，开门控可见，否则只见 `Pending`）；已借＋本次超限→等待（`WaitingForQuota`，同上门控条件） |
+| 运行进展 | `PodsReady` 条件；Admitted ≠ 运行 | workload.md | 训练进展 | Admitted 后 Pod 长期不 Ready→PodsReadyTimeout 驱逐重排 |
+
+对照验收（设计，未执行）：同配置请求不超过 nominalQuota 的负载应得 `QuotaReserved=True`、`Admitted=True`（正例）；请求超过本 CQ 该 flavor 的 `nominalQuota + borrowingLimit`→持续 Pending（开门控时 reason 为 `ExceedsMaxQuota`，关闭时只见 `Pending`）（反例）。判定方式：读 Workload 条件与 ClusterQueue 账本字段。
+
+### 样板 B：Slurm partition/QOS/priority/reservation（24.11.7，只读未执行）
+
+适用前提：工作负载在 Slurm 单集群，已有账户/QOS/预留体系（不是产品推荐）。公平性代价：评估顺序为可抢占作业→带预留作业→分区 PriorityTier→job priority→提交时间→job ID（最高 priority 不一定先评估）；fair-share 让 under-serviced 账户先调度（非固定配额）；预留核/节点他作业不可用（`no other jobs can use those resources`），但预留不改 priority。
+
+| 维度 | 观测字段/命令 | 来源 | 不能推出什么 | 失败或不适用反例 |
+|---|---|---|---|---|
+| 资源向量 | TRES/GRES 请求向量（`--gres`、`--cpus-per-gpu` 等） | [gres](https://slurm.schedmd.com/archive/slurm-24.11.7/gres.html) | 拓扑满足 | 请求超分区上限→拒绝或 Pending |
+| 拓扑 | `topology/tree`＋`--switches`（未登记本页，unknown） | — | 链路健康 | 越层放置性能未知 |
+| 碎片 | 单节点剩余 vs 单 Pod 需求（本库推论：总量够但单节点放不下） | [job_reason_codes](https://slurm.schedmd.com/archive/slurm-24.11.7/job_reason_codes.html)（Resources 原文仅“资源不可用”，推论已标注） | 根因证明 | Resources＋节点有空→查碎片/约束 |
+| 配额 | QOS/Assoc 限额系列 reason；squeue `%r` | 同上 | 优先级 | 限额命中→对应 QOS*/Assoc* reason |
+| 运行进展 | `R` 状态；squeue `%R` 失败说明 | [squeue](https://slurm.schedmd.com/archive/slurm-24.11.7/squeue.html) | 应用成功 | `R` 且无进度→查应用日志 |
+
+对照验收（设计，未执行）：同一 QOS、同一分区、该 QOS 未设 `DenyOnLimit`（设了则提交时即被拒，不进 Pending）、分区未挂优先于作业 QOS 的 Partition QOS（除非作业 QOS 设了 `OverPartQOS`）、站点实际执行 QOS 限额（站点配置 unknown）；请求不超过 QOS 每作业 GRES 上限时，`squeue %r` 不应为 `QOSMax*PerJob`（正例）；只把 GRES 请求提高到超过该上限时，`%r` 应为 `QOSMaxGRESPerJob`（反例）（job_reason_codes、qos 页）。指定节点（`--nodelist`）不可用→`ReqNodeNotAvail`为另一对，配“同作业不指定节点”的正例。判定方式：squeue/sinfo/scontrol 只读命令。
+
+配置/状态参数：`PriorityWeight*`、分区 `PriorityTier`、`PreemptType=preempt/qos`、QOS `GrpTRES` 等限额字段、预留 `FLEX` 等 flags（见 [priority_multifactor](https://slurm.schedmd.com/archive/slurm-24.11.7/priority_multifactor.html)、[qos](https://slurm.schedmd.com/archive/slurm-24.11.7/qos.html)、[reservations](https://slurm.schedmd.com/archive/slurm-24.11.7/reservations.html)，只读未执行；站点值 unknown）。预留仅 root 或配置的 SlurmUser 可建。
+
+两样板术语不互套：Kueue（Workload 整体配额预留＋可选 waitForPodsReady 超时驱逐与退避重排，见 [T05-02](kubernetes-job-lifecycle.md) L115）≠ Slurm gang scheduling（分时）≠ Volcano gang（最小规模放行）。
+
+## MindCluster 边界与等待定位入口
+
+NPU 侧以 MindCluster 固定实现为准（见上文 NPU 节），型号/调度路径（`self-maintain-available-card` 两条资源路径、芯片亲和差异）不得从上游 Volcano 或 Kueue 样板推导。有空闲设备但作业等待时，先按[空闲设备但作业等待诊断指南](idle-resource-job-waiting-triage.md)定位等待层，再用本页样板确认配额/放置两层。本文示例不是推荐所有平台的统一策略。
