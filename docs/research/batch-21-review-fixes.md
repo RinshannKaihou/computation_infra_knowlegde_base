@@ -418,3 +418,13 @@
 - C33-2：M-LIB 实际挂载证据改为来源—挂载—目标三方关联：宿主源 st_dev/路径身份 → 容器进程 `/proc/<pid>/mountinfo` 条目（field 3/4/5/9/10，proc_pid_mountinfo(5) man-pages 6.19，新登记 src.linux-man-pages.proc-pid-mountinfo-6.19）→容器内目标；st_dev 一致＋root 子路径一致才记关联成立；镜像内同路径文件不产生新条目故不能替代；CLI 返回/可达仅旁证；缺条目/不一致/未采→K2，未执行→K3。
 - C33-3：§3 口径句与来源记录 unknown 清单同步：实际挂载证据未采单列 K2、CLI 执行/部署产物核对 K3；M-LIB 挂载判据属已交付方法（不再压成"仅缺 filled 值"的笼统 K2，也不留 K1 缺段）。
 - 登记：新增 src.linux-man-pages.proc-pid-mountinfo-6.19；syft 条目 revision/notes 补 debian cataloger/model file.go/filecataloging/options file.go/selection.go 实读；正文 source_refs 加 mountinfo 项；来源记录加第五轮增补表。
+
+## T05-01 第三十一轮修订（2026-10-17，本会话作者角色；处理 codex 第 30 次复核剩余子项；C32-2 已 CLOSED 不动）
+
+- C32-1a：成员清单解析路径改为 syft-json 键 `artifacts[].metadata.files[].path`，并注明 Go 字段 `Files`/`Path` 与 JSON 键 `files`/`path` 的对应（dpkg.go L55–70，成员记录另带 digest/isConfigFile），避免按错误键解析误报缺项。
+- C32-1b：交付 all-layers 同路径跨层归属/消歧规则——候选集（`location.path`==P，每层至多一条，同层多条冲突记 K2）→按 manifest 层序取最上层为运行时有效文件（layerID＝内容来源层、digests＝内容身份，历史候选分列）；包 metadata digest（dpkg md5）与文件编目 digests 比对须加配 md5（options/file.go 可选值）；whiteout/上层删除检测方法未选定单列 K1；包证据层不等于成员层。
+- C32-3：summary、待确认清单、来源记录 unknown 清单同步新增 whiteout K1；C32-1 缺项判据已按 K1（成员清单/whiteout 方法）/K2（未采/缺字段/消歧证据不全）分列。
+- C33-2a：M-LIB 目录项改按父挂载处理——有效父挂载＝目标目录路径最长前缀 mountinfo 条目，堆叠取 top-most（同页 field 2 注），更长前缀遮蔽另注明；逐库目标全路径＝父挂载点＋子库相对父目录路径；父挂载缺失→整体未挂载（K2）；父挂载成立但子库两侧存在性未核→无法确定（K2）。
+- C33-2b：源路径→root 坐标换算——P_src→宿主 mountinfo 最长前缀挂载点 M_host（st_dev）→R＝P_src 相对 M_host 子路径；容器条目须 field 3＝M_host.st_dev 且 field 4＝R（field 4 为源文件系统内部路径，不等于宿主绝对路径），两者一致才记来源关联成立。
+- C33-3：§3 口径句 M-LIB 描述同步为"目录父挂载/遮蔽处理与 root 坐标换算判据"；缺项分类补"有效父挂载缺失或遮蔽未判明（K2）"。
+- 登记：syft 条目 revision 补 dpkg.go L55–70。
