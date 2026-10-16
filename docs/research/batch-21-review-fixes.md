@@ -436,3 +436,9 @@
 - C33-2b root 换算：纳入宿主条目自身 field 4——R_fs＝`join(M_host.field4, relative(P_src, M_host.field5))`，附反例（field4=`/drivers`＋relative=`lib64`→`/drivers/lib64`）；容器条目须 field 3＝M_host.st_dev 且 field 4＝R_fs；注明该式为字段语义推论非手册原文。
 - C33-3：§3 口径句、待确认清单、来源记录 unknown 清单同步"遮蔽/可达性超出可判情形"K1 与 field 4 换算表述。
 - 登记无新增（mountinfo 页已在第 30 轮登记）。
+
+## T05-01 第三十三轮修订（2026-10-17，本会话作者角色；处理 codex 第 32 次复核 C33-2a 剩余坐标缺段；其余子项已 CLOSED 不动）
+
+- C33-2a 坐标分列与转换：CLI 侧目标 `D_cli`＝`<bundle rootfs 宿主路径>`＋源路径（u_mount.c 目标计算）与进程根内目标 `D_proc`＝源路径本身分列；转换＝`D_proc`＝`D_cli` 去宿主 rootfs 前缀；覆盖挂载选择与相对路径计算一律在进程根内坐标进行，不以 `D_cli` 匹配 field 5；完整目标改 `D_proc/r`；④ 文件项改按进程根内目标路径（＝源路径）匹配 field 5。
+- C33-3：§3 口径句与来源记录 L12 同步补坐标分列/转换判据；无其他完成度口径变化（方法缺段补齐后保持"已交付、filled 值 K2"）。
+- 登记无新增。
