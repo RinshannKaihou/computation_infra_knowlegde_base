@@ -5217,12 +5217,12 @@ sources:
   url: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/1.20.0/
   kind: documentation
   registered_at: '2026-10-14'
-  revision: 1.20.0 版本化文档（非 latest）；实开 install-guide/cdi-support/troubleshooting（curl 200），核对安装、CDI、nvidia.com/gpu 条目
+  revision: 1.20.0 版本化文档（非 latest）；实开 install-guide/cdi-support/troubleshooting（curl 200），核对安装、CDI、nvidia.com/gpu 条目；2026-10-17 第四轮重开 cdi-support（JIT-CDI 节、`nvidia-container-runtime.mode` 显式 cdi 设定节、非 CDI runtime 消费节）与 troubleshooting（"legacy mode" 措辞、访问丢失 Affected Environments 节）
   license:
     status: unknown
     scopes: []
     notes: 文档页许可未核对；只链接并原创归纳。
-  notes: Batch 21 取证轮实开：host driver/容器库/设备文件/环境变量/挂载入口；CDI 规范细节见 cncf-tags（未登记，unknown）。
+  notes: Batch 21 取证轮实开：host driver/容器库/设备文件/环境变量/挂载入口；第四轮补：两端消费配置对与 legacy/hook 访问丢失场景依据；CDI 规范细节见 cncf-tags（未登记，unknown）。
 - id: src.nvidia.k8s-device-plugin-v0.20.1
   title: NVIDIA k8s-device-plugin v0.20.1
   url: https://github.com/NVIDIA/k8s-device-plugin/tree/v0.20.1
@@ -5278,6 +5278,17 @@ sources:
     scopes: []
     notes: k8s 文档许可未核对；只链接并原创归纳。
   notes: Batch 21 取证轮实开：编排侧拉取策略字段与默认值；digest 引用行为以本页为准。
+- id: src.k8s.pod-resize-v1.32
+  title: Kubernetes v1.32 Resize CPU and Memory Resources assigned to Containers（Pod resize 子资源）
+  url: https://v1-32.docs.kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/
+  kind: documentation
+  registered_at: '2026-10-17'
+  revision: v1.32 版本化文档静态快照；2026-10-17 经 FetchURL 实开，核对 /resize 子资源、InPlacePodVerticalScaling 门控（v1.27 alpha，默认关）、requests/limits CPU/内存可变与单位示例（700m/800m）、status.resize（Proposed/InProgress/Deferred/Infeasible/空）、containerStatuses[].resources、QoS/限制条款与 restartCount 不变判定
+  license:
+    status: unknown
+    scopes: []
+    notes: k8s 文档许可未核对；只链接并原创归纳。
+  notes: T05-01 第四轮取证：容器资源更新变体的已选定接口依据；门控未启用时接口不可用，退化为重建路径。
 - id: src.pytorch.cuda-notes-2.14
   title: PyTorch 2.14 CUDA semantics（可见设备）
   url: https://docs.pytorch.org/docs/2.14/notes/cuda.html
@@ -5294,12 +5305,12 @@ sources:
   url: https://github.com/anchore/syft/tree/v1.54.1
   kind: repository
   registered_at: '2026-10-14'
-  revision: tag v1.54.1；实开 README（curl 200），核对 SBOM/CycloneDX/SPDX/容器镜像条目
+  revision: tag v1.54.1；实开 README（curl 200），核对 SBOM/CycloneDX/SPDX/容器镜像条目；2026-10-17 第四轮经 sparse clone 只读核对源码：syft/source/scope.go L8–24（squashed/all-layers/deep-squashed 语义）、cmd/syft/internal/options/catalog.go L41/L78/L228–233（--scope flag 与默认 squashed）、syft/format/syftjson/model/package.go（PackageBasicData：name/version/type/foundBy/locations）、syft/file/coordinates.go（JSON 键 path/layerID）、syft/file/location.go（镜像源 layerID＝层 digest）、internal/constants.go L6（JSON schema 16.1.11）
   license:
     status: unknown
     scopes: []
     notes: Apache-2.0 未在本轮打开核对；只链接并原创归纳。
-  notes: Batch 21 取证轮实开：SBOM 生成工具入口；未执行 SBOM 生成与比对。
+  notes: Batch 21 取证轮实开：SBOM 生成工具入口；第四轮补读源码固定扫描范围/输出字段/层连接键；全部 cataloger 实现未审；未执行 SBOM 生成与比对。
 - id: src.sigstore.cosign-docs
   title: Sigstore cosign 签名文档（signing overview）
   url: https://docs.sigstore.dev/cosign/signing/overview/

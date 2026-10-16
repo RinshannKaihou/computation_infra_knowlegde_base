@@ -396,3 +396,16 @@
 ## T05-05 第五轮修订（claude 第四次定向复核 3/4 → 处理 C23；逐条 grep 已核对）
 
 - C23：对照前提改通用写法（站点实际执行 QOS 限额，站点配置 unknown）；L11 残留清理。
+
+## T05-01 第二十九轮修订（2026-10-17，本会话作者角色；处理 codex 第 28 次复核 OPEN 的 C32/C33/C34；新取证见 batch-21-t05-01-sources.md 第四轮）
+
+- C32-1：§1 SBOM 行交付所选扫描范围与字段——`--scope all-layers`（选定理由：逐层归属；默认 squashed/deep-squashed 见 scope.go L8–24，flag/默认见 catalog.go L41/L78/L228–233）＋`syft-json`（schema 16.1.11，constants.go L6）；必要字段 name/version/type/foundBy＋locations[].path/layerID（coordinates.go/location.go，镜像源 layerID＝层 digest）。§2 镜像自带库行交付逐库连接键：layerID→层清单（diff_ids↔layers 同序，image-spec config.md）→宿主来源→挂载→目标；缺项按分类注明。
+- C32-2：§2 框架映射行交付 M-ID 五步（可见集快照→分配 ID（先固定 deviceIDStrategy，所选 uuid）→CDI qualified 名→完整节点（类型/major/minor/路径/来源）→稳定身份）；宿主节点↔UUID 复核与框架枚举顺序未取源记 K1；核对表列名同步 M-ID 步骤。
+- C32-3：§4 新增公共缺项分类 K1/K2/K3 定义；清单 11 行缺失解释、异常分支表 6 行判定、对照方案引言与基线行全部统一引用。
+- C33-1：§3 散文改为逐对象对应表（10 行：作业设备/manager/310B 辅助 14 项/dvpp_cmdlist/UB 设备节点/UB 配置文件/控制键/worker 7 键/LD_LIBRARY_PATH/vdevice+poststop），公共记录规则＝条件｜宿主来源｜容器目标｜结果｜失败/跳过｜证据定位；UB 设备节点（runtime addUBDevice/addDevicesInDir，cgroup rwm）与 UB 配置文件（hook addUBMount：/etc/hccl_rootinfo.json＋/usr/local/Ascend/driver/topo，CLI 文件/目录挂载）分两行。
+- C33-2：交付逐库记录规则 M-LIB（父候选＋子库相对路径→宿主完整来源→CLI 目标→容器目标；来源—目标三方关联为挂载证据；CLI 返回/目标可达不单独证明，u_mount.c 反例）；删除①旧判据"挂载成功以 CLI 返回＋目标可达为准"与②③⑤"同①规则"。
+- C33-3：worker 7 键字符串定位改指 `api/consts.go` Env 段，ASCEND 控制键留 `api/default_name.go`，两处旧合并表述删除；两处"runtime 库注入语义未核对，unknown"宽口径删除，改机制已读/未读变体（K1）/filled 未采（K2）/现场未执行（K3）四分；§3 口径句、文末待确认清单、本记录 unknown 清单同步四分。
+- C34-1：换注入模式变体两端设计取值全部选定——基线端 `runtime_type='io.containerd.runc.v2'`＋`options.BinaryName` 默认空（默认 runc）＋Toolkit mode 不适用（NVIDIA runtime 包装器不在链）；变体端 `options.BinaryName`＝NVIDIA Container Runtime 包装器（安装路径 K2）＋mode＝legacy（排障页措辞；CDI 页 mode 键显式设定/auto→JIT-CDI）；补"envvar 单策略不足以证明 legacy"旁路证据要求（CDI 页显式 cdi mode 节）。
+- C34-2：资源更新变体选定接口＝k8s Pod `/resize` 子资源（新登记 src.k8s.pod-resize-v1.32）：字段 requests/limits.cpu、单位（700m/800m）、语义限制、InPlacePodVerticalScaling 门控（alpha 默认关，不可用则退化重建路径）、完成判定（resize 收敛空＋status 一致＋restartCount 不变）、旧→新记录格式、同次更新前后采样关联。
+- C34-3：基线行与对照方案引言接通 M-ID＋K1/K2/K3。
+- 结构：front matter updated_at→2026-10-17、source_refs 加 src.k8s.pod-resize-v1.32、summary/verification.notes 同步；registry 增 src.k8s.pod-resize-v1.32、syft 与 Toolkit 1.20.0 条目 revision/notes 补第四轮实读范围。
