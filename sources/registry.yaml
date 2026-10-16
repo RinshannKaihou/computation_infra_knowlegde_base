@@ -330,6 +330,17 @@ sources:
     scopes: []
     notes: 本次未成功取得该手册源文件许可声明，只保存精确链接与原创解释。
   notes: 核对文件数据/元数据同步、目录项边界和错误返回；不据此推断网络或对象存储的完整协议及目标现场保障。
+- id: src.linux-man-pages.proc-pid-mountinfo-6.19
+  title: Linux man-pages 6.19 proc_pid_mountinfo(5)
+  url: https://man7.org/linux/man-pages/man5/proc_pid_mountinfo.5.html
+  kind: documentation
+  registered_at: '2026-10-17'
+  revision: man-pages 6.19（manual date 2026-02-08，man7 镜像 HTML 2026-09-09 生成）；2026-10-17 经 FetchURL 实开，核对 mountinfo 字段 1–11（major:minor＝st_dev、root＝bind 源子路径、mount point、fs type、mount source）
+  license:
+    status: unknown
+    scopes: []
+    notes: 未单独取得该手册页许可声明，只保存精确链接与原创解释。
+  notes: T05-01 第四轮取证：M-LIB 实际挂载证据的字段语义依据；bind 挂载经 root 字段暴露源子路径。
 - id: src.ascend.mindio-acp-v26.1.1
   title: MindIO ACP v26.1.1 固定 README
   url: https://github.com/Ascend/mind-cluster/blob/44385c13d7b1d87def35f1604e8be4d16de6ca4e/component/mindio/acp/README.md
@@ -5305,12 +5316,12 @@ sources:
   url: https://github.com/anchore/syft/tree/v1.54.1
   kind: repository
   registered_at: '2026-10-14'
-  revision: tag v1.54.1；实开 README（curl 200），核对 SBOM/CycloneDX/SPDX/容器镜像条目；2026-10-17 第四轮经 sparse clone 只读核对源码：syft/source/scope.go L8–24（squashed/all-layers/deep-squashed 语义）、cmd/syft/internal/options/catalog.go L41/L78/L228–233（--scope flag 与默认 squashed）、syft/format/syftjson/model/package.go（PackageBasicData：name/version/type/foundBy/locations）、syft/file/coordinates.go（JSON 键 path/layerID）、syft/file/location.go（镜像源 layerID＝层 digest）、internal/constants.go L6（JSON schema 16.1.11）
+  revision: tag v1.54.1；实开 README（curl 200），核对 SBOM/CycloneDX/SPDX/容器镜像条目；2026-10-17 第四轮经 sparse clone 只读核对源码：syft/source/scope.go L8–24（squashed/all-layers/deep-squashed 语义）、cmd/syft/internal/options/catalog.go L41/L78/L228–233（--scope flag 与默认 squashed）、syft/format/syftjson/model/package.go（PackageBasicData：name/version/type/foundBy/locations）、syft/file/coordinates.go（JSON 键 path/layerID）、syft/file/location.go（镜像源 layerID＝层 digest）、internal/constants.go L6（JSON schema 16.1.11）；同日补读：syft/format/syftjson/model/file.go（files[] 条目含 location/digests）、syft/cataloging/filecataloging/config.go（Selection 字段与默认 owned-by-package）、cmd/syft/internal/options/file.go L34–47（CLI 默认 selection/digests）与 file.go L58–73（选项描述）、syft/file/selection.go（all/owned-by-package/none）、syft/pkg/cataloger/debian/package.go L163–193 与 parse_dpkg_db.go L36–49（包 Locations＝发现/佐证位置，成员文件另在 metadata.Files）
   license:
     status: unknown
     scopes: []
     notes: Apache-2.0 未在本轮打开核对；只链接并原创归纳。
-  notes: Batch 21 取证轮实开：SBOM 生成工具入口；第四轮补读源码固定扫描范围/输出字段/层连接键；全部 cataloger 实现未审；未执行 SBOM 生成与比对。
+  notes: Batch 21 取证轮实开：SBOM 生成工具入口；第四轮补读源码固定扫描范围/输出字段/层连接键/文件编目与包证据—成员文件语义；其余 cataloger 实现未审；未执行 SBOM 生成与比对。
 - id: src.sigstore.cosign-docs
   title: Sigstore cosign 签名文档（signing overview）
   url: https://docs.sigstore.dev/cosign/signing/overview/

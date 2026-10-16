@@ -409,3 +409,12 @@
 - C34-2：资源更新变体选定接口＝k8s Pod `/resize` 子资源（新登记 src.k8s.pod-resize-v1.32）：字段 requests/limits.cpu、单位（700m/800m）、语义限制、InPlacePodVerticalScaling 门控（alpha 默认关，不可用则退化重建路径）、完成判定（resize 收敛空＋status 一致＋restartCount 不变）、旧→新记录格式、同次更新前后采样关联。
 - C34-3：基线行与对照方案引言接通 M-ID＋K1/K2/K3。
 - 结构：front matter updated_at→2026-10-17、source_refs 加 src.k8s.pod-resize-v1.32、summary/verification.notes 同步；registry 增 src.k8s.pod-resize-v1.32、syft 与 Toolkit 1.20.0 条目 revision/notes 补第四轮实读范围。
+
+## T05-01 第三十轮修订（2026-10-17，本会话作者角色；处理 codex 第 29 次复核剩余子项；C33-1/C34-1/C34-2 已 CLOSED 不动）
+
+- C32-1：§1 SBOM 行补注 locations＝发现/佐证位置（非成员库路径）并加选文件编目 `files[]`（location.path/layerID＋digests；CLI 默认 selection=owned-by-package、digests sha1+sha256，options/file.go L34–47）；§2 逐库归属改两段：包段（locations/证据层）与成员文件段（cataloger metadata.Files，无清单包类型记 K1）→文件→层经 files[] 同 path 条目 layerID；缺项判据按 K1/K2 分列。
+- C32-2：M-ID 补单卡完整闭合段（请求 1×`nvidia.com/gpu`＋uuid：envvar 经 `updateResponseForDeviceListEnvVar` 直写分配 UUID→可见集单元素→ordinal 0；cdi-cri 经 qualified 名→deviceNodes→唯一作业节点→ordinal 0）；多卡枚举顺序、index 策略、宿主复核显式 K1 出所选范围。
+- C32-3：summary 改"单卡所选范围闭合＋K1 余项"；清单"宿主内核/驱动"行缺失解释改 K1（NPU 语义未取源）＋K2（记录未采）分列；逐库归属缺项判据区分 K1（成员清单语义未覆盖）/K2（未采/缺字段）。
+- C33-2：M-LIB 实际挂载证据改为来源—挂载—目标三方关联：宿主源 st_dev/路径身份 → 容器进程 `/proc/<pid>/mountinfo` 条目（field 3/4/5/9/10，proc_pid_mountinfo(5) man-pages 6.19，新登记 src.linux-man-pages.proc-pid-mountinfo-6.19）→容器内目标；st_dev 一致＋root 子路径一致才记关联成立；镜像内同路径文件不产生新条目故不能替代；CLI 返回/可达仅旁证；缺条目/不一致/未采→K2，未执行→K3。
+- C33-3：§3 口径句与来源记录 unknown 清单同步：实际挂载证据未采单列 K2、CLI 执行/部署产物核对 K3；M-LIB 挂载判据属已交付方法（不再压成"仅缺 filled 值"的笼统 K2，也不留 K1 缺段）。
+- 登记：新增 src.linux-man-pages.proc-pid-mountinfo-6.19；syft 条目 revision/notes 补 debian cataloger/model file.go/filecataloging/options file.go/selection.go 实读；正文 source_refs 加 mountinfo 项；来源记录加第五轮增补表。
