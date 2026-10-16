@@ -5385,8 +5385,8 @@ tasks:
   work_units: 2
 - id: T05-01
   title: 镜像制品、容器运行时与设备暴露基线
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 21
   operation: new
   content_type: reference

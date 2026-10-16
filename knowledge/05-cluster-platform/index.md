@@ -58,7 +58,7 @@ related_ids:
 
 ## 二级主题地图
 
-- **05.1 容器、镜像、设备暴露与运行环境** — 已有[设备访问条件的概念草稿](device-resource-chain.md)，新增[镜像运行时基线](container-image-runtime-baseline.md)（T05-01 草稿，审阅中）；部署与实测待补充。
+- **05.1 容器、镜像、设备暴露与运行环境** — 已有[设备访问条件的概念草稿](device-resource-chain.md)，新增[镜像运行时基线](container-image-runtime-baseline.md)（T05-01 草稿，gpt-6.1-sol/xhigh 审阅已闭环，未做真实环境验证）；部署与实测待补充。
 - **05.2 Kubernetes、Slurm 等平台与作业生命周期** — 已有[Kueue/Volcano 状态边界](admission-and-placement.md)，新增[Kubernetes 作业生命周期](kubernetes-job-lifecycle.md)与[Slurm 状态参考](slurm-jobs-and-device-resources.md)（T05-02/T05-03 草稿，待审阅）；完整生命周期待审阅验收。
 - **05.3 设备发现、分配、健康上报与资源账本** — 已有[设备资源状态链](device-resource-chain.md)，已有容器内 NPU 可见性指南、公开案例和实验设计；现场验证待补充。
 - **05.4 配额、排队、gang、放置与拓扑亲和性** — 已有[准入与放置概念](admission-and-placement.md)和[空闲设备但作业等待诊断指南](idle-resource-job-waiting-triage.md)；现场配置与验证待补充。
