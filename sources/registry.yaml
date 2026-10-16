@@ -5201,3 +5201,309 @@ sources:
       url: https://docs.ceph.com/en/squid/
     notes: 页脚声明 CC BY-SA 3.0；本库只链接并原创归纳。
   notes: Batch 21 取证轮实开：满/修复类健康检查入口；具体 thresholds 未逐项核对处 unknown。
+- id: src.oci.image-spec-v1.1.1
+  title: OCI Image Format Specification v1.1.1
+  url: https://github.com/opencontainers/image-spec/tree/v1.1.1
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: tag v1.1.1；实开 manifest.md/media-types.md/descriptor.md（curl 200），核对 digest/mediaType/config/layers/annotations/subject 条目
+  license:
+    status: unknown
+    scopes: []
+    notes: Apache-2.0 未在本轮打开核对；只链接并原创归纳。
+  notes: Batch 21 取证轮实开：镜像 digest/媒体类型/清单结构；digest 不证明主机/驱动兼容。
+- id: src.nvidia.container-toolkit-1.20.0
+  title: NVIDIA Container Toolkit 1.20.0 版本化文档
+  url: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/1.20.0/
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: 1.20.0 版本化文档（非 latest）；实开 install-guide/cdi-support/troubleshooting（curl 200），核对安装、CDI、nvidia.com/gpu 条目
+  license:
+    status: unknown
+    scopes: []
+    notes: 文档页许可未核对；只链接并原创归纳。
+  notes: Batch 21 取证轮实开：host driver/容器库/设备文件/环境变量/挂载入口；CDI 规范细节见 cncf-tags（未登记，unknown）。
+- id: src.nvidia.k8s-device-plugin-v0.20.1
+  title: NVIDIA k8s-device-plugin v0.20.1
+  url: https://github.com/NVIDIA/k8s-device-plugin/tree/v0.20.1
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: tag v0.20.1；实开 README（curl 200）与 server.go L280–438/L448–481（Allocate：DevicesIds 校验→UUID/index 转换去重→QualifiedName→CdiDevices[].Name），核对 CDI/deviceListStrategy/failOnInitError/MIG 条目
+  license:
+    status: unknown
+    scopes: []
+    notes: Apache-2.0 未在本轮打开核对；只链接并原创归纳。
+  notes: Batch 21 取证轮实开：设备发现/分配策略入口；调度策略细节见 T05-05。
+- id: src.ascend.device-plugin-pkg-44385c13
+  title: Ascend device-plugin 分配/挂载实现（mind-cluster 固定 commit）
+  url: https://github.com/Ascend/mind-cluster/blob/44385c13d7b1d87def35f1604e8be4d16de6ca4e/component/ascend-device-plugin/pkg/server/plugin.go
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: commit 44385c13；实开 plugin.go（curl 200，1416 行），核对 mountDevice L1087/mountDefaultDevice L1103/setNPUDeviceMount L1161/Allocate L1296
+  license:
+    status: unknown
+    scopes: []
+    notes: 仓库根 LICENSE 未在本轮核对；只链接并原创归纳。
+  notes: Batch 21 取证轮实开：分配/返回配置与设备挂载两条路径；common.go L90–150 静态输出已读；环境变量字符串值（api 包）、实际库挂载/白名单/hook 可执行未取（unknown）。
+- id: src.containerd.cri-config-v2.4.1
+  title: containerd v2.4.1 CRI 插件配置指南（含 CDI）
+  url: https://github.com/containerd/containerd/blob/v2.4.1/docs/cri/config.md
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: tag v2.4.1（tag 对象 e24870ce，所指 commit f2551031）；实开 config.md（curl 200），核对版本头、cdi_spec_dirs（/etc/cdi、/var/run/cdi）条目
+  license:
+    status: unknown
+    scopes: []
+    notes: Apache-2.0 未在本轮打开核对；只链接并原创归纳。
+  notes: Batch 21 取证轮实开：CRI 配置模式与 CDI 消费端入口；runc 行为、诊断命令未覆盖（unknown）。
+- id: src.cdi.spec-1.1.0
+  title: CDI 规范 1.1.0（SPEC.md，仓库 tag v1.1.1 所指 commit）
+  url: https://github.com/cncf-tags/container-device-interface/blob/cb98bcf66dc68530012483bd56e33e14d815e167/SPEC.md
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: commit cb98bcf6（仓库 tag v1.1.1 所指；规范自述版本 1.1.0，Released versions 表确认该 patch 无 Spec 变更）；实开 SPEC.md L1-130（Version/Released versions/README How does CDI work）
+  license:
+    status: unknown
+    scopes: []
+    notes: Apache-2.0 未在本轮打开核对；只链接并原创归纳。
+  notes: Batch 21 取证轮实开：区分仓库/API tag、spec 版本、实际 CDI 文件 cdiVersion 三层身份；消费端支持交集 unknown。
+- id: src.k8s.images-v1.32
+  title: Kubernetes v1.32 Images（拉取策略）
+  url: https://v1-32.docs.kubernetes.io/docs/concepts/containers/images/
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: v1.32 版本化文档；实开（curl 200），核对 imagePullPolicy（Always/Never/IfNotPresent）与默认化/缓存语义条目
+  license:
+    status: unknown
+    scopes: []
+    notes: k8s 文档许可未核对；只链接并原创归纳。
+  notes: Batch 21 取证轮实开：编排侧拉取策略字段与默认值；digest 引用行为以本页为准。
+- id: src.pytorch.cuda-notes-2.14
+  title: PyTorch 2.14 CUDA semantics（可见设备）
+  url: https://docs.pytorch.org/docs/2.14/notes/cuda.html
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: 2.14 版本化文档；实开（curl 200），核对 CUDA_VISIBLE_DEVICES 可见集语义条目
+  license:
+    status: unknown
+    scopes: []
+    notes: 文档许可未核对；只链接并原创归纳。
+  notes: Batch 21 取证轮实开：框架可见集管理方法；ordinal→物理映射方法未给出（unknown）。
+- id: src.anchore.syft-v1.54.1
+  title: Anchore syft v1.54.1（SBOM 工具）
+  url: https://github.com/anchore/syft/tree/v1.54.1
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: tag v1.54.1；实开 README（curl 200），核对 SBOM/CycloneDX/SPDX/容器镜像条目
+  license:
+    status: unknown
+    scopes: []
+    notes: Apache-2.0 未在本轮打开核对；只链接并原创归纳。
+  notes: Batch 21 取证轮实开：SBOM 生成工具入口；未执行 SBOM 生成与比对。
+- id: src.sigstore.cosign-docs
+  title: Sigstore cosign 签名文档（signing overview）
+  url: https://docs.sigstore.dev/cosign/signing/overview/
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: 实开（curl 200），核对 cosign sign/keyless/Fulcio/Rekor/verify 条目；cosign v3.1.3 为取证时最新 tag（未读实现）
+  license:
+    status: unknown
+    scopes: []
+    notes: 文档许可未核对；只链接并原创归纳。
+  notes: Batch 21 取证轮实开：签名/核验方法入口；未执行签名与核验。
+- id: src.opencontainers.runc-man-v1.5.2
+  title: runc v1.5.2 手册页
+  url: https://github.com/opencontainers/runc/blob/v1.5.2/man/runc.8.md
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: tag v1.5.2（所指 commit 29dd3dc2）；实开 man/runc.8.md（curl 200）
+  license:
+    status: unknown
+    scopes: []
+    notes: Apache-2.0 未在本轮打开核对；只链接并原创归纳。
+  notes: Batch 21 取证轮实开：runc 实现入口；cgroup/systemd 驱动细节未逐项核对（unknown）。
+- id: src.ascend.device-plugin-common-44385c13
+  title: Ascend device-plugin common 包（SetAscendRuntimeEnv 实现）
+  url: https://github.com/Ascend/mind-cluster/blob/44385c13d7b1d87def35f1604e8be4d16de6ca4e/component/ascend-device-plugin/pkg/common/common.go
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: commit 44385c13；实开 common.go（curl 200），核对 SetAscendRuntimeEnv 输出字段（设备 ID 逗号拼接、runtime options、310B allow-link、worker 环境组）
+  license:
+    status: unknown
+    scopes: []
+    notes: 仓库根 LICENSE 未在本轮核对；只链接并原创归纳。
+  notes: Batch 21 取证轮实开：`SetAscendRuntimeEnv` 静态输出字段已读（common.go L107–121 字段级条件）；环境变量键为 `ascend-common/api` 包别名（constants.go：AscendVisibleDevicesEnv/ascendRuntimeOptionsEnv/ascendAllowLinkEnv 均 = api.* 同名符号），字符串值在兄弟模块 `component/ascend-common/api/default_name.go`（docker runtime 段：四个环境键＋配置目录 `/etc/ascend-docker-runtime.d`；纠正前轮 vendored 说法，go.mod replace 至 `../ascend-common`）；实际库挂载结果/dcmi 实现未执行或未读（unknown，白名单源码链与消费规则见 docker-hook/install 登记）。
+- id: src.sigstore.cosign-cli-v3.1.3
+  title: sigstore cosign CLI v3.1.3（签名/核验工具版本锚）
+  url: https://github.com/sigstore/cosign/tree/v3.1.3
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: tag v3.1.3（tag 对象 2f3a85b0，所指 commit 11926fa5）；已核对同修订 `cmd/cosign/cli/verify.go` L1–220、`options/verify.go` L1–195、`options/certificate.go` L1–155（只读，未运行命令）；命令输出未取（unknown）
+  license:
+    status: unknown
+    scopes: []
+    notes: Apache-2.0 未在本轮打开核对；只链接并原创归纳。
+  notes: Batch 21 取证轮实开：CLI 版本锚；核验语义以文档页为准。
+- id: src.kubernetes.job-lifecycle-v1-32
+  title: Kubernetes v1.32 Job/Pod 生命周期与清理文档快照
+  url: https://v1-32.docs.kubernetes.io/docs/concepts/workloads/controllers/job/
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: v1.32 documentation snapshot（静态快照页，页头标不再积极维护）；webfetch 只读核对 2026-10-14
+  license:
+    status: partial
+    scopes:
+    - scope: Kubernetes website 仓库文档许可声明；main 链接为可变定位
+      identifier: CC-BY-4.0
+      url: https://github.com/kubernetes/website/blob/main/LICENSE
+    notes: 版本化页面与当前仓库许可分别记录；未固定 v1.32 文档源提交，仅作原创归纳与链接。
+  notes: Batch 22（T05-02）取证轮经 webfetch 只读核对：Job 概念页（completions/parallelism/backoffLimit 默认 6/指数退避/activeDeadlineSeconds/podFailurePolicy/backoffLimitPerIndex/successPolicy/TTL/finalizer/managedBy/应用自理临时文件）、Pod 生命周期页（五 phase、conditions、restartPolicy、probes 与 ready 区别）、TTL-after-finished（仅 Job、时钟 skew 注意）、finalizers/owners-dependents（级联删除）、Job v1 API 参考（JobSpec/JobStatus 字段与 conditions）。未部署集群、未提交 Job；curl 字节级取回未执行。
+- id: src.kueue.job-lifecycle-v0.19.0
+  title: Kueue v0.19.0 Job 集成与 Workload 状态固定资料
+  url: https://github.com/kubernetes-sigs/kueue/blob/911a822a49bcfd99c9c62203a009efa4130ad604/site/content/en/docs/tasks/run/jobs.md
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: v0.19.0; commit 911a822a49bcfd99c9c62203a009efa4130ad604；同 commit 下 workload/admission/admission-check/troubleshooting_jobs/API 参考、setup_failure_recovery/setup_wait_for_pods_ready/setup_object_retention_policy、metrics/cluster_queue 页、kube_features.go（门控阶段/默认值）、pkg/workload（reason 回退/Elastic 判定）、jobframework/reconciler.go L1476（Workload controller owner）与 job 控制器测试函数行号经只读核对 2026-10-14；README/安装页 K8s≥1.29 声明见同条目
+  license:
+    status: partial
+    scopes:
+    - scope: 固定仓库自有 API 代码与所引文档源码；第三方文件及独立站点资产另计
+      identifier: Apache-2.0
+      url: https://github.com/kubernetes-sigs/kueue/blob/911a822a49bcfd99c9c62203a009efa4130ad604/LICENSE
+    notes: 已读取根许可，仅链接和原创归纳；没有复制图、示例配置或代码，也未核查制品及第三方 notices。
+  notes: Batch 22（T05-02）取证：Job 集成页（queue-name label、不必手动建 suspend、事件链、PartialAdmission/ElasticJob 注解）、两阶段准入（QuotaReservation→AdmissionChecks→Admitted，spec.active=false 驱逐；Retry 释配额不去活、Rejected 去活）、stopPolicy（ClusterQueue/LocalQueue 的 None/Hold/HoldAndDrain）、条件与 reason 以 v1beta2 为准（v1beta1 已弃用，见 src.kueue.admission-v0.19.0）、troubleshooting_jobs 对齐方法（job-uid label 反查，Workload 名格式以后者与控制器代码为准，非同名，纠正初稿）、账本字段（clusterqueue flavorsReservation/flavorsUsage、metrics reservation/usage、evicted reason）与测试函数行号；failure recovery（60 秒/v0.15+/门控/注解/5 分钟容忍）、PodsReady 重排退避（backoffLimitCount 去活）、保留策略（默认保留/可选回收可级联）。范围限 Job 集成/Workload/排障/测试；准入两阶段与类型定义原文见 src.kueue.admission-v0.19.0（复用，不重复登记）。未部署或运行，不构成与 NPU、MindCluster 或 Volcano 的配套声明。
+- id: src.kubernetes.job-controller-tests-v1.32.0
+  title: Kubernetes v1.32.0 Job 控制器与集成测试路径（存在性）
+  url: https://github.com/kubernetes/kubernetes/tree/v1.32.0/pkg/controller/job
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: tag v1.32.0；目录存在性＋job_test.go 函数名/行号（TestJobPodFailurePolicy L260、TestDelayTerminalPhaseCondition L1236、TestBackoffLimitPerIndex L1623、TestJobPodReplacementPolicy L2889/3154、TestOrphanPodsFinalizersClearedWithGC L3594、TestSuspendJob L3884）与 pkg/registry/batch/job/strategy.go L62–74（删除默认 Orphan）、storage.go L56–57（默认保留子 Pod）原文定位；Kueue job_controller_test.go It 名/行号（finalizer L2365、reclaim L2416、Active=false L2707、PodsReady 重排 L3388、retention L3916/4042、无配额泄漏 L5306）；上游行为样本，未执行
+  license:
+    status: unknown
+    scopes: []
+    notes: 未打开核对 LICENSE；只链接并记录存在性。
+  notes: Batch 22（T05-02）取证：pkg/controller/job（含 job_controller.go/backoff_utils.go/pod_failure_policy.go/success_policy.go/tracking_utils.go）与 test/integration/job（含 job_test.go）存在；Kueue 侧 job 控制器单测与集成测试路径存在。存在性不构成行为规范，不替代文档证据。
+- id: src.slurm.docs-24.11.7
+  title: Slurm 24.11.7 归档文档（作业/状态/调度）
+  url: https://slurm.schedmd.com/archive/slurm-24.11.7/overview.html
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: 24.11.7 archive（静态归档；页内只标 24.11，补丁级由归档路径确定）；webfetch 只读核对 2026-10-14；主站当时已为 26.05，裸域名页为可变页不得混用
+  license:
+    status: unknown
+    scopes: []
+    notes: SchedMD 站点许可未核对；只链接并原创归纳，未复制手册长段。
+  notes: Batch 22（T05-03）取证轮经 webfetch 只读核对：overview（含 gang 分时与分区 OverSubscribe）、job_state_codes（含 PREEMPTED/COMPLETING）、job_reason_codes（含 JobHoldMaxRequeue/JobHeldAdmin/Cleaning/终止类）、squeue（含 %R 失败说明）、sinfo（含 INVAL/节点 COMPLETING/PERFORMANCE）、scontrol（含节点 State=DOWN/DRAIN/RESUME/UNDRAIN、reboot nextstate 只 RESUME/DOWN、信号四情形）、sbatch（含 --tres-bind/--gres-flags/--gpus、SLURM_RESTART_COUNT）、scancel（信号四情形）、priority_multifactor/qos/reservations（含预留删除约束）/prolog_epilog（含失败处置）/slurm.conf（ReturnToService 默认 0/值 2/有效配置、SlurmdTimeout 默认 300、HealthCheckProgram、UnkillableStepTimeout、MaxBatchRequeue 默认 5、KillWait 默认 30、JobRequeue 默认 1）/sacct（-D=--duplicates）。文档默认与站点实际分开，后者 unknown。未提交作业、未执行任何 Slurm 命令。
+- id: src.slurm.gres-tres-cgroup-24.11.7
+  title: Slurm 24.11.7 GRES/TRES/cgroup 与绑定（归档）
+  url: https://slurm.schedmd.com/archive/slurm-24.11.7/gres.html
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: 24.11.7 archive；webfetch 只读核对 2026-10-14
+  license:
+    status: unknown
+    scopes: []
+    notes: SchedMD 站点许可未核对；只链接并原创归纳。
+  notes: Batch 22（T05-03）取证：gres（GresTypes/Gres 声明、--gres/--gpus 系列、AutoDetect=nvml/nvidia/rsmi/nrt/oneapi/off、Type 子串规则、CUDA_VISIBLE_DEVICES 在 Prolog 与 job 内可不同、MIG 条件）、gres.conf（AutoDetect/File-Count 一致性/Type-Cores-Links 校验失配则节点 invalid+drain）、tres（类型与 Billing 权重站点配置）、cgroups/cgroup.conf（v1/v2、proctrack/task/jobacct 插件、ConstrainCores/ConstrainDevices/ConstrainRAMSpace 等，ConstrainDevices=yes 为 GRES 硬隔离前提）、resource_binding（CPU bind 生效序）。AutoDetect 仅见 NVIDIA/AMD/Intel/AWS 四类字符串，无 Ascend/NPU 一手证据（unknown）；cgroup 与内核/systemd 版本对应矩阵未取（unknown）。
+- id: src.slurm.testsuite-24-11-7-1
+  title: Slurm 24.11.7 testsuite 回归用例编号与头注释目的（头注释为审阅者取证）
+  url: https://github.com/SchedMD/slurm/tree/slurm-24-11-7-1/testsuite
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: tag slurm-24-11-7-1（tag 对象 9d1ef187，所指 commit defaf214）；用例精确到文件：test1.62、test39.1/39.2、test40.1、test2.21/2.22、test3.8/3.11、test31.2/31.3、test8.12、test24.1（test24.2 为 sshare）；头注释目的＋审阅者已核对行区间（test12.7 约 L60–120、test31.2 L122–125，含代码），未审计断言、未查 CI、未运行
+  license:
+    status: unknown
+    scopes: []
+    notes: 仓库根 LICENSE/DISCLAIMER 未核；用例文件头与 man 页 COPYING 节见 GPL v2 or later 声明（审阅者旁证，未独立复核），本条保持 unknown。
+  notes: Batch 22（T05-03）取证：test1.62（gres/gpu 插件）、test39.1/39.2（sbatch/salloc --gpu）、test40.1（invalid gres/mps）、test2.21/2.22/3.8（requeue 系列）、test31.2（Prolog 失败转 held）/31.3（环境变量）、test3.11/8.12（reservation）、test24.1（multifactor）、test12.7（sacct -D 重排历史，头注释目的）。头注释目的可引用为上游行为样本；存在性不构成语义证据，需起服 Slurm 才能运行，非本文验证。
+- id: src.ascend.docker-runtime-44385c13
+  title: Ascend docker-runtime 消费实现（mind-cluster 固定 commit）
+  url: https://github.com/Ascend/mind-cluster/blob/44385c13d7b1d87def35f1604e8be4d16de6ca4e/component/ascend-docker-runtime/runtime/process/process.go
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: commit 44385c13；实开 README（设计简介：prestart-hook、可见设备变量、设备 cgroup、库挂载）与 process.go（938 行：DoProcess/create 改写 bundle config.json、checkVisibleDevice、addHook、addDevice、cgroup allow、库路径、hook 路径）；vdevice 切分/dcmi 细节未审计（unknown）
+  license:
+    status: unknown
+    scopes: []
+    notes: 仓库根 LICENSE 未在本轮核对；只链接并原创归纳。
+  notes: Batch 21 取证轮实开：runtime 消费端实现入口；纠正前轮“同级未定位”错误结论（ascend-docker 404 仅为独立仓库名不可解析）。
+- id: src.kubernetes.api-gc-v1-32
+  title: Kubernetes v1.32 ObjectMeta 与 GC 文档（属主/删除语义）
+  url: https://v1-32.docs.kubernetes.io/docs/reference/kubernetes-api/common-definitions/object-meta/
+  kind: documentation
+  registered_at: '2026-10-14'
+  revision: v1.32 版本化文档；实开 object-meta（generation 定义）与 garbage-collection（前台删除/blockOwnerDeletion）及 owners-dependents/resource-quotas 相关段；只读文字，未执行
+  license:
+    status: unknown
+    scopes: []
+    notes: k8s 文档许可未核对；只链接并原创归纳。
+  notes: Batch 22 取证轮增补（T05-02 初审 C08）：属主跨 namespace 规则、前台删除语义、generation 定义；ResourceQuota 口径仅作范围声明。
+- id: src.ascend.docker-hook-44385c13
+  title: Ascend docker-hook 可执行行为（mind-cluster 固定 commit）
+  url: https://github.com/Ascend/mind-cluster/blob/44385c13d7b1d87def35f1604e8be4d16de6ca4e/component/ascend-docker-runtime/hook/process/process.go
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: commit 44385c13；实开 hook/main.go（入口调 DoPrestartHook）与 hook/process/process.go（DoPrestartHook：stdin 容器状态→bundle config.json→env；可见变量空即返回；RUNTIME_MOUNTS 默认 base；<configDir>/<name>.list 白名单为每份 `.list` 扫描行数上限 128（非合并总数）；`.list` 内容为部署产物，固定 commit 树内 runtime/install/assets/hook 目录均未见；UB 挂载项；options 仅 NODRV/VIRTUAL；allow-link True/False；exec ascend-docker-cli）；执行输出未取（unknown）
+  license:
+    status: unknown
+    scopes: []
+    notes: 仓库根 LICENSE 未在本轮核对；只链接并原创归纳。
+  notes: Batch 21 取证轮实开：hook 可执行行为与挂载白名单机制；实际挂载结果未执行（unknown）；CLI 调用参数构造已读。
+- id: src.ascend.docker-install-44385c13
+  title: Ascend docker-runtime 安装选择与 CLI 挂载实现（固定 commit）
+  url: https://github.com/Ascend/mind-cluster/blob/44385c13d7b1d87def35f1604e8be4d16de6ca4e/component/ascend-docker-runtime/build/scripts/base.list
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: commit 44385c13；实开 build/scripts/base.list（5 项）与 run_main.sh（--install-type 五变体选择＋add_so，--install-scene 三场景）、cli/src/u_mount.c（bind＋remount ro/nosuid，rootfs 拼接）；执行结果未取（unknown）
+  license:
+    status: unknown
+    scopes: []
+    notes: 仓库根 LICENSE 未在本轮核对；只链接并原创归纳。
+  notes: Batch 21 取证轮实开：白名单源码（base.list 5 项＋5 产品变体名）→安装选择（run_main 五分支＋add_so/三场景）→CLI 消费（u_mount 规则）→目标完整链；源码列表在 build/scripts，安装后文件为部署产物（/etc/ascend-docker-runtime.d），与 install 部署逻辑关联；纠正“固定树未见”说法。
+- id: src.volcano.gang-plugin-v1.15.0
+  title: Volcano v1.15.0 gang 插件实现
+  url: https://github.com/volcano-sh/volcano/blob/8fc394c11e8db0d0ada5c17816b58bced9d7213d/pkg/scheduler/plugins/gang/gang.go
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: tag v1.15.0（tag 对象 4691eac3，所指 commit 8fc394c1）；实开 gang.go 全文（validJobFn/reclaim-preempt fns/order-ready-pipelined/starving fns/OnSessionClose 条件），只读未执行
+  license:
+    status: unknown
+    scopes: []
+    notes: Apache-2.0 未在本轮打开核对；只链接并原创归纳。
+  notes: Batch 22 取证轮实开：成组校验/抢占/条件上报入口；控制器实现见 job-controller 登记条目，handler 事件路径未覆盖（unknown）。
+- id: src.kueue.cluster-queue-v0.19.0
+  title: Kueue v0.19.0 ClusterQueue 文档（配额/借用/抢占）
+  url: https://github.com/kubernetes-sigs/kueue/blob/911a822a49bcfd99c9c62203a009efa4130ad604/site/content/en/docs/concepts/cluster_queue.md
+  kind: repository
+  registered_at: '2026-10-14'
+  revision: commit 911a822a；实开全文 561 行（flavor/borrow/lending/preemption/fungibility/stopPolicy），只读未执行；范围：ClusterQueue 配额/借用/抢占样板，准入两阶段与类型定义原文见 src.kueue.admission-v0.19.0（复用）
+  license:
+    status: partial
+    scopes:
+    - scope: 固定仓库自有文档源码；第三方文件及独立站点资产另计
+      identifier: Apache-2.0
+      url: https://github.com/kubernetes-sigs/kueue/blob/911a822a49bcfd99c9c62203a009efa4130ad604/LICENSE
+    notes: 沿用 src.kueue.admission-v0.19.0 已读取的根许可口径，仅链接和原创归纳；没有复制图、示例配置或代码。
+  notes: Batch 22 取证轮实开：配额借用/抢占样板；未部署验证。
+- id: src.volcano.scheduler-actions-v1.15.0
+  title: Volcano v1.15.0 调度动作实现（enqueue/allocate/gangpreempt）
+  url: https://github.com/volcano-sh/volcano/blob/8fc394c11e8db0d0ada5c17816b58bced9d7213d/pkg/scheduler/actions/enqueue/enqueue.go
+  kind: repository
+  registered_at: '2026-10-15'
+  revision: tag v1.15.0（tag 对象 4691eac3，所指 commit 8fc394c1）；实开 enqueue.go/gangpreempt.go/gangreclaim.go/allocate.go 全文＋api/job_info.go（ReadyTaskNum L877–886/IsReady L1202–1204/IsPipelined L1206–1208），只读未执行
+  license:
+    status: unknown
+    scopes: []
+    notes: Apache-2.0 未在本轮打开核对；只链接并原创归纳。
+  notes: Batch 22 取证轮实开：入队门、会话内回退、gangpreempt bundle 模型；proportion/capacity/overcommit 判定公式未审计（unknown）。
+- id: src.volcano.job-controller-v1.15.0
+  title: Volcano v1.15.0 job 控制器实现（running/restarting/policy）
+  url: https://github.com/volcano-sh/volcano/blob/8fc394c11e8db0d0ada5c17816b58bced9d7213d/pkg/controllers/job/state/running.go
+  kind: repository
+  registered_at: '2026-10-15'
+  revision: tag v1.15.0（tag 对象 4691eac3，所指 commit 8fc394c1）；实开 running.go/restarting.go/job_controller_util.go（applyPolicies）/job_controller_actions.go（L813–816/L877–880 同步）全文，只读未执行
+  license:
+    status: unknown
+    scopes: []
+    notes: Apache-2.0 未在本轮打开核对；只链接并原创归纳。
+  notes: Batch 22 取证轮实开：重启/重试/失败映射；handler 事件路径未覆盖（unknown）。
