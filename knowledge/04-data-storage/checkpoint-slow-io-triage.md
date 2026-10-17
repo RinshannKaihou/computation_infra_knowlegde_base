@@ -12,13 +12,26 @@ source_refs:
   - src.ascend.mindio-acp-v26.1.1
   - src.mlcommons.storage-rules-v2.0
   - src.pytorch.tutorial-async-checkpoint-2026-09-30
-updated_at: "2026-10-08"
-summary: 把 checkpoint 保存/恢复慢定位到状态收集、staging 拷贝、后台写入、内核 writeback/fsync、存储后端或读路径；以 PyTorch 2.6 DCP 与 MindIO ACP 为固定样板，保留网络存储证据缺口。
+  - src.kernel.docs-nfs-v6.16
+  - src.nfs-utils.nfs-5-man7
+  - src.nfs-utils.exports-5-man7
+  - src.ietf.rfc-8881
+  - src.ceph.docs-rgw-s3-squid
+  - src.ceph.docs-health-checks-squid
+  - src.lustre.ops-manual-2x
+updated_at: "2026-10-18"
+summary: 把 checkpoint 保存/恢复慢定位到状态收集、staging 拷贝、后台写入、内核 writeback/fsync、存储后端或读路径；以 PyTorch 2.6 DCP 与 MindIO ACP 为固定样板；NFS/RGW/Lustre 后端支路按各自版本化参考分列入口，RDMA 保留证据缺口。
 related_ids:
   - data-storage.checkpoint-durability
   - training.checkpoint-state-consistency
   - data-storage.training-data-path
   - reliability.evidence-and-hypotheses
+  - data-storage.local-and-shared-storage
+  - data-storage.object-and-parallel-storage
+  - data-storage.artifact-transfer-and-publication
+  - data-storage.checkpoint-integrity-evidence
+  - data-storage.storage-workload-baselines
+  - data-storage.storage-client-backend-recovery
 applicability:
   environment_refs: []
   notes: "流程以 PyTorch 2.6 DCP（固定 v2.6.0 源码）与 MindCluster v26.1.1 MindIO ACP 为证据样板；目标环境的框架版本、writer/stager 配置、存储实现与内核参数需另行固定。"
@@ -29,7 +42,7 @@ verification:
     - src.kernel.docs-sysctl-vm-v6.16
     - src.ascend.mindio-acp-v26.1.1
     - src.mlcommons.storage-rules-v2.0
-  notes: "已核对 DCP async_save/staging/writer/reader 实现、Linux vm.rst 的 dirty/writeback 语义、MindIO ACP 接口文档与 MLPerf checkpointing 规则；未执行保存、恢复或存储压测。"
+  notes: "已核对 DCP async_save/staging/writer/reader 实现、Linux vm.rst 的 dirty/writeback 语义、MindIO ACP 接口文档与 MLPerf checkpointing 规则；未执行保存、恢复或存储压测。2026-10-18（T04-08 补交）复用登记版本化后端来源（内核 v6.16 NFS、nfs(5)/exports(5)、RFC 8881、Squid RGW S3 与健康检查、Lustre 2.x 手册），新增后端支路入口节并收窄缺口声明；本轮未运行任何工具。"
 ---
 
 # Checkpoint 慢写与恢复 I/O 诊断指南
@@ -42,7 +55,7 @@ verification:
 
 证据样板：PyTorch 2.6 DCP（文档 + v2.6.0 固定源码）、MindCluster v26.1.1 的 MindIO ACP、Linux kernel v6.16 的 vm 文档（固定 commit）、MLPerf Storage v2.0。进入排查前固定：框架与 writer/stager 实现及版本、`sync_files`/`thread_count`/`single_file_per_rank`/staging 配置、同步或异步保存、存储后端类型、内核 dirty 参数、每次保存的数据量与分片数。
 
-**缺口声明**：网络文件系统、RDMA、对象存储的传输行为暂无已核对来源，相关支路只能按现场证据处理；DCP 2.6 的 `dcp_logger` 只有方法级总耗时，没有分阶段计时，阶段拆分需自行打点。
+**缺口声明（2026-10-18 更新）**：NFS、Ceph RGW、Lustre 的后端语义已有版本化参考，支路入口见「后端支路入口」节；仍无已核对来源的：RDMA 传输行为、RGW 性能计数器/官方负载基准与日志端点、NFS 客户端 mountstats、Lustre 计数器其余含义与精确小版本（完整清单见[来源记录](../../docs/research/batch-21-t04-08-sources.md)）；DCP 2.6 的 `dcp_logger` 只有方法级总耗时，没有分阶段计时，阶段拆分需自行打点。
 
 ## 需要的证据
 
@@ -67,6 +80,21 @@ verification:
 | 6 | MindIO ACP 分支（昇腾栈）：`save(open_way='memfs')` 的返回值区分失败/原生 torch.save/memfs/fopen（[save接口.md](https://github.com/Ascend/mind-cluster/blob/44385c13d7b1d87def35f1604e8be4d16de6ca4e/component/mindio/acp/doc/Interface_description/save%E6%8E%A5%E5%8F%A3.md)）；内存暂存到后端持久化的完成信号是 `flush()`——等待后台异步刷盘全部成功，返回 0/1，**无超时与部分失败语义**（[flush接口.md](https://github.com/Ascend/mind-cluster/blob/44385c13d7b1d87def35f1604e8be4d16de6ca4e/component/mindio/acp/doc/Interface_description/flush%E6%8E%A5%E5%8F%A3.md)）。memfs 的内部实现与性能数据未公开核对；ACP 无性能/并发调节环境变量 | 只读 | “保存返回快但 flush 慢”说明慢在后端异步写入 | 与步骤 4/5 对齐后端证据 |
 | 7 | 汇总：阶段、证据、反例与未知 | 无 | 结论回链到阶段与配置 | 满足完成判据后结束 |
 
+## 后端支路入口与同窗计时对齐
+
+步骤 5 定位到后端/读侧支路后，按实现进入各自入口；以下只列入口与边界，不给跨后端的统一调参命令。语义细节按各实现的版本化参考核对（NFS/ext4 见[本地与共享存储](local-and-shared-storage.md)，RGW/Lustre 见[对象与并行存储](object-and-parallel-storage.md)，恢复流程见[存储客户端、后端异常与恢复验证](storage-client-backend-recovery.md)）。
+
+| 实现 | 写路径慢/失败的特征入口 | 读侧与缓存 | 元数据 vs 数据瓶颈 | 空间压力 |
+|---|---|---|---|---|
+| 本地 ext4 | commit 窗口（默认 5 s）内元数据变更可丢；`data=` 三模式与 `barrier` 决定写入路径（[admin-guide/ext4](https://www.kernel.org/doc/html/v6.16/admin-guide/ext4.html)）；步骤 4 的内核 writeback 节流适用 | 页缓存污染读测量（见步骤 5）；冷基线方法见[本地与共享存储 §5](local-and-shared-storage.md) | 同一介质不分层 | inode/空间耗尽无已核对来源（unknown） |
+| NFSv4.1 | 客户端 fsync/close 慢可能在对端：WRITE 可带 UNSTABLE4，须 COMMIT＋比对 write verifier（[RFC 8881 §18.32](https://datatracker.ietf.org/doc/html/rfc8881#section-18.32)/[§18.3](https://datatracker.ietf.org/doc/html/rfc8881#section-18.3)）；导出 `async` 允许落盘前应答（[exports(5)](https://man7.org/linux/man-pages/man5/exports.5.html)）；grace 期服务器可拒绝某些 READ/WRITE（[§8.4](https://datatracker.ietf.org/doc/html/rfc8881#section-8.4)）；`hard`/`soft` 超时行为见 [nfs(5)](https://man7.org/linux/man-pages/man5/nfs.5.html) | CTO/缓存窗口见[本地与共享存储 §3](local-and-shared-storage.md) | 协议层不分开 | 服务器侧空间证据 unknown |
+| Ceph RGW（S3） | multipart 上传中断按 upload-id 列举残留分片；upload-id 不匹配返 404 NoSuchUpload；Complete 前可见性/列举一致性 unknown（见[对象与并行存储 §2](object-and-parallel-storage.md)）；官方性能计数器与超时语义 unknown——慢只能按客户端计时＋网络/后端证据判定 | 读/条件请求条目见同页 §2；`GET /?usage` 为用量统计、非性能计数器 | bucket 索引 resharding 条目见同页 §1，细节 unknown | 池满 OSD_FULL/NEARFULL/POOL_FULL（[health-checks](https://docs.ceph.com/en/squid/rados/operations/health-checks/)） |
+| Lustre 2.x | 写带宽受条带布局影响（`lfs setstripe`/`getstripe`，手册 §19.3/§19.4）；同文件多写锁争用（§34.10）；`BAD WRITE CHECKSUM` 日志为 32-bit 传输校验（§23.5.1） | 页缓存/客户端缓存语义以手册为准（细分 unknown） | MDT 元数据瓶颈与 OST 数据带宽瓶颈分开观测（§1.2.2）；Jobstats（Ch.12）/brw_stats（Ch.39）入口 | Full OST 禁建与数据迁移（§23.1）；`lfs df` |
+
+同窗计时对齐例子（保存路径，固定实现锚点，均未执行）：同一时钟口径下同窗采集——①主线程：保存调用点停顿区间（staging 在主线程内执行，见步骤 2；用 profiler 或训练侧打点获得）；②后台：DCP 后台写 Future 的完成时间，或 MindIO `flush()` 返回点（步骤 6）；③内核层：同窗 dirty/writeback 计数与节流迹象（步骤 4）；④后端：同窗后端统计（knfsd-stats/Jobstats/health 入口）；⑤读侧（恢复慢时）：读带宽与缓存冷/热状态（步骤 5）。**异步重叠不能简单相加**：`async_save` 的 staging 与后台写重叠、内核 writeback 与应用写重叠，各阶段耗时之和可以大于 wall-clock；判定用关键路径——主线程停顿区间与 Future/flush 完成点，分段耗时用于定位候选，不累加定罪。DCP `dcp_logger` 仅方法级总耗时（见缺口声明），分阶段须自行打点；fio 的 slat/clat 拆分只用于独立基线工具（见[存储负载基线 §4](storage-workload-baselines.md)），不是保存路径内的计时来源。
+
+定位后的接续：独立基线与隔离/争用/冷热对照口径见[存储负载、容量与长尾基线口径](storage-workload-baselines.md)；后端异常的定位链、repair/remount/回放分支与恢复完成判据见[存储客户端、后端异常与恢复验证](storage-client-backend-recovery.md)；制品暂存/提交/读回验证协议见[模型制品与 Checkpoint 的传输、发布和读回](artifact-transfer-and-publication.md)；RDMA 传输行为仍无已核对来源（unknown）。
+
 ## 停止条件与恢复安排
 
 - 不为提速直接关闭 `sync_files` 或调大 dirty 参数：前者牺牲故障一致性，后者改变整机写行为；任何内核/配置变更需授权与回滚计划。
@@ -82,7 +110,7 @@ verification:
 3. 单变量配置变更（thread_count、staging 缓存、保存并发窗口）稳定改变保存耗时，且完成语义未降级；
 4. 证据不足，但已记录缺失的阶段计时、内核计数或后端证据，结论保持 `unknown`。
 
-“保存成功”不单独满足完成判据；“变快了”需要说明变的是哪个阶段。
+“保存成功”不单独满足完成判据；“变快了”需要说明变的是哪个阶段。定位到后端支路或做过受控对照时，完成记录还须同时包含：制品身份（保存 ID、清单与哈希，见[完整性证据](checkpoint-integrity-evidence.md)与[传输发布](artifact-transfer-and-publication.md)）、作业进展（保存后训练 step 恢复；恢复场景的首批/持续窗口）、完整性（读回校验结论）、时延/吞吐与资源代价（对照前后同窗）。
 
 ## 来源与验证记录
 
@@ -90,7 +118,8 @@ verification:
 - [Linux kernel v6.16 vm.rst（固定 commit）](https://github.com/torvalds/linux/blob/038d61fd642278bab63ee8ef722c50d10ab01e8f/Documentation/admin-guide/sysctl/vm.rst)：dirty/writeback 与写者节流；[fsync(2)（man-pages 6.19）](https://man7.org/linux/man-pages/man2/fsync.2.html)。
 - [MindIO ACP 接口文档（MindCluster v26.1.1 固定 commit）](https://github.com/Ascend/mind-cluster/tree/44385c13d7b1d87def35f1604e8be4d16de6ca4e/component/mindio)：save/multi_save/flush/register_checker/load 与环境变量。
 - [MLPerf Storage v2.0 规则](https://github.com/mlcommons/storage/blob/7e71ca162d8f9e7ae4b5b698d7d79b0883817f25/Submission_guidelines.md)：checkpointing 负载的清缓存、fsync 与测量边界。
+- 2026-10-18（T04-08 补交）加法：后端支路入口节复用已登记版本化来源——[Linux v6.16 NFS 内核文档](https://www.kernel.org/doc/html/v6.16/filesystems/nfs/index.html)、[nfs(5)](https://man7.org/linux/man-pages/man5/nfs.5.html) 与 [exports(5)](https://man7.org/linux/man-pages/man5/exports.5.html)、[RFC 8881](https://datatracker.ietf.org/doc/html/rfc8881)（§18.3/§18.32/§8.4）、[Ceph Squid RGW S3](https://docs.ceph.com/en/squid/radosgw/s3/) 与 [health-checks](https://docs.ceph.com/en/squid/rados/operations/health-checks/)、[Lustre 2.x 手册](https://doc.lustre.org/lustre_manual.xhtml)；逐条 revision/许可与未覆盖范围见[第二十一批 T04-08 来源记录](../../docs/research/batch-21-t04-08-sources.md)。本轮未运行任何工具或压测。
 - [PyTorch 异步保存教程](https://docs.pytorch.org/tutorials/recipes/distributed_async_checkpoint_recipe.html)（动态页，2026-09-30 观察）：仅限定引用其 2.6 适用部分（CPU buffer、staging 阻塞、单异步请求建议）；页面已并入 2.9 的 DefaultStager 内容，不能当作 2.6 功能。
 - 逐条主张与证据定位见[第十批 checkpoint I/O 来源记录](../../docs/research/batch-10-checkpoint-io-sources.md)。
 - 当前验证范围：来源核对；未执行保存、恢复或存储压测。
-- 待确认：网络文件系统/RDMA/对象存储的传输证据；DCP loader 集合调用行号；MindIO memfs 实现与性能数据；目标存储的实测基线。
+- 待确认：RDMA 传输证据；RGW 性能计数器/日志端点；NFS 客户端 mountstats；Lustre 计数器其余含义与精确小版本；DCP loader 集合调用行号；MindIO memfs 实现与性能数据；目标存储的实测基线（未执行）。

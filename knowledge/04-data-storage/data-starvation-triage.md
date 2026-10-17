@@ -11,13 +11,23 @@ source_refs:
   - src.pytorch.profiler-2.6
   - src.pytorch.cuda-semantics-2.6
   - src.mlcommons.storage-rules-v2.0
-updated_at: "2026-09-30"
-summary: 把“训练在等数据”定位到存储、CPU 处理、组 batch、主机队列、设备传输或训练消费中的首个边界；以 PyTorch 2.6 DataLoader 与 profiler 为可核对实现样板，区分配置错误、worker 硬失败和真实供给不足。
+  - src.kernel.docs-nfs-v6.16
+  - src.nfs-utils.nfs-5-man7
+  - src.ceph.docs-rgw-s3-squid
+  - src.ceph.docs-health-checks-squid
+  - src.lustre.ops-manual-2x
+  - src.fio.repo-3.43
+updated_at: "2026-10-18"
+summary: 把“训练在等数据”定位到存储、CPU 处理、组 batch、主机队列、设备传输或训练消费中的首个边界；以 PyTorch 2.6 DataLoader 与 profiler 为可核对实现样板，区分配置错误、worker 硬失败和真实供给不足；存储支路按 NFS/RGW/Lustre/ext4 各自的版本化参考分列入口。
 related_ids:
   - data-storage.training-data-path
   - reliability.evidence-and-hypotheses
   - hardware.resource-topology
   - training.parallelism-and-state
+  - data-storage.local-and-shared-storage
+  - data-storage.object-and-parallel-storage
+  - data-storage.storage-workload-baselines
+  - data-storage.storage-client-backend-recovery
 applicability:
   environment_refs: []
   notes: "流程以 PyTorch 2.6 的 DataLoader 文档与固定 v2.6.0 源码为证据样板；目标环境的框架、存储实现、CPU/NUMA/设备拓扑与版本仍需补齐，其他框架的同名概念不能照搬参数语义。"
@@ -27,7 +37,7 @@ verification:
     - src.pytorch.data-loader-2.6
     - src.pytorch.dataloader-source-v2.6.0
     - src.pytorch.profiler-2.6
-  notes: "已核对 PyTorch 2.6 data.html 参数语义、v2.6.0 固定 dataloader.py 的 worker 错误/超时/prefetch/record_function 实现和 profiler.html 的观测能力；未在真实环境执行训练、profiling 或变更验证。"
+  notes: "已核对 PyTorch 2.6 data.html 参数语义、v2.6.0 固定 dataloader.py 的 worker 错误/超时/prefetch/record_function 实现和 profiler.html 的观测能力；未在真实环境执行训练、profiling 或变更验证。2026-10-18（T04-08 补交）复用登记版本化后端来源（内核 v6.16 NFS、nfs(5)、Squid RGW S3 与健康检查、Lustre 2.x 手册、fio 3.43 计时锚点），新增后端支路入口与同窗计时对齐节；本轮未运行任何工具。"
 ---
 
 # 训练数据加载饥饿诊断指南
@@ -79,6 +89,21 @@ verification:
 - profiler 文档的 `ProfilerActivity` 枚举含 `PrivateUse1`，但页面没有 NPU 字样或任何 PrivateUse1 使用说明；NPU 侧的 profiling 能力（如 torch_npu 的 profiler）本文未核对，不能假设与 CUDA 路径一致。
 - `pin_memory=True` 的“加速主机到设备传输”是 CUDA 语境语义；固定源码中空 `pin_memory_device` 默认走 CUDA 可用性判断（[dataloader.py L657–669](https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/torch/utils/data/dataloader.py#L657-L669)）。NPU 的内存注册与异步传输语义需按 TorchNPU/CANN 对应版本核对，见[昇腾 NPU 内存与 OOM 证据](../02-software-stack/ascend-memory-oom-evidence.md)的版本边界。
 
+## 后端支路入口与同窗计时对齐
+
+步骤 5 定位到存储/缓存/后端支路后，按实现进入各自的观察入口。以下只列入口与边界，不给跨后端的统一调参命令；旋钮语义按各实现的版本化参考核对（NFS/ext4 见[本地与共享存储](local-and-shared-storage.md)，RGW/Lustre 见[对象与并行存储](object-and-parallel-storage.md)）。
+
+| 实现 | 重试/超时与失败入口 | 缓存/一致性窗口 | 元数据 vs 数据瓶颈 | 争用观察点 | 空间压力 |
+|---|---|---|---|---|---|
+| 本地 ext4/NVMe | 无客户端超时语义；`errors=` 只决定检错后的反应方式（[admin-guide/ext4](https://www.kernel.org/doc/html/v6.16/admin-guide/ext4.html)） | 页缓存冷/热；drop_caches 冷基线方法（非破坏性、有开销）见[本地与共享存储 §5](local-and-shared-storage.md) | 同一介质，元数据/数据不分层 | 同机其他负载共用设备，按现场计数器 | inode/空间耗尽无已核对来源（unknown） |
+| NFSv4.1 | `hard` 无限重试；`soft`/`softerr` retrans 次后 EIO/ETIMEDOUT；`timeo` TCP 默认 60 s 线性退避至 600 s（[nfs(5)](https://man7.org/linux/man-pages/man5/nfs.5.html)）；遇 `soft` 挂载先记录该事实（静默损坏风险），再解释现象 | CTO/属性缓存窗口内可读陈旧数据；`actimeo`/`lookupcache` 只改变窗口长度，不改变协议语义（[nfs(5)](https://man7.org/linux/man-pages/man5/nfs.5.html)） | 协议层不分开；服务器实现另计 | 服务器侧统计 [knfsd-stats](https://www.kernel.org/doc/html/v6.16/filesystems/nfs/knfsd-stats.html)；客户端 mountstats 未登记（unknown） | 服务器侧空间证据 unknown |
+| Ceph RGW（S3） | 读路径失败语义未单列（unknown）；写入/multipart 条目见[对象与并行存储 §2](object-and-parallel-storage.md) | Complete 前可见性 unknown；读到旧版本按版本化三态判定（同页 §5） | bucket 索引实现细节 unknown | `GET /?usage` 是用量统计、不是性能计数器；RGW 官方负载基准 unknown | 池满检查 OSD_FULL/NEARFULL/POOL_FULL（[Ceph Squid health-checks](https://docs.ceph.com/en/squid/rados/operations/health-checks/)） |
+| Lustre 2.x | 初始建联超时见手册 Ch.35.3.8；运行期超时细分 unknown | LDLM 跨客户端/服务器一致性（手册 §1.1.1）；不与 NFS 缓存模型互推 | MDT 元数据瓶颈与 OST 数据带宽瓶颈分开观测（手册 §1.2.2） | Jobstats（Ch.12）与 brw_stats（Ch.39）入口；同文件多写锁争用（§34.10） | Full OST 禁建与数据迁移（§23.1）；`lfs df` |
+
+同窗计时对齐例子（固定实现锚点，均未执行）：以一次疑似饥饿窗口为例，同一时钟口径下同窗采集——①消费侧：profiler 中 record_function 区间 `enumerate(DataLoader)#_MultiProcessingDataLoaderIter.__next__` 的耗时与占比（见步骤 2）；②主机侧：训练循环取 batch 前后的应用层打点（自定义 record_function 区间或等价计时）；③后端侧：同窗的后端统计（NFS 服务器 knfsd-stats、Lustre Jobstats/brw_stats、Ceph health 入口；本地设备为系统计数器），与应用侧请求字节/延迟对照；④独立基线：fio 的 slat（提交）/clat（完成）拆分（[fio 3.43](https://github.com/axboe/fio/tree/fio-3.43) HOWTO 与 io_u.c 取样行 L2097/L2102）只用于工具自身的离线基线，不是训练路径内的计时来源。**异步重叠不能简单相加**：预取与异步传输允许阶段重叠（见[数据路径](training-data-path.md)的流水线说明），各阶段耗时之和可以大于 wall-clock；等待判定只看关键路径——「下一顺位 batch 未就绪且与输入等待重合」的区间，分段耗时用于定位候选，不累加定罪。
+
+定位到后端支路后的接续：独立基线与对照口径（隔离/争用/冷热三组对照、latency_target 饱和读法、各工具终点分开）见[存储负载、容量与长尾基线口径](storage-workload-baselines.md)；后端异常与恢复（Ceph 定位链、NFS grace/reclaim、Lustre recovery、ext4 回放）见[存储客户端、后端异常与恢复验证](storage-client-backend-recovery.md)；RDMA 传输行为仍无已核对来源（unknown）。
+
 ## 停止条件与恢复安排
 
 出现以下任一情况时停止主动试探，先保存证据：
@@ -98,7 +123,7 @@ verification:
 3. 单变量对照稳定改变了预定义的等待或吞吐观测；
 4. 证据不足，但已明确记录缺失的版本、窗口、队列或后端证据，结论保持 `unknown`。
 
-“命令成功”“worker 数调大后好像快了”或“利用率回升”均不单独满足完成判据；需要同窗口的等待位置与吞吐证据。
+“命令成功”“worker 数调大后好像快了”或“利用率回升”均不单独满足完成判据；需要同窗口的等待位置与吞吐证据。定位到后端支路或做过受控对照时，完成记录还须同时包含：数据/制品身份（数据集版本与 manifest 未变，核对方法见[数据路径 §A](training-data-path.md)）、作业进展（同窗吞吐/step 恢复）、完整性（如发生读回，记录校验结论）、时延/吞吐与资源代价（对照前后同窗）。
 
 ## 来源与验证记录
 
@@ -108,4 +133,5 @@ verification:
 - [PyTorch 2.6 CUDA semantics](https://docs.pytorch.org/docs/2.6/notes/cuda.html)：仅 pin_memory/non_blocking 的 CUDA 语境对照。
 - [MLPerf Storage v2.0 规则](https://github.com/mlcommons/storage/blob/7e71ca162d8f9e7ae4b5b698d7d79b0883817f25/Submission_guidelines.md)：其 AU 用模拟计算且不含预处理与设备传输——不能用该基准的存储结论替代本流程的端到端饥饿判断。
 - 逐条主张与证据定位见[第八批数据加载来源记录](../../docs/research/batch-08-dataloader-sources.md)。
+- 2026-10-18（T04-08 补交）加法：后端支路入口与同窗计时对齐节复用已登记版本化来源——[Linux v6.16 NFS 内核文档](https://www.kernel.org/doc/html/v6.16/filesystems/nfs/index.html)（knfsd-stats/nfs41-server/client-identifier）、[nfs(5)](https://man7.org/linux/man-pages/man5/nfs.5.html)、[Ceph Squid RGW S3](https://docs.ceph.com/en/squid/radosgw/s3/) 与 [health-checks](https://docs.ceph.com/en/squid/rados/operations/health-checks/)、[Lustre 2.x 手册](https://doc.lustre.org/lustre_manual.xhtml)、[fio 3.43](https://github.com/axboe/fio/tree/fio-3.43)（slat/clat 锚点）；逐条 revision/许可与未覆盖范围见[第二十一批 T04-08 来源记录](../../docs/research/batch-21-t04-08-sources.md)。本轮未运行任何工具或压测。
 - 当前验证范围：来源核对；没有目标环境的训练、profiling 或变更执行记录。
