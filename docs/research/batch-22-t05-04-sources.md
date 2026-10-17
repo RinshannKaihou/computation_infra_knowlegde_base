@@ -1,8 +1,8 @@
 # 第二十二批 T05-04 来源记录
 
-任务：T05-04（修订 `knowledge/05-cluster-platform/device-resource-chain.md`，concept）。作者取证方法：本机 curl 字节级取回固定 commit 原文件（SHA-256 见下表，行数与 GitHub blob 页总行数核对一致），K8s 文档经 FetchURL 只读读取版本化页面；未部署运行、未执行任何集群命令。第 1 轮取证＝NVIDIA k8s-device-plugin v0.20.1 `internal/plugin/server.go` 全 557 行＋`internal/rm/health.go` 全 363 行（健康 ListAndWatch/分配/重启策略，backlog 待核查项）；K8s v1.32 Device Plugins 页重开 Handling kubelet restarts/ResourceHealthStatus/PodResources/部署节。初审（`batch-22-t05-04-claude-review.md`，B22-C31–C38）后第 2 轮取证＝同 commit 新增七文件（main.go/plugin-manager.go/factory.go/nvml_manager.go/rm.go/devices.go/device_map.go，重启/重建/发现失败/ID 构造）＋作者侧重开 Slurm 归档六页核对修订引文。复用取证＝T05-01 固定链（Toolkit 1.20.0/CDI、M-ID 方法，见 `container-image-runtime-baseline.md`）与 T05-03 固定 Slurm 24.11.7 GRES/TRES/cgroup/绑定材料（见 `slurm-jobs-and-device-resources.md` 及其来源记录）。
+任务：T05-04（修订 `knowledge/05-cluster-platform/device-resource-chain.md`，concept）。作者取证方法：本机 curl 字节级取回固定 commit 原文件（SHA-256 见下表，行数与 GitHub blob 页总行数核对一致），K8s 文档经 FetchURL 只读读取版本化页面；未部署运行、未执行任何集群命令。第 1 轮取证＝NVIDIA k8s-device-plugin v0.20.1 `internal/plugin/server.go` 全 557 行＋`internal/rm/health.go` 全 363 行（健康 ListAndWatch/分配/重启策略，backlog 待核查项）；K8s v1.32 Device Plugins 页重开 Handling kubelet restarts/ResourceHealthStatus/PodResources/部署节。初审（`batch-22-t05-04-claude-review.md`，B22-C31–C38）后第 2 轮取证＝同 commit 新增七文件（main.go/plugin-manager.go/factory.go/nvml_manager.go/rm.go/devices.go/device_map.go，重启/重建/发现失败/ID 构造）＋作者侧重开 Slurm 归档六页核对修订引文。定向复核（`batch-22-t05-04-claude-recheck.md`，B22-C39–C41）后补充取证＝同 commit `internal/rm/nvml_devices.go`（序号字符串化，哈希与定向复核一致）＋重开 prolog_epilog.html（SLURM_JOB_GPUS 可用范围，哈希与初审一致）。复用取证＝T05-01 固定链（Toolkit 1.20.0/CDI、M-ID 方法，见 `container-image-runtime-baseline.md`）与 T05-03 固定 Slurm 24.11.7 GRES/TRES/cgroup/绑定材料（见 `slurm-jobs-and-device-resources.md` 及其来源记录）。
 
-## 取证哈希表（作者侧，curl 字节级取回；与初审取证表逐一一致）
+## 取证哈希表（作者侧，curl 字节级取回；NVIDIA 前九文件与 Slurm gres/gres.conf/slurm.conf/scontrol/sacct/prolog_epilog 的哈希与初审取证表一致；nvml_devices.go 与 sbatch 为初审后新开，哈希与定向复核一致）
 
 版本锚：`refs/tags/v0.20.1` tag 对象 `03296a61aeb9943906a1789f978ac3c87e13dfdd`，`^{}`→ commit `487d7a93894b0f3ad08097169593972eb3ca8206`（初审 `git ls-remote` 记录，作者侧引用）。
 
@@ -17,14 +17,16 @@
 | internal/rm/rm.go | `f6dced1f504f604455315999026352d27bc8dd8607ec844b06c2080dfa321c1b` | 2 |
 | internal/rm/devices.go | `e23a3b2e7d3c9fdee9e5e754ed6c334a163bd1c03d52edf126135fc9a340b062` | 2 |
 | internal/rm/device_map.go | `26d83432c1f05c66270167fd6e0744e1891851ccefebc45e1d9ebc641edac2b5` | 2 |
+| internal/rm/nvml_devices.go | `6a0c4968a16235e7482d5caabda542f9c1bf1dc1f71d434cb7a7c6f35958591d` | 复核后（与定向复核一致） |
 | slurm-24.11.7/gres.html | `4c7a58746e36f07ac7bf43cde934a7342b16698068ceb61ee83debc1c6eccff9` | 2（重开） |
 | slurm-24.11.7/gres.conf.html | `21aeb902c64844020cca02fe761eb53a8daec7699020d79c7f36d113f47e294e` | 2（重开） |
 | slurm-24.11.7/slurm.conf.html | `f4151769ed29968c7de408809a5acb8f0591865cd525d5f2c70925e847a1ff34` | 2（重开） |
 | slurm-24.11.7/scontrol.html | `da776891b3e6070f6e576c5b0f7bcbd62465e976919a1dd62b296050aa4e6d97` | 2（重开） |
 | slurm-24.11.7/sacct.html | `d96f8299e0b778c8d4cd04a710969f458f118482b122bb99443716ca9ab677f4` | 2（重开） |
-| slurm-24.11.7/sbatch.html | `132d28b42e5cb4f9124734b339a9093707d46e30f0b412d2ec12d11f4a10a00f` | 2（新开） |
+| slurm-24.11.7/sbatch.html | `132d28b42e5cb4f9124734b339a9093707d46e30f0b412d2ec12d11f4a10a00f` | 2（新开；与定向复核一致） |
+| slurm-24.11.7/prolog_epilog.html | `6d83380c65d0dcd57a598b03aa9a046e4c1aae86975a873dc9175cd01731ceac` | 复核后（重开；与初审一致） |
 
-K8s v1.32 Device Plugins 页经 FetchURL 读取（第 1 轮），作者侧无哈希；初审侧哈希见其报告（可变网页，只代表当次观察）。
+K8s v1.32 Device Plugins 页经 FetchURL 读取（第 1 轮），作者侧无哈希；初审/定向复核侧哈希见各自报告（可变网页，只代表当次观察）。
 
 ## 主张—来源定位表（ID—精确页面/行—字段/支持范围）
 
@@ -36,7 +38,7 @@ K8s v1.32 Device Plugins 页经 FetchURL 读取（第 1 轮），作者侧无哈
 | 发现失败分支（fail-on-init-error 默认 true；NVML init 失败 true→报错退出/false→nil,nil 无插件；资源名无设备不启动；GPU 名不匹配资源模式报错） | 同上（第 2 轮新增） | main.go L68–73/L415–417；factory.go L104–108；nvml_manager.go L59–62；main.go L402–405；device_map.go L131 | “缺设备”候选断点 |
 | 健康检查启动失败降级与静默关闭（CheckHealth 返回错误才记日志；全禁或 init 失败且 false 时返回 nil 无日志） | 同上 | server.go Start L129–160（L151–157）；health.go L45–48/L50–56 | 降级后账本仍显示健康的后果为推论（标注） |
 | gRPC 崩溃重启环（崩溃即重启；相邻间隔超 1 h 计数归零否则累加；计数 >5 即连续第 6 次崩溃 Fatalf；Stop 删 socket） | 同上 | server.go Serve L177–226（环 L186–215、Fatalf L193–196）；Stop L163–174 | 措辞经初审 C37 修正（不写“累计”） |
-| 分配响应三策略与 ID 转换（账本侧 ID＝构建期 UUID/UUID::n 与策略无关；运行时 ID 才由 deviceIDStrategy 决定，默认 uuid；uuid 去注解/index 查表取枚举序；envvar 直写 NVIDIA_VISIBLE_DEVICES；CDI qualified 名；volume-mounts；passDeviceSpecs 默认 false） | 同上 | devices.go L86–93/L232–240；device_map.go L110–134/L326–342；main.go L87–104；server.go Allocate L306–320/getAllocateResponse L322–366/updateResponseForCDI L377–409/uniqueDeviceIDsFromAnnotatedDeviceIDs L456–474/updateResponseForDeviceListEnvVar L481–483/updateResponseForDeviceMounts L497–514/apiDeviceSpecs L516–557 | index↔UUID 在插件设备表内确定；枚举序↔宿主 nvidia-smi 序号未取（go-nvlib，K1 收窄） |
+| 分配响应三策略与 ID 转换（账本侧 ID＝构建期 UUID/UUID::n 与策略无关；运行时 ID 才由 deviceIDStrategy 决定，默认 uuid；uuid 去注解/index 查表取构建期序号——序号为 `VisitDevices` 回调序号 i 的十进制串，字符串化在 nvml_devices.go L47–49，WSL 为 "all"（L52–54）、MIG 为 `i:j`（L56–58）；envvar 直写 NVIDIA_VISIBLE_DEVICES；CDI qualified 名；volume-mounts；passDeviceSpecs 默认 false） | 同上 | devices.go L86–93/L232–240；device_map.go L110–134（传参 L113/L127）/L45–47/L326–342；nvml_devices.go L47–58（复核后补入）；main.go L87–104；server.go Allocate L306–320/getAllocateResponse L322–366/updateResponseForCDI L377–409/uniqueDeviceIDsFromAnnotatedDeviceIDs L456–474/updateResponseForDeviceListEnvVar L481–483/updateResponseForDeviceMounts L497–514/apiDeviceSpecs L516–557 | 回调序号 i 与 NVML index、宿主 nvidia-smi 序号的关系未取（go-nvlib `VisitDevices` 语义，K1），不以十进制串形式推定一致 |
 | 过期分配拒绝（ValidateRequest 对未知 ID 报 unknown device；共享副本请求数限制） | 同上（第 2 轮新增） | rm.go L83–105；server.go L309–311 | 设备集变化后旧 ID 走此分支为推论 |
 | 健康检查机制（NVML event set；eventMask 三类事件；循环只处理 XidCriticalError；启动期三类失败即标记 L80–85/L90–95/L97–102；ERROR_NOT_SUPPORTED 只警告 L104–112；等待错误/UUID 解析失败标记全部；命中标记 L169–170） | 同上 | health.go checkHealth L44–172（eventMask L78、L124–131、L133–136、L145–153、L154–158、L160–167） | NVML 事件到具体硬件故障的语义不在本文件 |
 | 健康标记粒度限制（parentToDeviceMap 按物理 UUID 只保留一个条目 L74/L88；MIG 取父 UUID；副本 GetUUID 去注解；事件先查唯一条目再比 GI/CI L154–167；WSL 无健康检查） | 同上（第 2 轮补充） | health.go L74/L88/L154–167；devices.go L50–51/L232–235；rm.go L53–56；nvml_manager.go L71–73 | MIG 多实例/共享副本后果为推论（未执行）；tegra unknown |
@@ -49,7 +51,7 @@ K8s v1.32 Device Plugins 页经 FetchURL 读取（第 1 轮），作者侧无哈
 
 - 插件登记的前轮区域锚 `server.go L280–438/L448–481` 经字节级取回核对为松散超集（初审确认对所列四函数成立）；精确函数行号为 Allocate L306–320、getAllocateResponse L322–366、updateResponseForCDI L377–409、uniqueDeviceIDsFromAnnotatedDeviceIDs L456–474；RegisterRequest 字面量精确行 L242–249（本记录第 1 轮写 L241–248，初审勘误）。
 - server.go ListAndWatch 循环注释自述 `FIXME: there is no way to recover from the Unhealthy state.`（L277）＝单次进程内无恢复路径；初审 C31 补充：任何重启路径都从零重建设备集并以 Healthy 上报（main.go/plugin-manager.go/factory.go/nvml_manager.go/devices.go 链），正文按“进程内无恢复、重启即 Healthy 重建（推论）”写。
-- **初审引证勘误**：初审 C35 称 `SLURM_JOB_GPUS` 在 gres.html L622–625（“The GPU IDs of GPUs in the job allocation”）；作者侧取回同一哈希（`4c7a5874…`）的 gres.html 全文 grep 无 `SLURM_JOB_GPUS`（0 命中）。实际定义在 [sbatch.html L2926–2928](https://slurm.schedmd.com/archive/slurm-24.11.7/sbatch.html)：“The global GPU IDs of the GPUs allocated to this job. The GPU IDs are not relative to any device cgroup, even if devices are constrained with task/cgroup. Only set in batch and interactive jobs.”（srun.html 亦有 1 处）。正文按 sbatch 页引用，定向复核时请审阅者复核此勘误。
+- **初审引证勘误（经定向复核确认并补充）**：初审 C35 称 `SLURM_JOB_GPUS` 在 gres.html L622–625（“The GPU IDs of GPUs in the job allocation”）；作者侧取回同一哈希（`4c7a5874…`）的 gres.html 全文 grep 无 `SLURM_JOB_GPUS`（0 命中，定向复核独立取回确认，742 行）。**初审引文的真实出处**经定向复核自查确认为 [prolog_epilog.html L622–625](https://slurm.schedmd.com/archive/slurm-24.11.7/prolog_epilog.html)（`6d83380c…`，初审取证表同哈希）：“The GPU IDs of GPUs in the job allocation (if any). Available in the Prolog, SrunProlog, TaskProlog, Epilog, SrunEpilog and TaskProlog.”——页名误记为 gres.html，引文与行号本身无误。作者另定位的全局编号定义在 [sbatch.html L2926–2928](https://slurm.schedmd.com/archive/slurm-24.11.7/sbatch.html)：“The global GPU IDs of the GPUs allocated to this job. The GPU IDs are not relative to any device cgroup, even if devices are constrained with task/cgroup. Only set in batch and interactive jobs.”（srun.html 亦有 1 处）。两页措辞差异（global/非 cgroup 相对 vs 无此限定）在正文并列引用。
 
 ## unknown 清单
 
