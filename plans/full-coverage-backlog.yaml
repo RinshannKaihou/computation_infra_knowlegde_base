@@ -1856,7 +1856,7 @@ topics:
     - T05-01
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 05.1-G2
     gap_text: 缺少 GPU runtime/CDI 专项流程
@@ -1865,7 +1865,7 @@ topics:
     - T05-04
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 3
     gap_ref: 05.1-G3
     gap_text: 缺少容器隔离/运行环境基线
@@ -1918,7 +1918,7 @@ topics:
     - T05-03
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 05.2-G2
     gap_text: 缺少完整作业生命周期、控制器责任、退出/重试与状态清理机制
@@ -1927,7 +1927,7 @@ topics:
     - T05-03
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 在上述有限 v1 范围内，五方面均能定位到正文段落和精确支持来源；任务新增/修订稿及导航齐全，不能仅靠目录或邻域提及验收。
   - 每个平台/实现的适用和未知条件分开；发布/文档/源码版本固定后核对支持交集，不因概念相同推定兼容。
@@ -2005,7 +2005,7 @@ topics:
     - T05-05
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 05.4-G2
     gap_text: 缺少配额配置与调度策略权衡实例
@@ -2023,7 +2023,7 @@ topics:
     - T05-05
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 在上述有限 v1 范围内，五方面均能定位到正文段落和精确支持来源；任务新增/修订稿及导航齐全，不能仅靠目录或邻域提及验收。
   - 每个平台/实现的适用和未知条件分开；发布/文档/源码版本固定后核对支持交集，不因概念相同推定兼容。
@@ -3672,7 +3672,7 @@ batches:
   conservative_wave: 8
 - number: 22
   title: 集群平台
-  status: planned
+  status: done
   task_refs:
   - T05-02
   - T05-03
@@ -5430,8 +5430,8 @@ tasks:
   work_units: 2
 - id: T05-02
   title: Kubernetes 作业全生命周期与控制器责任
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 22
   operation: new
   content_type: concept
@@ -5467,8 +5467,8 @@ tasks:
   work_units: 2
 - id: T05-03
   title: Slurm 作业生命周期、设备资源与状态参考
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 22
   operation: new
   content_type: reference
@@ -5551,8 +5551,8 @@ tasks:
   work_units: 1
 - id: T05-05
   title: 扩展 gang、配额和双平台调度策略
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 22
   operation: revise
   content_type: concept
