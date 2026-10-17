@@ -33,7 +33,7 @@ related_ids:
 
 ## 已有正文
 
-[从物理设备到容器资源的状态链](device-resource-chain.md)：区分物理存在、驱动可见、插件上报、调度分配、容器访问和框架可用，并记录各阶段的证据边界。
+[从物理设备到容器资源的状态链](device-resource-chain.md)：区分物理存在、驱动可见、插件上报、调度分配、容器访问和框架可用，记录各阶段的证据边界；含 NVIDIA k8s-device-plugin v0.20.1 与 Slurm 24.11.7 GRES/TRES 两个固定实现的独立发现/分配/健康/回收视图（T05-04 修订草稿，待审阅）。
 
 [作业准入、调度与拓扑放置](admission-and-placement.md)：区分队列配额、准入、组级约束、节点放置与设备分配，保留 NPU 型号差异。
 
@@ -60,7 +60,7 @@ related_ids:
 
 - **05.1 容器、镜像、设备暴露与运行环境** — 已有[设备访问条件的概念草稿](device-resource-chain.md)，新增[镜像运行时基线](container-image-runtime-baseline.md)（T05-01 草稿，gpt-6.1-sol/xhigh 审阅已闭环，未做真实环境验证）；部署与实测待补充。
 - **05.2 Kubernetes、Slurm 等平台与作业生命周期** — 已有[Kueue/Volcano 状态边界](admission-and-placement.md)，新增[Kubernetes 作业生命周期](kubernetes-job-lifecycle.md)与[Slurm 状态参考](slurm-jobs-and-device-resources.md)（T05-02/T05-03 草稿，待审阅）；完整生命周期待审阅验收。
-- **05.3 设备发现、分配、健康上报与资源账本** — 已有[设备资源状态链](device-resource-chain.md)，已有容器内 NPU 可见性指南、公开案例和实验设计；现场验证待补充。
+- **05.3 设备发现、分配、健康上报与资源账本** — 已有[设备资源状态链](device-resource-chain.md)（T05-04 修订后含 GPU/Slurm 独立账本视图与三实现对照，待审阅），已有容器内 NPU 可见性指南、公开案例和实验设计；现场验证待补充。
 - **05.4 配额、排队、gang、放置与拓扑亲和性** — 已有[准入与放置概念](admission-and-placement.md)和[空闲设备但作业等待诊断指南](idle-resource-job-waiting-triage.md)；现场配置与验证待补充。
 - **05.5 多租户、隔离、资源争用与容量管理** — 待建设。
 - **05.6 节点上下线、升级、发布与变更** — 待建设。

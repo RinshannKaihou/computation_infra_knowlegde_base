@@ -131,7 +131,7 @@ sources:
   url: https://v1-32.docs.kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/device-plugins/
   kind: documentation
   registered_at: '2026-09-29'
-  revision: v1.32 documentation snapshot
+  revision: v1.32 documentation snapshot；2026-10-17 T05-04 轮重开同一版本化页，核对 Handling kubelet restarts（新 kubelet 启动删除 device-plugins 目录 sockets、插件监测自身 socket 删除并重注册）、Device plugin and unhealthy devices（allocatable 降/capacity 不变/既有 Pod 保持分配）、ResourceHealthStatus（v1.31 alpha 默认关→allocatedResourcesStatus）、Deployment（DaemonSet 重启失败 daemon Pod）、Monitoring（PodResources List/GetAllocatableResources/Get 端点与 socket 路径）
   license:
     status: partial
     scopes:
@@ -5239,7 +5239,7 @@ sources:
   url: https://github.com/NVIDIA/k8s-device-plugin/tree/v0.20.1
   kind: repository
   registered_at: '2026-10-14'
-  revision: tag v0.20.1；实开 README（curl 200）与 server.go L280–438/L448–481（Allocate：DevicesIds 校验→UUID/index 转换去重→QualifiedName→CdiDevices[].Name），核对 CDI/deviceListStrategy/failOnInitError/MIG 条目
+  revision: tag v0.20.1；实开 README（curl 200）与 server.go L280–438/L448–481（Allocate：DevicesIds 校验→UUID/index 转换去重→QualifiedName→CdiDevices[].Name），核对 CDI/deviceListStrategy/failOnInitError/MIG 条目；2026-10-17 T05-04 轮 curl 字节级取回 server.go 全 557 行＋internal/rm/health.go 全 363 行（行数与 blob 页一致），核对 ListAndWatch L267–285（FIXME 无 Unhealthy 恢复路径 L277）、Serve 崩溃重启环 L186–215（>5 次×<1h→Fatalf）、Start L129–160（健康检查启动失败降级 L151–157）、Stop L163–174、Register L229–256，健康检查 checkHealth L44–172（eventMask L78、全设备标记 L124–131/L145–153、MIG GI/CI 过滤 L160–167）、忽略 XID L232–240、DP_DISABLE/ENABLE_HEALTHCHECKS L34/L40；Allocate 链精确行号修正为 L306–320/L322–366/L377–409/L456–474（前轮 L280–438/L448–481 为区域超集锚）
   license:
     status: unknown
     scopes: []
