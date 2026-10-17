@@ -5244,7 +5244,7 @@ sources:
     status: unknown
     scopes: []
     notes: server.go/health.go 文件头 L1–15 为 Apache License 2.0 声明（2026-10-17 初审旁证，作者侧同见）；仓库根 LICENSE 未打开核对，本条保持 unknown；只链接并原创归纳。
-  notes: Batch 21 取证轮实开：设备发现/分配策略入口；调度策略细节见 T05-05。T05-04 两轮取证覆盖重启/重建/发现失败/健康标记粒度；kubelet devicemanager 侧、go-nvlib 枚举序、tegra、CDI handler 未取（unknown）。
+  notes: Batch 21 取证轮实开：设备发现/分配策略入口；调度策略细节见 T05-05。T05-04 两轮取证覆盖重启/重建/发现失败/健康标记粒度；kubelet devicemanager 侧、`VisitDevices` 回调序号与 NVML index、宿主 nvidia-smi 序号的关系（go-nvlib 未取）、tegra、CDI handler 未取（unknown）。
 - id: src.ascend.device-plugin-pkg-44385c13
   title: Ascend device-plugin 分配/挂载实现（mind-cluster 固定 commit）
   url: https://github.com/Ascend/mind-cluster/blob/44385c13d7b1d87def35f1604e8be4d16de6ca4e/component/ascend-device-plugin/pkg/server/plugin.go
