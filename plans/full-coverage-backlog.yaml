@@ -5,7 +5,7 @@ status: in_progress
 planning_stage: completed
 execution_started: true
 scope_version: content-v1-63-topics
-notice: 原63主题完整覆盖的有限交付基线；规划交付时任务为 planned。Batch 13（T00-01/T01-01/T01-02/T01-03/T01-04）已于 2026-10-08 交付并通过 gpt-6.1-sol / xhigh 审阅与两轮定向复核（18 项发现全部关闭）；Batch 14（T01-05/T01-06/T01-07/T01-08）已于 2026-10-09 交付并通过 gpt-6.1-sol / xhigh 审阅与三轮定向复核（15 项发现 B14-C01–C15 全部关闭，其中 C10 按「编写者核对记录、未独立核验」限定口径关闭）；Batch 15（T01-09/T02-01/T02-02/T02-03）已于 2026-10-09 交付并通过 gpt-6.1-sol / xhigh 审阅与两轮定向复核（8 项发现 B15-C01–C08 全部关闭，其中 C06 按「编写者核对记录、未独立核验」限定口径关闭）；Batch 16（T02-04/T02-05/T02-06/T02-07）已于 2026-10-09 交付并通过 gpt-6.1-sol / xhigh 审阅与两轮定向复核（7 项发现 B16-C01–C07 全部关闭）；当前依赖视图不代表实时运行/完成状态，不证明技术核验或真实环境完成。
+notice: 原63主题完整覆盖的有限交付基线；规划交付时任务为 planned。Batch 13（T00-01/T01-01/T01-02/T01-03/T01-04）已于 2026-10-08 交付并通过 gpt-6.1-sol / xhigh 审阅与两轮定向复核（18 项发现全部关闭）；Batch 14（T01-05/T01-06/T01-07/T01-08）已于 2026-10-09 交付并通过 gpt-6.1-sol / xhigh 审阅与三轮定向复核（15 项发现 B14-C01–C15 全部关闭，其中 C10 按「编写者核对记录、未独立核验」限定口径关闭）；Batch 15（T01-09/T02-01/T02-02/T02-03）已于 2026-10-09 交付并通过 gpt-6.1-sol / xhigh 审阅与两轮定向复核（8 项发现 B15-C01–C08 全部关闭，其中 C06 按「编写者核对记录、未独立核验」限定口径关闭）；Batch 16（T02-04/T02-05/T02-06/T02-07）已于 2026-10-09 交付并通过 gpt-6.1-sol / xhigh 审阅与两轮定向复核（7 项发现 B16-C01–C07 全部关闭）；Batch 17（T02-08/T02-09/T02-10/T02-11）已于 2026-10-09 交付并经 gpt-6.1-sol / xhigh 审阅与六轮定向复核（13 项发现 B17-C01–C13 中 12 项关闭；C08 逐算子累加精度与 cubeMathType 透传证据未关闭，2026-10-14 经例外清单条件验收、长期 open 具名跟踪，见 docs/research/batch-17-t02-10-exception.md）；Batch 18（T03-01/T03-02/T03-03/T03-04）已于 2026-10-09 交付并经 gpt-6.1-sol / xhigh 审阅与八轮定向复核（16 项发现 B18-C01–C16 全部关闭，C01 为审阅误读撤销、C16 为首轮修订引入）；Batch 19（T03-05/T03-06/T03-07/T03-08/T04-01）已于 2026-10-13 交付并经 gpt-6.1-sol / xhigh 审阅与多轮定向复核（27 项发现 B19-C01–C27 全部关闭；BLOCKED-1 HCCL Test×目标 CANN/HDK/机型交集无关闭路径，经例外清单条件验收、长期 open 具名跟踪，T03-06 acceptance 5 未验收，见 docs/research/batch-19-blocked-1-exception.md）；Batch 20（T04-02/T04-03/T04-04/T04-05）已于 2026-10-13 交付并经 claude-opus-5-5 审阅与逐任务定向复核（40 项发现 B20-C01–C40 全部关闭，无例外）；Batch 21 的 T04-06/T04-07 已于 2026-10-13 交付并经 claude-opus-5-5 审阅闭环（B21-C01–C18 全部关闭），T05-01 经两轮作废初审后改 codex gpt-6.1-sol / xhigh 初审与 33 轮定向复核（B21-C30–C34 全部关闭）于 2026-10-17 闭环，T04-08 从未启动（无交付与审阅记录），批次保持未完成；Batch 22（T05-02/T05-03/T05-05/T05-04）已于 2026-10-17 交付并经 claude-opus-5-5 审阅与定向复核（44 项发现 B22-C01–C44 全部关闭）及整批验收审阅（B22X-C01/C02 关闭）；Batch 17–21 的 exit_gate 主题范围复核环节未执行，01.3/02.5/02.6/03.1/03.2/03.3/03.4/03.5/03.6/03.7/04.1–04.6 的主题验收与缺口判定均未回填、保持 planned/open，留待补做；当前依赖视图不代表实时运行/完成状态，不证明技术核验或真实环境完成。
 input_snapshot:
   audit_path: plans/topic-coverage.yaml
   outline_path: content-outline.md
@@ -3579,7 +3579,7 @@ batches:
   completion_record: docs/research/batch-16-source-audit.md
 - number: 17
   title: 执行栈
-  status: planned
+  status: done
   task_refs:
   - T02-08
   - T02-09
@@ -3594,9 +3594,11 @@ batches:
   minimal_predecessor_batches:
   - 16
   conservative_wave: 5
+  completed_at: '2026-10-14'
+  completion_record: docs/research/batch-17-source-audit.md
 - number: 18
   title: 互联通信
-  status: planned
+  status: done
   task_refs:
   - T03-01
   - T03-02
@@ -3612,9 +3614,11 @@ batches:
   minimal_predecessor_batches:
   - 15
   conservative_wave: 4
+  completed_at: '2026-10-10'
+  completion_record: docs/research/batch-18-source-audit.md
 - number: 19
   title: 互联通信、数据存储
-  status: planned
+  status: done
   task_refs:
   - T03-05
   - T03-06
@@ -3633,9 +3637,11 @@ batches:
   - 17
   - 18
   conservative_wave: 6
+  completed_at: '2026-10-13'
+  completion_record: docs/research/batch-19-source-audit.md
 - number: 20
   title: 数据存储
-  status: planned
+  status: done
   task_refs:
   - T04-02
   - T04-03
@@ -3651,6 +3657,8 @@ batches:
   minimal_predecessor_batches:
   - 19
   conservative_wave: 7
+  completed_at: '2026-10-13'
+  completion_record: docs/research/batch-20-source-audit.md
 - number: 21
   title: 数据存储、集群平台
   status: planned
@@ -4556,8 +4564,8 @@ tasks:
   work_units: 2
 - id: T02-08
   title: 框架到设备后端的适配与能力核对
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 17
   operation: new
   content_type: reference
@@ -4597,8 +4605,8 @@ tasks:
   work_units: 2
 - id: T02-09
   title: GPU 分配器、保留内存与 OOM 证据
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 17
   operation: new
   content_type: concept
@@ -4633,8 +4641,8 @@ tasks:
   work_units: 2
 - id: T02-10
   title: dtype、layout、格式转换与有限精度语义
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 17
   operation: new
   content_type: concept
@@ -4674,8 +4682,8 @@ tasks:
   work_units: 2
 - id: T02-11
   title: Ascend 主机传输、stream 与同步证据补齐
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 17
   operation: revise
   content_type: concept
@@ -4710,8 +4718,8 @@ tasks:
   work_units: 1
 - id: T03-01
   title: 节点内、节点间与超节点互联路径参考
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 18
   operation: new
   content_type: reference
@@ -4749,8 +4757,8 @@ tasks:
   work_units: 2
 - id: T03-02
   title: Ethernet、IB、RoCE 与 RDMA 机制
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 18
   operation: new
   content_type: concept
@@ -4786,8 +4794,8 @@ tasks:
   work_units: 2
 - id: T03-03
   title: RDMA 网络基线、路由与拥塞诊断
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 18
   operation: new
   content_type: procedure
@@ -4828,8 +4836,8 @@ tasks:
   work_units: 2
 - id: T03-04
   title: 扩展集合通信数据流、算法与工作负载映射
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 18
   operation: revise
   content_type: concept
@@ -4865,8 +4873,8 @@ tasks:
   work_units: 2
 - id: T03-05
   title: RCCL 运行条件、观测与最小验证档案
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 19
   operation: new
   content_type: reference
@@ -4904,8 +4912,8 @@ tasks:
   work_units: 2
 - id: T03-06
   title: 三套通信库能力与版本条件档案
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 19
   operation: new
   content_type: reference
@@ -4953,8 +4961,8 @@ tasks:
   work_units: 1
 - id: T03-07
   title: 扩展跨节点、rail 与拥塞性能基线口径
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 19
   operation: revise
   content_type: reference
@@ -4995,8 +5003,8 @@ tasks:
   work_units: 1
 - id: T03-08
   title: 带宽退化、通信热点与来源案例补齐
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 19
   operation: revise
   content_type: procedure
@@ -5036,8 +5044,8 @@ tasks:
   work_units: 1
 - id: T04-01
   title: 扩展数据集身份、预处理、缓存与数据游标
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 19
   operation: revise
   content_type: concept
@@ -5077,8 +5085,8 @@ tasks:
   work_units: 2
 - id: T04-02
   title: 本地与共享文件存储的版本化参考
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 20
   operation: new
   content_type: reference
@@ -5120,8 +5128,8 @@ tasks:
   work_units: 2
 - id: T04-03
   title: 对象与并行存储的版本化参考
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 20
   operation: new
   content_type: reference
@@ -5161,8 +5169,8 @@ tasks:
   work_units: 2
 - id: T04-04
   title: 模型制品与 Checkpoint 的传输、发布和读回
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 20
   operation: new
   content_type: procedure
@@ -5204,8 +5212,8 @@ tasks:
   work_units: 2
 - id: T04-05
   title: 扩展数据、制品与后端完整性校验证据
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 20
   operation: revise
   content_type: concept
@@ -5248,8 +5256,8 @@ tasks:
   work_units: 1
 - id: T04-06
   title: 存储负载、容量与长尾基线口径
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 21
   operation: new
   content_type: reference
@@ -5290,8 +5298,8 @@ tasks:
   work_units: 2
 - id: T04-07
   title: 存储客户端、后端异常与恢复验证
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 21
   operation: new
   content_type: procedure
