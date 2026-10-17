@@ -5509,8 +5509,8 @@ tasks:
   work_units: 2
 - id: T05-04
   title: 扩展 GPU 与 Slurm 设备资源账本
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 22
   operation: revise
   content_type: concept
