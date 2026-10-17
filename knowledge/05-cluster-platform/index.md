@@ -39,9 +39,9 @@ related_ids:
 
 [空闲设备但作业等待诊断指南](idle-resource-job-waiting-triage.md)：以 Kueue v0.19.0 为样板，把“有空闲设备但作业不运行”定位到接管、配额、准入、拓扑、放置或设备分配的具体等待层。
 
-[Kubernetes 作业全生命周期与控制器责任](kubernetes-job-lifecycle.md)：以 Kubernetes v1.32 与 Kueue v0.19.0 为样板，解释提交、准入、运行、退出、重试、取消和资源清理（T05-02 草稿，待审阅）。
+[Kubernetes 作业全生命周期与控制器责任](kubernetes-job-lifecycle.md)：以 Kubernetes v1.32 与 Kueue v0.19.0 为样板，解释提交、准入、运行、退出、重试、取消和资源清理（T05-02，claude-opus-5-5 审阅已闭环，未做真实环境验证）。
 
-[Slurm 作业生命周期、设备资源与状态参考](slurm-jobs-and-device-resources.md)：固定 Slurm 24.11.7 归档，查询 Job/Step、GRES/TRES、分区/QOS/优先级/预留、cgroup 与状态（T05-03 草稿，待审阅）。
+[Slurm 作业生命周期、设备资源与状态参考](slurm-jobs-and-device-resources.md)：固定 Slurm 24.11.7 归档，查询 Job/Step、GRES/TRES、分区/QOS/优先级/预留、cgroup 与状态（T05-03，claude-opus-5-5 审阅已闭环，未做真实环境验证）。
 
 ## 本章范围
 
@@ -59,7 +59,7 @@ related_ids:
 ## 二级主题地图
 
 - **05.1 容器、镜像、设备暴露与运行环境** — 已有[设备访问条件的概念草稿](device-resource-chain.md)，新增[镜像运行时基线](container-image-runtime-baseline.md)（T05-01 草稿，gpt-6.1-sol/xhigh 审阅已闭环，未做真实环境验证）；部署与实测待补充。
-- **05.2 Kubernetes、Slurm 等平台与作业生命周期** — 已有[Kueue/Volcano 状态边界](admission-and-placement.md)，新增[Kubernetes 作业生命周期](kubernetes-job-lifecycle.md)与[Slurm 状态参考](slurm-jobs-and-device-resources.md)（T05-02/T05-03 草稿，待审阅）；完整生命周期待审阅验收。
+- **05.2 Kubernetes、Slurm 等平台与作业生命周期** — 已有[Kueue/Volcano 状态边界](admission-and-placement.md)，新增[Kubernetes 作业生命周期](kubernetes-job-lifecycle.md)与[Slurm 状态参考](slurm-jobs-and-device-resources.md)（T05-02/T05-03，审阅已闭环，仍为 draft 且未做真实环境验证）；05.2 主题内容验收仍为 planned、属 Batch 24（T05-08/T05-10 等未交付）。
 - **05.3 设备发现、分配、健康上报与资源账本** — 已有[设备资源状态链](device-resource-chain.md)（T05-04 修订后含 GPU/Slurm 独立账本视图与三实现对照，审阅已闭环），已有容器内 NPU 可见性指南、公开案例和实验设计；现场验证待补充。
 - **05.4 配额、排队、gang、放置与拓扑亲和性** — 已有[准入与放置概念](admission-and-placement.md)和[空闲设备但作业等待诊断指南](idle-resource-job-waiting-triage.md)；现场配置与验证待补充。
 - **05.5 多租户、隔离、资源争用与容量管理** — 待建设。
