@@ -39,7 +39,7 @@ verification:
     - src.pytorch.data-loader-2.6
     - src.pytorch.dataloader-source-v2.6.0
     - src.pytorch.profiler-2.6
-  notes: "已核对 PyTorch 2.6 data.html 参数语义、v2.6.0 固定 dataloader.py 的 worker 错误/超时/prefetch/record_function 实现和 profiler.html 的观测能力；未在真实环境执行训练、profiling 或变更验证。2026-10-18（T04-08 补交）复用登记版本化后端来源（内核 v6.16 NFS、nfs(5)、Squid RGW S3 与健康检查、Lustre 2.x 手册、fio 3.43 计时锚点、admin-guide/ext4），新增后端支路入口与同窗计时对齐节；本轮未重取上游页面，新增条目以 T04-02/03/06/07 已核对口径与初审（B21-C35–C52）修订为准；未运行任何工具。"
+  notes: "已核对 PyTorch 2.6 data.html 参数语义、v2.6.0 固定 dataloader.py 的 worker 错误/超时/prefetch/record_function 实现和 profiler.html 的观测能力；未在真实环境执行训练、profiling 或变更验证。2026-10-18（T04-08 补交）复用登记版本化后端来源（内核 v6.16 NFS、nfs(5)、RFC 8881、Squid RGW S3 与健康检查、Lustre 2.x 手册、fio 3.43 计时锚点、admin-guide/ext4），新增后端支路入口与同窗计时对齐节；本轮未重取上游页面，新增条目以 T04-02/03/06/07 已核对口径与初审及定向复核（B21-C35–C59）修订为准；未运行任何工具。"
 ---
 
 # 训练数据加载饥饿诊断指南

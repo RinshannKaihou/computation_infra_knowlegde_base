@@ -474,3 +474,11 @@
 - C53（stager 重叠句缺条件，初审关闭条件本身欠准）：补"且 `should_synchronize_after_execute=False`（协议默认 True；为 True 时 saver 返回 Future 前调用 synchronize_staging()）"。
 - C56（新增两类 unknown 未入来源记录清单）：unknown 清单第 5 项补"客户端 pNFS 实现范围"与"冷/热基线中属性/目录项缓存与 v4 委托是否随本机 drop_caches 失效"；checkpoint 缺口声明"完整清单"由此重新成立。
 - C57（"对象侧无客户端缓存层语义"无出处）：删除该句，RGW 缓存格保留"冷/热基线入口 unknown（对象侧缓存语义无已核对来源）"。
+
+## T04-08 第三轮修订（2026-10-18，claude-opus-5-5 第二次定向复核 3/6 CLOSED → 处理 C50/C54/C56/C58/C59 共 5 项，均 P3）
+
+- C54（① 未限定 async_save、缺同步 save 对照）：① 补"async_save 语境；同步 save 全程在调用线程执行、无 staging 与后台段之分"。
+- C58（L39 阶段链与 ① 矛盾）：阶段链改"状态收集 → staging（主线程）→ 后台写入（含序列化）→ 内核页缓存与 fsync → 存储后端 → 读与反序列化"。
+- C56（unknown 清单仍缺 NFS 冷基线服务器侧）：清单第 5 项补"冷/热基线的服务器侧"。
+- C50（fio 行"负载矩阵参数"标直接实为经链接）：fio 行收窄为计时口径直接引用，负载矩阵参数注明经 storage-workload-baselines.md 链接沿用。
+- C59（新锚点与 notes 依据未同步）：来源记录 DCP 行补 filesystem.py L263/default_planner.py L148；两篇 notes 修订依据扩为"初审及定向复核（B21-C35–C59）"；饥饿 notes 复用来源清单补 RFC 8881。
