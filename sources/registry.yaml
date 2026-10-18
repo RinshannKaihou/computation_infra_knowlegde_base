@@ -5529,3 +5529,306 @@ sources:
     scopes: []
     notes: Apache-2.0 未在本轮打开核对；只链接并原创归纳。
   notes: Batch 22 取证轮实开：重启/重试/失败映射；handler 事件路径未覆盖（unknown）。
+- id: src.kubernetes.node-drain-v1-32
+  title: Kubernetes v1.32 节点 drain 文档与 kubectl drain 参考（静态快照）
+  url: https://v1-32.docs.kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: v1.32 documentation snapshot（静态快照页，页头标不再积极维护）；FetchURL 只读核对 2026-10-18；另实开同快照 kubectl_drain 自动生成参考页 https://v1-32.docs.kubernetes.io/docs/reference/kubectl/generated/kubectl_drain/
+  license:
+    status: partial
+    scopes:
+    - scope: Kubernetes website 仓库文档许可声明；main 链接为可变定位
+      identifier: CC-BY-4.0
+      url: https://github.com/kubernetes/website/blob/main/LICENSE
+    notes: 沿用既有 K8s 文档条目（src.kubernetes.device-plugins-v1-32、src.kubernetes.job-lifecycle-v1-32）已登记的许可口径，本轮未重新打开 LICENSE 页；仅链接并原创归纳。
+  notes: Batch 23（T05-08）取证：safely-drain-node（drain 完成语义、uncordon、并行 drain 与 PDB、建议 AlwaysAllow）与 kubectl_drain 参考（--ignore-daemonsets/--delete-emptydir-data/--force/--grace-period 默认 -1/--timeout 0 无限/--disable-eviction/--skip-wait-for-delete-timeout、mirror Pod 不经 API、DS Pod 不删）。未执行任何 drain 命令。
+- id: src.kubernetes.eviction-pdb-v1-32
+  title: Kubernetes v1.32 API-initiated Eviction 与 PodDisruptionBudget 文档（静态快照）
+  url: https://v1-32.docs.kubernetes.io/docs/concepts/scheduling-eviction/api-eviction/
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: v1.32 documentation snapshot；FetchURL 只读核对 2026-10-18；同轮实开 disruptions 与 configure-pdb 两页
+  license:
+    status: partial
+    scopes:
+    - scope: Kubernetes website 仓库文档许可声明；main 链接为可变定位
+      identifier: CC-BY-4.0
+      url: https://github.com/kubernetes/website/blob/main/LICENSE
+    notes: 沿用既有 K8s 文档条目许可口径，本轮未重新打开 LICENSE 页；仅链接并原创归纳。
+  notes: Batch 23（T05-08）取证：api-eviction（policy/v1 Eviction、200/429/500、删除六步序列、stuck eviction 处置）、disruptions（自愿/非自愿分类、PDB 语义、DisruptionTarget 五 reason、三节点 drain 状态例子）、configure-pdb（取整、健康判定 Ready=True、unhealthyPodEvictionPolicy 两策略及 IfHealthyBudget 的 currentHealthy/desiredHealthy 判断、零剩余预算对健康 Pod 的阻塞与 AlwaysAllow 不健康 Pod 例外、重叠选择器拒驱逐、任意负载限制）。未配置或触发任何 PDB。
+- id: src.kubernetes.node-shutdown-v1-32
+  title: Kubernetes v1.32 Graceful/Non-graceful Node Shutdown 文档（静态快照）
+  url: https://v1-32.docs.kubernetes.io/docs/concepts/cluster-administration/node-shutdown/
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: v1.32 documentation snapshot；FetchURL 只读核对 2026-10-18
+  license:
+    status: partial
+    scopes:
+    - scope: Kubernetes website 仓库文档许可声明；main 链接为可变定位
+      identifier: CC-BY-4.0
+      url: https://github.com/kubernetes/website/blob/main/LICENSE
+    notes: 沿用既有 K8s 文档条目许可口径，本轮未重新打开 LICENSE 页；仅链接并原创归纳。
+  notes: Batch 23（T05-08）取证：优雅关闭（systemd inhibitor、shutdownGracePeriod 系列默认 0、NotReady reason、两阶段与按优先级分桶、指标名）、非优雅关闭（out-of-service 污点→强删＋立即 detach、StatefulSet 卡 terminating 与 VolumeAttachment 滞留）、6 分钟 force detach 与 disable-force-detach-on-timeout、CSI 顺序违背与数据损坏风险、Windows alpha。未执行任何关机。
+- id: src.kubernetes.node-lifecycle-v1-32
+  title: Kubernetes v1.32 Node 架构与污点驱逐文档（静态快照）
+  url: https://v1-32.docs.kubernetes.io/docs/concepts/architecture/nodes/
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: v1.32 documentation snapshot；FetchURL 只读核对 2026-10-18；同轮实开 taint-and-toleration 页
+  license:
+    status: partial
+    scopes:
+    - scope: Kubernetes website 仓库文档许可声明；main 链接为可变定位
+      identifier: CC-BY-4.0
+      url: https://github.com/kubernetes/website/blob/main/LICENSE
+    notes: 沿用既有 K8s 文档条目许可口径，本轮未重新打开 LICENSE 页；仅链接并原创归纳。
+  notes: Batch 23（T05-08）取证：nodes（Node 名唯一性与同名同对象假设、自注册、cordon、心跳 Lease、node controller 5 s 检查/默认 5 分钟驱逐/限速 0.1/s/区域降级 0.01/s/小集群阈值 50）与 taint-and-toleration（NoExecute 语义、tolerationSeconds、七内建污点、失联期 Pod 续跑、DaemonSet 自动容忍）。未操作任何节点。
+- id: src.kubernetes.daemonset-static-pod-v1-32
+  title: Kubernetes v1.32 DaemonSet 与 Static Pod 文档（静态快照）
+  url: https://v1-32.docs.kubernetes.io/docs/concepts/workloads/controllers/daemonset/
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: v1.32 documentation snapshot；FetchURL 只读核对 2026-10-18；同轮实开 static-pod 任务页
+  license:
+    status: partial
+    scopes:
+    - scope: Kubernetes website 仓库文档许可声明；main 链接为可变定位
+      identifier: CC-BY-4.0
+      url: https://github.com/kubernetes/website/blob/main/LICENSE
+    notes: 沿用既有 K8s 文档条目许可口径，本轮未重新打开 LICENSE 页；仅链接并原创归纳。
+  notes: Batch 23（T05-08）取证：daemonset（逐节点建 Pod/立即补建/自动容忍表含 unschedulable:NoSchedule/删除级联与 orphan 收养）与 static-pod（kubelet 直管、mirror Pod 可见不可删、manifest 目录扫描增删、crictl ATTEMPT 列、kubelet 自动重启）。未创建或删除任何 Pod。
+- id: src.kubernetes.storage-reclaim-v1-32
+  title: Kubernetes v1.32 PV/PVC 回收与卷生命周期文档（静态快照）
+  url: https://v1-32.docs.kubernetes.io/docs/concepts/storage/persistent-volumes/
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: v1.32 documentation snapshot；FetchURL 只读核对 2026-10-18；同轮实开 volumes 概念页 emptyDir/hostPath/local 节
+  license:
+    status: partial
+    scopes:
+    - scope: Kubernetes website 仓库文档许可声明；main 链接为可变定位
+      identifier: CC-BY-4.0
+      url: https://github.com/kubernetes/website/blob/main/LICENSE
+    notes: 沿用既有 K8s 文档条目许可口径，本轮未重新打开 LICENSE 页；仅链接并原创归纳。
+  notes: Batch 23（T05-08）取证：persistent-volumes（Retain/Delete/Recycle 三策略与 v1.32 仅 nfs/hostPath 支持 Recycle、pvc-protection/pv-protection in-use finalizer、CSI external-provisioner finalizer 自 v1.31、PV 四 phase）与 volumes（emptyDir 随 Pod 离开节点永久删除、hostPath 无生命周期管理、local 卷节点绑定与数据丢失容忍）。未删除任何卷。
+- id: src.slurm.node-power-lifecycle-24.11.7
+  title: Slurm 24.11.7 slurmd 节点 daemon 与 power_save 生命周期（归档）
+  url: https://slurm.schedmd.com/archive/slurm-24.11.7/slurmd.html
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: 24.11.7 archive（静态归档，man2html 生成时间 2025-11-11 GMT）；FetchURL 只读核对 2026-10-18
+  license:
+    status: unknown
+    scopes: []
+    notes: SchedMD 站点许可未核对；只链接并原创归纳，未复制手册长段。
+  notes: Batch 23（T05-08）取证：slurmd.html（daemon 职责、SIGTERM/SIGINT/SIGQUIT 干净关闭、SIGHUP 重读配置、-c 异常后清系统锁、-b 上报重启、-M mlockall、--systemd）与 power_save.html（SuspendTime/Timeout、ResumeTimeout 默认 60 s 未注册→DOWN＋重排＋"Node unexpectedly rebooted"、电源五态与 sinfo 符号、手动 power_down/power_down_asap/power_down_force/power_up 语义、ResumeProgram/SuspendProgram 运行身份与容错要求、SLURM_RESUME_FILE 10 s 窗口、PowerDownOnIdle 的 COMPLETING→IDLE 条件）。24.11.7 归档无 node_states.html（404 实开确认）。未执行任何 Slurm 命令。
+- id: src.kubernetes.version-skew-v1-32
+  title: Kubernetes v1.32 Version Skew Policy（静态快照；另观察可变主页）
+  url: https://v1-32.docs.kubernetes.io/releases/version-skew-policy/
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: v1.32 documentation snapshot（页面自述 "no longer actively maintained ... static snapshot"）；2026-10-18 经 FetchURL 实开；同日实开可变主页 https://kubernetes.io/releases/version-skew-policy/（当时最新 1.37、维护分支 1.37/1.36/1.35，示例 1.36→1.37），正文引用以 v1.32 快照为准
+  license:
+    status: partial
+    scopes:
+    - scope: Kubernetes website 仓库文档许可声明；main 链接为可变定位
+      identifier: CC-BY-4.0
+      url: https://github.com/kubernetes/website/blob/main/LICENSE
+    notes: 沿用既有 k8s 文档条目（如 src.kubernetes.device-plugins-v1-32）已核对的许可口径，本轮未重开 website LICENSE；仅链接并原创归纳。
+  notes: Batch 23（T05-09）取证：Supported versions（维护分支窗口）与 Supported version skew 全组件规则（apiserver HA ±1 minor、kubelet 不新于 apiserver 且可旧 3 minor（<1.25 为 2）、kube-proxy 同 kubelet 且与同节点 kubelet ±3、kcm/scheduler/ccm 不新于 apiserver 且可旧 1、kubectl ±1；HA 混版收窄示例）；Supported component upgrade order（1.31→1.32 示例：apiserver→kcm/scheduler/ccm 无相互顺序→kubelet 可选留旧→kube-proxy 可选留旧；kubelet minor 升级前必须 drain、不支持原地 minor 升级；持续落后 3 minor 阻塞控制面升级的 Warning）。未覆盖：各部署工具的额外限制（页面自述存在）。
+- id: src.kubernetes.kubeadm-upgrade-v1-32
+  title: Kubernetes v1.32 Upgrading kubeadm clusters（静态快照）
+  url: https://v1-32.docs.kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: v1.32 documentation snapshot；2026-10-18 经 FetchURL 实开；内容覆盖 1.31.x→1.32.x 与 1.32.x→1.32.y，跨 minor 跳过不支持
+  license:
+    status: partial
+    scopes:
+    - scope: Kubernetes website 仓库文档许可声明；main 链接为可变定位
+      identifier: CC-BY-4.0
+      url: https://github.com/kubernetes/website/blob/main/LICENSE
+    notes: 同上沿用既有口径；仅链接并原创归纳。
+  notes: Batch 23（T05-09）取证：workflow（primary CP→additional CP→workers）；Before you begin（读 release notes、备份、swap 关）；kubeadm upgrade plan/apply/node 分工；首台 CP 后手动升 CNI；drain/uncordon 与 kubelet 重启验证；workers "one node at a time or few nodes at a time"；Verify（kubectl get nodes 全 Ready）；Recovering from a failure state（幂等重跑、apply --force、/etc/kubernetes/tmp 下 kubeadm-backup-etcd 与 kubeadm-backup-manifests 手动恢复 /var/lib/etcd 与 /etc/kubernetes/manifests）；How it works（apply 预检含 skew 强制、控制面组件失败回滚、CoreDNS/kube-proxy/RBAC、证书 180 天续期）。页面无 downgrade 节（unknown 边界）。未覆盖：Linux/Windows worker 子页细节。
+- id: src.slurm.upgrades-24.11.7
+  title: Slurm 24.11.7 Upgrade Guide（归档）与 Quick Start Admin 状态节
+  url: https://slurm.schedmd.com/archive/slurm-24.11.7/upgrades.html
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: 24.11.7 archive（upgrades.html 页脚 Last modified 15 January 2025；quickstart_admin.html 页脚 Last modified 14 November 2024）；2026-10-18 经 FetchURL 实开
+  license:
+    status: unknown
+    scopes: []
+    notes: SchedMD 站点许可未核对；只链接并原创归纳，未复制手册长段。
+  notes: Batch 23（T05-09）取证：Release Cycle（24.05 起 6 个月周期）/ Compatibility Window（24.11 起兼容前三个大版本；23.02–25.11 兼容表；不兼容版本启动即失败须分步，窗口外升级杀作业丢账目）/ EPEL 排除建议 / Pre-Release 风险 / Reverting an Upgrade（daemon 启动即迁移状态与库；回退不识别新状态、拒启；只能备份/镜像/快照恢复且丢失后续；至少恢复 StateSaveLocation 与账目库）/ Minor Upgrades（维护版更宽容但仍须备份）/ Upgrade Procedure（顺序 slurmdbd→slurmctld→slurmd→客户端→重编译插件→测试→归档；等旧 slurmstepd 作业结束；同机多 daemon 须同升）/ Preparation（RELEASE_NOTES/NEWS、配置变更测试环境先行、停机计划、OpenAPI data_parser 移除表与 spec_only 对比）/ Create Backups（StateSaveLocation、sysconfdir、mysqldump 含 --single-transaction 限制）/ slurmdbd（先升、同/高于 slurmctld、首启前台 -D 防 systemd 超时、purge 缩短停机、sacct/sacctmgr 停机期间不可用、MaxDBDMsgs）/ Database Server（MariaDB 10.2.1+ 需 slurmdbd ≥22.05.7）/ slurmctld（调大 SlurmdTimeout/SlurmctldTimeout 并 reconfig 防 DOWN 杀作业）/ slurmd（可与 ctld 同升或分组滚动）/ Customized Plugins（libslurm soname 每大版本递增须重编译、PMI-1/2 例外、ldd 检查法）/ Seamless Upgrades（独立目录+符号链接仅回切二进制）。另开 quickstart_admin.html：Upgrades 节仅回链 Upgrade Guide；Starting the Daemons 的 -c 清状态语义；Configuration 的 StateSaveLocation 部署建议（低时延本地盘、HA 共享盘勿用 NFS、无状态启动取消作业）。未执行任何 Slurm 命令。
+- id: src.nvidia.gpu-operator-upgrade-25.3
+  title: NVIDIA GPU Operator 25.3 升级文档（upgrade 与 GPU Driver Upgrades 页）
+  url: https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/25.3/upgrade.html
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: 25.3 次版本文档树（URL 级固定；2026-10-18 观察时 upgrade 页示例 RELEASE_TAG=v25.3.4）；同树 gpu-driver-upgrades.html 同轮实开；/latest/ 可变树当时为 26.7.2（仅定位指针，不引正文）
+  license:
+    status: unknown
+    scopes: []
+    notes: 公开可读不等于允许全文再分发；本库只链接并作原创归纳，Operator 软件与镜像许可另行核验。
+  notes: Batch 23（T05-09）取证：upgrade.html（PSA privileged 前提；Helm 升级两选项——手动 apply clusterpolicies/nvidiadrivers/NFD 三 CRD 或 pre-upgrade hook（v22.09 起、v24.9.0 起默认开、用算子镜像、拉取失败需 --no-hooks 删除）；ClusterPolicy kubectl edit 动态更新；OpenShift 走 OLM）＋ gpu-driver-upgrades.html（驱动升级五步骤（停客户端→卸模块→新 pod→装驱动加载模块→恢复客户端）；只管容器化驱动；upgrade controller 默认开；driver.version patch 触发；状态机十一态含 validation-required（operator-validator）与 upgrade-failed；maxParallelUpgrades 默认 1、maxUnavailable 默认 25% 且已 cordon 节点占额度；waitForCompletion/gpuPodDeletion（默认 300s 强删）/drain（默认关）门槛；autoUpgrade=false 暂停、nvidia.com/gpu-driver-upgrade.skip=true 跳过；六项 Prometheus 指标与 GPUDriverUpgrade 事件；失败重试=重打 upgrade-required 标签；备选 k8s-driver-manager（initContainer、无状态机观测、不再加新特性）；daemonsets.updateStrategy=OnDelete 手工控波次）。未覆盖：算子本体回退节（无，unknown）；driver 降级步骤（无专门节）；operator-validator 具体检查项。
+- id: src.nvidia.gpu-operator-platform-support-25.3
+  title: NVIDIA GPU Operator 25.3 Platform Support 与 Release Notes（配套矩阵/生命周期/已知问题）
+  url: https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/25.3/platform-support.html
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: 25.3 次版本文档树；2026-10-18 观察时 release notes 顶条 25.3.4（树内最新补丁）；platform-support 与同树 release-notes.html 同轮实开
+  license:
+    status: unknown
+    scopes: []
+    notes: 公开可读不等于允许全文再分发；本库只链接并作原创归纳。
+  notes: Batch 23（T05-09）取证：Versioning（calVer YY.MM.PP）/ Life Cycle（前一 major 维护、更早 EOL；"Upgrades are only supported within a major release or to the next major release"；25.3.x GA/24.9.x Maintenance/24.6.x- EOL）/ Component Matrix 指引 / 支持 GPU 与系统表（含 GH200 需 open kernel 模块等注）/ OS×K8s 表（裸金属/直通 1.29—1.33；OpenShift 4.12—4.19；各 OS 行）/ 预编译驱动表（Ubuntu 22.04/24.04 × R535/R570/R580）/ 容器运行时表（containerd 1.6–2.1、CRI-O）/ GPUDirect RDMA/Storage 配套（Network Operator 版本）/ KubeVirt/vGPU 表；release-notes.html（25.3.4 顶条：默认驱动 580.82.07；25.3.2 已知问题 CDMM 与 MIG/GDS 不兼容、570.124.06 等 MIG 混合 Pending 建议升 570.172.08；25.3.1 组件版本清单 toolkit v1.17.8/DCGM v4.2.3/device plugin v0.17.2/NFD v0.17.3/GDRCopy v2.5.0）。platform-support 脚注 1 另载 570.x MIG 混合问题绕行建议「downgrade the driver to version 570.86.15」。未逐条展开 vGPU/KubeVirt 子表与全部 Known Issues。
+- id: src.ascend.mind-cluster-upgrade-v26.1.1
+  title: MindCluster v26.1.1（commit 44385c13）升级与版本配套文档（release_notes 与安装/开发者指南升级章）
+  url: https://github.com/Ascend/mind-cluster/blob/44385c13d7b1d87def35f1604e8be4d16de6ca4e/docs/zh/release_notes.md
+  kind: repository
+  registered_at: '2026-10-18'
+  revision: commit 44385c13d7b1d87def35f1604e8be4d16de6ca4e（annotated tag v26.1.1）；2026-10-18 经 FetchURL 实开 raw 与 blob 页；docs/zh/release_notes.md 产品版本字段写 26.1.0
+  license:
+    status: partial
+    scopes:
+    - scope: 固定 commit 的 docs 目录文档；第三方素材按各自声明核查
+      identifier: CC-BY-4.0
+      url: https://github.com/Ascend/mind-cluster/blob/44385c13d7b1d87def35f1604e8be4d16de6ca4e/docs/LICENSE
+    notes: docs/LICENSE 由既有条目 src.ascend.mind-cluster-v26.1.1 在同 commit 核对，本轮未重开；仅链接并原创归纳。
+  notes: Batch 23（T05-09）取证（全部固定 commit）：release_notes.md（配套表 1–6：26.1.0↔CANN 9.1.0↔HDK 分产品↔MindSpeed-LLM 26.1.0↔TorchNPU 26.1.0↔MindSpore 2.10.0；各组件勿跨版本混用；关键特性变更 deviceResetTimeout 60s→600s 等；升级影响：过程「无」、Infer Operator 日志目录 root 权限；遗留问题 gloo 段错误概率约 0.00125）；scheduling/03_installation_guide/04_upgrade/menu_upgrade.md＋02_helm_upgrade.md（可跨大版本 7.x→26.x；仅 Helm 3.x；八款可 Helm 升级组件清单；helm list -A 判断管理方式；CRD 三组件先升且可能中断工作负载；--dry-run；升级后组件状态确认；异常三选（回退/重升/卸载重装）；版本回退=helm history+helm rollback 先 mindcluster-crds 后 mindcluster；kubectl 安装的以 helm_tool.sh --add-helm-meta-all 纳入管理；26.1.0 镜像 tag 坑；单组件升级时其他 Enabled 须保持）＋01_manual_upgrade.md 与 05_developer_guide/00_installation_deployment/01_upgrade.md（全量升级可跨版本须停任务 vs 升级镜像仅同版本不停任务；预检 kubectl get pods -A/关 pingmesh/查组件；Ascend Docker Runtime 唯一 --upgrade（root、重启 docker/containerd、旧版=旧包重跑）；Device Plugin 须先升 Docker Runtime 至 26.1.0+ 再卸载重装；其余组件卸载重装、回退=卸新装旧；ClusterD 断点续训例外；升级镜像=镜像名一致+rollout restart；Container Manager deploy.sh upgrade（26.1.0+，勿用 install）；TaskD 镜像内 pip 换装+docker commit；用户改过源码不适用）＋04_usage/03_basic_scheduling/07_Intergenerational_upgrade.md（A3→950 代际 YAML 变更表：资源名/schedule_policy/sp-block/ra-block/ASCEND_VISIBLE_DEVICES）。另：README.md raw 实开（版本配套详情=/docs/zh/release_notes.md；版本维护表止于 v26.0.0/v7.3.0；免责声明与 gitcode releases 指针）——对既有条目 src.ascend.mind-cluster-v26.1.1 的补充核对记录。未覆盖：官方波次/灰度说明（无）；Helm 默认 values 全文（02_installation/00_helm_installation.md 未开）；样例 YAML 所在 mindcluster-deploy 仓库（可变分支，未开）。
+- id: src.nvidia.mig-user-guide-2026-10-18
+  title: NVIDIA MIG User Guide（Supported GPUs 与 Concepts；2026-10-18 观察）
+  url: https://docs.nvidia.com/datacenter/tesla/mig-user-guide/
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: 可变文档站（随驱动更新）；2026-10-18 经 FetchURL 实开 index、supported-gpus.html、concepts.html 三页；未固定驱动版本，引用按观察日期
+  license:
+    status: unknown
+    scopes: []
+    notes: NVIDIA 文档站许可未在打开页面中核对；只链接并原创归纳，未复制图表或长段。
+  notes: Batch 23（T05-06）取证：supported-gpus（Ampere+、compute capability ≥8.0、A100/A30/H100/H200/H20/B200/GB200/GB300/RTX PRO Blackwell/Thor iGPU 与最大实例数）；concepts（memory slice≈1/8、SM slice≈1/7、GI/CI 语义、profile placement 与碎片、CUDA Concurrency Mechanisms 对照表：分区类型/最大分区/SM 隔离/显存保护/带宽 QoS/错误隔离/跨分区互操作/重配置）。未覆盖：最低驱动版本、supported profiles 全集、MIG 与 Kubernetes 专项页（该站 mig-kubernetes.html 本轮 404）。
+- id: src.nvidia.mps-docs-2026-10-18
+  title: NVIDIA Multi-Process Service 文档（Overview 与 When to Use MPS；2026-10-18 观察）
+  url: https://docs.nvidia.com/deploy/mps/index.html
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: 可变文档站；2026-10-18 经 FetchURL 实开 index.html 与 when-to-use-mps.html；文档区分 Legacy MPS v2 与 MPS v3，未绑定 CUDA 版本
+  license:
+    status: unknown
+    scopes: []
+    notes: NVIDIA 文档站许可未核对；只链接并原创归纳。
+  notes: Batch 23（T05-06）取证：index（控制 daemon/server/client runtime、收益、文档结构）；when-to-use-mps（仅 Linux/QNX、单用户活动 server、不同用户激活被串行化、记账归属 server、EXCLUSIVE_PROCESS 建议、64 位/同 UID/dynamic parallelism 限制、地址空间隔离与有限错误遏制、FAULT 状态语义、动态资源限额非预留、60 client contexts 默认上限、设备显存上限与 OOM、静态 SM 分区与 chunk 规则、客户端提前终止未定义状态）。未覆盖：实际性能数据、驱动最低版本。
+- id: src.nvidia.k8s-device-plugin-sharing-v0.20.1
+  title: NVIDIA k8s-device-plugin v0.20.1 README — Shared Access to GPUs（time-slicing/MPS）
+  url: https://github.com/NVIDIA/k8s-device-plugin/blob/487d7a93894b0f3ad08097169593972eb3ca8206/README.md
+  kind: repository
+  registered_at: '2026-10-18'
+  revision: commit 487d7a93894b0f3ad08097169593972eb3ca8206（tag v0.20.1）；2026-10-18 经 FetchURL 读取 raw README 全文
+  license:
+    status: unknown
+    scopes: []
+    notes: 本轮未重开 LICENSE；沿用既有 src.nvidia.k8s-device-plugin-v0.20.1 的仓库口径（未核对），只链接并原创归纳。
+  notes: Batch 23（T05-06）取证：Shared Access to GPUs（time-slicing 与 MPS 互斥、同节点统一配置不可逐卡）；time-slicing（不做隔离、共享显存与故障域、replicas 语义与 8×10=80 示例、请求 >1 不保证比例算力、failRequestsGreaterThanOne 默认 false、支持资源含 mixed MIG 资源名）；MPS（等分显存与算力限制、v0.15.0 起 experimental、MIG 启用时不支持、仅整卡）；Running GPU Jobs 的「未请求 GPU 会暴露全部 GPU」告警。未覆盖：实际争用/性能数据。
+- id: src.ascend.ascend-device-plugin-44385c13
+  title: Ascend Device Plugin（mind-cluster v26.1.1）组件 README
+  url: https://github.com/Ascend/mind-cluster/blob/44385c13d7b1d87def35f1604e8be4d16de6ca4e/component/ascend-device-plugin/README.md
+  kind: repository
+  registered_at: '2026-10-18'
+  revision: commit 44385c13d7b1d87def35f1604e8be4d16de6ca4e（annotated tag v26.1.1）；2026-10-18 经 FetchURL 读取 raw 全文
+  license:
+    status: partial
+    scopes:
+    - scope: 仓库根许可证（代码与组件文档）
+      identifier: Apache-2.0
+      url: https://github.com/Ascend/mind-cluster/blob/44385c13d7b1d87def35f1604e8be4d16de6ca4e/LICENSE
+    notes: 沿用既有 src.ascend.mind-cluster-v26.1.1 在同 commit 已核对的仓库根许可口径，本轮未重开 LICENSE；只链接并原创归纳。
+  notes: Batch 23（T05-06）取证：支持产品形态（Atlas 训练/A2/A3、300I/推理系列、800I A2）；组件介绍（设备发现含「拆分物理设备得到的虚拟设备」上报、健康检查「虚拟设备健康状态由物理设备决定」、设备分配与 NPU 重调度）。未覆盖：vNPU 规格/隔离/回收语义（README 未给），该分支保留 unknown。
+- id: src.kueue.fair-sharing-v0.19.0
+  title: Kueue v0.19.0 公平共享文档（Fair Sharing 与 Admission Fair Sharing）
+  url: https://github.com/kubernetes-sigs/kueue/blob/911a822a49bcfd99c9c62203a009efa4130ad604/site/content/en/docs/concepts/admission_fair_sharing.md
+  kind: repository
+  registered_at: '2026-10-18'
+  revision: commit 911a822a49bcfd99c9c62203a009efa4130ad604（v0.19.0）；2026-10-18 经 FetchURL 实开同 commit 的 fair_sharing.md 与 admission_fair_sharing.md
+  license:
+    status: partial
+    scopes:
+    - scope: 固定仓库自有文档源码；第三方文件及独立站点资产另计
+      identifier: Apache-2.0
+      url: https://github.com/kubernetes-sigs/kueue/blob/911a822a49bcfd99c9c62203a009efa4130ad604/LICENSE
+    notes: 沿用 src.kueue.admission-v0.19.0 已核对的根许可口径；只链接并原创归纳，未复制示例配置或代码。
+  notes: Batch 23（T05-07）取证：admission_fair_sharing（beta/默认开、历史用量排序与衰减、Entry Penalty、resourceWeights、ClusterQueue admissionScope、LocalQueue weight、status.FairSharing 观测）；fair_sharing（DRS 防循环抢占论证与分层情形 Limitations；页内链接指向另一 commit，不作为本 commit 实现证据）。未覆盖：默认参数数值、完整指标清单。
+- id: src.slurm.sshare-24.11.7
+  title: Slurm 24.11.7 sshare 命令参考（归档）
+  url: https://slurm.schedmd.com/archive/slurm-24.11.7/sshare.html
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: 24.11.7 archive（man2html 生成时间 2025-11-11 GMT）；2026-10-18 经 FetchURL 只读
+  license:
+    status: unknown
+    scopes: []
+    notes: SchedMD 站点许可未核对；只链接并原创归纳，未复制手册长段。
+  notes: Batch 23（T05-07）取证：仅 priority/multifactor 下可用；数据经 slurmdbd；输出字段（Raw/Norm Shares、Raw/Norm Usage、Effectv Usage、FairShare、GrpTRESMins、GrpTRESRaw、TRESRunMins）；FAIR_TREE 默认语义（Norm Shares 按层、Effectv Usage 相对父级、Level FS=Norm/Effectv、无用量为 infinity）；PERFORMANCE 节的 RPC/循环调用告警。未执行 sshare。
+- id: src.nvidia.mig-deployment-considerations-2026-10-18
+  title: NVIDIA MIG User Guide — Deployment Considerations（2026-10-18 观察）
+  url: https://docs.nvidia.com/datacenter/tesla/mig-user-guide/deployment-considerations.html
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: 可变页，页面标注 2026-10-13 更新；2026-10-18 经审阅轮实开；未固定驱动版本
+  license:
+    status: unknown
+    scopes: []
+    notes: NVIDIA 文档站许可未核对；只链接并原创归纳。
+  notes: Batch 23（T05-06 审阅补充，作者采纳）：GPU/CUDA/驱动条件、Linux/容器边界，以及驱动层可在 MIG 上使用 MPS 的说明；用于区分“插件层不支持 MPS-on-MIG”与“驱动层一概禁止”。逐型号最低驱动交集仍未建立（unknown）。
+- id: src.nvidia.a100-mem-error-recovery-2026-10-18
+  title: NVIDIA GPU Memory Error Management — Error Recovery and Response Flags（2026-10-18 观察）
+  url: https://docs.nvidia.com/deploy/a100-gpu-mem-error-mgmt/error-recovery-and-response-flags.html
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: 可变页，页面标注 2026-09-09 更新；2026-10-18 经审阅轮实开；未固定驱动/机型
+  license:
+    status: unknown
+    scopes: []
+    notes: NVIDIA 文档站许可未核对；只链接并原创归纳。
+  notes: Batch 23（T05-06 审阅补充，作者采纳）：恢复动作包含终止全部 GPU 进程后整卡 reset、OS reboot，以及部分 MIG 分区受损后的 drain-and-reset；作为“MIG 错误隔离不是任意错误都不外溢”的官方边界证据，不是本库故障注入结果。
+- id: src.ascend.virtual-instance-hdk-44385c13
+  title: MindCluster v26.1.1 虚拟化实例（HDK）文档（特性、模板、静态/动态 vNPU）
+  url: https://github.com/Ascend/mind-cluster/blob/44385c13d7b1d87def35f1604e8be4d16de6ca4e/docs/zh/scheduling/04_usage/02_virtual_instance/00_virtual_instance_with_hdk/01_description.md
+  kind: repository
+  registered_at: '2026-10-18'
+  revision: commit 44385c13d7b1d87def35f1604e8be4d16de6ca4e（annotated tag v26.1.1）；2026-10-18 经 FetchURL 实开 raw：01_description、03_virtualization_templates、04_static_vnpu_scheduling/01_creating_vnpu 与 02_mounting_vnpu_static、05_dynamic_vnpu_scheduling/01_dynamic_vnpu_scheduling_inference
+  license:
+    status: partial
+    scopes:
+    - scope: 固定 commit 的 docs 目录文档；第三方素材按各自声明核查
+      identifier: CC-BY-4.0
+      url: https://github.com/Ascend/mind-cluster/blob/44385c13d7b1d87def35f1604e8be4d16de6ca4e/docs/LICENSE
+    notes: docs/LICENSE 由既有条目 src.ascend.mind-cluster-v26.1.1 在同 commit 核对，本轮未重开；只链接并原创归纳。
+  notes: Batch 23（T05-06 修订）：基于 HDK 的虚拟化实例（将 NPU 切分为 vNPU 挂载容器）；产品支持表（Atlas 推理/训练、A2/A3 训练与推理，静态/动态场景，200/300/500 与 200I/500 A2 不支持）；虚拟化模板（vir02/04/08/16、vir01…vir04_4c_dvpp、A2/A3 的 vir06_1c_16g/vir12_3c_32g、A2 推理多模板、A3 推理 vir05/10）；约束（虚拟化后物理 NPU 不可再挂容器/直通 VM；一个 vNPU 只能被一个任务容器使用；模板作用于整机且不支持混插；训练系列仅 AMP 模式）；静态创建（npu-smi set -t vnpu-mode/create-vnpu、vnpu-id 范围、vgroup、vnpu-cfg-recover）与 K8s 静态资源名（huawei.com/Ascend910-Y / Ascend310P-Y，每 Pod 最多 1 个 vNPU，创建/销毁需重启 Device Plugin，不支持故障重调度/交换机亲和；静态挂载的 ASCEND_RUNTIME_OPTIONS 必须含 VIRTUAL）；动态 vNPU（Docker 的 ASCEND_VISIBLE_DEVICES+ASCEND_VNPU_SPECS，使用前须关闭 vNPU 恢复功能，ASCEND_RUNTIME_OPTIONS 不能含 VIRTUAL；K8s 仅 Volcano、presetVirtualDevice=false、同一时刻只能相同模板、每 Pod 1 个 vNPU、不支持分布式任务、支持芯片/节点故障重调度；所引集群推理场景同一集群不能同时存在静态与动态 vNPU 任务，切换需删除已有任务，K8s 自动创建/销毁不能与 Docker 操作混用）。未覆盖：跨 vNPU 的故障隔离与性能 QoS 保证（文档只给资源切分与容器隔离表述）、虚拟化功能最低固件/CANN 版本矩阵。
+- id: src.ascend.virtual-instance-vcann-44385c13
+  title: MindCluster v26.1.1 vCANN-RT 软切分虚拟化文档（特性与软切分调度）
+  url: https://github.com/Ascend/mind-cluster/blob/44385c13d7b1d87def35f1604e8be4d16de6ca4e/docs/zh/scheduling/04_usage/02_virtual_instance/01_virtual_instance_with_vcann_rt/00_description.md
+  kind: repository
+  registered_at: '2026-10-18'
+  revision: commit 44385c13d7b1d87def35f1604e8be4d16de6ca4e（annotated tag v26.1.1）；2026-10-18 经 FetchURL 实开 raw 的 00_description（另核对目录中软切分调度页存在，未逐页展开）
+  license:
+    status: partial
+    scopes:
+    - scope: 固定 commit 的 docs 目录文档；第三方素材按各自声明核查
+      identifier: CC-BY-4.0
+      url: https://github.com/Ascend/mind-cluster/blob/44385c13d7b1d87def35f1604e8be4d16de6ca4e/docs/LICENSE
+    notes: 沿用既有条目在同 commit 的 docs/LICENSE 口径，本轮未重开；只链接并原创归纳。
+  notes: Batch 23（T05-06 修订）：基于 vCANN-RT 的软切分虚拟化（时分复用、按 AICore 百分比与内存配置分配）；仅支持推理任务；一个容器只能挂载一个 NPU；YAML requests 表示 AICore 百分比而非卡数；A3 需单 die 直通（-useSingleDieMode=true）；软切分后物理 NPU 不可直通 VM；同一物理 NPU 上所有容器必须使用相同软切分策略；最大切分数量建议不超过单 device 最大用户进程数。未覆盖：跨容器故障隔离/性能保证、软切分实际开销数据。
+- id: src.nvidia.k8s-device-plugin-mps-v0.20.1
+  title: NVIDIA k8s-device-plugin v0.20.1 MPS 分配实现与 mps-control-daemon 部署（固定 commit）
+  url: https://github.com/NVIDIA/k8s-device-plugin/blob/487d7a93894b0f3ad08097169593972eb3ca8206/internal/plugin/mps.go
+  kind: repository
+  registered_at: '2026-10-18'
+  revision: commit 487d7a93894b0f3ad08097169593972eb3ca8206（tag v0.20.1）；2026-10-18 经 FetchURL 实开 raw 的 internal/plugin/mps.go 与 deployments/helm/nvidia-device-plugin/templates/daemonset-mps-control-daemon.yml
+  license:
+    status: unknown
+    scopes: []
+    notes: 本轮未重开 LICENSE；沿用既有 src.nvidia.k8s-device-plugin-v0.20.1 的仓库口径（未核对），只链接并原创归纳。
+  notes: Batch 23（T05-06 修订）：MPS sharing 在存在 MIG 设备时返回不支持；分配响应设置 CUDA_MPS_PIPE_DIRECTORY 并挂载 pipe 目录与 shm 目录（hostRoot 到 container）；Helm 模板另行部署 mps-control-daemon DaemonSet（mps-control-daemon 容器、mount-shm init、mps-root hostPath、/dev/shm、nodeSelector nvidia.com/mps.capable=true），daemon/server 生命周期由该配套组件负责。未覆盖：站点自管 daemon 路径、实际部署验证。

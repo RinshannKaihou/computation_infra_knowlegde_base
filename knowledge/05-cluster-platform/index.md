@@ -10,7 +10,7 @@ source_refs:
 - src.ascend.mind-cluster
 - src.ascend.agent-skills
 - src.infrasys.aiinfra
-updated_at: '2026-09-30'
+updated_at: '2026-10-18'
 summary: 组织容器、设备资源管理、调度、多租户和集群变更。
 related_ids:
 - cluster-platform.device-resource-chain
@@ -25,6 +25,10 @@ related_ids:
 - cluster-platform.ascend-device-visibility-source-case
 - cluster-platform.ascend-device-visibility-experiment
 - cluster-platform.idle-resource-job-waiting-triage
+- cluster-platform.accelerator-sharing-and-isolation
+- cluster-platform.contention-capacity-validation
+- cluster-platform.node-drain-resource-reclamation
+- cluster-platform.platform-change-and-rollback
 ---
 
 # 05 集群平台与资源管理
@@ -43,6 +47,14 @@ related_ids:
 
 [Slurm 作业生命周期、设备资源与状态参考](slurm-jobs-and-device-resources.md)：固定 Slurm 24.11.7 归档，查询 Job/Step、GRES/TRES、分区/QOS/优先级/预留、cgroup 与状态（T05-03，claude-opus-5-5 审阅已闭环，未做真实环境验证）。
 
+[加速器共享与租户隔离机制](accelerator-sharing-and-isolation.md)：区分租户、容器、设备、显存、算力与故障域边界，比较整卡独占、MIG、MPS 与 time slicing 的隔离和支持条件；Ascend 虚拟设备分支保留未证实（T05-06 gpt-6.1-sol/xhigh 审阅已闭环的 draft，未做真实环境验证）。
+
+[多租户争用、公平性与容量验证](contention-capacity-validation.md)：把设备与主机/网络/存储争用关联到容量记录、Kueue/Slurm 公平性口径和两租户对照设计（T05-07 gpt-6.1-sol/xhigh 审阅已闭环的 draft，未执行）。
+
+[节点摘除、drain 与资源回收流程](node-drain-resource-reclamation.md)：分别组织 Kubernetes cordon/drain/删除与 Slurm DRAIN/DOWN/RESUME，按负载类型说明停止准入、Checkpoint、卷/设备清理与重新准入（T05-08 gpt-6.1-sol/xhigh 审阅已闭环的 draft，未执行）。
+
+[平台组件升级、发布、回退与回服](platform-change-and-rollback.md)：以 Kubernetes/Slurm 与 NVIDIA/Ascend 有限版本样板，规划预检、波次、观测、失败停发、回退与回服门槛，明确不可直接回退边界（T05-09 gpt-6.1-sol/xhigh 审阅已闭环的 draft，未执行）。
+
 ## 本章范围
 
 覆盖设备如何被平台发现、分配给任务、上报健康状态，以及作业如何被调度、运行和恢复。连接物理资源、平台资源对象与工作负载。
@@ -59,12 +71,12 @@ related_ids:
 ## 二级主题地图
 
 - **05.1 容器、镜像、设备暴露与运行环境** — 已有[设备访问条件的概念草稿](device-resource-chain.md)，新增[镜像运行时基线](container-image-runtime-baseline.md)（T05-01 草稿，gpt-6.1-sol/xhigh 审阅已闭环，未做真实环境验证）；部署与实测待补充。
-- **05.2 Kubernetes、Slurm 等平台与作业生命周期** — 已有[Kueue/Volcano 状态边界](admission-and-placement.md)，新增[Kubernetes 作业生命周期](kubernetes-job-lifecycle.md)与[Slurm 状态参考](slurm-jobs-and-device-resources.md)（T05-02/T05-03，审阅已闭环，仍为 draft 且未做真实环境验证）；05.2 主题内容验收仍为 planned、属 Batch 24（T05-08/T05-10 等未交付）。
+- **05.2 Kubernetes、Slurm 等平台与作业生命周期** — 已有[Kueue/Volcano 状态边界](admission-and-placement.md)，新增[Kubernetes 作业生命周期](kubernetes-job-lifecycle.md)与[Slurm 状态参考](slurm-jobs-and-device-resources.md)（T05-02/T05-03，审阅已闭环，仍为 draft 且未做真实环境验证）；T05-08 已交付[节点摘除与回收流程](node-drain-resource-reclamation.md)（gpt-6.1-sol/xhigh 审阅已闭环的 draft，未执行），05.2 主题内容验收仍属 Batch 24（T05-10 等未交付）。
 - **05.3 设备发现、分配、健康上报与资源账本** — 已有[设备资源状态链](device-resource-chain.md)（T05-04 修订后含 GPU/Slurm 独立账本视图与三实现对照，审阅已闭环），已有容器内 NPU 可见性指南、公开案例和实验设计；现场验证待补充。
-- **05.4 配额、排队、gang、放置与拓扑亲和性** — 已有[准入与放置概念](admission-and-placement.md)和[空闲设备但作业等待诊断指南](idle-resource-job-waiting-triage.md)；现场配置与验证待补充。
-- **05.5 多租户、隔离、资源争用与容量管理** — 待建设。
-- **05.6 节点上下线、升级、发布与变更** — 待建设。
-- **05.7 调度失败、控制面异常与集群恢复** — 待建设。
+- **05.4 配额、排队、gang、放置与拓扑亲和性** — 已有[准入与放置概念](admission-and-placement.md)和[空闲设备但作业等待诊断指南](idle-resource-job-waiting-triage.md)；新增[多租户争用、公平性与容量验证](contention-capacity-validation.md)（T05-07 gpt-6.1-sol/xhigh 审阅已闭环的 draft，未执行）；现场配置与验证待补充。
+- **05.5 多租户、隔离、资源争用与容量管理** — 新增[加速器共享与租户隔离机制](accelerator-sharing-and-isolation.md)（T05-06）与[多租户争用、公平性与容量验证](contention-capacity-validation.md)（T05-07），均为 gpt-6.1-sol/xhigh 审阅已闭环的 draft；Ascend vNPU 的共享规格与分配约束已交付，跨 vNPU 故障隔离/QoS 保留未证实。
+- **05.6 节点上下线、升级、发布与变更** — 新增[节点摘除、drain 与资源回收流程](node-drain-resource-reclamation.md)（T05-08）与[平台组件升级、发布、回退与回服](platform-change-and-rollback.md)（T05-09），均为 gpt-6.1-sol/xhigh 审阅已闭环的 draft，未做真实演练。
+- **05.7 调度失败、控制面异常与集群恢复** — 待建设（控制面故障与恢复属 Batch 24 的 T05-10；本批 T05-08/T05-09 只覆盖节点级回收与变更边界）。
 
 ## 内容边界
 
@@ -96,4 +108,4 @@ Device Plugin、NPU Exporter、容器设备可见性和 MindCluster 的平台能
 
 ## 首轮成果与后续
 
-已有设备状态链、准入放置，以及容器内 NPU 可见性指南、案例和实验设计；后续补调度失败、资源争用和节点生命周期。
+已有设备状态链、准入放置、Kubernetes/Slurm 作业生命周期、加速器共享与租户隔离、争用与容量验证、节点摘除与平台变更回退，以及容器内 NPU 可见性指南、案例和实验设计；后续补控制面故障与集群恢复（T05-10，Batch 24）与现场验证。
