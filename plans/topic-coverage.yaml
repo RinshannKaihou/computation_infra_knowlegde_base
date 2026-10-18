@@ -720,9 +720,9 @@ topics:
 - topic_id: '05.7'
   title: 调度失败、控制面异常与集群恢复
   domain_code: '05'
-  coverage_status: partial
+  coverage_status: covered
   core_scope: 区分调度失败、资源视图失真和控制面故障，恢复平台并验证作业进展
-  present_scope: 已有等待层定位、账本与分配矛盾核对，以及节点回收/变更边界的部分正文；控制面故障与恢复待 Batch 24
+  present_scope: 已有等待层定位、账本与分配矛盾核对、节点回收/变更边界，以及控制面故障分支/恢复前提/新旧任务验收矩阵（T05-10 审阅闭环）
   evidence_refs:
   - cluster-platform.idle-resource-job-waiting-triage
   - cluster-platform.admission-and-placement
@@ -755,9 +755,9 @@ topics:
 - topic_id: '06.2'
   title: 数据、张量、流水线、专家等并行策略
   domain_code: '06'
-  coverage_status: partial
+  coverage_status: covered
   core_scope: 比较 DP/状态分片/TP/PP/EP 等策略的状态、通信、内存、效率与组合条件
-  present_scope: 已有 DDP/FSDP/TP/PP 状态布局和组合身份；EP/CP 仅列入维度
+  present_scope: 已有 DDP/FSDP/TP/PP 状态布局与组合身份，补齐 EP dispatch/combine、SP/CP 区别、expert grid、冲突检查、固定假设选型表与单步边界（T06-01 修订，审阅闭环）
   evidence_refs:
   - training.parallelism-and-state
   - communication.collectives-and-rank-progress
@@ -773,9 +773,9 @@ topics:
 - topic_id: '06.3'
   title: 训练框架与执行：框架通用机制及平台实现
   domain_code: '06'
-  coverage_status: partial
+  coverage_status: covered
   core_scope: 说明训练框架的执行循环、分布式封装、平台适配与观测接口
-  present_scope: 已有 PyTorch 并行/state-dict 与 MindSpeed HA 样板及框架分层
+  present_scope: 已有 PyTorch/Megatron/MindSpeed 三组独立档案的执行循环职责对照、eager/compiled 路径、阶段故障分界与测试定位（T06-02，审阅闭环）
   evidence_refs:
   - training.parallelism-and-state
   - training.elastic-training-and-membership
@@ -791,9 +791,9 @@ topics:
 - topic_id: '06.4'
   title: 预训练、微调、强化学习与 rollout
   domain_code: '06'
-  coverage_status: missing
+  coverage_status: covered
   core_scope: 比较预训练、微调、RL 的工作流，并解释 rollout、权重同步与数据/状态一致性
-  present_scope: SFT 来源案例与总览只是背景，尚无这些工作流的机制正文
+  present_scope: 已有预训练/继续预训练/全参 SFT/LoRA-SFT 的目标×参数轴、状态契约、adapter 装载/合并边界、混合/划分/pack 机制与阶段转换验证（T06-03，审阅闭环；RL rollout 属后续批次）
   evidence_refs: []
   background_refs:
   - training.gpu-npu-precision-difference-source-case
@@ -802,8 +802,8 @@ topics:
   - 缺少预训练/微调类型与工作流
   - 缺少 RL rollout、训练/推理协同及权重同步
   - 缺少一致性/吞吐验证
-  followup_priority: high
-  recommended_action: new_content
+  followup_priority: normal
+  recommended_action: extend
   closure_criteria: 补齐所列缺口，给出适用条件、精确来源、观察/判断方法及验证判据；需要真实结果时另登记复现证据。
 - topic_id: '06.5'
   title: 算子适配、混合精度、数值行为与收敛

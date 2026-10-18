@@ -1935,7 +1935,7 @@ topics:
   - 所有计划任务交付后重新进行主题内容覆盖验收；已有 covered 基础判断不自动变成最终 v1 达标。
   - 验证设计与公开来源案例满足方法层交付；真实 GPU/NPU/存储/平台执行结果仍需环境档案和证据，未执行不标 reproduced。
   content_acceptance_batch: 24
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
   validation_refs: []
   retained_background_ids: []
 - topic_id: '05.3'
@@ -1972,7 +1972,7 @@ topics:
   - 所有计划任务交付后重新进行主题内容覆盖验收；已有 covered 基础判断不自动变成最终 v1 达标。
   - 验证设计与公开来源案例满足方法层交付；真实 GPU/NPU/存储/平台执行结果仍需环境档案和证据，未执行不标 reproduced。
   content_acceptance_batch: 24
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
   validation_refs:
   - V02
   retained_background_ids: []
@@ -2203,7 +2203,7 @@ topics:
   - 所有计划任务交付后重新进行主题内容覆盖验收；已有 covered 基础判断不自动变成最终 v1 达标。
   - 验证设计与公开来源案例满足方法层交付；真实 GPU/NPU/存储/平台执行结果仍需环境档案和证据，未执行不标 reproduced。
   content_acceptance_batch: 24
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
   validation_refs:
   - V11
   retained_background_ids: []
@@ -3721,7 +3721,7 @@ batches:
   completion_record: docs/research/batch-23-source-audit.md
 - number: 24
   title: 集群平台、训练与后训练
-  status: planned
+  status: done
   task_refs:
   - T05-10
   - T06-01
@@ -3738,6 +3738,8 @@ batches:
   minimal_predecessor_batches:
   - 23
   conservative_wave: 11
+  completed_at: '2026-10-19'
+  completion_record: docs/research/batch-24-source-audit.md
 - number: 25
   title: 训练与后训练
   status: planned
@@ -5784,8 +5786,8 @@ tasks:
   work_units: 2
 - id: T05-10
   title: 控制面故障、平台恢复与账本核对
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 24
   operation: new
   content_type: procedure
@@ -5831,8 +5833,8 @@ tasks:
   work_units: 2
 - id: T06-01
   title: 补齐并行策略选择、专家并行与组合映射
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 24
   operation: revise
   content_type: concept
@@ -5879,8 +5881,8 @@ tasks:
   work_units: 2
 - id: T06-02
   title: 训练框架组件、执行循环与平台职责对照
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 24
   operation: new
   content_type: reference
@@ -5929,8 +5931,8 @@ tasks:
   work_units: 2
 - id: T06-03
   title: 预训练与微调工作流和状态契约
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 24
   operation: new
   content_type: concept

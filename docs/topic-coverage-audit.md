@@ -199,3 +199,5 @@
 2026-10-08 交付核对：`make check` 与 `make build` 均通过，仍为 69 content entries / 84 sources。另核对原目录的 63 个编号与题名、每行唯一性、覆盖分类/领域小计、全部 69 个输入条目的 ID/元数据/文件摘要/核对章节、56 篇正文的映射，以及盘点表/README/填充计划的 371 处本地文件链接，全部一致。YAML 的 `validation` 保留核对结果。
 
 这些检查确认编号、引用、摘要和统计，不证明覆盖判断之外的技术正确性、远程资料或现场兼容性；本次没有修改校验工具或执行硬件实验。
+
+- 2026-10-19（Batch 24 主题范围复核）：05.7 由 partial 升为 covered（T05-10 控制面故障/恢复/验收矩阵）；06.2 由 partial 升为 covered（EP/CP/expert grid/选型表）；06.3 由 partial 升为 covered（三组档案职责对照）；06.4 由 missing 升为 covered（四类工作流状态契约；RL rollout 属后续批次）。05.2/05.3/05.7 主题验收随批次置 accepted。
