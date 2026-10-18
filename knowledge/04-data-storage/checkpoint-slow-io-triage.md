@@ -19,6 +19,7 @@ source_refs:
   - src.ceph.docs-rgw-s3-squid
   - src.ceph.docs-health-checks-squid
   - src.lustre.ops-manual-2x
+  - src.kernel.admin-guide-ext4-v6.16
 updated_at: "2026-10-18"
 summary: 把 checkpoint 保存/恢复慢定位到状态收集、staging 拷贝、后台写入、内核 writeback/fsync、存储后端或读路径；以 PyTorch 2.6 DCP 与 MindIO ACP 为固定样板；NFS/RGW/Lustre 后端支路按各自版本化参考分列入口，RDMA 保留证据缺口。
 related_ids:
@@ -42,7 +43,7 @@ verification:
     - src.kernel.docs-sysctl-vm-v6.16
     - src.ascend.mindio-acp-v26.1.1
     - src.mlcommons.storage-rules-v2.0
-  notes: "已核对 DCP async_save/staging/writer/reader 实现、Linux vm.rst 的 dirty/writeback 语义、MindIO ACP 接口文档与 MLPerf checkpointing 规则；未执行保存、恢复或存储压测。2026-10-18（T04-08 补交）复用登记版本化后端来源（内核 v6.16 NFS、nfs(5)/exports(5)、RFC 8881、Squid RGW S3 与健康检查、Lustre 2.x 手册），新增后端支路入口节并收窄缺口声明；本轮未运行任何工具。"
+  notes: "已核对 DCP async_save/staging/writer/reader 实现、Linux vm.rst 的 dirty/writeback 语义、MindIO ACP 接口文档与 MLPerf checkpointing 规则；未执行保存、恢复或存储压测。2026-10-18（T04-08 补交）复用登记版本化后端来源（内核 v6.16 NFS、nfs(5)/exports(5)、RFC 8881、Squid RGW S3 与健康检查、Lustre 2.x 手册、admin-guide/ext4），新增后端支路入口节并收窄缺口声明；本轮未重取上游页面，新增条目以 T04-02/03/06/07 已核对口径与初审（B21-C35–C52）修订为准；未运行任何工具。"
 ---
 
 # Checkpoint 慢写与恢复 I/O 诊断指南
@@ -55,7 +56,7 @@ verification:
 
 证据样板：PyTorch 2.6 DCP（文档 + v2.6.0 固定源码）、MindCluster v26.1.1 的 MindIO ACP、Linux kernel v6.16 的 vm 文档（固定 commit）、MLPerf Storage v2.0。进入排查前固定：框架与 writer/stager 实现及版本、`sync_files`/`thread_count`/`single_file_per_rank`/staging 配置、同步或异步保存、存储后端类型、内核 dirty 参数、每次保存的数据量与分片数。
 
-**缺口声明（2026-10-18 更新）**：NFS、Ceph RGW、Lustre 的后端语义已有版本化参考，支路入口见「后端支路入口」节；仍无已核对来源的：RDMA 传输行为、RGW 性能计数器/官方负载基准与日志端点、NFS 客户端 mountstats、Lustre 计数器其余含义与精确小版本（完整清单见[来源记录](../../docs/research/batch-21-t04-08-sources.md)）；DCP 2.6 的 `dcp_logger` 只有方法级总耗时，没有分阶段计时，阶段拆分需自行打点。
+**缺口声明（2026-10-18 更新）**：NFS、Ceph RGW、Lustre 的后端语义已有版本化参考，支路入口见「后端支路入口」节；仍无已核对来源的支路只能按现场证据处理，包括：RDMA 传输行为、NFS/RGW 传输选项层行为（如 rsize/wsize/proto、RGW HTTP 前端）、RGW 性能计数器/官方负载基准与日志端点、NFS 客户端 mountstats、Lustre 计数器其余含义与精确小版本（完整清单见[来源记录](../../docs/research/batch-21-t04-08-sources.md)）；DCP 2.6 的 `dcp_logger` 只有方法级总耗时，没有分阶段计时，阶段拆分需自行打点。
 
 ## 需要的证据
 
@@ -82,22 +83,22 @@ verification:
 
 ## 后端支路入口与同窗计时对齐
 
-步骤 5 定位到后端/读侧支路后，按实现进入各自入口；以下只列入口与边界，不给跨后端的统一调参命令。语义细节按各实现的版本化参考核对（NFS/ext4 见[本地与共享存储](local-and-shared-storage.md)，RGW/Lustre 见[对象与并行存储](object-and-parallel-storage.md)，恢复流程见[存储客户端、后端异常与恢复验证](storage-client-backend-recovery.md)）。
+步骤 5 定位到后端/读侧支路后，按实现进入各自入口；以下只列入口与边界，不给跨后端的统一调参命令。语义细节按各实现的版本化参考核对（NFS/ext4 见[本地与共享存储](local-and-shared-storage.md)，RGW/Lustre 见[对象与并行存储](object-and-parallel-storage.md)，恢复流程见[存储客户端、后端异常与恢复验证](storage-client-backend-recovery.md)）；Lustre 条目限 LTS 2.15.x 及以前引入的特性（见[对象与并行存储 §1](object-and-parallel-storage.md)）。
 
-| 实现 | 写路径慢/失败的特征入口 | 读侧与缓存 | 元数据 vs 数据瓶颈 | 空间压力 |
-|---|---|---|---|---|
-| 本地 ext4 | commit 窗口（默认 5 s）内元数据变更可丢；`data=` 三模式与 `barrier` 决定写入路径（[admin-guide/ext4](https://www.kernel.org/doc/html/v6.16/admin-guide/ext4.html)）；步骤 4 的内核 writeback 节流适用 | 页缓存污染读测量（见步骤 5）；冷基线方法见[本地与共享存储 §5](local-and-shared-storage.md) | 同一介质不分层 | inode/空间耗尽无已核对来源（unknown） |
-| NFSv4.1 | 客户端 fsync/close 慢可能在对端：WRITE 可带 UNSTABLE4，须 COMMIT＋比对 write verifier（[RFC 8881 §18.32](https://datatracker.ietf.org/doc/html/rfc8881#section-18.32)/[§18.3](https://datatracker.ietf.org/doc/html/rfc8881#section-18.3)）；导出 `async` 允许落盘前应答（[exports(5)](https://man7.org/linux/man-pages/man5/exports.5.html)）；grace 期服务器可拒绝某些 READ/WRITE（[§8.4](https://datatracker.ietf.org/doc/html/rfc8881#section-8.4)）；`hard`/`soft` 超时行为见 [nfs(5)](https://man7.org/linux/man-pages/man5/nfs.5.html) | CTO/缓存窗口见[本地与共享存储 §3](local-and-shared-storage.md) | 协议层不分开 | 服务器侧空间证据 unknown |
-| Ceph RGW（S3） | multipart 上传中断按 upload-id 列举残留分片；upload-id 不匹配返 404 NoSuchUpload；Complete 前可见性/列举一致性 unknown（见[对象与并行存储 §2](object-and-parallel-storage.md)）；官方性能计数器与超时语义 unknown——慢只能按客户端计时＋网络/后端证据判定 | 读/条件请求条目见同页 §2；`GET /?usage` 为用量统计、非性能计数器 | bucket 索引 resharding 条目见同页 §1，细节 unknown | 池满 OSD_FULL/NEARFULL/POOL_FULL（[health-checks](https://docs.ceph.com/en/squid/rados/operations/health-checks/)） |
-| Lustre 2.x | 写带宽受条带布局影响（`lfs setstripe`/`getstripe`，手册 §19.3/§19.4）；同文件多写锁争用（§34.10）；`BAD WRITE CHECKSUM` 日志为 32-bit 传输校验（§23.5.1） | 页缓存/客户端缓存语义以手册为准（细分 unknown） | MDT 元数据瓶颈与 OST 数据带宽瓶颈分开观测（§1.2.2）；Jobstats（Ch.12）/brw_stats（Ch.39）入口 | Full OST 禁建与数据迁移（§23.1）；`lfs df` |
+| 实现 | 写路径慢/失败的特征入口 | 读侧与缓存 | 元数据 vs 数据瓶颈 | 争用观察点 | 空间压力 |
+|---|---|---|---|---|---|
+| 本地 ext4 | commit 窗口（默认 5 s）内元数据变更可丢；`data=` 三模式与 `barrier` 决定写入路径（[admin-guide/ext4](https://www.kernel.org/doc/html/v6.16/admin-guide/ext4.html)）；步骤 4 的内核 writeback 节流适用 | 页缓存污染读测量（见步骤 5）；冷基线方法见[本地与共享存储 §5](local-and-shared-storage.md) | 默认内部日志时数据与日志同一设备；外部日志设备（`journal_dev`/`journal_path`）例外（[admin-guide/ext4](https://www.kernel.org/doc/html/v6.16/admin-guide/ext4.html)） | 同机其他负载共用设备，按现场计数器 | inode/空间耗尽无已核对来源（unknown） |
+| NFSv4.1 | 客户端 fsync/close 慢可能在对端：WRITE 可带 UNSTABLE4，须 COMMIT＋比对 write verifier（[RFC 8881 §18.32](https://datatracker.ietf.org/doc/html/rfc8881#section-18.32)/[§18.3](https://datatracker.ietf.org/doc/html/rfc8881#section-18.3)）；导出 `async` 允许落盘前应答——违反 NFS 协议，异常重启可丢数据/损坏（[exports(5)](https://man7.org/linux/man-pages/man5/exports.5.html)），Checkpoint 发布要求导出 `sync`（见[本地与共享存储 §3/§4](local-and-shared-storage.md)）；grace 期服务器须以 NFS4ERR_GRACE 拒绝 READ/WRITE 与非 reclaim 锁请求，除非能保证安全（[§8.4.2.1](https://datatracker.ietf.org/doc/html/rfc8881#section-8.4.2.1)）；`hard`/`soft` 超时行为见 [nfs(5)](https://man7.org/linux/man-pages/man5/nfs.5.html) | CTO/缓存窗口见[本地与共享存储 §3](local-and-shared-storage.md)（v3 语境叙述，v4 unknown 沿用）；冷/热基线见[同页 §5](local-and-shared-storage.md)（本机 drop_caches；属性/目录项缓存与 v4 委托是否随之失效 unknown；服务器侧 unknown） | pNFS（[RFC 8881 §12](https://datatracker.ietf.org/doc/html/rfc8881#section-12)，OPTIONAL）在协议层分离 metadata server 与 storage devices，客户端 pNFS 范围 unknown（见[本地与共享存储 §3](local-and-shared-storage.md)）；非 pNFS 部署由同一服务器处理元数据与数据操作 | 服务器侧统计 [knfsd-stats](https://www.kernel.org/doc/html/v6.16/filesystems/nfs/knfsd-stats.html)（线程池饱和信号，无请求字节/延迟） | 服务器侧空间证据 unknown |
+| Ceph RGW（S3） | multipart 上传中断按 upload-id 列举残留分片；upload-id 不匹配返 404 NoSuchUpload；Complete 前后的可见性与列举一致性 unknown（见[对象与并行存储 §2](object-and-parallel-storage.md)）；已登记来源内没有 RGW 逐操作计数器，暂按客户端计时＋网络/后端证据判定 | 读/条件请求条目见同页 §2；`GET /?usage` 为用量统计、非性能计数器；冷/热基线入口 unknown | bucket 索引 resharding 条目见同页 §1，细节 unknown | 争用观察入口 unknown（`GET /?usage` 非性能计数器） | 池满 OSD_FULL/NEARFULL/POOL_FULL（[health-checks](https://docs.ceph.com/en/squid/rados/operations/health-checks/)） |
+| Lustre 2.x | 写带宽受条带布局影响（手册 §19.2 Striping Considerations；布局设/查用 `lfs setstripe`/`getstripe`，§19.3/§19.4）；`BAD WRITE CHECKSUM` 日志为 32-bit 传输校验、ldiskfs 无持久校验（§23.5.1）；校验和不匹配时客户端 re-read/re-write 至多五次（§23.5.1），初始建联超时见 Ch.35.3.8 | 页缓存/客户端缓存语义以手册为准（细分 unknown）；冷/热基线入口 unknown | MDT 元数据瓶颈与 OST 数据带宽瓶颈分开观测（§1.2.2）；Jobstats（Ch.12）/brw_stats（Ch.39）入口 | 同文件多写锁争用（§34.10）；Jobstats 按作业操作计数（Ch.12） | Full OST 禁建与数据迁移（§23.1）；`lfs df` |
 
-同窗计时对齐例子（保存路径，固定实现锚点，均未执行）：同一时钟口径下同窗采集——①主线程：保存调用点停顿区间（staging 在主线程内执行，见步骤 2；用 profiler 或训练侧打点获得）；②后台：DCP 后台写 Future 的完成时间，或 MindIO `flush()` 返回点（步骤 6）；③内核层：同窗 dirty/writeback 计数与节流迹象（步骤 4）；④后端：同窗后端统计（knfsd-stats/Jobstats/health 入口）；⑤读侧（恢复慢时）：读带宽与缓存冷/热状态（步骤 5）。**异步重叠不能简单相加**：`async_save` 的 staging 与后台写重叠、内核 writeback 与应用写重叠，各阶段耗时之和可以大于 wall-clock；判定用关键路径——主线程停顿区间与 Future/flush 完成点，分段耗时用于定位候选，不累加定罪。DCP `dcp_logger` 仅方法级总耗时（见缺口声明），分阶段须自行打点；fio 的 slat/clat 拆分只用于独立基线工具（见[存储负载基线 §4](storage-workload-baselines.md)），不是保存路径内的计时来源。
+同窗计时对齐例子（保存路径，固定实现锚点，均未执行）：同一时钟口径下同窗采集——①主线程：保存调用点停顿区间（状态收集/序列化 CPU 与 staging 拷贝都在主线程，分别打点；staging 阻塞语义见步骤 2）；②后台：DCP 后台写 Future 的完成时间，或 MindIO `flush()` 返回点（步骤 6）；③内核层：同窗 dirty/writeback 计数与节流迹象（步骤 4）；④后端：同窗后端入口，各实现给出的量不同——knfsd-stats 只有服务器线程池排队/唤醒计数（饱和信号），Ceph health 为状态检查，两者都没有请求字节/延迟；Lustre Jobstats/brw_stats 给操作计数与 I/O 时间分布；NFS/RGW 的后端逐操作字节/延迟无已登记来源（unknown）；⑤读侧（恢复慢时）：读带宽、反序列化耗时与 H2D 传输分开计时（区分见步骤 5），并标注缓存冷/热状态。**异步重叠不能简单相加**：默认 `BlockingAsyncStager` 下 staging 在主线程阻塞完成、先于后台 save（[state_dict_saver.py L229–248](https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/torch/distributed/checkpoint/state_dict_saver.py#L229-L248)），与后台 save 重叠的是后续训练步；只有自定义非阻塞 stager（`should_synchronize_after_execute`/`synchronize_staging`，[staging.py L72/L116](https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/torch/distributed/checkpoint/staging.py#L72-L116)）才可能让 staging 与前/反向计算重叠（协议 docstring 的重叠例子正是如此，L37）；内核 writeback 与应用写的重叠同理。各阶段耗时之和可以大于 wall-clock；判定用关键路径——主线程停顿区间与 Future/flush 完成点，分段耗时用于定位候选，不累加定罪。DCP `dcp_logger` 仅方法级总耗时（见缺口声明），分阶段须自行打点；fio 的 slat/clat 拆分只用于独立基线工具（见[存储负载基线 §4](storage-workload-baselines.md)），不是保存路径内的计时来源。
 
 定位后的接续：独立基线与隔离/争用/冷热对照口径见[存储负载、容量与长尾基线口径](storage-workload-baselines.md)；后端异常的定位链、repair/remount/回放分支与恢复完成判据见[存储客户端、后端异常与恢复验证](storage-client-backend-recovery.md)；制品暂存/提交/读回验证协议见[模型制品与 Checkpoint 的传输、发布和读回](artifact-transfer-and-publication.md)；RDMA 传输行为仍无已核对来源（unknown）。
 
 ## 停止条件与恢复安排
 
-- 不为提速直接关闭 `sync_files` 或调大 dirty 参数：前者牺牲故障一致性，后者改变整机写行为；任何内核/配置变更需授权与回滚计划。
+- 不为提速直接关闭 `sync_files`、调大 dirty 参数或改用 NFS 导出 `async`：前者牺牲故障一致性，dirty 参数改变整机写行为，导出 `async` 违反 NFS 协议且异常重启可丢数据/损坏（[exports(5)](https://man7.org/linux/man-pages/man5/exports.5.html)；Checkpoint 发布要求导出 `sync`，见[本地与共享存储 §4](local-and-shared-storage.md)）；任何内核/配置变更需授权与回滚计划。
 - 保存期间频繁失败或后端报错时先保存证据（配置、时间线、后端日志），再决定是否重试；不完整的 checkpoint 产物按[持久化边界](checkpoint-durability.md)的提交语义处理，不直接删改。
 - 压测类验证（如 MLPerf 流程）需在隔离环境执行；其规则的清缓存、fsync 强制与“无需真实加速器”边界不等同于本环境的训练保存验证。
 
@@ -118,8 +119,8 @@ verification:
 - [Linux kernel v6.16 vm.rst（固定 commit）](https://github.com/torvalds/linux/blob/038d61fd642278bab63ee8ef722c50d10ab01e8f/Documentation/admin-guide/sysctl/vm.rst)：dirty/writeback 与写者节流；[fsync(2)（man-pages 6.19）](https://man7.org/linux/man-pages/man2/fsync.2.html)。
 - [MindIO ACP 接口文档（MindCluster v26.1.1 固定 commit）](https://github.com/Ascend/mind-cluster/tree/44385c13d7b1d87def35f1604e8be4d16de6ca4e/component/mindio)：save/multi_save/flush/register_checker/load 与环境变量。
 - [MLPerf Storage v2.0 规则](https://github.com/mlcommons/storage/blob/7e71ca162d8f9e7ae4b5b698d7d79b0883817f25/Submission_guidelines.md)：checkpointing 负载的清缓存、fsync 与测量边界。
-- 2026-10-18（T04-08 补交）加法：后端支路入口节复用已登记版本化来源——[Linux v6.16 NFS 内核文档](https://www.kernel.org/doc/html/v6.16/filesystems/nfs/index.html)、[nfs(5)](https://man7.org/linux/man-pages/man5/nfs.5.html) 与 [exports(5)](https://man7.org/linux/man-pages/man5/exports.5.html)、[RFC 8881](https://datatracker.ietf.org/doc/html/rfc8881)（§18.3/§18.32/§8.4）、[Ceph Squid RGW S3](https://docs.ceph.com/en/squid/radosgw/s3/) 与 [health-checks](https://docs.ceph.com/en/squid/rados/operations/health-checks/)、[Lustre 2.x 手册](https://doc.lustre.org/lustre_manual.xhtml)；逐条 revision/许可与未覆盖范围见[第二十一批 T04-08 来源记录](../../docs/research/batch-21-t04-08-sources.md)。本轮未运行任何工具或压测。
+- 2026-10-18（T04-08 补交）加法：后端支路入口节复用已登记版本化来源——[Linux v6.16 NFS 内核文档](https://www.kernel.org/doc/html/v6.16/filesystems/nfs/index.html)、[nfs(5)](https://man7.org/linux/man-pages/man5/nfs.5.html) 与 [exports(5)](https://man7.org/linux/man-pages/man5/exports.5.html)、[RFC 8881](https://datatracker.ietf.org/doc/html/rfc8881)（§18.3/§18.32/§8.4.2.1/§12）、[Ceph Squid RGW S3](https://docs.ceph.com/en/squid/radosgw/s3/) 与 [health-checks](https://docs.ceph.com/en/squid/rados/operations/health-checks/)、[Lustre 2.x 手册](https://doc.lustre.org/lustre_manual.xhtml)、[admin-guide/ext4](https://www.kernel.org/doc/html/v6.16/admin-guide/ext4.html)；逐条 revision/许可与未覆盖范围见[第二十一批 T04-08 来源记录](../../docs/research/batch-21-t04-08-sources.md)。本轮未重取上游页面、未运行任何工具或压测。
 - [PyTorch 异步保存教程](https://docs.pytorch.org/tutorials/recipes/distributed_async_checkpoint_recipe.html)（动态页，2026-09-30 观察）：仅限定引用其 2.6 适用部分（CPU buffer、staging 阻塞、单异步请求建议）；页面已并入 2.9 的 DefaultStager 内容，不能当作 2.6 功能。
 - 逐条主张与证据定位见[第十批 checkpoint I/O 来源记录](../../docs/research/batch-10-checkpoint-io-sources.md)。
 - 当前验证范围：来源核对；未执行保存、恢复或存储压测。
-- 待确认：RDMA 传输证据；RGW 性能计数器/日志端点；NFS 客户端 mountstats；Lustre 计数器其余含义与精确小版本；DCP loader 集合调用行号；MindIO memfs 实现与性能数据；目标存储的实测基线（未执行）。
+- 待确认：RDMA 传输证据；NFS/RGW 传输选项层行为（如 rsize/wsize/proto、RGW HTTP 前端）；RGW 性能计数器/官方负载基准与日志端点；NFS 客户端 mountstats；Lustre 计数器其余含义与精确小版本；DCP loader 集合调用行号；MindIO memfs 实现与性能数据；目标存储的实测基线（未执行）。

@@ -442,3 +442,26 @@
 - C33-2a 坐标分列与转换：CLI 侧目标 `D_cli`＝`<bundle rootfs 宿主路径>`＋源路径（u_mount.c 目标计算）与进程根内目标 `D_proc`＝源路径本身分列；转换＝`D_proc`＝`D_cli` 去宿主 rootfs 前缀；覆盖挂载选择与相对路径计算一律在进程根内坐标进行，不以 `D_cli` 匹配 field 5；完整目标改 `D_proc/r`；④ 文件项改按进程根内目标路径（＝源路径）匹配 field 5。
 - C33-3：§3 口径句与来源记录 L12 同步补坐标分列/转换判据；无其他完成度口径变化（方法缺段补齐后保持"已交付、filled 值 K2"）。
 - 登记无新增。
+
+## T04-08 修订（2026-10-18，claude-opus-5-5 初审 B21-C35–C52 → 本轮处理全部 18 项）
+
+修订依据说明：初审审阅者已抓取固定上游原文核对（多页 SHA-256 与登记快照一致），本轮修订按初审关闭条件与其引用的原文执行；作者本轮未重新抓取上游页面。未触碰 B17-C08 / B19 BLOCKED-1 例外约束范围（与本任务无关）。
+
+- C35（checkpoint 计时例子重叠语义与源码不符）：改写为默认 `BlockingAsyncStager` 下 staging 主线程阻塞完成、先于后台 save（state_dict_saver.py L229–248），后台 save 与后续训练步重叠，仅自定义非阻塞 stager 可与前/反向重叠（staging.py L37/L72/L116）；内核 writeback 重叠句保留。
+- C36（NFS 元数据/数据"协议层不分开"与 RFC 8881 §12.2 相反）：两篇 NFS 行改写为 pNFS（§12，OPTIONAL）协议层分离 metadata server/storage devices、客户端 pNFS 范围 unknown、非 pNFS 部署由同一服务器处理元数据与数据操作。
+- C37（NFS 缓存格丢 v3 限定、lookupcache 语义错）：补 T04-02 §3 的 v3 限定与 v4 unknown；`actimeo`（窗口长度）与 `lookupcache`（正/负目录项信任/重验）按 nfs(5) 原意分开；"不改变协议语义"删除。
+- C38（knfsd-stats/Ceph health 被当作可对字节/延迟对照）：两篇计时例子的后端项按实现分写实际给出的量（knfsd-stats＝线程池饱和信号、Ceph health＝状态检查、Lustre Jobstats/brw_stats＝操作计数与 I/O 时间分布）；NFS/RGW 后端逐操作字节/延迟记 unknown。
+- C39（计时例子缺 CPU/队列/传输层）：饥饿指南补 worker CPU/解码、队列就绪时刻、H2D 传输起止（NPU 计时 unknown）、客户端缓存冷/热；checkpoint 补状态收集/序列化 CPU 分开打点与恢复侧读/反序列化/H2D 分开计时。
+- C40（cold/warm 与争用入口缺）：饥饿表 NFS 行补 T04-02 §5 冷基线（unknown 沿用）、RGW/Lustre 行显式记 unknown；checkpoint 表新增争用观察点列（逐实现写明），Lustre 补校验和 re-read/re-write 至多五次与初始建联超时入口。
+- C41（导出 async 未带代价）：checkpoint NFS 行补"违反协议、异常重启可丢数据/损坏"与发布要求导出 sync（链 T04-02 §3/§4）；停止条件补"不改用导出 async"。
+- C42（RGW 可见性收窄）：两篇改为"Complete 前后的可见性与列举一致性 unknown"，与 T04-03 §2 逐字一致。
+- C43（漏列 ext4 来源）：两篇 source_refs 补 src.kernel.admin-guide-ext4-v6.16、来源条目补 admin-guide/ext4；来源记录定位表 ext4 行去掉未使用的 docs-ext4。
+- C44（ext4"同一介质"与超时措辞）：两篇改"默认内部日志同一设备、journal_dev/journal_path 例外"；饥饿超时格与 T04-07 §2 对齐（无超时挂载语义、块层超时 unknown）。
+- C45（grace 弱化 RFC must）：改"须以 NFS4ERR_GRACE 拒绝 READ/WRITE 与非 reclaim 锁请求，除非能保证安全"，锚点改 §8.4.2.1。
+- C46（fio 缩写对应偏离）：按 T04-06 §4 口径改写（slat 初始化到提交/clat 提交到完成/lat＝二者之和；io_u.c `issue_time`→clat L2097、`start_time`→lat L2102、slat L2427）。
+- C47（Lustre 限定与锚点偏移）：两篇节首注明"限 ≤ LTS 2.15.x 引入特性"；checkpoint 带宽主张锚 §19.2（§19.3/19.4 保留为命令节）；`BAD WRITE CHECKSUM` 补"ldiskfs 无持久校验"。
+- C48（"慢只能按客户端计时"超出证据范围）：改"已登记来源内没有 RGW 逐操作计数器，暂按客户端计时＋网络/后端证据判定"。
+- C49（unknown 清单四处不同步）：checkpoint 缺口声明恢复"仍无已核对来源的支路只能按现场证据处理"并补 NFS/RGW 传输选项层；待确认行与缺口声明同组项；来源记录 unknown 清单扩为 12 项，覆盖两表出现的全部 unknown。
+- C50（定位表与实际引用不一致；rados bench 归属错）：定位表加"引用方式"列（直接/经链接沿用），PG/OSD 排查、rados(8)、sysctl vm、MindIO、MLPerf 标为经链接沿用或既有内容；L8 改为"rados bench 计时能力本轮未核对（`--show-time` 未评估）"；Lustre 行章节按实际引用收敛（§19.2/§23.5.1/§35.3.8 入，§34.8/Ch.38 出）。
+- C51（notes 未披露未重取页面）：两篇 verification.notes 补"本轮未重取上游页面，新增条目以 T04-02/03/06/07 已核对口径与初审修订为准"；派生主张（C35/C36/C37/C44）已按初审核对的原文改写。
+- C52（完整性条件式、判据 2 适用不明）：饥饿指南完整性项改引数据路径 §A 字节校验和（抽查范围由现场定）；写明判据 1–3（含硬失败修复后的同窗复核）均须五项记录。

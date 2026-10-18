@@ -17,6 +17,7 @@ source_refs:
   - src.ceph.docs-health-checks-squid
   - src.lustre.ops-manual-2x
   - src.fio.repo-3.43
+  - src.kernel.admin-guide-ext4-v6.16
 updated_at: "2026-10-18"
 summary: 把“训练在等数据”定位到存储、CPU 处理、组 batch、主机队列、设备传输或训练消费中的首个边界；以 PyTorch 2.6 DataLoader 与 profiler 为可核对实现样板，区分配置错误、worker 硬失败和真实供给不足；存储支路按 NFS/RGW/Lustre/ext4 各自的版本化参考分列入口。
 related_ids:
@@ -37,7 +38,7 @@ verification:
     - src.pytorch.data-loader-2.6
     - src.pytorch.dataloader-source-v2.6.0
     - src.pytorch.profiler-2.6
-  notes: "已核对 PyTorch 2.6 data.html 参数语义、v2.6.0 固定 dataloader.py 的 worker 错误/超时/prefetch/record_function 实现和 profiler.html 的观测能力；未在真实环境执行训练、profiling 或变更验证。2026-10-18（T04-08 补交）复用登记版本化后端来源（内核 v6.16 NFS、nfs(5)、Squid RGW S3 与健康检查、Lustre 2.x 手册、fio 3.43 计时锚点），新增后端支路入口与同窗计时对齐节；本轮未运行任何工具。"
+  notes: "已核对 PyTorch 2.6 data.html 参数语义、v2.6.0 固定 dataloader.py 的 worker 错误/超时/prefetch/record_function 实现和 profiler.html 的观测能力；未在真实环境执行训练、profiling 或变更验证。2026-10-18（T04-08 补交）复用登记版本化后端来源（内核 v6.16 NFS、nfs(5)、Squid RGW S3 与健康检查、Lustre 2.x 手册、fio 3.43 计时锚点、admin-guide/ext4），新增后端支路入口与同窗计时对齐节；本轮未重取上游页面，新增条目以 T04-02/03/06/07 已核对口径与初审（B21-C35–C52）修订为准；未运行任何工具。"
 ---
 
 # 训练数据加载饥饿诊断指南
@@ -91,16 +92,16 @@ verification:
 
 ## 后端支路入口与同窗计时对齐
 
-步骤 5 定位到存储/缓存/后端支路后，按实现进入各自的观察入口。以下只列入口与边界，不给跨后端的统一调参命令；旋钮语义按各实现的版本化参考核对（NFS/ext4 见[本地与共享存储](local-and-shared-storage.md)，RGW/Lustre 见[对象与并行存储](object-and-parallel-storage.md)）。
+步骤 5 定位到存储/缓存/后端支路后，按实现进入各自的观察入口。以下只列入口与边界，不给跨后端的统一调参命令；旋钮语义按各实现的版本化参考核对（NFS/ext4 见[本地与共享存储](local-and-shared-storage.md)，RGW/Lustre 见[对象与并行存储](object-and-parallel-storage.md)）；Lustre 条目限 LTS 2.15.x 及以前引入的特性（见[对象与并行存储 §1](object-and-parallel-storage.md)）。
 
 | 实现 | 重试/超时与失败入口 | 缓存/一致性窗口 | 元数据 vs 数据瓶颈 | 争用观察点 | 空间压力 |
 |---|---|---|---|---|---|
-| 本地 ext4/NVMe | 无客户端超时语义；`errors=` 只决定检错后的反应方式（[admin-guide/ext4](https://www.kernel.org/doc/html/v6.16/admin-guide/ext4.html)） | 页缓存冷/热；drop_caches 冷基线方法（非破坏性、有开销）见[本地与共享存储 §5](local-and-shared-storage.md) | 同一介质，元数据/数据不分层 | 同机其他负载共用设备，按现场计数器 | inode/空间耗尽无已核对来源（unknown） |
-| NFSv4.1 | `hard` 无限重试；`soft`/`softerr` retrans 次后 EIO/ETIMEDOUT；`timeo` TCP 默认 60 s 线性退避至 600 s（[nfs(5)](https://man7.org/linux/man-pages/man5/nfs.5.html)）；遇 `soft` 挂载先记录该事实（静默损坏风险），再解释现象 | CTO/属性缓存窗口内可读陈旧数据；`actimeo`/`lookupcache` 只改变窗口长度，不改变协议语义（[nfs(5)](https://man7.org/linux/man-pages/man5/nfs.5.html)） | 协议层不分开；服务器实现另计 | 服务器侧统计 [knfsd-stats](https://www.kernel.org/doc/html/v6.16/filesystems/nfs/knfsd-stats.html)；客户端 mountstats 未登记（unknown） | 服务器侧空间证据 unknown |
-| Ceph RGW（S3） | 读路径失败语义未单列（unknown）；写入/multipart 条目见[对象与并行存储 §2](object-and-parallel-storage.md) | Complete 前可见性 unknown；读到旧版本按版本化三态判定（同页 §5） | bucket 索引实现细节 unknown | `GET /?usage` 是用量统计、不是性能计数器；RGW 官方负载基准 unknown | 池满检查 OSD_FULL/NEARFULL/POOL_FULL（[Ceph Squid health-checks](https://docs.ceph.com/en/squid/rados/operations/health-checks/)） |
-| Lustre 2.x | 初始建联超时见手册 Ch.35.3.8；运行期超时细分 unknown | LDLM 跨客户端/服务器一致性（手册 §1.1.1）；不与 NFS 缓存模型互推 | MDT 元数据瓶颈与 OST 数据带宽瓶颈分开观测（手册 §1.2.2） | Jobstats（Ch.12）与 brw_stats（Ch.39）入口；同文件多写锁争用（§34.10） | Full OST 禁建与数据迁移（§23.1）；`lfs df` |
+| 本地 ext4/NVMe | 无超时挂载语义（块层命令超时不属本列范围，unknown）；`errors=` 只决定检错后的反应方式（[admin-guide/ext4](https://www.kernel.org/doc/html/v6.16/admin-guide/ext4.html)） | 页缓存冷/热；drop_caches 冷基线方法（非破坏性、有开销）见[本地与共享存储 §5](local-and-shared-storage.md) | 默认内部日志时数据与日志同一设备；外部日志设备（`journal_dev`/`journal_path`）例外（[admin-guide/ext4](https://www.kernel.org/doc/html/v6.16/admin-guide/ext4.html)） | 同机其他负载共用设备，按现场计数器 | inode/空间耗尽无已核对来源（unknown） |
+| NFSv4.1 | `hard` 无限重试；`soft`/`softerr` retrans 次后 EIO/ETIMEDOUT；`timeo` TCP 默认 60 s 线性退避至 600 s（[nfs(5)](https://man7.org/linux/man-pages/man5/nfs.5.html)）；遇 `soft` 挂载先记录该事实（静默损坏风险），再解释现象 | CTO/属性缓存窗口内可读陈旧数据——nfs(5) 的 CTO 节以 v3 语境叙述，Linux v4 客户端 CTO 行为未在已取源中单列（unknown，见[本地与共享存储 §3](local-and-shared-storage.md)）；`actimeo` 把 acregmin/acregmax/acdirmin/acdirmax 设为同一值（窗口长度），`lookupcache=all\|none\|pos` 决定正/负目录项在父目录属性过期前是否视为有效（none 为使用前总是重验），两者语义不同（[nfs(5)](https://man7.org/linux/man-pages/man5/nfs.5.html)）；冷/热基线：本机 drop_caches 清本地干净页缓存，属性/目录项缓存与 v4 委托是否随之失效 unknown、服务器侧 unknown（见[本地与共享存储 §5](local-and-shared-storage.md)） | pNFS（[RFC 8881 §12](https://datatracker.ietf.org/doc/html/rfc8881#section-12)，OPTIONAL）在协议层分离 metadata server 与 storage devices，客户端 pNFS 范围 unknown（见[本地与共享存储 §3](local-and-shared-storage.md)）；非 pNFS 部署由同一服务器处理元数据与数据操作 | 服务器侧统计 [knfsd-stats](https://www.kernel.org/doc/html/v6.16/filesystems/nfs/knfsd-stats.html)；客户端 mountstats 未登记（unknown） | 服务器侧空间证据 unknown |
+| Ceph RGW（S3） | 读路径失败语义未单列（unknown）；写入/multipart 条目见[对象与并行存储 §2](object-and-parallel-storage.md) | Complete 前后的可见性与列举一致性 unknown（同页 §2）；读到旧版本按版本化三态判定（同页 §5）；对象侧无客户端缓存层语义，冷/热基线入口 unknown | bucket 索引实现细节 unknown | `GET /?usage` 是用量统计、不是性能计数器；RGW 官方负载基准 unknown | 池满检查 OSD_FULL/NEARFULL/POOL_FULL（[Ceph Squid health-checks](https://docs.ceph.com/en/squid/rados/operations/health-checks/)） |
+| Lustre 2.x | 初始建联超时见手册 Ch.35.3.8；运行期超时细分 unknown；校验和不匹配时客户端 re-read/re-write 至多五次（§23.5.1） | LDLM 跨客户端/服务器一致性（手册 §1.1.1）；不与 NFS 缓存模型互推；冷/热基线入口 unknown（客户端缓存细分未核对） | MDT 元数据瓶颈与 OST 数据带宽瓶颈分开观测（手册 §1.2.2） | Jobstats（Ch.12）与 brw_stats（Ch.39）入口；同文件多写锁争用（§34.10） | Full OST 禁建与数据迁移（§23.1）；`lfs df` |
 
-同窗计时对齐例子（固定实现锚点，均未执行）：以一次疑似饥饿窗口为例，同一时钟口径下同窗采集——①消费侧：profiler 中 record_function 区间 `enumerate(DataLoader)#_MultiProcessingDataLoaderIter.__next__` 的耗时与占比（见步骤 2）；②主机侧：训练循环取 batch 前后的应用层打点（自定义 record_function 区间或等价计时）；③后端侧：同窗的后端统计（NFS 服务器 knfsd-stats、Lustre Jobstats/brw_stats、Ceph health 入口；本地设备为系统计数器），与应用侧请求字节/延迟对照；④独立基线：fio 的 slat（提交）/clat（完成）拆分（[fio 3.43](https://github.com/axboe/fio/tree/fio-3.43) HOWTO 与 io_u.c 取样行 L2097/L2102）只用于工具自身的离线基线，不是训练路径内的计时来源。**异步重叠不能简单相加**：预取与异步传输允许阶段重叠（见[数据路径](training-data-path.md)的流水线说明），各阶段耗时之和可以大于 wall-clock；等待判定只看关键路径——「下一顺位 batch 未就绪且与输入等待重合」的区间，分段耗时用于定位候选，不累加定罪。
+同窗计时对齐例子（固定实现锚点，均未执行）：以一次疑似饥饿窗口为例，同一时钟口径下同窗采集——①消费侧：profiler 中 record_function 区间 `enumerate(DataLoader)#_MultiProcessingDataLoaderIter.__next__` 的耗时与占比（见步骤 2）；②worker/CPU：worker 进程 CPU 时间与样本产出率、解码/变换耗时（见「需要的证据」表与[数据路径阶段表](training-data-path.md)对应行）；③队列：下一顺位 batch 就绪时刻与可交付队列为空的持续时间（按序返回语义见[数据路径](training-data-path.md)）；④传输：主机到设备传输开始/结束与同步等待（设备时间线或等价事件；NPU 侧计时实现未核对，unknown）；⑤客户端/缓存：标注冷/热状态与工作集（冷/热基线入口见上表）；⑥后端侧：同窗的后端入口，各实现给出的量不同——NFS 服务器 knfsd-stats 只有线程池排队/唤醒计数（饱和信号，无请求字节/延迟）；Lustre Jobstats（按作业操作计数）与 brw_stats（I/O 大小与时间直方图）可与应用侧请求对照；Ceph health 是状态检查（无请求字节/延迟）；RGW 逐操作字节/延迟无已登记来源（unknown）；本地设备为系统计数器；对照只在入口实际给出对应量时成立；⑦独立基线：fio 的 slat（初始化到提交）/clat（提交到完成）、lat＝slat＋clat（[fio 3.43](https://github.com/axboe/fio/tree/fio-3.43) HOWTO；io_u.c 取样行 `issue_time`→clat L2097、`start_time`→lat L2102、slat L2427）只用于工具自身的离线基线，不是训练路径内的计时来源。**异步重叠不能简单相加**：预取与异步传输允许阶段重叠（见[数据路径](training-data-path.md)的流水线说明），各阶段耗时之和可以大于 wall-clock；等待判定只看关键路径——「下一顺位 batch 未就绪且与输入等待重合」的区间，分段耗时用于定位候选，不累加定罪。
 
 定位到后端支路后的接续：独立基线与对照口径（隔离/争用/冷热三组对照、latency_target 饱和读法、各工具终点分开）见[存储负载、容量与长尾基线口径](storage-workload-baselines.md)；后端异常与恢复（Ceph 定位链、NFS grace/reclaim、Lustre recovery、ext4 回放）见[存储客户端、后端异常与恢复验证](storage-client-backend-recovery.md)；RDMA 传输行为仍无已核对来源（unknown）。
 
@@ -123,7 +124,7 @@ verification:
 3. 单变量对照稳定改变了预定义的等待或吞吐观测；
 4. 证据不足，但已明确记录缺失的版本、窗口、队列或后端证据，结论保持 `unknown`。
 
-“命令成功”“worker 数调大后好像快了”或“利用率回升”均不单独满足完成判据；需要同窗口的等待位置与吞吐证据。定位到后端支路或做过受控对照时，完成记录还须同时包含：数据/制品身份（数据集版本与 manifest 未变，核对方法见[数据路径 §A](training-data-path.md)）、作业进展（同窗吞吐/step 恢复）、完整性（如发生读回，记录校验结论）、时延/吞吐与资源代价（对照前后同窗）。
+“命令成功”“worker 数调大后好像快了”或“利用率回升”均不单独满足完成判据；需要同窗口的等待位置与吞吐证据。判据 1–3 的完成记录（含硬失败修复后的同窗复核）还须同时包含：数据/制品身份（数据集版本与 manifest 未变，核对方法见[数据路径 §A](training-data-path.md)）、作业进展（同窗吞吐/step 恢复）、完整性（按[数据路径 §A](training-data-path.md)的字节校验和项核对，抽查范围由现场定）、时延/吞吐与资源代价（对照前后同窗）。
 
 ## 来源与验证记录
 
@@ -133,5 +134,5 @@ verification:
 - [PyTorch 2.6 CUDA semantics](https://docs.pytorch.org/docs/2.6/notes/cuda.html)：仅 pin_memory/non_blocking 的 CUDA 语境对照。
 - [MLPerf Storage v2.0 规则](https://github.com/mlcommons/storage/blob/7e71ca162d8f9e7ae4b5b698d7d79b0883817f25/Submission_guidelines.md)：其 AU 用模拟计算且不含预处理与设备传输——不能用该基准的存储结论替代本流程的端到端饥饿判断。
 - 逐条主张与证据定位见[第八批数据加载来源记录](../../docs/research/batch-08-dataloader-sources.md)。
-- 2026-10-18（T04-08 补交）加法：后端支路入口与同窗计时对齐节复用已登记版本化来源——[Linux v6.16 NFS 内核文档](https://www.kernel.org/doc/html/v6.16/filesystems/nfs/index.html)（knfsd-stats/nfs41-server/client-identifier）、[nfs(5)](https://man7.org/linux/man-pages/man5/nfs.5.html)、[Ceph Squid RGW S3](https://docs.ceph.com/en/squid/radosgw/s3/) 与 [health-checks](https://docs.ceph.com/en/squid/rados/operations/health-checks/)、[Lustre 2.x 手册](https://doc.lustre.org/lustre_manual.xhtml)、[fio 3.43](https://github.com/axboe/fio/tree/fio-3.43)（slat/clat 锚点）；逐条 revision/许可与未覆盖范围见[第二十一批 T04-08 来源记录](../../docs/research/batch-21-t04-08-sources.md)。本轮未运行任何工具或压测。
+- 2026-10-18（T04-08 补交）加法：后端支路入口与同窗计时对齐节复用已登记版本化来源——[Linux v6.16 NFS 内核文档](https://www.kernel.org/doc/html/v6.16/filesystems/nfs/index.html)（knfsd-stats/nfs41-server/client-identifier）、[nfs(5)](https://man7.org/linux/man-pages/man5/nfs.5.html)、[Ceph Squid RGW S3](https://docs.ceph.com/en/squid/radosgw/s3/) 与 [health-checks](https://docs.ceph.com/en/squid/rados/operations/health-checks/)、[Lustre 2.x 手册](https://doc.lustre.org/lustre_manual.xhtml)、[fio 3.43](https://github.com/axboe/fio/tree/fio-3.43)（slat/clat 锚点）、[admin-guide/ext4](https://www.kernel.org/doc/html/v6.16/admin-guide/ext4.html)；逐条 revision/许可与未覆盖范围见[第二十一批 T04-08 来源记录](../../docs/research/batch-21-t04-08-sources.md)。本轮未重取上游页面、未运行任何工具或压测。
 - 当前验证范围：来源核对；没有目标环境的训练、profiling 或变更执行记录。
