@@ -499,14 +499,14 @@ topics:
     - T02-11
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 正文缺口须由实际交付的内容与精确来源验收关闭，新增/修订内容与已有证据组成五方面阅读闭环；真实证据缺口仅在独立验证轨道完成后关闭。
   - 精确上游证据、平台/版本/工具边界和未知项可追溯；资料尚未取得的 blocked_on_evidence 子项不能因任务规划或文档编写被标已覆盖。
   - 本主题 task_refs 的有限 v1 交付通过 gpt-6.1-sol / xhigh 审阅、发现修订与定向复核及结构/构建检查后，再重新对照主题范围验收。
   - 模型审阅、source_checked 和方法定义均不等于 reproduced；硬件实际验证及真实环境档案分别保留状态。
   content_acceptance_batch: 17
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
   validation_refs: []
   retained_background_ids: []
 - topic_id: '01.4'
@@ -960,7 +960,7 @@ topics:
     - T02-08
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 02.5-G2
     gap_text: 缺少 GPU/其他框架实现对照和适配验证方法
@@ -968,14 +968,14 @@ topics:
     - T02-08
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 正文缺口须由实际交付的内容与精确来源验收关闭，新增/修订内容与已有证据组成五方面阅读闭环；真实证据缺口仅在独立验证轨道完成后关闭。
   - 精确上游证据、平台/版本/工具边界和未知项可追溯；资料尚未取得的 blocked_on_evidence 子项不能因任务规划或文档编写被标已覆盖。
   - 本主题 task_refs 的有限 v1 交付通过 gpt-6.1-sol / xhigh 审阅、发现修订与定向复核及结构/构建检查后，再重新对照主题范围验收。
   - 模型审阅、source_checked 和方法定义均不等于 reproduced；硬件实际验证及真实环境档案分别保留状态。
   content_acceptance_batch: 17
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
   validation_refs: []
   retained_background_ids: []
 - topic_id: '02.6'
@@ -1006,7 +1006,7 @@ topics:
     - T02-09
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 02.6-G2
     gap_text: 缺少数据格式转换、混合精度与精度语义基础
@@ -1014,7 +1014,7 @@ topics:
     - T02-10
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 3
     gap_ref: 02.6-G3
     gap_text: NPU 传输/同步接口证据待补
@@ -1022,14 +1022,14 @@ topics:
     - T02-11
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 正文缺口须由实际交付的内容与精确来源验收关闭，新增/修订内容与已有证据组成五方面阅读闭环；真实证据缺口仅在独立验证轨道完成后关闭。
   - 精确上游证据、平台/版本/工具边界和未知项可追溯；资料尚未取得的 blocked_on_evidence 子项不能因任务规划或文档编写被标已覆盖。
   - 本主题 task_refs 的有限 v1 交付通过 gpt-6.1-sol / xhigh 审阅、发现修订与定向复核及结构/构建检查后，再重新对照主题范围验收。
   - 模型审阅、source_checked 和方法定义均不等于 reproduced；硬件实际验证及真实环境档案分别保留状态。
   content_acceptance_batch: 17
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
   validation_refs:
   - V05
   retained_background_ids: []
@@ -1122,7 +1122,7 @@ topics:
     - T03-01
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 03.1-G2
     gap_text: 缺少节点间物理路径图与拓扑核对实例
@@ -1131,7 +1131,7 @@ topics:
     - T03-03
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 在上述有限 v1 范围内，五方面均能定位到正文段落和精确支持来源；任务新增/修订稿及导航齐全，不能仅靠目录或邻域提及验收。
   - 每个平台/实现的适用和未知条件分开；发布/文档/源码版本固定后核对支持交集，不因概念相同推定兼容。
@@ -1139,7 +1139,7 @@ topics:
   - 所有计划任务交付后重新进行主题内容覆盖验收；已有 covered 基础判断不自动变成最终 v1 达标。
   - 验证设计与公开来源案例满足方法层交付；真实 GPU/NPU/存储/平台执行结果仍需环境档案和证据，未执行不标 reproduced。
   content_acceptance_batch: 18
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
   validation_refs:
   - V09
   retained_background_ids: []
@@ -1168,7 +1168,7 @@ topics:
     - T03-02
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 03.2-G2
     gap_text: 缺少 IB/RoCE 配置、拥塞和独立验证的版本化方法
@@ -1176,7 +1176,7 @@ topics:
     - T03-03
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 在上述有限 v1 范围内，五方面均能定位到正文段落和精确支持来源；任务新增/修订稿及导航齐全，不能仅靠目录或邻域提及验收。
   - 每个平台/实现的适用和未知条件分开；发布/文档/源码版本固定后核对支持交集，不因概念相同推定兼容。
@@ -1184,7 +1184,7 @@ topics:
   - 所有计划任务交付后重新进行主题内容覆盖验收；已有 covered 基础判断不自动变成最终 v1 达标。
   - 验证设计与公开来源案例满足方法层交付；真实 GPU/NPU/存储/平台执行结果仍需环境档案和证据，未执行不标 reproduced。
   content_acceptance_batch: 18
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
   validation_refs:
   - V09
   retained_background_ids:
@@ -1223,7 +1223,7 @@ topics:
     - T03-07
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 03.3-G2
     gap_text: 缺少拥塞与多租户争用的指标、对照和来源案例
@@ -1232,7 +1232,7 @@ topics:
     - T03-08
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 3
     gap_ref: 03.3-G3
     gap_text: 缺少跨节点网络基线
@@ -1241,7 +1241,7 @@ topics:
     - T03-07
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 在上述有限 v1 范围内，五方面均能定位到正文段落和精确支持来源；任务新增/修订稿及导航齐全，不能仅靠目录或邻域提及验收。
   - 每个平台/实现的适用和未知条件分开；发布/文档/源码版本固定后核对支持交集，不因概念相同推定兼容。
@@ -1249,7 +1249,7 @@ topics:
   - 所有计划任务交付后重新进行主题内容覆盖验收；已有 covered 基础判断不自动变成最终 v1 达标。
   - 验证设计与公开来源案例满足方法层交付；真实 GPU/NPU/存储/平台执行结果仍需环境档案和证据，未执行不标 reproduced。
   content_acceptance_batch: 19
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
   validation_refs:
   - V09
   retained_background_ids: []
@@ -1280,7 +1280,7 @@ topics:
     - T03-04
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 03.4-G2
     gap_text: 缺少 ring/tree 等算法与代价
@@ -1288,7 +1288,7 @@ topics:
     - T03-04
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 3
     gap_ref: 03.4-G3
     gap_text: 缺少与 DP/TP/PP/EP 工作负载的系统映射
@@ -1296,7 +1296,7 @@ topics:
     - T03-04
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 在上述有限 v1 范围内，五方面均能定位到正文段落和精确支持来源；任务新增/修订稿及导航齐全，不能仅靠目录或邻域提及验收。
   - 每个平台/实现的适用和未知条件分开；发布/文档/源码版本固定后核对支持交集，不因概念相同推定兼容。
@@ -1304,7 +1304,7 @@ topics:
   - 所有计划任务交付后重新进行主题内容覆盖验收；已有 covered 基础判断不自动变成最终 v1 达标。
   - 验证设计与公开来源案例满足方法层交付；真实 GPU/NPU/存储/平台执行结果仍需环境档案和证据，未执行不标 reproduced。
   content_acceptance_batch: 18
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
   validation_refs: []
   retained_background_ids: []
 - topic_id: '03.5'
@@ -1337,7 +1337,7 @@ topics:
     - T03-05
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 03.5-G2
     gap_text: 缺少通信库能力/运行条件比较
@@ -1345,7 +1345,7 @@ topics:
     - T03-06
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 3
     gap_ref: 03.5-G3
     gap_text: HCCL 测试版本与目标环境需分别固定
@@ -1398,7 +1398,7 @@ topics:
   - 所有计划任务交付后重新进行主题内容覆盖验收；已有 covered 基础判断不自动变成最终 v1 达标。
   - 验证设计与公开来源案例满足方法层交付；真实 GPU/NPU/存储/平台执行结果仍需环境档案和证据，未执行不标 reproduced。
   content_acceptance_batch: 19
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
   validation_refs:
   - V03
   - V04
@@ -1438,7 +1438,7 @@ topics:
     - T03-08
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 03.7-G2
     gap_text: 缺少带宽退化的独立来源案例和路径对照
@@ -1446,7 +1446,7 @@ topics:
     - T03-08
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 3
     gap_ref: 03.7-G3
     gap_text: 跨节点链路证据仍需补齐
@@ -1456,7 +1456,7 @@ topics:
     - T03-08
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 在上述有限 v1 范围内，五方面均能定位到正文段落和精确支持来源；任务新增/修订稿及导航齐全，不能仅靠目录或邻域提及验收。
   - 每个平台/实现的适用和未知条件分开；发布/文档/源码版本固定后核对支持交集，不因概念相同推定兼容。
@@ -1464,7 +1464,7 @@ topics:
   - 所有计划任务交付后重新进行主题内容覆盖验收；已有 covered 基础判断不自动变成最终 v1 达标。
   - 验证设计与公开来源案例满足方法层交付；真实 GPU/NPU/存储/平台执行结果仍需环境档案和证据，未执行不标 reproduced。
   content_acceptance_batch: 19
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
   validation_refs:
   - V03
   - V04
@@ -1497,7 +1497,7 @@ topics:
     - T04-01
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 04.1-G2
     gap_text: 缺少缓存一致性/失效机制
@@ -1505,7 +1505,7 @@ topics:
     - T04-01
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 3
     gap_ref: 04.1-G3
     gap_text: NPU 数据传输与精确数据游标恢复仍有缺口
@@ -1514,7 +1514,7 @@ topics:
     - T04-08
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 在上述有限 v1 范围内，五方面均能定位到正文段落和精确支持来源；任务新增/修订稿及导航齐全，不能仅靠目录或邻域提及验收。
   - 每个平台/实现的适用和未知条件分开；发布/文档/源码版本固定后核对支持交集，不因概念相同推定兼容。
@@ -1522,7 +1522,7 @@ topics:
   - 所有计划任务交付后重新进行主题内容覆盖验收；已有 covered 基础判断不自动变成最终 v1 达标。
   - 验证设计与公开来源案例满足方法层交付；真实 GPU/NPU/存储/平台执行结果仍需环境档案和证据，未执行不标 reproduced。
   content_acceptance_batch: 21
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
   validation_refs: []
   retained_background_ids: []
 - topic_id: '04.2'
@@ -1553,7 +1553,7 @@ topics:
     - T04-03
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 04.2-G2
     gap_text: 缺少版本绑定的后端访问/诊断/基线方法与选型条件
@@ -1564,7 +1564,7 @@ topics:
     - T04-07
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 在上述有限 v1 范围内，五方面均能定位到正文段落和精确支持来源；任务新增/修订稿及导航齐全，不能仅靠目录或邻域提及验收。
   - 每个平台/实现的适用和未知条件分开；发布/文档/源码版本固定后核对支持交集，不因概念相同推定兼容。
@@ -1572,7 +1572,7 @@ topics:
   - 所有计划任务交付后重新进行主题内容覆盖验收；已有 covered 基础判断不自动变成最终 v1 达标。
   - 验证设计与公开来源案例满足方法层交付；真实 GPU/NPU/存储/平台执行结果仍需环境档案和证据，未执行不标 reproduced。
   content_acceptance_batch: 21
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
   validation_refs:
   - V10
   retained_background_ids:
@@ -1611,7 +1611,7 @@ topics:
     - T04-04
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 04.3-G2
     gap_text: 缺少网络文件系统/对象存储的传输和提交语义
@@ -1621,7 +1621,7 @@ topics:
     - T04-04
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 3
     gap_ref: 04.3-G3
     gap_text: 缺少选定存储后端的读写验证
@@ -1630,7 +1630,7 @@ topics:
     - T04-06
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 在上述有限 v1 范围内，五方面均能定位到正文段落和精确支持来源；任务新增/修订稿及导航齐全，不能仅靠目录或邻域提及验收。
   - 每个平台/实现的适用和未知条件分开；发布/文档/源码版本固定后核对支持交集，不因概念相同推定兼容。
@@ -1638,7 +1638,7 @@ topics:
   - 所有计划任务交付后重新进行主题内容覆盖验收；已有 covered 基础判断不自动变成最终 v1 达标。
   - 验证设计与公开来源案例满足方法层交付；真实 GPU/NPU/存储/平台执行结果仍需环境档案和证据，未执行不标 reproduced。
   content_acceptance_batch: 21
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
   validation_refs:
   - V10
   retained_background_ids: []
@@ -1674,7 +1674,7 @@ topics:
     - T04-04
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 04.4-G2
     gap_text: 缺少传输端到端校验
@@ -1683,7 +1683,7 @@ topics:
     - T04-05
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 3
     gap_ref: 04.4-G3
     gap_text: 其他存储后端及应用自检实现证据待补
@@ -1692,7 +1692,7 @@ topics:
     - T04-05
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 在上述有限 v1 范围内，五方面均能定位到正文段落和精确支持来源；任务新增/修订稿及导航齐全，不能仅靠目录或邻域提及验收。
   - 每个平台/实现的适用和未知条件分开；发布/文档/源码版本固定后核对支持交集，不因概念相同推定兼容。
@@ -1700,7 +1700,7 @@ topics:
   - 所有计划任务交付后重新进行主题内容覆盖验收；已有 covered 基础判断不自动变成最终 v1 达标。
   - 验证设计与公开来源案例满足方法层交付；真实 GPU/NPU/存储/平台执行结果仍需环境档案和证据，未执行不标 reproduced。
   content_acceptance_batch: 21
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
   validation_refs:
   - V06
   - V10
@@ -1735,7 +1735,7 @@ topics:
     - T04-06
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 04.5-G2
     gap_text: 缺少共享/对象存储长尾和争用对照
@@ -1744,7 +1744,7 @@ topics:
     - T04-08
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 3
     gap_ref: 04.5-G3
     gap_text: 缺少可引用的阶段计时实现
@@ -1753,7 +1753,7 @@ topics:
     - T04-08
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 在上述有限 v1 范围内，五方面均能定位到正文段落和精确支持来源；任务新增/修订稿及导航齐全，不能仅靠目录或邻域提及验收。
   - 每个平台/实现的适用和未知条件分开；发布/文档/源码版本固定后核对支持交集，不因概念相同推定兼容。
@@ -1761,7 +1761,7 @@ topics:
   - 所有计划任务交付后重新进行主题内容覆盖验收；已有 covered 基础判断不自动变成最终 v1 达标。
   - 验证设计与公开来源案例满足方法层交付；真实 GPU/NPU/存储/平台执行结果仍需环境档案和证据，未执行不标 reproduced。
   content_acceptance_batch: 21
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
   validation_refs:
   - V10
   retained_background_ids: []
@@ -1796,7 +1796,7 @@ topics:
     - T04-07
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 04.6-G2
     gap_text: 缺少存储恢复、修复与故障域演练
@@ -1804,7 +1804,7 @@ topics:
     - T04-07
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 3
     gap_ref: 04.6-G3
     gap_text: 不得由训练恢复指南代替存储恢复
@@ -1813,7 +1813,7 @@ topics:
     - T04-08
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 在上述有限 v1 范围内，五方面均能定位到正文段落和精确支持来源；任务新增/修订稿及导航齐全，不能仅靠目录或邻域提及验收。
   - 每个平台/实现的适用和未知条件分开；发布/文档/源码版本固定后核对支持交集，不因概念相同推定兼容。
@@ -1821,7 +1821,7 @@ topics:
   - 所有计划任务交付后重新进行主题内容覆盖验收；已有 covered 基础判断不自动变成最终 v1 达标。
   - 验证设计与公开来源案例满足方法层交付；真实 GPU/NPU/存储/平台执行结果仍需环境档案和证据，未执行不标 reproduced。
   content_acceptance_batch: 21
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
   validation_refs:
   - V10
   retained_background_ids: []
@@ -1874,7 +1874,7 @@ topics:
     - T05-06
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 在上述有限 v1 范围内，五方面均能定位到正文段落和精确支持来源；任务新增/修订稿及导航齐全，不能仅靠目录或邻域提及验收。
   - 每个平台/实现的适用和未知条件分开；发布/文档/源码版本固定后核对支持交集，不因概念相同推定兼容。
@@ -1882,7 +1882,7 @@ topics:
   - 所有计划任务交付后重新进行主题内容覆盖验收；已有 covered 基础判断不自动变成最终 v1 达标。
   - 验证设计与公开来源案例满足方法层交付；真实 GPU/NPU/存储/平台执行结果仍需环境档案和证据，未执行不标 reproduced。
   content_acceptance_batch: 23
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
   validation_refs:
   - V02
   retained_background_ids: []
@@ -2014,7 +2014,7 @@ topics:
     - T05-07
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 3
     gap_ref: 05.4-G3
     gap_text: 其他平台调度方法需独立来源
@@ -2031,7 +2031,7 @@ topics:
   - 所有计划任务交付后重新进行主题内容覆盖验收；已有 covered 基础判断不自动变成最终 v1 达标。
   - 验证设计与公开来源案例满足方法层交付；真实 GPU/NPU/存储/平台执行结果仍需环境档案和证据，未执行不标 reproduced。
   content_acceptance_batch: 23
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
   validation_refs: []
   retained_background_ids: []
 - topic_id: '05.5'
@@ -2062,7 +2062,7 @@ topics:
     - T05-06
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 05.5-G2
     gap_text: 缺少争用检测、公平性及容量管理
@@ -2070,7 +2070,7 @@ topics:
     - T05-07
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 3
     gap_ref: 05.5-G3
     gap_text: 缺少租户隔离验证和来源案例
@@ -2079,7 +2079,7 @@ topics:
     - T05-07
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 在上述有限 v1 范围内，五方面均能定位到正文段落和精确支持来源；任务新增/修订稿及导航齐全，不能仅靠目录或邻域提及验收。
   - 每个平台/实现的适用和未知条件分开；发布/文档/源码版本固定后核对支持交集，不因概念相同推定兼容。
@@ -2088,7 +2088,7 @@ topics:
   - 验证设计与公开来源案例满足方法层交付；真实 GPU/NPU/存储/平台执行结果仍需环境档案和证据，未执行不标 reproduced。
   - 本轮必交的共享机制或工具/目标环境交集分支，缺少必要一手材料时保留该子项 open；unknown 与独占/其他平台例子不自动关闭缺口。
   content_acceptance_batch: 23
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
   validation_refs:
   - V11
   retained_background_ids:
@@ -2122,7 +2122,7 @@ topics:
     - T05-08
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 05.6-G2
     gap_text: 缺少升级/发布/回退策略
@@ -2130,7 +2130,7 @@ topics:
     - T05-09
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 3
     gap_ref: 05.6-G3
     gap_text: 缺少变更后验收和失败恢复
@@ -2139,7 +2139,7 @@ topics:
     - T05-09
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 在上述有限 v1 范围内，五方面均能定位到正文段落和精确支持来源；任务新增/修订稿及导航齐全，不能仅靠目录或邻域提及验收。
   - 每个平台/实现的适用和未知条件分开；发布/文档/源码版本固定后核对支持交集，不因概念相同推定兼容。
@@ -2147,7 +2147,7 @@ topics:
   - 所有计划任务交付后重新进行主题内容覆盖验收；已有 covered 基础判断不自动变成最终 v1 达标。
   - 验证设计与公开来源案例满足方法层交付；真实 GPU/NPU/存储/平台执行结果仍需环境档案和证据，未执行不标 reproduced。
   content_acceptance_batch: 23
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
   validation_refs:
   - V11
   retained_background_ids:
@@ -3700,7 +3700,7 @@ batches:
   conservative_wave: 9
 - number: 23
   title: 集群平台
-  status: planned
+  status: done
   task_refs:
   - T05-06
   - T05-07
@@ -3717,6 +3717,8 @@ batches:
   minimal_predecessor_batches:
   - 22
   conservative_wave: 10
+  completed_at: '2026-10-18'
+  completion_record: docs/research/batch-23-source-audit.md
 - number: 24
   title: 集群平台、训练与后训练
   status: planned
@@ -5602,8 +5604,8 @@ tasks:
   work_units: 2
 - id: T05-06
   title: 加速器共享与租户隔离机制
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 23
   operation: new
   content_type: concept
@@ -5647,8 +5649,8 @@ tasks:
   work_units: 2
 - id: T05-07
   title: 多租户争用、公平性与容量验证
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 23
   operation: new
   content_type: procedure
@@ -5694,8 +5696,8 @@ tasks:
   work_units: 2
 - id: T05-08
   title: 节点摘除、drain 与资源回收流程
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 23
   operation: new
   content_type: procedure
@@ -5738,8 +5740,8 @@ tasks:
   work_units: 2
 - id: T05-09
   title: 平台组件升级、发布、回退与回服
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: source_preparation_completed
   batch: 23
   operation: new
   content_type: procedure
