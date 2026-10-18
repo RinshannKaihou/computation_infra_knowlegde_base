@@ -465,3 +465,12 @@
 - C50（定位表与实际引用不一致；rados bench 归属错）：定位表加"引用方式"列（直接/经链接沿用），PG/OSD 排查、rados(8)、sysctl vm、MindIO、MLPerf 标为经链接沿用或既有内容；L8 改为"rados bench 计时能力本轮未核对（`--show-time` 未评估）"；Lustre 行章节按实际引用收敛（§19.2/§23.5.1/§35.3.8 入，§34.8/Ch.38 出）。
 - C51（notes 未披露未重取页面）：两篇 verification.notes 补"本轮未重取上游页面，新增条目以 T04-02/03/06/07 已核对口径与初审修订为准"；派生主张（C35/C36/C37/C44）已按初审核对的原文改写。
 - C52（完整性条件式、判据 2 适用不明）：饥饿指南完整性项改引数据路径 §A 字节校验和（抽查范围由现场定）；写明判据 1–3（含硬失败修复后的同窗复核）均须五项记录。
+
+## T04-08 第二轮修订（2026-10-18，claude-opus-5-5 第一次定向复核 17/18 CLOSED → 处理 C50 残留与新增 C53–C57 共 6 项）
+
+- C54（checkpoint ①"序列化与 staging 都在主线程"与源码相反）：改写主线程/后台分界——状态收集与 staging 拷贝在主线程，序列化在后台 save 内执行（saver L234 提交；filesystem.py L263、default_planner.py L148），分别打点。
+- C55（C36 修订新引 RFC 8881 §12 但饥饿指南未登记）：source_refs 补 src.ietf.rfc-8881；来源条目补 RFC 8881（§12）并把内核文档括注收窄为实际使用的 knfsd-stats。
+- C50（定位表仍有两行标"直接"但正文未用）：NFS 内核文档行收窄为 knfsd-stats（去掉 nfs41-server/client-identifier）；Ceph health-checks 行收窄为空间压力条目（其余条目注明本轮未直接引用）。
+- C53（stager 重叠句缺条件，初审关闭条件本身欠准）：补"且 `should_synchronize_after_execute=False`（协议默认 True；为 True 时 saver 返回 Future 前调用 synchronize_staging()）"。
+- C56（新增两类 unknown 未入来源记录清单）：unknown 清单第 5 项补"客户端 pNFS 实现范围"与"冷/热基线中属性/目录项缓存与 v4 委托是否随本机 drop_caches 失效"；checkpoint 缺口声明"完整清单"由此重新成立。
+- C57（"对象侧无客户端缓存层语义"无出处）：删除该句，RGW 缓存格保留"冷/热基线入口 unknown（对象侧缓存语义无已核对来源）"。
