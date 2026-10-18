@@ -10,8 +10,8 @@ source_refs:
 - src.ascend.torch-npu
 - src.ascend.mind-cluster
 - src.stas.ml-engineering
-updated_at: '2026-10-08'
-summary: 组织训练状态、并行、数值行为、性能与故障恢复。
+updated_at: '2026-10-18'
+summary: 组织训练状态、并行、框架执行、预训练微调、数值行为、性能与故障恢复。
 related_ids:
 - software-stack.index
 - communication.index
@@ -20,6 +20,8 @@ related_ids:
 - inference.index
 - reliability.index
 - training.parallelism-and-state
+- training.framework-execution
+- training.pretraining-and-finetuning
 - training.checkpoint-state-consistency
 - training.gpu-npu-precision-difference-triage
 - training.gpu-npu-precision-difference-source-case
@@ -37,7 +39,9 @@ related_ids:
 
 ## 已有正文
 
-- [并行策略与训练状态](parallelism-and-state.md)。
+- [并行策略与训练状态](parallelism-and-state.md)：DP/FSDP/TP/PP 基础上补齐专家并行（token dispatch/combine）、序列维 SP/CP、组合身份与冲突检查、固定假设选型表和单步边界（Batch 24 修订，gpt-6.1-sol/xhigh 审阅已闭环的 draft，未实测）。
+- [训练框架组件、执行循环与平台职责对照](framework-execution.md)：训练驱动→autograd→分布式封装→optimizer→编译→算子后端→checkpoint 的职责图，PyTorch 2.6 / Megatron-Core core_v0.19.2 / MindSpeed-LLM v2.2.0 三组独立档案与各阶段故障分界（T06-02，Batch 24，gpt-6.1-sol/xhigh 审阅已闭环的 draft，未实测）。。
+- [预训练与微调工作流和状态契约](pretraining-and-finetuning.md)：预训练/继续预训练/全参 SFT/LoRA-PEFT 的目标、数据与状态契约、adapter 保存合并边界、观察口径与阶段切换验证（T06-03，Batch 24，gpt-6.1-sol/xhigh 审阅已闭环的 draft，未实测）。。
 - [Checkpoint 恢复一致性](checkpoint-state-consistency.md)。
 - [弹性训练与成员变更](elastic-training-and-membership.md)：rendezvous、成员变更与失败语义；PyTorch elastic 与 MindSpeed-LLM 副本机制的对照边界。
 
@@ -57,10 +61,10 @@ related_ids:
 
 ## 二级主题地图
 
-- **06.1 训练计算过程与状态：权重、梯度、优化器、数据进度** — 已有[状态责任基础草稿](parallelism-and-state.md)。
-- **06.2 数据、张量、流水线、专家等并行策略** — 已有[DP/FSDP/TP/PP 布局说明](parallelism-and-state.md)，专家和上下文并行专题待补。
-- **06.3 训练框架与执行：框架通用机制及平台实现** — 已有 PyTorch/MindSpeed 固定来源样板，具体工作负载与执行验证待补。
-- **06.4 预训练、微调、强化学习与 rollout** — 待建设。
+- **06.1 训练计算过程与状态：权重、梯度、优化器、数据进度** — 已有[状态责任基础草稿](parallelism-and-state.md)（Batch 24 补单步内所有权与合法跳步）。
+- **06.2 数据、张量、流水线、专家等并行策略** — 已有[DP/FSDP/TP/PP/EP/CP 布局与组合映射](parallelism-and-state.md)（Batch 24 补专家并行、SP/CP 区别、冲突检查与选型表）。
+- **06.3 训练框架与执行：框架通用机制及平台实现** — 已有[框架执行职责对照](framework-execution.md)（PyTorch 2.6/Megatron core_v0.19.2/MindSpeed-LLM v2.2.0 三组档案）；具体工作负载与执行验证待补。
+- **06.4 预训练、微调、强化学习与 rollout** — 已有[预训练与微调工作流和状态契约](pretraining-and-finetuning.md)（T06-03，RL rollout 属后续批次）。
 - **06.5 算子适配、混合精度、数值行为与收敛** — 已有[GPU→NPU 精度差异指南](gpu-npu-precision-difference-triage.md)、公开案例与实验设计；算子和训练质量专题待补。
 - **06.6 性能分析、慢 rank、资源不均与吞吐退化** — 已有[慢 rank 诊断指南](slow-rank-triage.md)（PyTorch 2.8/NCCL RAS 证据样板，NPU 侧观测缺口标注）；资源不均与吞吐专题待补。
 - **06.7 Checkpoint 状态、一致性、容错与弹性恢复** — 已有[恢复一致性与重分片边界](checkpoint-state-consistency.md)、[状态异常指南](checkpoint-state-recovery-triage.md)、公开案例与实验设计，以及[弹性训练与成员变更](elastic-training-and-membership.md)；尚未实测。
@@ -97,4 +101,4 @@ related_ids:
 
 ## 首轮成果与后续
 
-已有并行/状态、恢复一致性，以及精度迁移和恢复异常的指南、案例与实验设计；后续补慢 rank、弹性训练、强化学习及实际环境验证。
+已有并行/状态（含 EP/CP 与组合映射）、框架执行职责对照、预训练与微调状态契约、恢复一致性，以及精度迁移、恢复异常、慢 rank、弹性训练的指南/案例/实验设计；后续补强化学习 rollout（后续批次）与实际环境验证。

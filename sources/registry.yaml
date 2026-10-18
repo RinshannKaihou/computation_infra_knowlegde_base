@@ -5432,7 +5432,7 @@ sources:
   url: https://github.com/SchedMD/slurm/tree/slurm-24-11-7-1/testsuite
   kind: repository
   registered_at: '2026-10-14'
-  revision: tag slurm-24-11-7-1（tag 对象 9d1ef187，所指 commit defaf214）；用例精确到文件：test1.62、test39.1/39.2、test40.1、test2.21/2.22、test3.8/3.11、test31.2/31.3、test8.12、test24.1（test24.2 为 sshare）；头注释目的＋审阅者已核对行区间（test12.7 约 L60–120、test31.2 L122–125，含代码），未审计断言、未查 CI、未运行
+  revision: tag slurm-24-11-7-1（tag 对象 9d1ef187，所指 commit defaf214）；用例精确到文件：test1.62、test39.1/39.2、test40.1、test2.21/2.22、test3.8/3.11、test31.2/31.3、test8.12、test24.1（test24.2 为 sshare）；头注释目的＋审阅者已核对行区间（test12.7 约 L60–120、test31.2 L122–125，含代码），未审计断言、未查 CI、未运行；Batch 24（T05-10 修订轮）补充核对 test37.5（federated requeue：要求 accounting_storage/slurmdbd，check_dbd_states 断言 REQUEUED/REVOKED/PENDING、check_restart_cnt 断言重启计数；已读未运行）
   license:
     status: unknown
     scopes: []
@@ -5832,3 +5832,304 @@ sources:
     scopes: []
     notes: 本轮未重开 LICENSE；沿用既有 src.nvidia.k8s-device-plugin-v0.20.1 的仓库口径（未核对），只链接并原创归纳。
   notes: Batch 23（T05-06 修订）：MPS sharing 在存在 MIG 设备时返回不支持；分配响应设置 CUDA_MPS_PIPE_DIRECTORY 并挂载 pipe 目录与 shm 目录（hostRoot 到 container）；Helm 模板另行部署 mps-control-daemon DaemonSet（mps-control-daemon 容器、mount-shm init、mps-root hostPath、/dev/shm、nodeSelector nvidia.com/mps.capable=true），daemon/server 生命周期由该配套组件负责。未覆盖：站点自管 daemon 路径、实际部署验证。
+- id: src.kubernetes.etcd-backup-restore-v1-32
+  title: Kubernetes v1.32 Operating etcd clusters（备份/恢复/扩缩容，静态快照）
+  url: https://v1-32.docs.kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: v1.32 documentation snapshot（configure-upgrade-etcd URL 落地页标题为 Operating etcd clusters for Kubernetes）；curl 字节级取回 2026-10-18，SHA-256 19e528c0790d486b50e361e395a2509b3af7dd62b87912e2eea123b502a39ed7
+  license:
+    status: partial
+    scopes:
+    - scope: Kubernetes website 仓库文档许可声明；main 链接为可变定位
+      identifier: CC-BY-4.0
+      url: https://github.com/kubernetes/website/blob/main/LICENSE
+    notes: 沿用既有 K8s 文档条目许可口径，本轮未重新打开 LICENSE 页；仅链接并原创归纳。
+  notes: Batch 24（T05-10）取证：快照含全部 K8s 状态、建议加密；etcdctl snapshot save/etcdutl snapshot status（HASH/REVISION/TOTAL KEYS/TOTAL SIZE）；恢复前提＝停全部 API server→恢复所有 etcd 实例→重启，并建议重启 kube-controller-manager 与 kubelet 防陈旧数据；etcdutl --data-dir snapshot restore（etcdctl 恢复 3.5.x 起弃用）、同目录先删旧目录；etcd 不建议扩缩容/自动扩缩。未执行任何 etcdctl/etcdutl 命令。
+- id: src.kubernetes.controller-pattern-v1-32
+  title: Kubernetes v1.32 Controllers 概念（静态快照）
+  url: https://v1-32.docs.kubernetes.io/docs/concepts/architecture/controller/
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: v1.32 documentation snapshot；curl 字节级取回 2026-10-18，SHA-256 a6aecfb049400117d178dfb3a85bc39c14676a841fc4093920245cc34368720b
+  license:
+    status: partial
+    scopes:
+    - scope: Kubernetes website 仓库文档许可声明；main 链接为可变定位
+      identifier: CC-BY-4.0
+      url: https://github.com/kubernetes/website/blob/main/LICENSE
+    notes: 沿用既有 K8s 文档条目许可口径；仅链接并原创归纳。
+  notes: Batch 24（T05-10）取证：控制器＝watch 集群状态的控制循环；spec 为期望状态；控制器多经 API server 副作用生效（Job 控制器不直接运行 Pod）；大量简单控制器、控制器可失败且控制面另一部分接管；内建控制器运行于 kube-controller-manager。workqueue/informer 内部实现未展开（unknown）。未操作任何控制器。
+- id: src.kubernetes.leases-v1-32
+  title: Kubernetes v1.32 Leases（节点心跳/组件选主/apiserver 身份，静态快照）
+  url: https://v1-32.docs.kubernetes.io/docs/concepts/architecture/leases/
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: v1.32 documentation snapshot；curl 字节级取回 2026-10-18，SHA-256 ec68b97369247821e243bbe585808add24f4b763f9df00c60020edd9c5ad43b4
+  license:
+    status: partial
+    scopes:
+    - scope: Kubernetes website 仓库文档许可声明；main 链接为可变定位
+      identifier: CC-BY-4.0
+      url: https://github.com/kubernetes/website/blob/main/LICENSE
+    notes: 沿用既有 K8s 文档条目许可口径；仅链接并原创归纳。
+  notes: Batch 24（T05-10）取证：coordination.k8s.io Lease 支撑节点心跳（kube-node-lease 同名 Lease、心跳＝spec.renewTime 更新、控制面以时间戳判可用）与组件级 leader election（kcm/scheduler HA 单实例活跃）；apiserver 身份 Lease（v1.26 beta）与 label selector 枚举命令。未执行任何 kubectl 命令。
+- id: src.kubernetes.api-concepts-v1-32
+  title: Kubernetes v1.32 API Concepts（resourceVersion/watch/410/一致读，静态快照）
+  url: https://v1-32.docs.kubernetes.io/docs/reference/using-api/api-concepts/
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: v1.32 documentation snapshot；curl 字节级取回 2026-10-18，SHA-256 ca03957baf69b180cd8e9e2ee72aafbc8459b4bf78d92219e45d8b4976bbe00e
+  license:
+    status: partial
+    scopes:
+    - scope: Kubernetes website 仓库文档许可声明；main 链接为可变定位
+      identifier: CC-BY-4.0
+      url: https://github.com/kubernetes/website/blob/main/LICENSE
+    notes: 沿用既有 K8s 文档条目许可口径；仅链接并原创归纳。
+  notes: Batch 24（T05-10）取证：list-then-watch 与 resourceVersion；etcd3 默认保留最近 5 分钟变更、超窗 410 Gone→清缓存重新 list；BOOKMARK 不可假设间隔；continue token 默认 5 分钟过期；resourceVersion 不透明只可比较相等；Exact 不可用→410；未设 RV 的 list 需 quorum read，etcd 3.4.31+/3.5.13+ 且 K8s1.32 的 Most Recent 经 watch cache。未发起任何 API 请求。
+- id: src.kubernetes.kcm-reference-v1-32
+  title: Kubernetes v1.32 kube-controller-manager 命令行参考（静态快照）
+  url: https://v1-32.docs.kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: v1.32 documentation snapshot；curl 字节级取回 2026-10-18，SHA-256 344a05192c36149e43527b7f649223d8b9217c165c9520498f967e8c7a1badbf；选项表为单行大表，锚点以字节偏移记录
+  license:
+    status: partial
+    scopes:
+    - scope: Kubernetes website 仓库文档许可声明；main 链接为可变定位
+      identifier: CC-BY-4.0
+      url: https://github.com/kubernetes/website/blob/main/LICENSE
+    notes: 沿用既有 K8s 文档条目许可口径；仅链接并原创归纳。
+  notes: Batch 24（T05-10）取证：--leader-elect 默认 true；lease-duration 15s/renew-deadline 10s/retry-period 2s/resource-lock 默认 leases/resource-name kube-controller-manager/namespace kube-system；--controllers 默认 "*"；node-monitor-grace-period 50s（须为 kubelet nodeStatusUpdateFrequency 的 N 倍）、node-monitor-period 5s、node-startup-grace-period 1m0s。未运行该组件。
+- id: src.slurm.controller-ha-24.11.7
+  title: Slurm 24.11.7 控制器/DBD HA、状态保存与恢复（归档多页）
+  url: https://slurm.schedmd.com/archive/slurm-24.11.7/quickstart_admin.html
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: 24.11.7 archive；curl 字节级取回 2026-10-18（quickstart_admin d7e9c31bac0fe920b88a8791cc2d0fad0c93133c9299b90e914ee2bf35b480e7、slurm.conf f4151769ed29968c7de408809a5acb8f0591865cd525d5f2c70925e847a1ff34、troubleshoot 78f519e4e98c869e79011bc31056ff8c29182478220a8bc85f5ff9f6c7da4c4c、slurmctld 67e677b6d0dd57a0e223e2c85689d1974b5e6818351dee4bbbb0cb9fec987c49、slurmdbd 5a81ba6e817a1a83fb38bafcbfc8e06d9ca39b715af06cda474dcf108755976e、slurmdbd.conf 6d2529a81316317d122ac944ca512df5a4f9866590361525b5241027bdb9e45b）；24.11.7 归档无 high_availability.html（404＋索引实开确认）
+  license:
+    status: unknown
+    scopes: []
+    notes: SchedMD 站点许可未核对；只链接并原创归纳，未复制手册长段。
+  notes: Batch 24（T05-10）取证：quickstart_admin HA 节（多 SlurmctldHost 主备/共享 StateSaveLocation/接管与回切流程/状态落盘前故障即丢状态）；slurm.conf（SlurmctldHost 至少一条首主余备、SlurmctldTimeout 默认 120s、StateSaveLocation 默认 /var/spool 且建议可靠 FS、双主警告、AccountingStorageType/BackupHost、ReturnToService 见既有条目）；slurmctld.8（-c 清状态/-i 忽略错误/-r 默认部分恢复/-R 完整恢复）；troubleshoot（scontrol ping/ps 检查/重启/startclean 丢全部运行作业与状态）；slurmdbd.8（角色、-R lft/rgt、-u 转换检查）；slurmdbd.conf（DbdHost 必填、DbdBackupHost 须同库、StorageType 仅 mysql、PurgeJobAfter/ArchiveJobs 默认 no）。未执行任何 Slurm 命令。slurm.conf 页与 src.slurm.docs-24.11.7 为同一归档页的重开补证。
+- id: src.ascend.mind-cluster-clusterd-v26.1.1
+  title: MindCluster v26.1.1 clusterd 与 ascend-operator 组件 README
+  url: https://github.com/Ascend/mind-cluster/blob/v26.1.1/component/clusterd/README.md
+  kind: repository
+  registered_at: '2026-10-18'
+  revision: tag v26.1.1（codeload 源码包取回 2026-10-18；GitHub API 同刻限流，文件树由源码包代替；与既有条目 commit 44385c13 的字节等同未核）
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 tag 的 clusterd/ascend-operator README 文本；仓库根 LICENSE 声明范围
+      identifier: Apache-2.0
+      url: https://github.com/Ascend/mind-cluster/blob/v26.1.1/LICENSE
+    notes: 未逐文件核对许可头；仅链接并原创归纳，不复制 README 长段。
+  notes: Batch 24（T05-10）取证：clusterd 提供集群级可用资源信息、收集任务/资源/故障信息及影响范围（任务/芯片/故障维度统计），构建产物含 faultDuration.json/publicFaultConfiguration.json/relationFaultCustomization.json；ascend-operator 以 CRD 定义 AscendJob 支撑 mindspore/pytorch 分布式训练。两组件均无 HA/备份/恢复文档，故障恢复行为 unknown；不以 K8s/Slurm 机制类推。
+- id: src.pytorch.device-mesh-source-v2.6.0
+  title: PyTorch v2.6.0 DeviceMesh 与张量并行导出源码（冻结）
+  url: https://github.com/pytorch/pytorch/blob/v2.6.0/torch/distributed/device_mesh.py
+  kind: repository
+  registered_at: '2026-10-18'
+  revision: tag v2.6.0；curl raw 取回 2026-10-18（device_mesh.py SHA-256 d16e1975093c53fd6e5415adf6c3f98093b7a03cc8123b905f5c8dfa13246012、tensor/parallel/__init__.py 877f1578fe013f22d37aea8665a971442123dc0be5eca7741a3c9ba341bdc058）；2.6 版本化文档无 device_mesh 独立页（404 实开确认）
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库自有代码与随附文档
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/v2.6.0/LICENSE
+    notes: 沿用既有 PyTorch 条目许可口径；仅链接并原创归纳。
+  notes: Batch 24（T06-01）取证：DeviceMesh=n-d 设备布局（值为默认进程组 global rank）、通信代理、SPMD 编程模型、mesh_dim_names 命名（示例 dp/cp/tp）；tensor.parallel __all__（Colwise/Rowwise/SequenceParallel、ParallelStyle、PrepareModuleInput/Output、parallelize_module、loss_parallel）。未运行代码。
+- id: src.pytorch.cp-experimental-source-v2.6.0
+  title: PyTorch v2.6.0 Context Parallel experimental 源码（冻结）
+  url: https://github.com/pytorch/pytorch/blob/v2.6.0/torch/distributed/tensor/experimental/_attention.py
+  kind: repository
+  registered_at: '2026-10-18'
+  revision: tag v2.6.0；curl raw 取回 2026-10-18（_attention.py SHA-256 325e6a434113d42ae4742545bb926215b8a8f7013bf0348091088b7c3ae3fb12、experimental/__init__.py f17ddd5747d2c09dd322aaacc2c8bee9074f1040a569f385ba21b2baf3b995f3）
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库自有代码与随附文档
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/v2.6.0/LICENSE
+    notes: 沿用既有 PyTorch 条目许可口径；仅链接并原创归纳。
+  notes: Batch 24（T06-01）取证：context_parallel 上下文管理器（patch SDPA＋沿序列维 in-place 切分 buffers、退出恢复、no_restore_buffers、不得含 Parameter）；context_parallel_unshard；implicit_replication 带错误结果警告；导出面 context_parallel/implicit_replication/local_map/register_sharding。CP 在 2.6 为 experimental。未运行代码。
+- id: src.ascend.mindspeed-llm-parallel-features-v2.2.0
+  title: MindSpeed-LLM v2.2.0 并行特性文档与 MoE 官方脚本（CP/TP2D/MC2/VPP/MoE）
+  url: https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/docs/pytorch/features/ring-attention-context-parallel.md
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: tag v2.2.0；codeload 源码包取回 2026-10-18（包 SHA-256 693f619a8b608726c23dc53a7e0d283684883149fb140951f169a297fe72936e；各文件哈希见 docs/research/batch-24-t06-01-sources.md）；与既有条目 commit 53f3639c… 同 tag
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 tag 的 features 文档、models 文档与 examples 脚本；根 LICENSE 声明范围
+      identifier: BSD-3-Clause
+      url: https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/LICENSE
+    notes: 根 LICENSE 列出若干第三方文件其他许可；不复制文档长段与性能表，仅引用口径。
+  notes: Batch 24（T06-01/T06-03 共用）取证：CP 微调（cp-size 整除序列长、mask 只能 general、三种 cp 算法、seq/cp>8k 建议、两算法吞吐表）；Ring Attention 机制（KV 环通信、重叠条件、须 FlashAttention、8k 以下可能负优化）；TP2D（tp=N1×N2、不兼容 SP/fused-rmsnorm、不支持 MoE、融合算子 CANN 8.0.1.B020+）；MC2（CANN 8.0.RC2+HDK 24.1.RC2 前提、默认关、可能精度问题、MoE MLP 不使能）；VPP（空泡/通信取舍与 16 层示例）；GLM4.5-MoE 106B A3 预训练脚本（TP1/PP4/EP16 与全部 MoE 参数）；moe_model.md 预置模型 Pass/Test 分级；cc_lora（--lora-fusion、与 --overlap-param-gather 冲突、兼容 PP/VPP/dist-optimizer）。性能数字仅为其文档口径。未运行任何脚本。
+- id: src.nvidia.megatron-training-loop-core-v0.19.2
+  title: NVIDIA Megatron-LM tag core_v0.19.2 训练循环/流水线调度/分布式优化器（冻结实现）
+  url: https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/training/training.py
+  kind: repository
+  registered_at: '2026-10-18'
+  revision: tag core_v0.19.2；curl raw 取回 2026-10-18（training.py SHA-256 d968ef8216f63d6373372190ac895fc905234c116bba3e804d2951876e6ad98c、schedules.py 9d3624f4b1bc8e9e4747f339587b3dab2560e0fc5faa9fecd736e4eed2d5f1b7、distrib_optimizer.py 40cae307ccb2a3f484ebd5d28ee8549eb572d1b0ba6e91dc5661c137bf560907）
+  license:
+    status: unknown
+    scopes: []
+    notes: Apache-2.0 为仓库主许可（未逐文件核对头声明）；仅链接并原创归纳。
+  notes: Batch 24（T06-02）取证：training.py train_step/setup_model_and_optimizer/train 与 per-iteration 保存分支；schedules.py get_forward_backward_func（pp/vp 选择）、interleaved 与 without-interleaving 调度、forward_step/backward_step；distrib_optimizer.py DistributedOptimizer（DP 组内分片 optimizer state、model_chunks/buffers 属性）。rerun_state_machine 与调度数值公式未逐行核对。未运行代码。
+- id: src.pytorch.autograd-mechanics-2.6
+  title: PyTorch 2.6 Autograd mechanics 笔记
+  url: https://docs.pytorch.org/docs/2.6/notes/autograd.html
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: PyTorch 2.6 documentation；curl 字节级取回 2026-10-18，SHA-256 792703d16102b45ceaebd07ef3d070fd1398af5c32df147085bb4d12bc4f8283
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库随附文档
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/v2.6.0/LICENSE
+    notes: 沿用既有 PyTorch 条目许可口径；仅链接并原创归纳。
+  notes: Batch 24（T06-02）取证：reverse AD 与 DAG 历史记录、no-grad/inference mode 局部禁用、retain_graph/线程安全边界。未运行代码。
+- id: src.pytorch.optim-docs-2.6
+  title: PyTorch 2.6 torch.optim 文档
+  url: https://docs.pytorch.org/docs/2.6/optim.html
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: PyTorch 2.6 documentation；curl 字节级取回 2026-10-18，SHA-256 53351ea89339ffb9913c675bc5fe946fee1b04f12b042ba8544a12ae6d9a2db9
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库随附文档
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/v2.6.0/LICENSE
+    notes: 沿用既有 PyTorch 条目许可口径；仅链接并原创归纳。
+  notes: Batch 24（T06-02）取证：optimizer 构造（参数可迭代/named_parameters、param groups 逐组超参）与"持有当前 state、按梯度更新参数"职责。state_dict 语义由既有 parallel-training-state-2.6 覆盖。未运行代码。
+- id: src.ascend.mindspeed-llm-training-interface-v2.2.0
+  title: MindSpeed-LLM v2.2.0 训练入口、参数校验与依赖配套（README/install_guide/training 源码）
+  url: https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/mindspeed_llm/training/training.py
+  kind: repository
+  registered_at: '2026-10-18'
+  revision: tag v2.2.0；codeload 源码包取回 2026-10-18（training.py SHA-256 341c0792484b7113fb71716eda66c9f4715e106d370b34e80c6a5201f905b2b8、arguments.py fd64204269ad1749159d9b98f47c91f92cb17de5075cb92670f8ab1d5df42a38、README 7b4893c93e8884d18eb0ff5eee5291bd93eced52dd91572d6a2566c4a7b12f99、install_guide 8dd60a6cc0983ffcf1e1aaa84da2cba054d1362a7b53a6bffacd665c0bdad423）
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 tag 的 README、install_guide 与 mindspeed_llm/training 源码；根 LICENSE 声明范围
+      identifier: BSD-3-Clause
+      url: https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/LICENSE
+    notes: 根 LICENSE 列出若干第三方文件其他许可；仅链接并原创归纳。
+  notes: Batch 24（T06-02）取证：pretrain() 四步职责链（initialize Megatron→setup→数据→train）、build_train_args/train 与 wrapper 族；arguments.py extra_args_provider_decorator、_validate_cp_args（位于 ulysses/mamba/hybrid 各 CP 分支且要求 --use-mcore-models；num_attention_heads 须能被 ulysses_size×TP 整除且商 ≥1；GQA 分支（开启且 num_query_groups ≥ 1 时进入）串联除法：G % TP == 0 且商 ≥1，未启用 kv-head-repeat 时该商还须能被 ulysses_size 整除且商 ≥1——正整数前提下 G 能被 TP×ulysses 整除；开关绕过第二层、代价是通信与内存）、_validate_instruction_finetune/_validate_train_mode_conflict；README 依赖表（PyTorch 2.7.1、NPU 组件在研）与 install_guide 固定 MindSpeed 2.2.0_core_r0.12.1＋Megatron-LM core_v0.12.1。未运行任何代码；MindSpeed core 仓本体未取回。
+- id: src.paper.lora-2106.09685
+  title: 'LoRA: Low-Rank Adaptation of Large Language Models（arXiv 摘要页）'
+  url: https://arxiv.org/abs/2106.09685
+  kind: paper
+  registered_at: '2026-10-18'
+  revision: arXiv:2106.09685 摘要页观察 2026-10-18（curl，SHA-256 70bb70b4fd6d41b8a0f53fc5148017bf6ef5b73acba822027397f861aee135c6）；未取 PDF 全文
+  license:
+    status: unknown
+    scopes: []
+    notes: arXiv 分发条款未核对；仅链接并原创归纳摘要主张。
+  notes: Batch 24（T06-03）取证：LoRA=冻结权重+低秩 ΔW=BA；无额外推理时延（相对 adapter）；论文实验数值（GPT-3 175B 可训练参数 10,000×↓、GPU 内存 3×↓、RoBERTa/DeBERTa/GPT-2/GPT-3 质量结论）仅作方法边界，不作为目标平台部署效果。
+- id: src.hf.peft-source-v0.7.1
+  title: Hugging Face PEFT v0.7.1 PeftModel 与 LoRA 实现源码（冻结）
+  url: https://github.com/huggingface/peft/blob/v0.7.1/src/peft/peft_model.py
+  kind: repository
+  registered_at: '2026-10-18'
+  revision: tag v0.7.1；curl raw 取回 2026-10-18（peft_model.py SHA-256 baeb93af9c9a75f1987f47e32e0ae512ea1b3b41158548d18296f8e408d74872、lora/model.py 44e5ceebc868163c52bb5c0eebb992ed259769d2c5c39d21c26cca67bc621048、lora/config.py 6e5446f2b0ed66247496f48cf856241885ae13aaeb0b873badf90f5c19bcee10）；版本取自 MindSpeed-LLM v2.2.0 requirements（peft==0.7.1）
+  license:
+    status: partial
+    scopes:
+    - scope: PEFT v0.7.1 仓库源码
+      identifier: Apache-2.0
+      url: https://github.com/huggingface/peft/blob/v0.7.1/LICENSE
+    notes: 仅链接并原创归纳，不复制实现长段。
+  notes: Batch 24（T06-03）取证：save_pretrained（safe_serialization/selected_adapters）、load_adapter（名称唯一、is_trainable 默认 False、新 adapter 不自动激活；另载 config 允许 bias/modules_to_save 可训练范围 L57–61/L91–98）、merge_and_unload（并入基座供 standalone、safe_merge）、LoraConfig（r 默认 8、target_modules 名或正则、lora_alpha/dropout、scaling=alpha/r）。未运行代码；多 adapter/反合并语义 unknown。
+- id: src.hf.transformers-trainer-4.43.2
+  title: Hugging Face Transformers v4.43.2 Trainer 与 data collator 源码（冻结）
+  url: https://github.com/huggingface/transformers/blob/v4.43.2/src/transformers/trainer.py
+  kind: repository
+  registered_at: '2026-10-18'
+  revision: tag v4.43.2；curl raw 取回 2026-10-18（trainer.py SHA-256 88320007d5b598d3d4b7e4af63ea47ef86e1877da6a5a3ae722cab5174edeb84、data_collator.py 5ee65cd10be88acb5525cc12076b8d6c0f2885844ce057662f917965fd4356fb）；版本取自 MindSpeed-LLM v2.2.0 requirements（transformers==4.43.2，install_guide 另注 4.51.0/4.54.0 按模型适用）
+  license:
+    status: partial
+    scopes:
+    - scope: Transformers v4.43.2 仓库源码
+      identifier: Apache-2.0
+      url: https://github.com/huggingface/transformers/blob/v4.43.2/LICENSE
+    notes: 仅链接并原创归纳。
+  notes: Batch 24（T06-03）取证：Trainer 职责（feature-complete 训练/评估循环、data_collator 默认、tokenizer 随存以 rerun interrupted training、IterableDataset 需一致 generator 或 set_epoch）、DataCollatorForLanguageModeling 与 label_pad_token_id=-100（PyTorch loss 自动忽略）。未运行代码。
+- id: src.nvidia.megatron-examples-core-v0.12.1
+  title: NVIDIA Megatron-LM tag core_v0.12.1 官方示例（最小 MCore 训练循环）
+  url: https://github.com/NVIDIA/Megatron-LM/blob/core_v0.12.1/examples/run_simple_mcore_train_loop.py
+  kind: repository
+  registered_at: '2026-10-18'
+  revision: tag core_v0.12.1（codeload 源码包 2026-10-18，包 SHA-256 3e83d4a79014d77c121b257c03ba592b55bcc68ed24bece705e54978942e04d8；脚本 5ed11bc7834177718e836da7e61e2b067256528b55821c0b8397b82e75773064）；该 tag 为 MindSpeed-LLM v2.2.0 install_guide 指定的 Mcore 依赖（选择理由与上游是否有示例无关）；修订轮更正：core_v0.19.2 实含 examples/llama 与 gpt3 模型级脚本（另登记 src.nvidia.megatron-model-configs-core-v0.19.2），首轮目录缺失断言不成立
+  license:
+    status: unknown
+    scopes: []
+    notes: Apache-2.0 为仓库主许可（未逐文件核对）；仅链接并原创归纳。
+  notes: Batch 24（T06-03）取证：run_simple_mcore_train_loop.py（initialize_model_parallel→TransformerConfig/GPTModel→数据→get_forward_backward_func→torch Adam；mock 数据仅演示）。examples 另含 post_training/modelopt 配置目录（本轮未展开）。未运行代码。 修订轮二补充：同 tag megatron/training/arguments.py L2244–2250 的 --data-path help（单 prefix / weight prefix 对 / 纯 prefix 列表按数据集长度推断权重）与 --train/valid/test-data-path 独立分列（SHA-256 f2a56f59b4ebd3913fdda687872e20a4c0f7e434d3166867f068b8ec9a92d454），支撑数据集混合机制口径。
+- id: src.ascend.mindspeed-llm-workflows-v2.2.0
+  title: MindSpeed-LLM v2.2.0 预训练/全参 SFT/LoRA 示例脚本与依赖清单
+  url: https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/examples/mcore/llama2/pretrain_llama2_7b_ptd.sh
+  kind: repository
+  registered_at: '2026-10-18'
+  revision: tag v2.2.0；codeload 源码包取回 2026-10-18（pretrain e3bd82f5b1bc562af4c4dcdcc4e225a28eae32a09ff65af747dded8796cced41、full SFT a0705230d059995cfe820bad210ea0d8c2214dd281337d075ab14d409063d24c、LoRA c9c85c81f8ec405fae960c3e8342c243bba2d326d13f9620499b58d04958752a；requirements：transformers==4.43.2、peft==0.7.1）
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 tag 的 examples 脚本与 requirements；根 LICENSE 声明范围
+      identifier: BSD-3-Clause
+      url: https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/LICENSE
+    notes: 不复制脚本长段，仅引用字段与默认值。
+  notes: Batch 24（T06-03）取证：pretrain（tokenizer/data-path/split 949,50,1/save-interval、cosine lr）；full SFT（--load＋--no-load-optim/--no-load-rng＋--finetune＋--is-instruction-dataset＋--prompt-type）；LoRA（--lora-r 16/--lora-alpha 32/--lora-fusion/--lora-target-modules linear_qkv 等）。ckpt_convert_* 仅目录枚举未逐脚本核对。未运行任何脚本。
+- id: src.etcd.disaster-recovery-v3.5-docs
+  title: etcd v3.5 Disaster recovery 指南（revision 差异/完整性校验/成员身份）
+  url: https://etcd.io/docs/v3.5/op-guide/recovery/
+  kind: documentation
+  registered_at: '2026-10-18'
+  revision: etcd v3.5 版本路径文档（非固定 commit 源码）；curl 字节级取回 2026-10-18，SHA-256 477f55130af7c597fcd094c206600f7a1860377b84311ade6c3db78aa7418739；正文若采用具体恢复选项（如 --bump-revision/--skip-hash-check）须按所选 etcd/etcdutl patch 再核
+  license:
+    status: unknown
+    scopes: []
+    notes: etcd.io 站点许可未核对；仅链接并原创归纳。
+  notes: Batch 24（T05-10 修订轮，审阅发现 B24-T10-C02/C06 补证）取证：Revision Difference（恢复后客户端可见 revision 回退数百/数千；K8s 控制器 informer 本地缓存与 watch 通知在该场景的失配风险）；--bump-revision 64 位增量使 revision 不回退、K8s 上下文须同时标记全部旧 revision；恢复自快照会改写 member ID/cluster ID、成员失去原身份、必须作为新逻辑集群启动并防误加入既有集群；恢复输入工件分三类：etcdctl snapshot save 的快照文件（带完整性哈希、etcdutl 恢复时校验）、从数据目录离线提取的 member/snap/db 单文件（无哈希，恢复须 --skip-hash-check——仅放行校验不证明完整性，且可能遗漏只在 WAL 未落盘的更新）、--data-dir 恢复输出目录（非输入）；--skip-hash-check 只适用于第二类工件类型。未执行任何恢复操作。
+- id: src.nvidia.megatron-model-configs-core-v0.19.2
+  title: NVIDIA Megatron-LM tag core_v0.19.2 模型级预训练示例脚本（Llama3-8B/GPT-3 175B）
+  url: https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/examples/llama/train_llama3_8b_h100_fp8.sh
+  kind: repository
+  registered_at: '2026-10-18'
+  revision: tag core_v0.19.2（codeload 源码包 2026-10-18，包 SHA-256 4c16ccc2a0d4c1b6c96f59baaab99316ac3b39eca2ef960ddf4436a2962eb69a；train_llama3_8b_h100_fp8.sh fddc588ca15f24384465f16e171147204feeb691f8fbc54b2a797cf135adc9cc、train_gpt3_175b_distributed.sh 4bc0e0194fef6cdaf578fcf81259ec7de34b26fc1892741ab314827e23059952；与审阅轮独立取回一致）
+  license:
+    status: unknown
+    scopes: []
+    notes: Apache-2.0 为仓库主许可（未逐文件核对头声明）；仅链接并原创归纳。
+  notes: Batch 24（T06-03 修订轮，发现 B24-T063-C06/C07 补证）取证：train_llama3_8b_h100_fp8.sh 的模型结构字段（hidden 4096、ffn 14336、32 头、GQA 8 组、kv-channels 128、swiglu、RMSNorm、rope base 1000000、H100 fp8）与 train_gpt3_175b_distributed.sh 存在于该 tag examples/。同时更正：首轮"core_v0.19.2 不含模型级示例"的目录缺失断言不成立（当时只探测了两个不存在的具体文件名，未开完整包）。脚本存在不等于可运行或与 Ascend 配套；未运行任何脚本。 修订轮二补充：examples/multimodal/nvlm/sft_qwen20_72b_internvit_6b.sh 为官方 SFT 示例（--tokenizer-prompt-format qwen2p0、--data-path、--load ${FINETUNE_DIR}；SHA-256 d96068afbe20ff53dc1ecf4a4321d203e18bc10b98c221bd945bfdc63a1e354b；多模态 NVLM 范围，纯文本 LLM SFT 专项在该 tag 未逐目录定位）。
+- id: src.kubernetes.core-v1-types-v1.32.0
+  title: Kubernetes v1.32.0 staging core/v1 types.go（ContainerStatus 等字段定义，冻结）
+  url: https://github.com/kubernetes/kubernetes/blob/v1.32.0/staging/src/k8s.io/api/core/v1/types.go
+  kind: repository
+  registered_at: '2026-10-18'
+  revision: tag v1.32.0；raw 取回核对 2026-10-18（SHA-256 ecc3289051e4c011c8d15089f820d1a03ba7a5400719a7abda0ce58caf33f842，与初审/复核轮独立取回一致）
+  license:
+    status: unknown
+    scopes: []
+    notes: Apache-2.0 为仓库主许可（本轮未重开 LICENSE 页逐文件核对）；仅链接并原创归纳。
+  notes: Batch 24（T05-10 修订轮，发现 B24-T10-R02 补登记）取证：ContainerStatus.RestartCount 定义为容器级重启计数（L3096–3100 附近），节点重启丢状态时可能归零；用于恢复核验的字段语义，不是跨 Pod/跨恢复的执行身份。
+- id: src.pytorch.official-tests-v2.6.0
+  title: PyTorch v2.6.0 官方测试（optimizer state_dict / autograd backward / dynamo compile，冻结）
+  url: https://github.com/pytorch/pytorch/blob/v2.6.0/test/test_optim.py
+  kind: repository
+  registered_at: '2026-10-18'
+  revision: tag v2.6.0；curl raw 取回 2026-10-18（test_optim.py SHA-256 76cf0c7a0a79eb070bbd3fea508b083156dcbaefa68d38914e332c34a4177593、test_autograd.py a8daf1cb687dad29cc1633c222465a9faecdf2073e137195a32d6d795db033c1、test/dynamo/test_compile.py 36745171714b59a3ac313ac9b8a80e5423fd95f7abb538933e6731cdbd074d3d）；已读未运行
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库测试代码
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/v2.6.0/LICENSE
+    notes: 沿用既有 PyTorch 条目许可口径；仅链接并原创归纳。
+  notes: Batch 24（T06-02 修订轮二，发现 B24-T062-C06 补证）取证：test_optim.py 的 test_state_dict_deterministic L1352、test_state_dict_with_cuda_params L1648、state_dict pre/post hook 测试 L1735/L1748（state_dict/参数组语义）；test_autograd.py 的 test_grad L902、test_backward L2263、test_backward_badcalls L1608；test/dynamo/test_compile.py 的 InPlaceCompilationTests 与 PublicTorchCompilerTests（torch.compiler 公共 API 面）。测试容差为其套件设定，不是本库阈值；未运行任何测试。
