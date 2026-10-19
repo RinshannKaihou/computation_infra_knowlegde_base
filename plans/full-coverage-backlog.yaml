@@ -5974,8 +5974,8 @@ tasks:
   work_units: 1
 - id: T06-04
   title: RL rollout、权重同步与训练推理协同
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 25
   operation: new
   content_type: concept
@@ -6021,8 +6021,8 @@ tasks:
   work_units: 2
 - id: T06-05
   title: 混合精度、算子适配与收敛验证
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 25
   operation: new
   content_type: procedure
@@ -6071,8 +6071,8 @@ tasks:
   work_units: 2
 - id: T06-06
   title: 训练性能分解、profiling 与优化验证
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 25
   operation: new
   content_type: procedure
@@ -6125,8 +6125,8 @@ tasks:
   work_units: 2
 - id: T06-07
   title: 训练吞吐回归的公开证据案例
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 25
   operation: new
   content_type: case

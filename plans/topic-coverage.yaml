@@ -760,16 +760,16 @@ topics:
 - topic_id: '06.2'
   title: 数据、张量、流水线、专家等并行策略
   domain_code: '06'
-  coverage_status: partial
+  coverage_status: covered
   core_scope: 比较 DP/状态分片/TP/PP/EP 等策略的状态、通信、内存、效率与组合条件
-  present_scope: 已有 DDP/FSDP/TP/PP 状态布局与组合身份，补齐 EP dispatch/combine、SP/CP 区别、expert grid、冲突检查、固定假设选型表与单步边界（T06-01 修订，审阅闭环）；组合并行的性能验证待 T06-06
+  present_scope: 已有 DDP/FSDP/TP/PP 状态布局与组合身份，补齐 EP dispatch/combine、SP/CP 区别、expert grid、冲突检查、固定假设选型表与单步边界（T06-01）；组合并行的性能验证入口（对照模板、候选对照样例与 A/B/恢复 A 判据）由 T06-06 交付并经审阅闭环（Batch 25）
   evidence_refs:
   - training.parallelism-and-state
   - communication.collectives-and-rank-progress
   - training.elastic-training-and-membership
+  - training.performance-analysis
   background_refs: []
-  gaps:
-  - 缺少组合并行的映射/性能验证（映射、静态冲突检查与验证判据已由 T06-01 交付；性能验证待 T06-06，Batch 25）
+  gaps: []
   followup_priority: normal
   recommended_action: add_or_extend
   closure_criteria: 补齐所列缺口，给出适用条件、精确来源、观察/判断方法及验证判据；需要真实结果时另登记复现证据。
@@ -792,56 +792,52 @@ topics:
 - topic_id: '06.4'
   title: 预训练、微调、强化学习与 rollout
   domain_code: '06'
-  coverage_status: partial
+  coverage_status: covered
   core_scope: 比较预训练、微调、RL 的工作流，并解释 rollout、权重同步与数据/状态一致性
-  present_scope: 已有预训练/继续预训练/全参 SFT/LoRA-SFT 的目标×参数轴、状态契约、adapter 装载/合并边界、混合/划分/pack 机制与阶段转换验证（T06-03，审阅闭环）；RL rollout、权重同步与训练/推理协同待 T06-04
+  present_scope: 已有预训练/继续预训练/全参 SFT/LoRA-SFT 的目标×参数轴、状态契约、adapter 装载/合并边界、混合/划分/pack 机制与阶段转换验证（T06-03）；RL rollout、权重同步与训练/推理协同（闭环、陈旧样本预算、失败重放一致性、观察口径与单变量验证，verl v0.9.1 legacy 样板＋MindSpeed TRL PPO 分立）由 T06-04 交付并经审阅闭环（Batch 25）
   evidence_refs:
   - training.pretraining-and-finetuning
+  - training.rl-rollout-consistency
   background_refs:
   - training.gpu-npu-precision-difference-source-case
   - overview.training-lifecycle
-  gaps:
-  - 缺少 RL rollout、训练/推理协同及权重同步（T06-04，Batch 25）
-  - 缺少一致性/吞吐验证（预训练/微调侧的阶段转换验证与有效 token 口径已由 T06-03 交付；RL 侧待 T06-04）
+  gaps: []
   followup_priority: high
   recommended_action: add_or_extend
   closure_criteria: 补齐所列缺口，给出适用条件、精确来源、观察/判断方法及验证判据；需要真实结果时另登记复现证据。
 - topic_id: '06.5'
   title: 算子适配、混合精度、数值行为与收敛
   domain_code: '06'
-  coverage_status: partial
+  coverage_status: covered
   core_scope: 关联算子适配、混合精度、数值差异和收敛，区分合法误差与错误
-  present_scope: GPU→NPU 精度专题已串联首差异、重复性、传播/质量对照与容差纪律
+  present_scope: GPU→NPU 精度专题已串联首差异、重复性、传播/质量对照与容差纪律；混合精度/loss scale 机制（GradScaler 时序、Megatron 状态机、autocast 边界与三平台分立）、收敛与训练质量判据（预注册容差、跳步率统计契约、有限窗口质量必经）与静默 dtype 适配案例（#200537 链）由 T06-05 交付并经审阅闭环（Batch 25）
   evidence_refs:
   - training.gpu-npu-precision-difference-triage
   - training.gpu-npu-precision-difference-source-case
   - training.gpu-npu-precision-difference-experiment
+  - training.mixed-precision-and-convergence
   - software-stack.ascend-op-graph-failure-triage
   - reliability.silent-errors-and-integrity
   background_refs: []
-  gaps:
-  - 缺少混合精度/loss scale 机制
-  - 缺少收敛与训练质量判断方法
-  - 算子适配与精度策略的端到端案例待补
+  gaps: []
   followup_priority: normal
   recommended_action: add_or_extend
   closure_criteria: 补齐所列缺口，给出适用条件、精确来源、观察/判断方法及验证判据；需要真实结果时另登记复现证据。
 - topic_id: '06.6'
   title: 性能分析、慢 rank、资源不均与吞吐退化
   domain_code: '06'
-  coverage_status: partial
+  coverage_status: covered
   core_scope: 按阶段与 rank 分解性能，区分数据/计算/通信/主机/设备等待和负载不均
-  present_scope: 已有慢 rank 指南和数据、通信、供电散热交叉入口
+  present_scope: 已有慢 rank 指南和数据、通信、供电散热交叉入口；系统 profiling 方法与工具对照（含取证受限记录）、受害/最早瓶颈区分、单因素优化与 A/B/恢复 A 判据、组合并行性能验证入口由 T06-06 交付，训练吞吐回归来源案例（#189239 全链）由 T06-07 交付，均经审阅闭环（Batch 25）
   evidence_refs:
   - training.slow-rank-triage
+  - training.performance-analysis
+  - training.performance-regression-source-case
   - data-storage.data-starvation-triage
   - communication.bandwidth-degradation-triage
   - hardware.power-thermal-evidence
   background_refs: []
-  gaps:
-  - 缺少系统 profiling 方法与工具边界
-  - 缺少并行负载不均/热点与吞吐优化权衡
-  - 缺少性能回归来源案例
+  gaps: []
   followup_priority: normal
   recommended_action: add_or_extend
   closure_criteria: 补齐所列缺口，给出适用条件、精确来源、观察/判断方法及验证判据；需要真实结果时另登记复现证据。
