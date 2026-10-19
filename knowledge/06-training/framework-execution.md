@@ -23,7 +23,7 @@ source_refs:
 - src.ascend.mindspeed-llm-ha-v2.2.0
 - src.ascend.torch-npu-v7.2.0-pytorch2.6.0
 - src.nvidia.megatron-examples-core-v0.12.1
-updated_at: "2026-10-18"
+updated_at: "2026-10-19"
 summary: 建立训练驱动、autograd、分布式封装、optimizer、编译、算子后端与 checkpoint 接口的职责图，比较 PyTorch 2.6、Megatron-Core core_v0.19.2 与 MindSpeed-LLM v2.2.0 三组独立资料档案，并给出各阶段故障分界与小规模执行路径验证方法。
 related_ids:
 - training.parallelism-and-state
@@ -64,9 +64,17 @@ verification:
  └─ checkpoint 接口   → 把上述状态按截取边界落盘（04 章＋06.1）
 ```
 
-PyTorch 侧官方语义：autograd 是 reverse 自动微分系统，按执行顺序记录 DAG，从输出向输入反向求导（[Autograd mechanics](https://docs.pytorch.org/docs/2.6/notes/autograd.html) L585–590）；局部禁用梯度用 no-grad/inference mode 上下文（L659–663）；计算图按迭代重建。`retain_graph` 的时序语义：**只有计划对同一张图再次求导、且反向依赖其中间量时，才需要在会释放这些中间量的那次 backward 调用中传 `retain_graph=True`**（图释放发生在该次反向中；之后再补传无法追溯恢复，只能重新 forward 重建图——[Autograd mechanics](https://docs.pytorch.org/docs/2.6/notes/autograd.html) L901–910 及 saved-variable 语义）。常规下一迭代经新的 forward 产生新图，不由此推出每步都要保图。optimizer 构造时接收参数可迭代对象（或 named_parameters），持有当前 state 并按计算出的梯度更新参数，param groups 支持逐组超参（[torch.optim](https://docs.pytorch.org/docs/2.6/optim.html) L585–632）。
+PyTorch 侧官方语义：
 
-Megatron 侧（core_v0.19.2）：`train_step` 组合 forward_step_func、数据迭代器、模型、optimizer、opt_param_scheduler 与 schedule（[training.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/training/training.py) L2336）；schedule 由 `get_forward_backward_func` 按 pp/vp 规模选择，interleaved（VPP）与 without-interleaving 两族实现在 [schedules.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/core/pipeline_parallel/schedules.py) L48、L992、L2120；`backward_step` 在非最后 stage 接收 output_tensor_grad（L532）。分布式优化器把 optimizer state 分片到 DP 组（[distrib_optimizer.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/core/optimizer/distrib_optimizer.py) L113–124）。
+- **autograd**：reverse 自动微分系统，按执行顺序记录 DAG，从输出向输入反向求导（[Autograd mechanics](https://docs.pytorch.org/docs/2.6/notes/autograd.html) L585–590）；局部禁用梯度用 no-grad/inference mode 上下文（L659–663）；计算图按迭代重建。
+- **`retain_graph` 的时序语义**：**只有计划对同一张图再次求导、且反向依赖其中间量时，才需要在会释放这些中间量的那次 backward 调用中传 `retain_graph=True`**（图释放发生在该次反向中；之后再补传无法追溯恢复，只能重新 forward 重建图——[Autograd mechanics](https://docs.pytorch.org/docs/2.6/notes/autograd.html) L901–910 及 saved-variable 语义）。常规下一迭代经新的 forward 产生新图，不由此推出每步都要保图。
+- **optimizer**：构造时接收参数可迭代对象（或 named_parameters），持有当前 state 并按计算出的梯度更新参数，param groups 支持逐组超参（[torch.optim](https://docs.pytorch.org/docs/2.6/optim.html) L585–632）。
+
+Megatron 侧（core_v0.19.2）：
+
+- **`train_step`**：组合 forward_step_func、数据迭代器、模型、optimizer、opt_param_scheduler 与 schedule（[training.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/training/training.py) L2336）。
+- **schedule**：由 `get_forward_backward_func` 按 pp/vp 规模选择，interleaved（VPP）与 without-interleaving 两族实现在 [schedules.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/core/pipeline_parallel/schedules.py) L48、L992、L2120；`backward_step` 在非最后 stage 接收 output_tensor_grad（L532）。
+- **分布式优化器**：把 optimizer state 分片到 DP 组（[distrib_optimizer.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/core/optimizer/distrib_optimizer.py) L113–124）。
 
 MindSpeed-LLM 侧（v2.2.0）：`mindspeed_llm.training.pretrain` 的 docstring 给出四步职责链——initialize Megatron→setup model/optimizer/lr schedule→取数据集→train（[training.py](https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/mindspeed_llm/training/training.py) L377 起）；即 MindSpeed-LLM 以包裹/扩展 Megatron 入口的方式提供平台能力，`build_train_args`（L291）与 wrapper 族（get_model_wrapper L188 等）是注入点。其 install_guide 固定 MindSpeed core `2.2.0_core_r0.12.1` 与 Megatron-LM `core_v0.12.1`。
 
@@ -89,12 +97,19 @@ MindSpeed-LLM 侧（v2.2.0）：`mindspeed_llm.training.pretrain` 的 docstring 
 | 档案 | 模型/程序范围 | 框架与依赖 | 硬件边界 | 未知项 |
 |---|---|---|---|---|
 | PyTorch 通用样板 | 通用张量程序与官方文档示例（未绑定具体模型）；文档 2.6＋源码 tag v2.6.0 | CUDA 构建语义按 [cuda-semantics](https://docs.pytorch.org/docs/2.6/notes/cuda.html)（stream/异步/缓存分配器）；ROCm 构建差异按 [HIP notes](https://docs.pytorch.org/docs/2.6/notes/hip.html)；与具体加速卡/驱动/NCCL 版本的配套未核 | CUDA 与 ROCm 构建分别适用；NPU 不在本档案内 | 与任何具体 NPU 栈的配套；官方测试面广阔未逐项映射（见测试定位表） |
-| NVIDIA Megatron-Core | 本页引用其训练循环/调度/分布式优化器实现（training.py、schedules.py、distrib_optimizer.py；面向 GPT 类大模型训练，未绑定具体模型配置）；tag core_v0.19.2 | 通信语义引用 03 章 NCCL 档案（未核版本配套）；并行度参数由 `ModelParallelConfig`/`TransformerConfig` 字段经参数工厂生成 CLI（[arguments.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/training/arguments.py) L2290 起＋[argument_utils.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/training/argument_utils.py) L96–107、L214–229 把 dataclass 字段转成 `--kebab-case` 旗标；CLI 实际解析未运行） | NVIDIA GPU（代际未逐一限定；MoE 通信重叠的 Hopper 分界见[并行页](parallelism-and-state.md)） | 具体硬件支持矩阵；rerun_state_machine、调度数值公式、CUDA graph full-iteration 路径未逐行核对；对 torch.compile 的支持 |
+| NVIDIA Megatron-Core | 本页引用其训练循环/调度/分布式优化器实现（training.py、schedules.py、distrib_optimizer.py；面向 GPT 类大模型训练，未绑定具体模型配置）；tag core_v0.19.2 | 通信语义引用 03 章 NCCL 档案（未核版本配套）；并行度参数经参数工厂生成 CLI（见表下） | NVIDIA GPU（代际未逐一限定；MoE 通信重叠的 Hopper 分界见[并行页](parallelism-and-state.md)） | 具体硬件支持矩阵；rerun_state_machine、调度数值公式、CUDA graph full-iteration 路径未逐行核对；对 torch.compile 的支持 |
 | Ascend MindSpeed-LLM | 本页引用 `mindspeed_llm/training` 入口与参数校验（未绑定具体模型配置）；tag v2.2.0 | README 依赖表：PyTorch 2.7.1、Python 3.10；NPU 驱动/固件/Toolkit/NNAL/torch_npu/apex 均为"在研版本"；install_guide 固定 MindSpeed core `2.2.0_core_r0.12.1`＋Megatron-LM `core_v0.12.1` | 昇腾 NPU（型号未核） | 在研组件的实际配套不可核；MindSpeed core 仓本体源码未取回；torch.compile 支持 |
+
+Megatron 档案的并行度 CLI 来源：并行度参数由 `ModelParallelConfig`/`TransformerConfig` 字段经参数工厂生成 CLI（[arguments.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/training/arguments.py) L2290 起＋[argument_utils.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/training/argument_utils.py) L96–107、L214–229 把 dataclass 字段转成 `--kebab-case` 旗标；CLI 实际解析未运行）。
 
 三组档案两两不组成同一软件环境：MindSpeed-LLM v2.2.0 组合的是 core_v0.12.1，不是 core_v0.19.2；PyTorch 2.6 与 MindSpeed-LLM 所需 2.7.1 是不同样板；TorchNPU v7.2.0-pytorch2.6.0 条目覆盖的是 2.6 组合，与 MindSpeed-LLM 的在研 torch_npu 不是同一配套。引用任何一组的结论时版本随行。
 
-**AMD/ROCm 边界（本页采用的执行差异，均为 2.6 版本化文档原文）**：HIP 复用 CUDA 命名接口（同一 API 名在 HIP 构建下映射到 ROCm 实现，[HIP notes](https://docs.pytorch.org/docs/2.6/notes/hip.html) "Reuse the CUDA Interfaces"）；HIP 构建判别方法见同页 "Checking for HIP"；该版本文档还记录了 TF32 与 `torch.distributed` 后端在 ROCm 侧的限制（同页相应小节），分布式支持条件以 [PyTorch 2.6 distributed](https://docs.pytorch.org/docs/2.6/distributed.html) 为准，NCCL 结论不得平移。另注：AMD 官方 [ROCm 7.1.1 PyTorch 兼容页](https://rocm.docs.amd.com/en/docs-7.1.1/compatibility/ml-compatibility/pytorch-compatibility.html)（`src.amd.pytorch-compatibility-7.1.1`）属**独立版本线**（覆盖 PyTorch 2.9＋ROCm 7.1.1、2.7/2.8＋ROCm 7.0 分节），不拼入本页 PyTorch 2.6 组合。**不声称 NVIDIA Megatron 或 MindSpeed-LLM 可直接迁移到 AMD**：两者的设备相关路径在 ROCm 上的等价物未取证（unknown）。
+**AMD/ROCm 边界（本页采用的执行差异，均为 2.6 版本化文档原文）**：
+
+- HIP 复用 CUDA 命名接口（同一 API 名在 HIP 构建下映射到 ROCm 实现，[HIP notes](https://docs.pytorch.org/docs/2.6/notes/hip.html) "Reuse the CUDA Interfaces"）；HIP 构建判别方法见同页 "Checking for HIP"。
+- 该版本文档还记录了 TF32 与 `torch.distributed` 后端在 ROCm 侧的限制（同页相应小节），分布式支持条件以 [PyTorch 2.6 distributed](https://docs.pytorch.org/docs/2.6/distributed.html) 为准，NCCL 结论不得平移。
+- 另注：AMD 官方 [ROCm 7.1.1 PyTorch 兼容页](https://rocm.docs.amd.com/en/docs-7.1.1/compatibility/ml-compatibility/pytorch-compatibility.html)（`src.amd.pytorch-compatibility-7.1.1`）属**独立版本线**（覆盖 PyTorch 2.9＋ROCm 7.1.1、2.7/2.8＋ROCm 7.0 分节），不拼入本页 PyTorch 2.6 组合。
+- **不声称 NVIDIA Megatron 或 MindSpeed-LLM 可直接迁移到 AMD**：两者的设备相关路径在 ROCm 上的等价物未取证（unknown）。
 
 ## 各阶段故障分界与小规模验证方法
 
@@ -116,14 +131,20 @@ MindSpeed-LLM 侧（v2.2.0）：`mindspeed_llm.training.pretrain` 的 docstring 
 
 | 文件（固定 tag） | 职责 | 观测挂点 | 对应测试/断言（未运行） |
 |---|---|---|---|
-| PyTorch v2.6.0 `torch/optim/optimizer.py` L235 起/L644/L841/L940/L1012 起 | optimizer 基类、param groups、state_dict、zero_grad | state_dict、梯度为 None 行为 | 官方测试（已读未运行；SHA-256 76cf0c7a…）：[test_optim.py](https://github.com/pytorch/pytorch/blob/v2.6.0/test/test_optim.py) `test_state_dict_deterministic` L1352（L1403–1439：克隆参数、加载 optimizer state 后**继续更新并对照参数值、状态与参数组**——state_dict 装载后更新等价性，非完整应用 checkpoint/RNG 恢复证明）；`test_state_dict_with_cuda_params` L1648（**onlyCUDA 参数化限定**；L1697–1717 检查加载不改写输入 state、step 后状态设备与后续更新）；state_dict pre/post hook L1735/L1748 |
+| PyTorch v2.6.0 `torch/optim/optimizer.py` L235 起/L644/L841/L940/L1012 起 | optimizer 基类、param groups、state_dict、zero_grad | state_dict、梯度为 None 行为 | 官方测试（已读未运行；SHA-256 76cf0c7a…）：[test_optim.py](https://github.com/pytorch/pytorch/blob/v2.6.0/test/test_optim.py) `test_state_dict_deterministic` L1352；`test_state_dict_with_cuda_params` L1648；state_dict pre/post hook L1735/L1748（断言范围见表下） |
 | PyTorch v2.6.0 `torch/autograd`（[notes/autograd](https://docs.pytorch.org/docs/2.6/notes/autograd.html)） | 计算图记录与 backward（图按迭代重建） | no_grad 块；retain_graph 的条件与时序见上文"PyTorch 侧官方语义"完整定义（同图再次求导且需其中间量时，在会释放它们的先前 backward 中保留） | 官方测试（已读未运行；SHA-256 a8daf1cb…）：[test_autograd.py](https://github.com/pytorch/pytorch/blob/v2.6.0/test/test_autograd.py) `test_grad` L902（`grad()` 对指定输入求导并对照）；`test_backward` L2263（L2270–2280 对照解析梯度）；`test_backward_badcalls` L1608（L1608–1611：对 requires_grad=False 输入调用 backward 报错——错误边界） |
-| PyTorch v2.6.0 `torch.compiler` 公共 API | 编译入口与回退边界 | 编译日志、重编译计数 | 官方测试（已读未运行；SHA-256 36745171…）：[test/dynamo/test_compile.py](https://github.com/pytorch/pytorch/blob/v2.6.0/test/dynamo/test_compile.py) `InPlaceCompilationTests.test_compilation` L25–32（`ToyModel`＋`model.compile(backend=CompileCounter)`，单次调用后断言 frame 数为 1）、`test_dynamo_signatures` L163–173（公共/内部 API 签名一致性——**不验证完整训练 step、编译数值或 optimizer/scheduler 路径**） |
+| PyTorch v2.6.0 `torch.compiler` 公共 API | 编译入口与回退边界 | 编译日志、重编译计数 | 官方测试（已读未运行；SHA-256 36745171…）：[test/dynamo/test_compile.py](https://github.com/pytorch/pytorch/blob/v2.6.0/test/dynamo/test_compile.py) `InPlaceCompilationTests.test_compilation` L25–32、`test_dynamo_signatures` L163–173（断言范围见表下） |
 | Megatron core_v0.19.2 `megatron/training/training.py` L2336/L2017/L3342 | train_step、setup_model_and_optimizer、train 主循环 | timers、save_params/save_activations/save_tokens_per_expert 按间隔分支 | 本轮未定位 train_step 专项单测（缺口） |
-| Megatron core_v0.19.2 `megatron/core/pipeline_parallel/schedules.py` L48/L992/L2120 | 调度选择与 forward/backward 执行 | forward_step/backward_step 边界、tensor shape 通信 | [test_schedules.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/tests/unit_tests/pipeline_parallel/test_schedules.py) L47–76 `test_get_forward_backward_func`：断言配置为 TP=2 下 PP=1→no_pipelining、PP=4 无 VP→without_interleaving、PP=4/VP=2 与 PP=2/VP=4→with_interleaving（SHA-256 5854bac1…；已读未运行）。**环境前提**：该测试经 `Utils.initialize_model_parallel` 进入真实分布式初始化（CUDA 设备＋NCCL 进程组），需要 GPU/多进程环境，不是纯函数单测；它只验证调度函数选择，不验证数值、通信完成或完整 step |
+| Megatron core_v0.19.2 `megatron/core/pipeline_parallel/schedules.py` L48/L992/L2120 | 调度选择与 forward/backward 执行 | forward_step/backward_step 边界、tensor shape 通信 | [test_schedules.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/tests/unit_tests/pipeline_parallel/test_schedules.py) L47–76 `test_get_forward_backward_func`（SHA-256 5854bac1…；已读未运行；断言与环境前提见表下） |
 | Megatron core_v0.19.2 `megatron/core/optimizer/distrib_optimizer.py` L113 | DP 组内 optimizer state 分片 | data_parallel_group、per_model_buffers | 本轮未定位 distributed optimizer 专项单测（缺口） |
 | MindSpeed-LLM v2.2.0 `mindspeed_llm/training/training.py` L291/L377/L515 | 包裹 Megatron 入口、构建训练参数 | build_train_args、e2e metrics（L586） | MindSpeed 侧测试（tests/ut、tests/st）未逐项核对（缺口） |
 | MindSpeed-LLM v2.2.0 `mindspeed_llm/training/arguments.py` L35/L242/L1015 | 平台扩展参数与冲突校验 | ValueError/AssertionError 消息 | 同上 |
+
+**测试断言范围**（上表三处"见表下"）：
+
+- **test_optim.py**：确定性用例在 L1403–1439 克隆参数、加载 optimizer state 后**继续更新并对照参数值、状态与参数组**——state_dict 装载后更新等价性，非完整应用 checkpoint/RNG 恢复证明；CUDA 参数用例有 **onlyCUDA 参数化限定**，L1697–1717 检查加载不改写输入 state、step 后状态设备与后续更新。
+- **test_compile.py**：前者用 `ToyModel`＋`model.compile(backend=CompileCounter)`，单次调用后断言 frame 数为 1；后者检查公共/内部 API 签名一致性。两者**不验证完整训练 step、编译数值或 optimizer/scheduler 路径**。
+- **test_schedules.py**：断言配置为 TP=2 下 PP=1→no_pipelining、PP=4 无 VP→without_interleaving、PP=4/VP=2 与 PP=2/VP=4→with_interleaving。**环境前提**：该测试经 `Utils.initialize_model_parallel` 进入真实分布式初始化（CUDA 设备＋NCCL 进程组），需要 GPU/多进程环境，不是纯函数单测；它只验证调度函数选择，不验证数值、通信完成或完整 step。
 
 测试覆盖现状：NVIDIA 档案有调度选择测试、PyTorch 档案已完成 optimizer/autograd/compile 三组代表性测试的具名映射（断言与适用条件见上表）；MindSpeed 侧测试（tests/ut、tests/st）与 PyTorch 更大测试面（如完整训练循环、分布式端到端）的映射仍未完成——缺口如实记录，不以已映射部分外推全覆盖，也不以 NVIDIA 测试套用到其他平台。
 

@@ -75,7 +75,9 @@ FSDP `FULL_SHARD` 的参数、梯度和 optimizer state 分片及其 all-gather/
 |---|---|---|---|
 | TP | **权重矩阵与中间激活**按 row/column 规则切分；每个 micro-batch 在 TP 组内经 collective 连接 | TP 组内 all-reduce（或配 SP 时 all-gather/reduce-scatter） | PyTorch 2.6 `ColwiseParallel/RowwiseParallel`（[tensor.parallel](https://docs.pytorch.org/docs/2.6/distributed.tensor.parallel.html)；v2.6.0 源码 `__all__` 见 [parallel/__init__.py](https://github.com/pytorch/pytorch/blob/v2.6.0/torch/distributed/tensor/parallel/__init__.py) L14–23） |
 | SP | **激活与部分 buffer 沿序列维**在 TP 组内分布，消除 TP 引入的激活重复 | 与 TP 同组配合：进 TP 块前 gather、出块后 scatter | `SequenceParallel` 是与 Colwise/Rowwise 并列的 ParallelStyle（同上 `__all__`）；MindSpeed-LLM 明确 2D TP 特性**不与** `--sequence-parallel` 兼容（[tensor_parallel_2d](https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/docs/pytorch/features/tensor_parallel_2d.md)） |
-| CP | **输入序列本身**按块分布到 CP 组；注意力所需的 KV 块在 CP 组内环形/全对全交换 | CP 组内 KV/dKV 点对点或 A2A；与 DP 组可组合（"含 CP 的 DP 组"） | PyTorch 2.6 experimental `context_parallel`：patch SDPA＋把 buffers 沿序列维 in-place 切分（[_attention.py](https://github.com/pytorch/pytorch/blob/v2.6.0/torch/distributed/tensor/experimental/_attention.py) L1211–1246）；Megatron `parallel_state` 为 KV/dKV 交换维护 CP 组与分层 CP 组（[parallel_state.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/core/parallel_state.py) L123–131），并提供 `get_tensor_and_context_parallel_group`（L1923–1928） |
+| CP | **输入序列本身**按块分布到 CP 组；注意力所需的 KV 块在 CP 组内环形/全对全交换 | CP 组内 KV/dKV 点对点或 A2A；与 DP 组可组合（"含 CP 的 DP 组"） | PyTorch 2.6 experimental `context_parallel`：patch SDPA＋把 buffers 沿序列维 in-place 切分（[_attention.py](https://github.com/pytorch/pytorch/blob/v2.6.0/torch/distributed/tensor/experimental/_attention.py) L1211–1246）；Megatron 侧见表下 |
+
+CP 行的 Megatron 侧来源：`parallel_state` 为 KV/dKV 交换维护 CP 组与分层 CP 组（[parallel_state.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/core/parallel_state.py) L123–131），并提供 `get_tensor_and_context_parallel_group`（L1923–1928）。
 
 Ascend 侧 CP 算法选择（MindSpeed-LLM v2.2.0）：`--context-parallel-algo` 三选——`megatron_cp_algo`（Ring Attention：KV 块环形传递、计算通信重叠）、`ulysses_cp_algo`、`hybrid_cp_algo`；ulysses 要求 attention heads 能被 ulysses×TP 整除（[arguments 校验](https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/mindspeed_llm/training/arguments.py) L242 起），Ring Attention 无此整除要求但必须开 FlashAttention，且短序列（seq/cp 小）可能出现负优化（[ring-attention 文档](https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/docs/pytorch/features/ring-attention-context-parallel.md)）。
 
@@ -83,7 +85,9 @@ Ascend 侧 CP 算法选择（MindSpeed-LLM v2.2.0）：`--context-parallel-algo`
 
 PyTorch 的 `DeviceMesh` 把多维布局命名为如 `("dp","cp","tp")` 的 n-d 数组，每个格子是对应进程组的 global rank，并遵循 SPMD 编程模型（[device_mesh.py](https://github.com/pytorch/pytorch/blob/v2.6.0/torch/distributed/device_mesh.py) L379–390、L87–110）。Megatron 侧同一 rank 同时属于多个进程组：TP 组、PP 组、CP 组（含分层 CP）、可选含/不含 CP 的 DP 组、EP 组与"TP+CP"组（parallel_state.py L601 起、L133–135、L1758–1807）。
 
-一个**完整合成身份样例**（本库构造的配置，按已核对的源码规则做纯映射推导，**不是**任何启动验证）。合成假设：64 个 rank（8 节点×8 卡）、32 层 Transformer、num_experts=128，取 `pp=2, cp=2, tp=2`，dense 数据并行 `dp = 64/(2×2×2) = 8`。mesh 维度顺序与步长（stride）为 `[pp=32, dp=4, cp=2, tp=1]`，即 `global_rank = 32×pp_idx + 4×dp_idx + 2×cp_idx + 1×tp_idx`。这与 Megatron core_v0.19.2 的默认轴序一致：`initialize_model_parallel` 默认 `order="tp-cp-ep-dp-pp"`（[parallel_state.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/core/parallel_state.py) L617），排在前面的维度变化最快（`generate_masked_orthogonal_rank_groups` 文档式 L292：`global_rank = tp_rank + dp_rank × tp_size + …`），稠密 generator 的 EP=1。传入非默认 `order` 时组成员随之改变。
+一个**完整合成身份样例**（本库构造的配置，按已核对的源码规则做纯映射推导，**不是**任何启动验证）。合成假设：64 个 rank（8 节点×8 卡）、32 层 Transformer、num_experts=128，取 `pp=2, cp=2, tp=2`，dense 数据并行 `dp = 64/(2×2×2) = 8`。mesh 维度顺序与步长（stride）为 `[pp=32, dp=4, cp=2, tp=1]`，即 `global_rank = 32×pp_idx + 4×dp_idx + 2×cp_idx + 1×tp_idx`。
+
+这与 Megatron core_v0.19.2 的默认轴序一致：`initialize_model_parallel` 默认 `order="tp-cp-ep-dp-pp"`（[parallel_state.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/core/parallel_state.py) L617），排在前面的维度变化最快（`generate_masked_orthogonal_rank_groups` 文档式 L292：`global_rank = tp_rank + dp_rank × tp_size + …`），稠密 generator 的 EP=1。传入非默认 `order` 时组成员随之改变。
 
 取 **global rank 37**：37 = 1×32 + 1×4 + 0×2 + 1 → 坐标 `pp=1, dp=1, cp=0, tp=1`。由步长可直接推出各维组成员（固定其余坐标、扫描本维）：
 
@@ -97,7 +101,9 @@ PyTorch 的 `DeviceMesh` 把多维布局命名为如 `("dp","cp","tp")` 的 n-d 
 | dense DP 组成员（同 pp,cp,tp） | 扫描 dp=0..7：{33, 37, 41, 45, 49, 53, 57, 61}，组内 rank 37 为第 1 号（0 起） |
 | stage/layer 区间 | pp=1 → 第 16–31 层（合成约定 32 层对半） |
 | expert 集合 | EP=4 时每 rank 持 32 个本地专家；rank 37 是其 EP 组的第 2 号 → expert 64–95（推导见下文 expert grid 身份） |
-| 参数身份示例 | 第 20 层（属本 rank 的 stage）的融合 QKV 权重 `linear_qkv.weight`。合成 MHA，全局 shape `[3×hidden, hidden]`。Megatron 用 column-parallel 线性层实现 `linear_qkv`（[gpt_layer_specs.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/core/models/gpt/gpt_layer_specs.py) L324 的 Transformer Engine spec、L444 的 local spec），即沿 dim 0（输出维）切分，对应 PyTorch 术语 ColwiseParallel：TP 组内第 1 片，本地 `[3×hidden/2, hidden]`，dim-0 offset = 1×(3×hidden/2)。该权重按 query group 交错存放 q/k/v（[attention.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/core/transformer/attention.py) L1840–1841 的交错注释；L1861–1867 按 query group 重排、L1887–1903 在组内拆分 Q/K/V），因此 offset 是 Megatron 存储布局中的行号，不能换算成"q/k/v 依次拼接"布局的位置 |
+| 参数身份示例 | 第 20 层（属本 rank 的 stage）的融合 QKV 权重 `linear_qkv.weight`，合成 MHA，全局 shape `[3×hidden, hidden]`；沿 dim 0 切分：TP 组内第 1 片，本地 `[3×hidden/2, hidden]`，dim-0 offset = 1×(3×hidden/2)（依据与存储布局见表下） |
+
+参数身份示例的依据：Megatron 用 column-parallel 线性层实现 `linear_qkv`（[gpt_layer_specs.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/core/models/gpt/gpt_layer_specs.py) L324 的 Transformer Engine spec、L444 的 local spec），即沿 dim 0（输出维）切分，对应 PyTorch 术语 ColwiseParallel。该权重按 query group 交错存放 q/k/v（[attention.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/core/transformer/attention.py) L1840–1841 的交错注释；L1861–1867 按 query group 重排、L1887–1903 在组内拆分 Q/K/V），因此 offset 是 Megatron 存储布局中的行号，不能换算成"q/k/v 依次拼接"布局的位置。
 
 覆盖/唯一性检查（样例自洽性）：dense 各维大小乘积 2×8×2×2 = 64 = world size；每维成员表按步长互斥且覆盖全部 rank；`world_size % (TP×PP×CP) = 64 % 8 = 0` ✓、`num_experts % EP = 128 % 4 = 0` ✓、`seq(32k) % (2×CP=4) = 0` ✓——即该合成配置通过上文全部硬断言。
 
@@ -110,11 +116,11 @@ PyTorch 的 `DeviceMesh` 把多维布局命名为如 `("dp","cp","tp")` 的 n-d 
 | expert TP 组（同 pp、edp、ep） | {36, 37}，组内第 1 号 |
 | EP 组（同 pp、edp、etp） | {33, 35, 37, 39}，组内第 2 号；按"连续 8 个 rank 为一节点"的合成放置，4 个成员都在节点 4，dispatch/combine 的 all-to-all 在节点内完成 |
 | expert DP 组（同 pp、ep、etp） | {37, 45, 53, 61}，组内第 0 号；跨节点 4–7（stride 8） |
-| 持有专家 | num_experts=128、EP=4 → 每 rank 32 个本地专家；Megatron 按 `local_expert_indices_offset = ep_rank × num_local_experts` 分配连续编号（[moe_layer.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/core/transformer/moe/moe_layer.py) L181–194，`ep_rank` 为 EP 组内序号）→ rank 37 持有 **expert 64–95**；同 EP 组的 4 个 rank 依次持 0–31/32–63/64–95/96–127，无重无漏 |
+| 持有专家 | num_experts=128、EP=4 → 每 rank 32 个本地专家；Megatron 按 `local_expert_indices_offset = ep_rank × num_local_experts` 分配连续编号（[moe_layer.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/core/transformer/moe/moe_layer.py) L181–194，`ep_rank` 为 EP 组内序号）→ rank 37 持有 **expert 64–95** |
 | 参数 shard 示例（合成张量） | `layers.20.mlp.experts.expert_64.gate_proj`（合成命名），全局 shape `[11008, 4096]`（ffn×hidden，合成值）、bf16；ETP=2 沿 dim 0（输出维）切分，即 column-parallel / PyTorch ColwiseParallel；本地 `[5504, 4096]`；rank 37 是 expert-TP 组 {36, 37} 的第 1 号 → dim-0 offset = 1×5504 = 5504（行 5504–11007） |
 | 数据并行副本 | expert DP 组 {37, 45, 53, 61} 的四个 rank 的 ep/etp 坐标相同，持有同一批专家（64–95）同一 shard 的副本，不是不同 shard |
 
-覆盖检查：每个专家的 gate_proj 恰由其 EP rank 的 2 个 ETP shard 覆盖 [0, 11008) 全部行，无重无漏。层编号按全局序解释并与所属 stage 对应。与稠密 grid 对照：同一个 rank 37 的稠密 DP 组 {33, 37, …, 61} 跨 4 个节点，而专家侧的 EP 组留在节点内、expert DP 组跨节点——两套 generator 产生不同的组放置。
+覆盖检查：同 EP 组的 4 个 rank 依次持 0–31/32–63/64–95/96–127，无重无漏；每个专家的 gate_proj 恰由其 EP rank 的 2 个 ETP shard 覆盖 [0, 11008) 全部行，无重无漏。层编号按全局序解释并与所属 stage 对应。与稠密 grid 对照：同一个 rank 37 的稠密 DP 组 {33, 37, …, 61} 跨 4 个节点，而专家侧的 EP 组留在节点内、expert DP 组跨节点——两套 generator 产生不同的组放置。
 
 组合约束（同一冻结 tag 的启动校验；不通过即拒绝启动，这是组合合法性的第一道验证）。注意区分三类：**硬断言**（启动期 assert/raise，拒绝启动）、**功能不支持**（特定组合被 assert 明确排除）、**性能提醒**（`warn_rank_0` 提示，不拒绝启动）。下表按类分列：
 
@@ -138,7 +144,14 @@ PyTorch 的 `DeviceMesh` 把多维布局命名为如 `("dp","cp","tp")` 的 n-d 
 
 ## 固定假设下的选型比较
 
-比较只在固定假设下有意义。**合成场景（全部为合成假设，本库无任何测量）**：32 层 Transformer、hidden 4096、序列 32768、精度 bf16、全局 batch 512、**拓扑＝8 节点×8 卡共 64 rank，节点内 8 卡高速互联、节点间互联带宽低于节点内**（合成假设，代表"节点内/间不对称"一类拓扑；真实拓扑须以实测为准）。全局 batch 的合成口径：**micro-batch 1 × 梯度累积数 × 数据并行度 = 512**（Megatron 的 `num_micro_batches = global_batch_size // (micro_batch_size × dp)` 口径，见[微批计算器](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/core/num_microbatches_calculator.py) `init_num_microbatches_calculator` 起，含整除断言）。适用实现：PyTorch 2.6（DDP/FSDP `FULL_SHARD`/TP/PP alpha）与 Megatron core_v0.19.2 语义。**公共放置约定与统一轴序（合成）**：连续 8 个 global rank 构成一个节点（`node = rank // 8`，节点内 0–7 为本地设备）。各候选的组员按**统一轴序重算步长**构造（不是沿用某一固定样例的步长）：稠密轴序 `[pp, dp, cp, tp]`（慢→快），`rank = ((pp_idx×DP + dp_idx)×CP + cp_idx)×TP + tp_idx`；专家轴序 `[pp, edp, ep, etp]` 同理（按各候选的 ETP/EP/EDP 大小重算步长）。两条轴序都取 Megatron core_v0.19.2 的默认 `order`（稠密 `tp-cp-ep-dp-pp`，专家 `tp-ep-dp-pp`，见上文身份样例）。下表各行的组员放置均由该公式与本约定推出（上文身份样例 TP2/CP2/PP2/DP8 是它的一个实例，其步长不能直接搬到其他候选）。下表每行给出一组**占满全部 64 rank** 的完整维度分解、对应累积数与主要通信组的放置（合成复算：各候选的 TP×PP×CP 乘积整除 64，剩余为 dense DP；EP 行另按 expert grid 公式复算；未写的维度＝1）：
+比较只在固定假设下有意义。**合成场景（全部为合成假设，本库无任何测量）**：
+
+- **模型与负载**：32 层 Transformer、hidden 4096、序列 32768、精度 bf16、全局 batch 512。
+- **拓扑**：8 节点×8 卡共 64 rank，节点内 8 卡高速互联、节点间互联带宽低于节点内（合成假设，代表"节点内/间不对称"一类拓扑；真实拓扑须以实测为准）。
+- **全局 batch 口径**：micro-batch 1 × 梯度累积数 × 数据并行度 = 512（Megatron 的 `num_micro_batches = global_batch_size // (micro_batch_size × dp)` 口径，见[微批计算器](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/core/num_microbatches_calculator.py) `init_num_microbatches_calculator` 起，含整除断言）。
+- **适用实现**：PyTorch 2.6（DDP/FSDP `FULL_SHARD`/TP/PP alpha）与 Megatron core_v0.19.2 语义。
+- **公共放置约定与统一轴序（合成）**：连续 8 个 global rank 构成一个节点（`node = rank // 8`，节点内 0–7 为本地设备）。各候选的组员按**统一轴序重算步长**构造（不是沿用某一固定样例的步长）：稠密轴序 `[pp, dp, cp, tp]`（慢→快），`rank = ((pp_idx×DP + dp_idx)×CP + cp_idx)×TP + tp_idx`；专家轴序 `[pp, edp, ep, etp]` 同理（按各候选的 ETP/EP/EDP 大小重算步长）。两条轴序都取 Megatron core_v0.19.2 的默认 `order`（稠密 `tp-cp-ep-dp-pp`，专家 `tp-ep-dp-pp`，见上文身份样例）。
+- **下表口径**：下表各行的组员放置均由该公式与本约定推出（上文身份样例 TP2/CP2/PP2/DP8 是它的一个实例，其步长不能直接搬到其他候选）。下表每行给出一组**占满全部 64 rank** 的完整维度分解、对应累积数与主要通信组的放置（合成复算：各候选的 TP×PP×CP 乘积整除 64，剩余为 dense DP；EP 行另按 expert grid 公式复算；未写的维度＝1）：
 
 | 策略（合成候选配置，均占满 64 rank） | 状态内存（机制） | 主要通信（机制） | bubble/负载（机制） | 分析预期与边界 |
 |---|---|---|---|---|
@@ -209,19 +222,41 @@ PyTorch 2.6 的 distributed state-dict API 用 canonical FQN 统一若干并行�
 | scaler update | GradScaler（growth tracker 与 scale 是独立状态） | 无；且应在 `update()` 后截取 | PyTorch 2.6 `GradScaler.state_dict`（见上文状态责任矩阵） |
 | data commit | sampler/loader 与应用计数（epoch、已提交样本） | 不可跳过；但允许按声明规则重放或去重 | DistributedSampler `set_epoch` 等语义（上文） |
 
-"合法跳步"有两层不同含义，须分开：**合法不序列化暂态**（上文：step 边界截取时飞行激活/未提交梯度可不入 checkpoint）与**合法不更新/不推进**（一次迭代因 overflow 等原因不执行参数更新）。后者以 Megatron core_v0.19.2 的 `train_step` 分支为样板：`optimizer.step()` 返回 `update_successful`（fp16 时由 Megatron 自有的 grad scaler 检测 inf/NaN，语义与 PyTorch GradScaler 不同，见下表）；训练循环把 `update_successful` 经模型并行组归约后分叉——**成功**：推进 `opt_param_scheduler`（增量 = micro-batch 数×micro-batch size×DP size×gtp）并置 `skipped_iter = 0`；**不成功**：置 `skipped_iter = 1`、学习率调度不推进；而 `consumed_train_samples` 在两种分支下都按本迭代序列数推进（[training.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/training/training.py) L2474、L2518–2531、L3941–3942；`skipped iterations` 作为指标单独累计）。因此恢复契约里要区分**尝试迭代数、成功更新数、scheduler 进度与已消费样本数**四类计数——它们在 overflow 迭代上合法地分叉，不能互相推算。**梯度累积窗口内的完整执行契约（三情形）**：
+"合法跳步"有两层不同含义，须分开：**合法不序列化暂态**（上文：step 边界截取时飞行激活/未提交梯度可不入 checkpoint）与**合法不更新/不推进**（一次迭代因 overflow 等原因不执行参数更新）。
+
+后者以 Megatron core_v0.19.2 的 `train_step` 分支为样板（[training.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/training/training.py) L2474、L2518–2531、L3941–3942）：
+
+- `optimizer.step()` 返回 `update_successful`（fp16 时由 Megatron 自有的 grad scaler 检测 inf/NaN，语义与 PyTorch GradScaler 不同，见下表），训练循环把 `update_successful` 经模型并行组归约后分叉；
+- **成功**：推进 `opt_param_scheduler`（增量 = micro-batch 数×micro-batch size×DP size×gtp）并置 `skipped_iter = 0`；
+- **不成功**：置 `skipped_iter = 1`、学习率调度不推进；
+- `consumed_train_samples` 在两种分支下都按本迭代序列数推进，`skipped iterations` 作为指标单独累计。
+
+因此恢复契约里要区分**尝试迭代数、成功更新数、scheduler 进度与已消费样本数**四类计数——它们在 overflow 迭代上合法地分叉，不能互相推算。
+
+**梯度累积窗口内的完整执行契约（三情形）**：
 
 下表的 scaler 分两列，分别对应两个实现，不能把 PyTorch 列的单次 backoff 套到 Megatron 列上；scheduler 与计数两列按 Megatron `train_step` 记。
 
 | 情形 | 参数更新 | PyTorch 2.6 `GradScaler` | Megatron core_v0.19.2 动态 grad scaler（fp16，未设 `--loss-scale`） | scheduler/成功更新计数（Megatron） | 数据/计数 |
 |---|---|---|---|---|---|
 | 非最后 micro-step | **不执行** | **不变更 scale，不调用 `update()`**（`update()` 只在整个有效 batch 的所有 `scaler.step()` 之后调用；累积期间 scaled gradients 使用**同一 scale**） | 不触及：scaler 只在 `optimizer.step()` 内的 `prepare_grads` 中检查 inf/NaN 并调用 `update()`（[optimizer.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/core/optimizer/optimizer.py) L741–774） | 不推进 | 只累积梯度、推进 micro-step 计数与已读取进度 |
-| 窗口末、成功 | 执行 optimizer 更新 | `update()`：连续 `growth_interval` 个未跳步后按 `growth_factor` 放大 | `DynamicGradScaler.update(False)`：growth tracker 加 1；累计到 `growth_interval`（`--loss-scale-window`，默认 1000）个连续有限步时，scale 乘 growth_factor（2.0），growth tracker 归零，hysteresis tracker 恢复为 `--hysteresis`（[grad_scaler.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/core/optimizer/grad_scaler.py) L144–153）；未满一个增长窗口的有限步不恢复 hysteresis tracker | 推进（`skipped_iter=0`；scheduler 步进） | consumed samples 推进（两种分支都推进） |
-| 窗口末、overflow | **跳过** optimizer 更新 | `update()` 仍执行：按 `backoff_factor` 缩小 scale、**重置 growth tracker** | `update(True)`：growth tracker 归零，hysteresis tracker 减 1；tracker ≤ 0 时 scale 乘 backoff_factor（0.5），下限为 `--min-loss-scale`（默认 1.0）（grad_scaler.py L138–143；默认值见 [arguments.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/training/arguments.py) L2913、L2917）。tracker 只在上一行的增长窗口完成时恢复，所以触发 backoff 的 overflow **不必连续**：默认 `--hysteresis 2` 时，自初始化或上次恢复起的第 1 次 overflow 不缩小，第 2 次起每次都缩小，直到下一个增长窗口完成。每次 overflow 都令 `step()` 返回 `update_successful=False`（optimizer.py L816–822），跳过参数更新与是否缩小 scale 无关 | 不推进（`skipped_iter=1`） | consumed samples 仍推进 |
+| 窗口末、成功 | 执行 optimizer 更新 | `update()`：连续 `growth_interval` 个未跳步后按 `growth_factor` 放大 | `DynamicGradScaler.update(False)`：growth tracker 加 1；满一个增长窗口时放大 scale 并恢复 hysteresis tracker（见表下状态机） | 推进（`skipped_iter=0`；scheduler 步进） | consumed samples 推进（两种分支都推进） |
+| 窗口末、overflow | **跳过** optimizer 更新 | `update()` 仍执行：按 `backoff_factor` 缩小 scale、**重置 growth tracker** | `update(True)`：growth tracker 归零、hysteresis tracker 减 1，tracker ≤ 0 时缩小 scale（见表下状态机）；每次 overflow 都令 `step()` 返回 `update_successful=False`（optimizer.py L816–822） | 不推进（`skipped_iter=1`） | consumed samples 仍推进 |
+
+**Megatron 动态 scaler 状态机**：
+
+- **有限步**：growth tracker 加 1；累计到 `growth_interval`（`--loss-scale-window`，默认 1000）个连续有限步时，scale 乘 growth_factor（2.0），growth tracker 归零，hysteresis tracker 恢复为 `--hysteresis`（[grad_scaler.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/core/optimizer/grad_scaler.py) L144–153）；未满一个增长窗口的有限步不恢复 hysteresis tracker。
+- **overflow**：growth tracker 归零，hysteresis tracker 减 1；tracker ≤ 0 时 scale 乘 backoff_factor（0.5），下限为 `--min-loss-scale`（默认 1.0）（grad_scaler.py L138–143；默认值见 [arguments.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/training/arguments.py) L2913、L2917）。
+- tracker 只在增长窗口完成时恢复，所以触发 backoff 的 overflow **不必连续**：默认 `--hysteresis 2` 时，自初始化或上次恢复起的第 1 次 overflow 不缩小，第 2 次起每次都缩小，直到下一个增长窗口完成。
+- 每次 overflow 都跳过参数更新，这与是否缩小 scale 无关。
 
 bf16 且未设 `--loss-scale` 时，Megatron 不创建 grad scaler（[optimizer/__init__.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/core/optimizer/__init__.py) L638–662），`prepare_grads` 直接返回 False（optimizer.py L774），不存在由 loss scaling 引起的 overflow 跳步分支。显式设置 `--loss-scale` 时使用 `ConstantGradScaler`，其 `update()` 不调整 scale（[grad_scaler.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/core/optimizer/grad_scaler.py) L43–52），上表动态规则不适用。动态 scaler 的 `state_dict` 含 scale、growth tracker 与 hysteresis tracker（L155–165），恢复时三者都要还原，只恢复 scale 会改变后续 overflow 是否缩小的轨迹。
 
-**overflow 跳过更新时 scaler 仍在更新**：PyTorch GradScaler 语义——`scaler.step(optimizer)` 在检测到 inf/NaN 梯度时**跳过 `optimizer.step()`**以避免污染参数（[grad_scaler.py](https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/torch/amp/grad_scaler.py) L355–365），但 `scaler.update()` 仍须在每个迭代末尾调用：发生过跳步则按 `backoff_factor` 缩小 scale、连续 `growth_interval` 个未跳步则按 `growth_factor` 放大（L463–480）——即"合法不更新"≠"合法不推进 scaler"。**未完成梯度累积时不得提前发生参数更新**：参数更新只应发生在完整累积窗口结束时；中途保存的恢复点若恢复到累积中途，必须连同未提交梯度与累积计数一起恢复，否则首个更新会只消费部分 micro-batch（mid-step 契约，通用协议 unknown）。应用层 data commit（哪些样本算"已训练"）没有跨框架通用来源，属于各训练系统的显式恢复契约（未声明的保持 unknown，不从 sampler epoch 或样本计数反推）。
+**overflow 跳过更新时 scaler 仍在更新**：PyTorch GradScaler 语义——`scaler.step(optimizer)` 在检测到 inf/NaN 梯度时**跳过 `optimizer.step()`**以避免污染参数（[grad_scaler.py](https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/torch/amp/grad_scaler.py) L355–365），但 `scaler.update()` 仍须在每个迭代末尾调用：发生过跳步则按 `backoff_factor` 缩小 scale、连续 `growth_interval` 个未跳步则按 `growth_factor` 放大（L463–480）——即"合法不更新"≠"合法不推进 scaler"。
+
+**未完成梯度累积时不得提前发生参数更新**：参数更新只应发生在完整累积窗口结束时；中途保存的恢复点若恢复到累积中途，必须连同未提交梯度与累积计数一起恢复，否则首个更新会只消费部分 micro-batch（mid-step 契约，通用协议 unknown）。
+
+应用层 data commit（哪些样本算"已训练"）没有跨框架通用来源，属于各训练系统的显式恢复契约（未声明的保持 unknown，不从 sampler epoch 或样本计数反推）。
 
 回到截取边界：只有当截取点定义在完整 optimizer step 之后，飞行激活、未提交梯度与未决 overflow 决议才允许不入 checkpoint——跳过它们不是优化，而是恢复契约的一部分。VPP/CP 场景下 schedule 内状态更复杂，能否同样跳过没有跨框架通用资料（unknown）。
 
@@ -246,7 +281,9 @@ bf16 且未设 `--loss-scale` 时，Megatron 不创建 grad scaler（[optimizer/
 
 **有来源的实现例**：MindSpeed-LLM v2.2.0 的 GLM4.5-MoE 106B A3 预训练脚本给出一组完整组合配置（TP=1、PP=4、EP=16、num-experts 128、router-topk 8、dispatcher `alltoall_seq`、grouped-gemm、alltoall overlap comm、permutation async comm），并通过 `--moe-router-load-balancing-type none` 显式选择无辅助损失的 router 策略——这是一个"组合并行＋EP 路由策略"共同决定的官方配置实例（[脚本](https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/examples/mcore/glm45-moe/pretrain_glm45_moe_106b_4k_A3_ptd.sh)）；其配套模型表按【Pass】（经昇腾官方版本测试）与【Test】（内部测试）区分认证级别。
 
-**合成反例（明确标注：本库构造，非任何官方记录；静态推导，非启动测试）**：在固定拓扑 64 rank、TP=2、PP=2、ulysses CP=4 的合成配置下（前提：`--use-mcore-models` 已启用——`_validate_cp_args` 的 head 检查位于该前提之后（[arguments.py](https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/mindspeed_llm/training/arguments.py) L273 起），且假定已通过其前置的 Megatron 侧校验；world-size 整除 `64 % (2×2×4) == 0`、序列长 `32768 % (2×4) == 0` 均满足），把 `num_attention_heads` 从 48 改为 52：此时 `52 % (4×2) = 4 ≠ 0`，MindSpeed-LLM 的 `_validate_cp_args` 将在启动校验处 raise ValueError——**单独违反 ulysses 头数整除这一条约束**（其余前置约束均满足），用于隔离演示该约束的判定方式。若人为绕过该校验，绕过后的实际执行行为（报错形态或静默错误）**未核实（unknown）**，本库不做断言。该反例说明：启动校验失败是组合合法性的第一道信号，应修正配置而不是绕过校验。
+**合成反例（明确标注：本库构造，非任何官方记录；静态推导，非启动测试）**：在固定拓扑 64 rank、TP=2、PP=2、ulysses CP=4 的合成配置下（前提：`--use-mcore-models` 已启用——`_validate_cp_args` 的 head 检查位于该前提之后（[arguments.py](https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/mindspeed_llm/training/arguments.py) L273 起），且假定已通过其前置的 Megatron 侧校验；world-size 整除 `64 % (2×2×4) == 0`、序列长 `32768 % (2×4) == 0` 均满足）。
+
+把 `num_attention_heads` 从 48 改为 52：此时 `52 % (4×2) = 4 ≠ 0`，MindSpeed-LLM 的 `_validate_cp_args` 将在启动校验处 raise ValueError——**单独违反 ulysses 头数整除这一条约束**（其余前置约束均满足），用于隔离演示该约束的判定方式。若人为绕过该校验，绕过后的实际执行行为（报错形态或静默错误）**未核实（unknown）**，本库不做断言。该反例说明：启动校验失败是组合合法性的第一道信号，应修正配置而不是绕过校验。
 
 ## 常见误解
 

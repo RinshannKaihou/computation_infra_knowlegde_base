@@ -36,11 +36,31 @@
 - **B24-PC-04 / R01（P2）**：首轮修订把 Megatron `DynamicGradScaler` 写成“连续 `--hysteresis` 次 overflow 后才缩小、单次 overflow 默认不缩小”，这是错的。实际状态机（grad_scaler.py L131–153）：overflow 时 growth tracker 归零、hysteresis tracker 减 1，tracker ≤ 0 即按 backoff 缩小（下限 `--min-loss-scale`，默认 1.0，arguments.py L2913）；有限步只增加 growth tracker，累计满 `growth_interval` 个连续有限步才放大 scale 并恢复 hysteresis tracker。所以触发缩小的 overflow 不必连续，tracker 耗尽后每次 overflow 都缩小，直到下一个增长窗口完成。三情形表的成功/overflow 两格已按此改写；表后补充 `ConstantGradScaler` 不调整 scale（L43–52），以及动态 scaler 的 `state_dict` 含 hysteresis tracker（L155–165）。
 - **B24-PC-R02（P3）**：坐标更正——QKV 交错注释为 attention.py L1840–1841（另引 L1861–1867、L1887–1903），无 scaler 时 `return False` 为 optimizer.py L774，放大 scale 的赋值为 grad_scaler.py L153。正文、本记录、T06-01 来源补充与登记 notes 已同步，均按固定 tag raw 文件 `nl -ba` 重新核对。
 
+## 遗留处理（2026-10-19，第二轮）
+
+用户要求逐项处理下节所列遗留问题。状态：**全部关闭**——第三次定向复核关闭 PC-07/08/10，PC-09 经两轮补正（R3-01/R3-02、R4-01）后由第五次定向复核关闭；三轮复核均为 codex `gpt-6.1-sol / xhigh`（会话 `2026-10-19T11-03-28`、`2026-10-19T11-19-17`、`2026-10-19T11-30-52`，`turn_context` 核验单一模型/档位）。执行者仍为 `claude-opus-5-5`，复核仍为 codex `gpt-6.1-sol / xhigh`，报告见 [第三次](batch-24-post-close-codex-recheck-3.md)、[第四次](batch-24-post-close-codex-recheck-4.md) 与[第五次](batch-24-post-close-codex-recheck-5.md)（PC-09、R4-01 关闭，第二轮遗留处理全部 CLOSED）。
+
+| 编号 | 优先级 | 问题 | 处理 |
+|---|---|---|---|
+| B24-PC-07 | P3 | T06-01 复核轮次口径：来源审计表与路线图写"初审＋5 轮"，实际为 6 份 recheck 报告 | 统一为"初审＋6 轮"（`batch-24-source-audit.md` 两处、`full-coverage-roadmap.md` 一处） |
+| B24-PC-08 | P2 | 05.2 账面：backlog 中 05.2-G1/G2 已于 Batch 22 关闭，Batch 24 将 05.2 主题验收置 accepted，但 `topic-coverage.yaml` 与盘点表仍为部分覆盖、列着两个缺口，且 `evidence_refs` 缺两篇作业生命周期正文，使 `unmapped_substantive_entries` 实际为 2 | 05.2 改为 covered/maintain，`evidence_refs` 补入 `cluster-platform.kubernetes-job-lifecycle`、`cluster-platform.slurm-jobs-and-device-resources`、`cluster-platform.node-drain-resource-reclamation`、`cluster-platform.control-plane-recovery`；盘点表 05.2 行同步。对全部 63 个主题做 backlog 与清单一致性检查，除 01.6-G3（content＋validation 双轨、V08 例外）外无其他不一致 |
+| B24-PC-09 | P3 | `topic-coverage.yaml` 的 `summary` 停在 Batch 16 后的 22/34/7（首个入库提交 b89abb9 即为该值），`batch_planning` 停在 completed 01–22；盘点文档"统计与结论"节同样过期 | 按当前清单重算：covered 43 / partial 18 / missing 2，followup 20，未映射条目 0；`batch_planning` 改为 completed 01–24、next 25（`planned_followup_batches` 的更正见下文"遗留处理复核后的修订"）；盘点文档统计节与领域小计表按当前 catalog（103 entries、493 sources、90 篇正文、75 source_checked / 15 not_verified）重写。`input_snapshot`、`validation`、`documents` 仍为 2026-10-08 盘点输入快照，未重新生成，已在 `summary.notes` 注明 |
+| B24-PC-10 | P3 | 可读性：四篇正文中超过 300 字的表格单元格共 18 个、超过 600 字的段落共 14 段（T05-10 etcd 单元格约 1,066 字，T06-03 NVIDIA 段约 1,522 字） | 只做结构重排：长单元格保留要点，细节移到表下分条说明；长段落拆为列表或短段。四篇均降为 0 个超标单元格、0 段超标段落，最长单行 471–590 字。用脚本对比改前改后的链接、行号锚点、行内代码与代码块：四篇均无缺失；T06-01 仅因单元格摘要与表下细节重复而多出少量数字 |
+
+### 遗留处理复核后的修订（第三次定向复核发现处理）
+
+第三次定向复核报告：[batch-24-post-close-codex-recheck-3](batch-24-post-close-codex-recheck-3.md)，关闭 PC-07/08/10；PC-09 因两项 P3 未关闭。
+
+- **B24-PC-R3-01**：`planned_followup_batches: 19` 与执行清单不符。按完整覆盖路线图的口径（后续规划 Batch 13–32 共 20 批）改为 20；新增 `remaining_planned_batches: 8`（Batch 25–32），并在 `planning_notes` 写明两个字段的口径与更正原因。
+- **B24-PC-R3-02**：我把 22/34/7 称作"2026-10-08 首次盘点"是错的。初始基线为 12/44/7、followup 51（`plans/full-coverage-backlog.yaml` 的 summary）；22/34/7 是包含 Batch 13–16 升级的滚动统计，首个入库提交 b89abb9（2026-10-09）即为该值。YAML `summary.notes`、盘点文档统计节括号及本记录 PC-09 行均已更正。
+
+- **B24-PC-R4-01**（第四次定向复核，[报告](batch-24-post-close-codex-recheck-4.md)）："已记录、本次未处理"节把 `summary` 与 `batch_planning` 的停更写成同一时点。已改为分别陈述：前者保留 Batch 16 后的值，后者更新到 01–22 但未跟上 Batch 23/24。
+
 ## 已记录、本次未处理
 
-- T06-01 复核轮次的文字口径不一：来源审计表写"初审＋5 轮定向复核"，实际为 6 份 recheck 报告（审阅节另注"第六轮关闭最后单项"）。
-- 可读性：T05-10 etcd 行单元格约 1,000 字，T06-01/T06-03 有超过 1,500 字的单段；本次只重排了 PC-03 涉及的 expert grid 段。
-- `plans/topic-coverage.yaml` 的 `summary` 计数与 `batch_planning`（completed_batches 01–22）自 2026-10-08 起未随批次更新，非 Batch 24 引入，本次不改。
+- T06-01 复核轮次的文字口径不一：来源审计表与路线图写"初审＋5 轮"，实际为 6 份 recheck 报告。〔已在第二轮遗留处理中处理，见 B24-PC-07。〕
+- 可读性：T05-10 etcd 行单元格约 1,000 字，T06-01/T06-03 有超过 1,500 字的单段；本次只重排了 PC-03 涉及的 expert grid 段。〔已在第二轮遗留处理中处理，见 B24-PC-10。〕
+- `plans/topic-coverage.yaml` 的两处过期字段，非 Batch 24 引入，本次不改：`summary` 一直保留 Batch 16 后的 22/34/7（首个入库提交 b89abb9 即为该值）；`batch_planning` 后来更新到 completed 01–22、next 23，但没有反映 Batch 23/24。〔首轮把两者合写为"自 2026-10-08 起未更新"，第三次复核后又误合写为"自 Batch 16 后"，均已更正；字段本身已在第二轮遗留处理中处理，见 B24-PC-09 与 R3-01。〕
 - 原批次两处作者否定断言（core_v0.19.2 无模型级示例、无 `--tensor-model-parallel-size` CLI 定义）已在原审阅链中纠正，见 T06-03/T06-02 来源记录。
 
 ## 结构检查

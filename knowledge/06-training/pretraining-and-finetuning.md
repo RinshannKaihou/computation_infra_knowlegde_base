@@ -19,7 +19,7 @@ source_refs:
 - src.ascend.torch-npu-v7.2.0-pytorch2.6.0
 - src.amd.pytorch-compatibility-7.1.1
 - src.pytorch.hip-notes-2.6
-updated_at: "2026-10-18"
+updated_at: "2026-10-19"
 summary: 比较预训练、继续预训练、全参 SFT 与参数高效微调的目标、数据、状态与资源路径，给出四类工作流的状态契约、观察口径、阶段切换验证与常见异常的区分检查，形成后训练（RL）入口。
 related_ids:
 - training.parallelism-and-state
@@ -70,11 +70,27 @@ Ascend 侧 MindSpeed-LLM 的长序列 CP 微调另有约束：`--attention-mask-
 
 | 机制 | 是什么 | 典型字段/入口 | 与恢复/计量的关系 |
 |---|---|---|---|
-| **数据集混合**（blend） | 多个语料源的加权组合，决定每个源贡献多少样本 | 官方入口是 `--data-path` 的**权重前缀对**（`weight1 prefix1 weight2 prefix2`）或纯前缀列表（此时权重按各数据集长度推断）；`--train/valid/test-data-path` 可独立分列（[Megatron core_v0.12.1 arguments.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.12.1/megatron/training/arguments.py) L2244–2275 的 --data-path help；`src.nvidia.megatron-examples-core-v0.12.1` 补充核对） | 权重与数据修订决定"训练了什么"；消费统计按源分开记录才能核对重复/遗漏 |
+| **数据集混合**（blend） | 多个语料源的加权组合，决定每个源贡献多少样本 | 官方入口是 `--data-path` 的**权重前缀对**（`weight1 prefix1 weight2 prefix2`）或纯前缀列表（此时权重按各数据集长度推断）；`--train/valid/test-data-path` 可独立分列（来源见表下） | 权重与数据修订决定"训练了什么"；消费统计按源分开记录才能核对重复/遗漏 |
 | **训练/验证/测试划分**（split） | 同一数据集内部的集合划分 | `--split 949,50,1`（[预训练脚本](https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/examples/mcore/llama2/pretrain_llama2_7b_ptd.sh)） | 划分泄漏（评测样本进训练集）是污染检查的对象之一 |
 | **pack（序列打包）** | 把多个短样本拼进一个定长序列以提升利用率 | MindSpeed 多样本 pack 微调方案（[文档](https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/docs/pytorch/solutions/finetune/multi_sample_pack_finetune.md)） | pack 改变样本边界与注意力边界（如 reset-position-ids），有效 token 计数须扣除拼接 padding，不能按序列条数折算 |
 
-**混合的单位与采样/重复语义**（[core_v0.12.1 blended builder](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.12.1/megatron/core/datasets/blended_megatron_dataset_builder.py) 构建规则原文口径）：①权重与目标 size 都给出时——中层子数据集按"权重×size"比例采样构建，顶层混合数据集长度略超 size、同样按比例采样（即权重同时决定子集配额与顶层混合索引的分布）；②只给前缀（无权重）时——中层"无超额采样"，顶层长度按各数据集长度比例、**封顶在中层长度之和**（不额外采样）；③权重与 size 都缺省——按一个 epoch 等价构建。**读取与重复**：GPT 子数据集的 document/sample/shuffle 索引在构建期预生成，`__getitem__` 沿该索引取样本（[gpt_dataset.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.12.1/megatron/core/datasets/gpt_dataset.py) L112–113、L233 起）；当**所需 token 总量**（按目标样本数×序列长度＋每序列额外 token 换算）**超过单 epoch 可提供的 token 总量**时按 epoch 数放大并重复（重排）文档索引（epoch 判定与文档索引复制分别见 [gpt_dataset.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.12.1/megatron/core/datasets/gpt_dataset.py) `_get_num_epochs` 与 `_build_document_index`）——即加权目标超过源数据时会**重复消费原始语料**，重复量计入按源消费统计。因此**样本比例不自动等于有效监督 token 比例**（各源样本长度不同），有效 token 占比要按上文的计损路径另行统计。具体混合比例、按模型/领域的推荐值没有取证（unknown，交付缺口如实保留）。**本页三类操作的数据游标/RNG 决策**：推理装载——不适用（不消费训练数据）；同阶段 resume——恢复截点的游标与 RNG 状态（见[并行页](parallelism-and-state.md)数据进度行与[Checkpoint 恢复一致性](checkpoint-state-consistency.md)）；新阶段微调/继续预训练——游标与 RNG 重置，切换前的消费统计归档为上一阶段终态。
+数据集混合行的来源：[Megatron core_v0.12.1 arguments.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.12.1/megatron/training/arguments.py) L2244–2275 的 --data-path help（`src.nvidia.megatron-examples-core-v0.12.1` 补充核对）。
+
+**混合的单位与采样/重复语义**（[core_v0.12.1 blended builder](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.12.1/megatron/core/datasets/blended_megatron_dataset_builder.py) 构建规则原文口径）：
+
+- ①权重与目标 size 都给出时——中层子数据集按"权重×size"比例采样构建，顶层混合数据集长度略超 size、同样按比例采样（即权重同时决定子集配额与顶层混合索引的分布）；
+- ②只给前缀（无权重）时——中层"无超额采样"，顶层长度按各数据集长度比例、**封顶在中层长度之和**（不额外采样）；
+- ③权重与 size 都缺省——按一个 epoch 等价构建。
+- **读取与重复**：GPT 子数据集的 document/sample/shuffle 索引在构建期预生成，`__getitem__` 沿该索引取样本（[gpt_dataset.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.12.1/megatron/core/datasets/gpt_dataset.py) L112–113、L233 起）。
+- **重复消费**：当**所需 token 总量**（按目标样本数×序列长度＋每序列额外 token 换算）**超过单 epoch 可提供的 token 总量**时按 epoch 数放大并重复（重排）文档索引（epoch 判定与文档索引复制分别见 [gpt_dataset.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.12.1/megatron/core/datasets/gpt_dataset.py) `_get_num_epochs` 与 `_build_document_index`）——即加权目标超过源数据时会**重复消费原始语料**，重复量计入按源消费统计。
+
+因此**样本比例不自动等于有效监督 token 比例**（各源样本长度不同），有效 token 占比要按上文的计损路径另行统计。具体混合比例、按模型/领域的推荐值没有取证（unknown，交付缺口如实保留）。
+
+**本页三类操作的数据游标/RNG 决策**：
+
+- 推理装载——不适用（不消费训练数据）；
+- 同阶段 resume——恢复截点的游标与 RNG 状态（见[并行页](parallelism-and-state.md)数据进度行与[Checkpoint 恢复一致性](checkpoint-state-consistency.md)）；
+- 新阶段微调/继续预训练——游标与 RNG 重置，切换前的消费统计归档为上一阶段终态。
 
 ### 状态契约：身份与责任
 
@@ -111,7 +127,12 @@ PEFT v0.7.1 源码级依据（[peft_model.py](https://github.com/huggingface/pef
 
 ### 阶段切换的官方脚本证据
 
-MindSpeed-LLM v2.2.0 的 Llama2 示例给出两类切换契约：全参 SFT 从基座 `--load` 后**显式** `--no-load-optim --no-load-rng`、`--finetune`、`--is-instruction-dataset`、`--prompt-type llama2`（[tune 脚本](https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/examples/mcore/llama2/tune_llama2_7b_full_ptd.sh)）；LoRA 微调用 `--lora-r 16 --lora-alpha 32 --lora-target-modules linear_qkv linear_proj linear_fc1 linear_fc2`（[lora 脚本](https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/examples/mcore/llama2/tune_llama2_7b_lora_ptd.sh)；`--lora-fusion` 为其 CCLoRA 加速特性）。预训练侧记录数据与保存节奏（`--data-path`、`--split 949,50,1`、`--save-interval`、cosine 学习率）（[pretrain 脚本](https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/examples/mcore/llama2/pretrain_llama2_7b_ptd.sh)）。HF Trainer 侧：tokenizer 随模型保存以便"rerun an interrupted training"；IterableDataset 场景要求各进程一致的 generator 或 `set_epoch()`（[trainer.py](https://github.com/huggingface/transformers/blob/v4.43.2/src/transformers/trainer.py) L288–327）。
+MindSpeed-LLM v2.2.0 的 Llama2 示例给出两类切换契约，另有预训练与 HF Trainer 侧的对照：
+
+- **全参 SFT**：从基座 `--load` 后**显式** `--no-load-optim --no-load-rng`、`--finetune`、`--is-instruction-dataset`、`--prompt-type llama2`（[tune 脚本](https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/examples/mcore/llama2/tune_llama2_7b_full_ptd.sh)）；
+- **LoRA 微调**：用 `--lora-r 16 --lora-alpha 32 --lora-target-modules linear_qkv linear_proj linear_fc1 linear_fc2`（[lora 脚本](https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/examples/mcore/llama2/tune_llama2_7b_lora_ptd.sh)；`--lora-fusion` 为其 CCLoRA 加速特性）。
+- **预训练侧**：记录数据与保存节奏（`--data-path`、`--split 949,50,1`、`--save-interval`、cosine 学习率）（[pretrain 脚本](https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/examples/mcore/llama2/pretrain_llama2_7b_ptd.sh)）。
+- **HF Trainer 侧**：tokenizer 随模型保存以便"rerun an interrupted training"；IterableDataset 场景要求各进程一致的 generator 或 `set_epoch()`（[trainer.py](https://github.com/huggingface/transformers/blob/v4.43.2/src/transformers/trainer.py) L288–327）。
 
 ## 观察口径
 
@@ -140,9 +161,22 @@ MindSpeed-LLM v2.2.0 的 Llama2 示例给出两类切换契约：全参 SFT 从�
 
 ## 平台实践与边界
 
-- **NVIDIA（Megatron-Core，两个固定档案）**：core_v0.12.1 的[最小循环示例](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.12.1/examples/run_simple_mcore_train_loop.py)是**合成数据的最小循环演示**（两层微型 GPT、MockGPTDataset；保存函数只展示模型分片状态）——只支撑"循环职责"示意，非性能/质量/生产恢复配置；选它是因为与 MindSpeed-LLM v2.2.0 的 install_guide 指定 Mcore 依赖一致。**模型级预训练配置**在 core_v0.19.2 档案：[examples/llama/train_llama3_8b_h100_fp8.sh](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/examples/llama/train_llama3_8b_h100_fp8.sh)（Llama3-8B 结构字段：hidden 4096、32 头、GQA 8 组、swiglu/RMSNorm、rope base 1M、H100 fp8）与 [examples/gpt3/train_gpt3_175b_distributed.sh](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/examples/gpt3/train_gpt3_175b_distributed.sh)；**模型级 SFT 示例**：[examples/multimodal/nvlm/sft_qwen20_72b_internvit_6b.sh](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/examples/multimodal/nvlm/sft_qwen20_72b_internvit_6b.sh)（`--tokenizer-prompt-format qwen2p0` 模板、`--data-path`；SHA-256 d96068af…，`src.nvidia.megatron-model-configs-core-v0.19.2` 修订轮二补充）——范围为**多模态 NVLM**。该脚本的**两个目录语义不同，勿混同**：`FINETUNE_DIR` 是本次 SFT 的**输出 checkpoint 目录**（保存与 `--load` 都指向它），`CHECKPOINT_DIR` 是**从预训练结果转换来的权重目录**（经 `--pretrained-checkpoint` 引用；README 要求先把预训练 checkpoint 按目标 PP 转换后再用于 SFT）；加载侧的分支是——`--load` 目录**不存在** checkpoint 时才选用 `pretrained_checkpoint` 并置 `finetune=True`（首次 SFT 路径），**存在**时走目标目录的恢复路径（同阶段 resume：恢复 iteration、消费计数与 optimizer/scheduler/RNG 状态）。即"首次微调"与"断点续训"由输出目录是否有 checkpoint 区分，正文上文的三类操作矩阵据此落到该脚本。纯文本 LLM 的 SFT 专项脚本在该 tag 未逐目录定位（有限缺口如实保留）。脚本存在不等于可运行或与 Ascend 配套。
-- **Ascend（MindSpeed-LLM v2.2.0）**：预置模型清单按【Pass】（经昇腾官方版本测试）与【Test】（内部测试）分级（[moe_model 等模型表](https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/docs/pytorch/models/moe_model.md)）；依赖与版本入口：[requirements.txt](https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/requirements.txt)（transformers==4.43.2、peft==0.7.1）、[install_guide](https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/docs/pytorch/install_guide.md)（MindSpeed core 2.2.0_core_r0.12.1＋Megatron-LM core_v0.12.1；qwen3/llama3.3 需 transformers 4.51.0、glm4.5-moe 需 4.54.0）、[README 依赖表](https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/README.md)（NPU 驱动/固件/Toolkit/torch_npu 在研版本）——实际部署须按目标版本重新核对，本页结论不跨版本成立。
-- **AMD（分层表述，均为官方页面原文口径）**：①官方声明的版本线——[ROCm 7.1.1 PyTorch 兼容页](https://rocm.docs.amd.com/en/docs-7.1.1/compatibility/ml-compatibility/pytorch-compatibility.html)（2025-12-10 更新，Applies to Linux）分节覆盖 **PyTorch 2.9＋ROCm 7.1.1、PyTorch 2.8＋ROCm 7.1、PyTorch 2.7/2.8＋ROCm 7.0** 的特性/已知问题与 Docker 镜像兼容；②PyTorch 2.6 构建侧——[HIP 文档](https://docs.pytorch.org/docs/2.6/notes/hip.html) 可直接核对的条件值：`torch.distributed` 在该版本 ROCm 构建下支持的后端为 **nccl 与 gloo**；该版本页写明 **ROCm 不支持 TF32**；HIP 构建判别用 `torch.version.hip`；接口命名复用 CUDA 名称。这些限制**只绑定 PyTorch 2.6 版本化文档**，不外推为所有 ROCm 版本的永久限制。两者是**不同版本线**，不拼成一套环境；**未核查范围（如实列出）**：具体 GPU 型号、OS 发行版与驱动版本组合、以及模型外部内核/扩展（FlashAttention 类）在 ROCm 的可用性均未核对（unknown）；PyTorch 2.6＋ROCm 的官方镜像/驱动配套值亦未在上述两页取得（unknown）。本页固定的 HF 组合（Transformers 4.43.2＋PEFT 0.7.1）在 ROCm 上的可执行性**未核实（unknown）**；Megatron/MindSpeed-LLM 向 AMD 的迁移性同样不声明。本库未执行任何 AMD 侧验证。
+- **NVIDIA（Megatron-Core，两个固定档案）**：
+  - core_v0.12.1 的[最小循环示例](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.12.1/examples/run_simple_mcore_train_loop.py)是**合成数据的最小循环演示**（两层微型 GPT、MockGPTDataset；保存函数只展示模型分片状态）——只支撑"循环职责"示意，非性能/质量/生产恢复配置；选它是因为与 MindSpeed-LLM v2.2.0 的 install_guide 指定 Mcore 依赖一致。
+  - **模型级预训练配置**在 core_v0.19.2 档案：[examples/llama/train_llama3_8b_h100_fp8.sh](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/examples/llama/train_llama3_8b_h100_fp8.sh)（Llama3-8B 结构字段：hidden 4096、32 头、GQA 8 组、swiglu/RMSNorm、rope base 1M、H100 fp8）与 [examples/gpt3/train_gpt3_175b_distributed.sh](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/examples/gpt3/train_gpt3_175b_distributed.sh)。
+  - **模型级 SFT 示例**：[examples/multimodal/nvlm/sft_qwen20_72b_internvit_6b.sh](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/examples/multimodal/nvlm/sft_qwen20_72b_internvit_6b.sh)（`--tokenizer-prompt-format qwen2p0` 模板、`--data-path`；SHA-256 d96068af…，`src.nvidia.megatron-model-configs-core-v0.19.2` 修订轮二补充）——范围为**多模态 NVLM**。
+  - 该脚本的**两个目录语义不同，勿混同**：`FINETUNE_DIR` 是本次 SFT 的**输出 checkpoint 目录**（保存与 `--load` 都指向它），`CHECKPOINT_DIR` 是**从预训练结果转换来的权重目录**（经 `--pretrained-checkpoint` 引用；README 要求先把预训练 checkpoint 按目标 PP 转换后再用于 SFT）。
+  - **加载侧分支**：`--load` 目录**不存在** checkpoint 时才选用 `pretrained_checkpoint` 并置 `finetune=True`（首次 SFT 路径），**存在**时走目标目录的恢复路径（同阶段 resume：恢复 iteration、消费计数与 optimizer/scheduler/RNG 状态）。即"首次微调"与"断点续训"由输出目录是否有 checkpoint 区分，正文上文的三类操作矩阵据此落到该脚本。
+  - 纯文本 LLM 的 SFT 专项脚本在该 tag 未逐目录定位（有限缺口如实保留）。脚本存在不等于可运行或与 Ascend 配套。
+- **Ascend（MindSpeed-LLM v2.2.0）**：
+  - 预置模型清单按【Pass】（经昇腾官方版本测试）与【Test】（内部测试）分级（[moe_model 等模型表](https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/docs/pytorch/models/moe_model.md)）；
+  - 依赖与版本入口：[requirements.txt](https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/requirements.txt)（transformers==4.43.2、peft==0.7.1）、[install_guide](https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/docs/pytorch/install_guide.md)（MindSpeed core 2.2.0_core_r0.12.1＋Megatron-LM core_v0.12.1；qwen3/llama3.3 需 transformers 4.51.0、glm4.5-moe 需 4.54.0）、[README 依赖表](https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/README.md)（NPU 驱动/固件/Toolkit/torch_npu 在研版本）；
+  - 实际部署须按目标版本重新核对，本页结论不跨版本成立。
+- **AMD（分层表述，均为官方页面原文口径）**：
+  - ①官方声明的版本线——[ROCm 7.1.1 PyTorch 兼容页](https://rocm.docs.amd.com/en/docs-7.1.1/compatibility/ml-compatibility/pytorch-compatibility.html)（2025-12-10 更新，Applies to Linux）分节覆盖 **PyTorch 2.9＋ROCm 7.1.1、PyTorch 2.8＋ROCm 7.1、PyTorch 2.7/2.8＋ROCm 7.0** 的特性/已知问题与 Docker 镜像兼容；
+  - ②PyTorch 2.6 构建侧——[HIP 文档](https://docs.pytorch.org/docs/2.6/notes/hip.html) 可直接核对的条件值：`torch.distributed` 在该版本 ROCm 构建下支持的后端为 **nccl 与 gloo**；该版本页写明 **ROCm 不支持 TF32**；HIP 构建判别用 `torch.version.hip`；接口命名复用 CUDA 名称。这些限制**只绑定 PyTorch 2.6 版本化文档**，不外推为所有 ROCm 版本的永久限制。
+  - 两者是**不同版本线**，不拼成一套环境。
+  - **未核查范围（如实列出）**：具体 GPU 型号、OS 发行版与驱动版本组合、以及模型外部内核/扩展（FlashAttention 类）在 ROCm 的可用性均未核对（unknown）；PyTorch 2.6＋ROCm 的官方镜像/驱动配套值亦未在上述两页取得（unknown）。本页固定的 HF 组合（Transformers 4.43.2＋PEFT 0.7.1）在 ROCm 上的可执行性**未核实（unknown）**；Megatron/MindSpeed-LLM 向 AMD 的迁移性同样不声明。本库未执行任何 AMD 侧验证。
 
 ## 常见误解
 

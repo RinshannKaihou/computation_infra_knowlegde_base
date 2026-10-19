@@ -7,7 +7,7 @@
 | 任务 | 操作 / 类型 | 目标文件 | 最终状态 |
 |---|---|---|---|
 | T05-10 控制面故障、平台恢复与账本核对 | 新增 / procedure | `knowledge/05-cluster-platform/control-plane-recovery.md` | **通过审阅**：初审 10 项（8 P2/2 P3）＋复核新发现 R01/R02，初审＋4 轮定向复核后全部 CLOSED；etcd 灾备/主备切换的官方自动化测试负结果如实保留 |
-| T06-01 补齐并行策略选择、专家并行与组合映射 | 修订 / concept | `knowledge/06-training/parallelism-and-state.md` | **通过审阅**：初审 9 项＋R01/S3-01/S4-01，初审＋5 轮定向复核后全部 CLOSED；原状态责任矩阵/身份/截取边界章节经回归抽查保持 |
+| T06-01 补齐并行策略选择、专家并行与组合映射 | 修订 / concept | `knowledge/06-training/parallelism-and-state.md` | **通过审阅**：初审 9 项＋R01/S3-01/S4-01，初审＋6 轮定向复核后全部 CLOSED；原状态责任矩阵/身份/截取边界章节经回归抽查保持 |
 | T06-02 训练框架组件、执行循环与平台职责对照 | 新增 / reference | `knowledge/06-training/framework-execution.md` | **通过审阅**：初审 9 项＋R01/S3×3，初审＋4 轮定向复核后全部 CLOSED |
 | T06-03 预训练与微调工作流和状态契约 | 新增 / concept | `knowledge/06-training/pretraining-and-finetuning.md` | **通过审阅**：初审 9 项＋R01/R02/R03/S2-01/S3-01，初审＋4 轮定向复核后全部 CLOSED |
 
@@ -33,7 +33,7 @@
 ## 审阅与复核
 
 - 审阅模型：`codex exec -m gpt-6.1-sol --config model_reasoning_effort="xhigh"`（每轮调用方从 `~/.codex/sessions` 的 `turn_context` 核验单一模型/档位，全部轮次无 fallback 标记）。
-- 轮次：初审 4 份＋定向复核 T05-10 4 轮、T06-01 5 轮（第六轮关闭最后单项）、T06-02 4 轮、T06-03 4 轮；全部发现（含各轮新增）累计 CLOSED。
+- 轮次：初审 4 份＋定向复核 T05-10 4 轮、T06-01 6 轮、T06-02 4 轮、T06-03 4 轮；全部发现（含各轮新增）累计 CLOSED。
 - 审阅者独立重开上游证据并比对 SHA-256；两处作者错误断言由审阅链纠正（core_v0.19.2 目录缺失误判、CLI 无定义误判），修订记录见各 sources 文档与 recheck 报告。
 - **最终结论**：四任务均通过既定审阅与定向复核范围；模型审阅不替代真实硬件、训练、恢复或灾备演练，正文保持 `draft`。
 
@@ -42,3 +42,4 @@
 - 用户告知本批正文、来源记录与收尾账面由 GLM-5.3 编写；原记录未写明编写模型，此处补记。复查与修订由 `claude-opus-5-5` 在用户要求下执行，定向复核仍为 codex `gpt-6.1-sol / xhigh`。
 - 复查确认 22 轮原审阅会话真实存在且报告未被改动；发现 6 项（B24-PC-01–06）：收尾账面缺口/evidence_refs/盘点表未同步，06.2、06.4 依赖 Batch 25 任务却记为已覆盖，T06-01 专家 grid 轴序与 Megatron 默认相反，三情形表拼接 PyTorch 与 Megatron 的 scaler 语义，融合 QKV offset 与切分术语错误，06 导航双句号。
 - 处理后：05.7、06.3 为已覆盖（基础），06.2 保持部分覆盖，06.4 由未覆盖升为部分覆盖；8 个缺口关闭、3 个保持 open。逐项证据与关闭条件见 [batch-24-post-close-review](batch-24-post-close-review.md)，定向复核见 [第一次](batch-24-post-close-codex-recheck.md)（关闭 5 项，PC-04 未关闭并新增 R01/R02）与 [第二次](batch-24-post-close-codex-recheck-2.md)（PC-04、R01、R02 全部关闭，无新增问题）；两轮均为 codex `gpt-6.1-sol / xhigh`，经 `turn_context` 核验。
+- 遗留处理（第二轮）：B24-PC-07–10（轮次口径、05.2 账面、覆盖统计、四篇正文可读性重排）见 [batch-24-post-close-review](batch-24-post-close-review.md)；复核见 [第三次](batch-24-post-close-codex-recheck-3.md)（PC-09 因两项 P3 未关闭）、[第四次](batch-24-post-close-codex-recheck-4.md)（R3-01/R3-02 关闭，新增 R4-01）与[第五次](batch-24-post-close-codex-recheck-5.md)（PC-09、R4-01 关闭，第二轮遗留处理全部 CLOSED）。
