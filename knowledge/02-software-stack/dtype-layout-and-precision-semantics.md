@@ -73,7 +73,7 @@ verification:
 4. **内部格式**：硬件/库侧的实际计算排布（如 Tensor Core 要求的对齐、block scaling），用户 dtype 不直接等于计算格式。
 5. **计算与累加精度**：算子内部以何精度计算、以何精度累加（如 fp16 输入 + fp32 累加），以及转换、舍入、特殊值（NaN/inf、subnormal）的处理。
 
-本文只到基础语义 + 检查方法。混合精度只讲 autocast/累加/loss scaling 的基础责任；训练收敛与任务质量判据归 06.5，推理量化方法与质量验证归 07.4，不在本文展开。
+本文只到基础语义 + 检查方法。混合精度只讲 autocast/累加/loss scaling 的基础责任；训练收敛与任务质量判据见 06 章的[混合精度、算子适配与收敛验证](../06-training/mixed-precision-and-convergence.md)，推理量化方法与质量验证归 07.4，不在本文展开。
 
 ## 机制与关键关系
 

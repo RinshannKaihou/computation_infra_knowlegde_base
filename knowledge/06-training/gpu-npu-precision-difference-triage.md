@@ -13,6 +13,7 @@ updated_at: "2026-09-30"
 summary: 先证明 GPU/NPU 比较对象和训练位置相同，再从平台内重复性、首个数值分叉和下游影响逐层缩小精度差异。
 related_ids:
   - training.parallelism-and-state
+  - training.mixed-precision-and-convergence
   - reliability.evidence-and-hypotheses
   - software-stack.ascend-documented-profile
   - software-stack.nvidia-documented-profile
@@ -101,6 +102,8 @@ dump 可能包含模型输入、权重或业务数据。采集前定义脱敏、
 若做过临时插桩或配置对照，记录原值、生效范围和 run id；恢复后撤销 hook/dump/同步/实现覆盖，确认原始未插桩路径与资源状态，再决定是否继续。关闭特性或改用 CPU 能使现象消失，不自动构成最终修复。
 
 ## 完成判据
+
+首差异定位完成后的混合精度机制层（autocast/loss scale）与有限窗口收敛/质量判据，进入[混合精度、算子适配与收敛验证](mixed-precision-and-convergence.md)流程；本页负责把比较对象与首差异锚定。
 
 本轮诊断在以下任一状态完成：
 

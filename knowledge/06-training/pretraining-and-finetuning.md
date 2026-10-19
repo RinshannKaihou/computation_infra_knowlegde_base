@@ -38,7 +38,7 @@ verification:
 
 # 预训练与微调工作流和状态契约
 
-本页比较四种工作流在**目标、数据、状态与资源路径**上的差别，并给出阶段切换时哪些状态继承、哪些显式丢弃。并行机制见[并行策略与训练状态](parallelism-and-state.md)，执行循环见[训练框架组件与执行循环](framework-execution.md)，checkpoint 文件语义见 04 章。强化学习后训练（PPO/GRPO 类 rollout 与权重同步）另行成篇，本页只作入口。
+本页比较四种工作流在**目标、数据、状态与资源路径**上的差别，并给出阶段切换时哪些状态继承、哪些显式丢弃。并行机制见[并行策略与训练状态](parallelism-and-state.md)，执行循环见[训练框架组件与执行循环](framework-execution.md)，checkpoint 文件语义见 04 章。强化学习后训练（PPO/GRPO 类 rollout 与权重同步）见[RL rollout、权重同步与训练推理协同](rl-rollout-consistency.md)，本页只作入口。
 
 ## 定义与要解决的问题
 

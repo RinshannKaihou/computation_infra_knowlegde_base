@@ -83,6 +83,8 @@ Ascend 侧 CP 算法选择（MindSpeed-LLM v2.2.0）：`--context-parallel-algo`
 
 ## 组合并行：身份样例与冲突检查
 
+组合身份的**性能验证入口**（对照记录模板与候选样例）见[训练性能分解、profiling 与优化验证](performance-analysis.md)的组合并行小节；本页提供映射与静态约束，性能验证方法在彼页。
+
 PyTorch 的 `DeviceMesh` 把多维布局命名为如 `("dp","cp","tp")` 的 n-d 数组，每个格子是对应进程组的 global rank，并遵循 SPMD 编程模型（[device_mesh.py](https://github.com/pytorch/pytorch/blob/v2.6.0/torch/distributed/device_mesh.py) L379–390、L87–110）。Megatron 侧同一 rank 同时属于多个进程组：TP 组、PP 组、CP 组（含分层 CP）、可选含/不含 CP 的 DP 组、EP 组与"TP+CP"组（parallel_state.py L601 起、L133–135、L1758–1807）。
 
 一个**完整合成身份样例**（本库构造的配置，按已核对的源码规则做纯映射推导，**不是**任何启动验证）。合成假设：64 个 rank（8 节点×8 卡）、32 层 Transformer、num_experts=128，取 `pp=2, cp=2, tp=2`，dense 数据并行 `dp = 64/(2×2×2) = 8`。mesh 维度顺序与步长（stride）为 `[pp=32, dp=4, cp=2, tp=1]`，即 `global_rank = 32×pp_idx + 4×dp_idx + 2×cp_idx + 1×tp_idx`。

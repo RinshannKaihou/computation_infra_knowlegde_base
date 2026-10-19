@@ -260,6 +260,8 @@ HIP graphs 的图 = 节点（kernel launch / host 函数 / 内存拷贝与 memse
 
 本文只讲机制与对照方法，不展开具体故障的分层判定。昇腾侧（算子不支持、GE/ACL 错误码、NPU 算子回退 CPU、torch.compile/aclgraph/NPU Graph 启用失败）见[昇腾算子不支持与图编译失败诊断指南](ascend-op-graph-failure-triage.md)。GPU 侧姐妹篇[GPU 算子、编译和图执行失败的定向诊断](gpu-op-graph-failure-triage.md)（NVIDIA/AMD 两平台的失败分支取证、诊断工具观测与 pytorch#188355 来源案例）。dispatcher 两种报错形态原文与昇腾 PrivateUse1 判定在上述指南展开；运行时初始化、stream/event 同步与进程实载库身份见[驱动初始化、运行时执行同步与库装载](runtime-execution-and-library-loading.md)；分层归属总览见[主机到模型执行的软件栈分层](layers-and-boundaries.md)。
 
+按节点类型做全局决策（如布局优化）的逻辑在训练拆分 forward/backward 图后看到的节点集合不同，可能静默改变行为：公开案例见 06 章[训练吞吐回归来源案例](../06-training/performance-regression-source-case.md)。
+
 ## 适用边界
 
 - **版本绑定**：GPU 主样板为 PyTorch 2.6 文档 + v2.6.0 源码 commit `1eba9b3`；NPU 为 TorchNPU 7.2.0 + TorchAir（Pytorch/720 文档树，页面 ID 如 torchair_00001 随版本变化）+ CANN 社区版 8.2.RC1.alpha001（URL 路径段 `/82RC1alpha001/`）；AMD 为 ROCm docs-10.1.0（HIP 页站标 7.16.0 冲突照录）与 docs-7.2.3 旁证。两个 Inductor caching 教程是 latest 可变页（2026-10-09 观察），与 2.6 固定文档冲突时以固定版本为准。

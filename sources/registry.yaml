@@ -6133,3 +6133,424 @@ sources:
       url: https://github.com/pytorch/pytorch/blob/v2.6.0/LICENSE
     notes: 沿用既有 PyTorch 条目许可口径；仅链接并原创归纳。
   notes: Batch 24（T06-02 修订轮二，发现 B24-T062-C06 补证）取证：test_optim.py 的 test_state_dict_deterministic L1352、test_state_dict_with_cuda_params L1648、state_dict pre/post hook 测试 L1735/L1748（state_dict/参数组语义）；test_autograd.py 的 test_grad L902、test_backward L2263、test_backward_badcalls L1608；test/dynamo/test_compile.py 的 InPlaceCompilationTests 与 PublicTorchCompilerTests（torch.compiler 公共 API 面）。测试容差为其套件设定，不是本库阈值；未运行任何测试。
+- id: src.verl.ppo-doc-v0.9.1
+  title: verl v0.9.1 PPO 算法文档（配置语义与 KL 控制扩展）
+  url: https://github.com/volcengine/verl/blob/v0.9.1/docs/algo/ppo.md
+  kind: documentation
+  registered_at: '2026-10-20'
+  revision: tag v0.9.1；codeload 源码包取回 2026-10-20（包 SHA-256 cef878a5ccc98491dd33af8aed0572ce44bae8e81d95897d8c4ba23e2b68a218；本文件 48fe658d2c04ddef720daa978f8723746035fda62ac647fd28a8b97ea03b7c16）
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 tag 的 docs 目录；仓库根 LICENSE
+      identifier: Apache-2.0
+      url: https://github.com/volcengine/verl/blob/v0.9.1/LICENSE
+    notes: 仅链接与原创归纳，不复制长段。
+  notes: Batch 25（T06-04）取证：Actor-Critic+GAE+clipped surrogate 的组件描述；data.train_batch_size 为 prompt 级全局 batch、响应数为 train_batch_size×rollout.n；micro_batch_size 只控单次前反向的样本/token 上限、不改算法行为；ppo_mini_batch_size/ppo_epochs/clip_ratio 默认 0.2；adv_estimator 支持 gae/grpo/reinforce_plus_plus/reinforce_plus_plus_baseline/rloo；KL 控制双机制（use_kl_loss+kl_loss_type k1/k2/k3/full 与 use_kl_in_reward+kl_ctrl fixed/adaptive）；Dual-clip PPO。作者方法表述，不构成目标环境结果。
+- id: src.verl.grpo-doc-v0.9.1
+  title: verl v0.9.1 GRPO 算法文档（组采样与 loss 聚合口径）
+  url: https://github.com/volcengine/verl/blob/v0.9.1/docs/algo/grpo.md
+  kind: documentation
+  registered_at: '2026-10-20'
+  revision: tag v0.9.1；同 codeload 包（本文件 d43fb13fba50523c0a39fec81e56bb300dd4468ddfd331b193a9a6bedf646b9c）
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 tag 的 docs 目录；仓库根 LICENSE
+      identifier: Apache-2.0
+      url: https://github.com/volcengine/verl/blob/v0.9.1/LICENSE
+    notes: 仅链接与原创归纳。
+  notes: Batch 25（T06-04）取证：GRPO 无 critic、组采样 rollout.n>1、组内奖励归一化为 baseline；loss_agg_mode 默认 token-mean，原始 GRPO 论文为 seq-mean-token-mean 且 verl 示例脚本用默认 token-mean（实现与论文聚合口径可能不同——正文须分开表述）；GRPO 用 use_kl_loss=True 的 KL loss 而非 reward 内惩罚；DrGRPO 扩展（seq-mean-token-sum-norm）。
+- id: src.verl.hybrid-flow-v0.9.1
+  title: verl v0.9.1 HybridFlow 编程指南（RL 控制流/计算流两层与单控制器）
+  url: https://github.com/volcengine/verl/blob/v0.9.1/docs/hybrid_flow.rst
+  kind: documentation
+  registered_at: '2026-10-20'
+  revision: tag v0.9.1；同 codeload 包（本文件 e6328517392492c7b945d2fc895705e4b635d9a5558453e980da028e251e7acc）
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 tag 的 docs 目录；仓库根 LICENSE
+      identifier: Apache-2.0
+      url: https://github.com/volcengine/verl/blob/v0.9.1/LICENSE
+    notes: 仅链接与原创归纳。
+  notes: Batch 25（T06-04）取证：RL 训练被表述为两层 dataflow——控制流（rollout→advantage→update 的算法逻辑）与计算流（神经网终前向/反向/优化器），LLM 时代计算流为多进程；两种设计选择（统一多控制器 vs 单控制器+驱动多进程）及 verl 采用的单控制器方案；文中引用 HybridFlow 论文（arXiv:2409.19256）。作为训练/推理协同架构的官方机制描述。
+- id: src.verl.fully-async-v0.9.1
+  title: verl v0.9.1 Fully Async Policy Trainer 文档（分离架构多步异步样板）
+  url: https://github.com/volcengine/verl/blob/v0.9.1/docs/advance/fully_async.md
+  kind: documentation
+  registered_at: '2026-10-20'
+  revision: tag v0.9.1；同 codeload 包（本文件 61676351b33d69f0f3406ac21a5cdfba3c5ebc1f92083710fd825e070777aec3）
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 tag 的 docs 目录；仓库根 LICENSE
+      identifier: Apache-2.0
+      url: https://github.com/volcengine/verl/blob/v0.9.1/LICENSE
+    notes: 仅链接与原创归纳；作者性能数字只作来源记录。
+  notes: Batch 25（T06-04）取证：Rollouter/Trainer 资源隔离（区别 hybrid_engine 共置）、生成与训练并行、0.x 到多步异步、NCCL 参数同步（参考 MoonshotAI checkpoint-engine）、staleness_threshold 为每轮参数同步周期内的样本生产预算（(1+staleness_threshold)×(trigger_parameter_sync_step×require_batches×ppo_mini_batch_size)−上轮超额携入样本，非逐样本版本滞后硬上限；复核轮二 B25-T04-C01 明确该口径）、PartialRollout（sleep/resume 保存进行中 rollout）、当前支持 megatron/fsdp+vllm（vllm 须为 AgentLoop server 模式）。作者报告 Qwen2.5-7B/128 GPU 2.35-2.67×提升，为其实验结论不外推。
+- id: src.verl.one-step-off-v0.9.1
+  title: verl v0.9.1 One Step Off Policy Async Trainer 文档（受控一步异步）
+  url: https://github.com/volcengine/verl/blob/v0.9.1/docs/advance/one_step_off.md
+  kind: documentation
+  registered_at: '2026-10-20'
+  revision: tag v0.9.1；同 codeload 包（本文件 34046471c0a624c8f57ddcf973c5b7d71d69b20fedf0e6e1bf6dc1b1be1c6c87）
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 tag 的 docs 目录；仓库根 LICENSE
+      identifier: Apache-2.0
+      url: https://github.com/volcengine/verl/blob/v0.9.1/LICENSE
+    notes: 仅链接与原创归纳。
+  notes: Batch 25（T06-04）取证：默认同步 PPO/GRPO/DAPO 流程每步用最新模型生成，须等最长输出完成，长尾样本导致 GPU 空闲；one_step_off 用上一步样本并行当前训练（一步 off-policy），为分离架构的受限异步（对照 fully_async 的多步异步）；作者引用 DAPO 32B 中 rollout 约占 70% 时间的观察。
+- id: src.verl.dpo-extension-v0.9.1
+  title: verl v0.9.1 DPO 扩展文档（离线偏好优化在线化范例）
+  url: https://github.com/volcengine/verl/blob/v0.9.1/docs/advance/dpo_extension.rst
+  kind: documentation
+  registered_at: '2026-10-20'
+  revision: tag v0.9.1；同 codeload 包（本文件 be13186cb5743bfd235dbe9d70c016fb9cf8e01986bed72f5efa1c3a926bdf60）
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 tag 的 docs 目录；仓库根 LICENSE
+      identifier: Apache-2.0
+      url: https://github.com/volcengine/verl/blob/v0.9.1/LICENSE
+    notes: 仅链接与原创归纳。
+  notes: Batch 25（T06-04）取证：verl 实现 PPO 全流程后以 Online DPO 为例演示扩展范式（generate_sequence/compute_log_prob/update_policy 封装→SPMD 计算→单进程控制流）；Online DPO 流程＝与 actor 同权重的 rollout 生成器每 prompt 生成 N 响应→verifier 打分配对→DPO 损失更新，无 reward model 内 KL/PPO ratio 项。
+- id: src.verl.vllm-rollout-source-v0.9.1
+  title: verl v0.9.1 vLLM rollout 适配源码（ServerAdapter/sleep-resume/update_weights）
+  url: https://github.com/volcengine/verl/blob/v0.9.1/verl/workers/rollout/vllm_rollout/vllm_rollout.py
+  kind: repository
+  registered_at: '2026-10-20'
+  revision: tag v0.9.1；同 codeload 包（本文件 e82e1c6782573e03c871b982eb0653801f54cb1647367a604aa8b1c5454773cb）
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 tag 源码；仓库根 LICENSE
+      identifier: Apache-2.0
+      url: https://github.com/volcengine/verl/blob/v0.9.1/LICENSE
+    notes: 仅链接与原创归纳，不复制实现。
+  notes: Batch 25（T06-04）取证：ServerAdapter(BaseRollout) 以 Ray actor 承载推理引擎，_execute_method 经 collective_rpc 下发方法（timeout 可控）；resume/release 调 wake_up(tags=weights/kv_cache)/sleep()（sleep mode，受 free_cache_engine 开关）；update_weights 双 wire_format——named_tensors（collective_rpc 发 update_weights_from_ipc + BucketedWeightSender 分桶 ZMQ/共享内存发送，bucket 大小配置化）与 delta_flush（增量权重，要求共置 CUDA IPC）；更新后 clear_kv_cache 并 set_global_steps（推理侧记录权重版本步号）；replica_rank/rollout_rank 支持多副本。源码坐标属固定 tag。
+- id: src.verl.ray-trainer-source-v0.9.1
+  title: verl v0.9.1 PPO ray_trainer 源码（fit 循环/检查点/验证/dump）
+  url: https://github.com/volcengine/verl/blob/v0.9.1/verl/trainer/ppo/ray_trainer.py
+  kind: repository
+  registered_at: '2026-10-20'
+  revision: tag v0.9.1；同 codeload 包（本文件 eb41f99ccc66976eab14ebe35aa1aa5b7318e02469240ef1569ac4c884c94312）
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 tag 源码；仓库根 LICENSE
+      identifier: Apache-2.0
+      url: https://github.com/volcengine/verl/blob/v0.9.1/LICENSE
+    notes: 仅链接与原创归纳。
+  notes: Batch 25（T06-04）取证：fit() 为单控制器训练循环——驱动进程仅经 RPC 组合 worker 计算，轻量 advantage 计算在驱动进程；启动即 _load_checkpoint 并 checkpoint_manager.update_weights（恢复后先对齐推理权重）；val_before_train 默认 True 先验证；global_steps 步号贯穿 checkpoint 目录（global_step_N/actor）与验证/dump 记录；复核轮二更正（B25-T04-C03）：首轮所述"old_log_probs 参与 GAE path-variance 代理"系误读——该分支属 optimal-token-baseline（ray_trainer.py L264–279），不是 GAE；GAE 直接输入为 rewards/values/mask、GRPO 按 uid 组归一化（L218–245）。logprob 路径默认为 decoupled（rollout_correction.yaml bypass_mode 默认 false，见 src.verl.rollout-correction-config-v0.9.1），bypass 为显式启用模式。adv_estimator/kl_penalty 细节在 core_algos（未逐行核对）。
+- id: src.verl.ascend-install-v0.9.1
+  title: verl v0.9.1 昇腾安装指南（vLLM-Ascend 版本配套）
+  url: https://github.com/volcengine/verl/blob/v0.9.1/docs/ascend_tutorial/zh/get_start/install_guidance.rst
+  kind: documentation
+  registered_at: '2026-10-20'
+  revision: tag v0.9.1；同 codeload 包（本文件 43ff1fe767964f1993d805be57f56ba5f7a9b45df58229ae80de7074e467899d）
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 tag 的 docs 目录；仓库根 LICENSE
+      identifier: Apache-2.0
+      url: https://github.com/volcengine/verl/blob/v0.9.1/LICENSE
+    notes: 仅链接与原创归纳。
+  notes: Batch 25（T06-04）取证：官方声明昇腾支持 vLLM 与 vLLM-Ascend 后端部署（镜像 quay.io/ascend/verl 或自定义安装）；2026-08-03 条目将 vLLM/vLLM-Ascend 由 0.18.0 更新为 0.23.0、torch 2.10.0、torch_npu 2.10.0.post2；组件表 CANN 9.1.0、torch_npu 2.10.0.post4、triton-ascend 3.2.2、Megatron-Bridge 0.5.0（对应 mcore core_r0.18.0，弃用 mbridge）。注意：与本库登记过的 vllm-ascend v0.14.0rc1 属不同版本线，不互推。
+- id: src.verl.ascend-features-v0.9.1
+  title: verl v0.9.1 昇腾后端特性指南（vllm/sglang NPU 支持与参数映射）
+  url: https://github.com/volcengine/verl/blob/v0.9.1/docs/ascend_tutorial/zh/feature_support/ascend_backend_features.md
+  kind: documentation
+  registered_at: '2026-10-20'
+  revision: tag v0.9.1；同 codeload 包（本文件 a1eeb19d979318d563887fea7a842de255d6979d83b6e6a52993df313bfcae27）
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 tag 的 docs 目录；仓库根 LICENSE
+      identifier: Apache-2.0
+      url: https://github.com/volcengine/verl/blob/v0.9.1/LICENSE
+    notes: 仅链接与原创归纳。
+  notes: Batch 25（T06-04）取证：官方声明 verl 支持 vllm/sglang 两种推理后端且均可在昇腾 NPU 运行；vLLM 经 vllm-ascend 插件（社区推荐路径、RFC 11162 可插拔接口）；参数映射表（model.path、gpu_memory_utilization、enforce_eager、enable_chunked_prefill、free_cache_engine、max_model_len、tp_size=rollout.TP×DP、dp/ep、load_format、enable_prefix_caching、quantization 等）逐项给出 verl 通用参数对应关系。
+- id: src.verl.amd-quickstart-v0.9.1
+  title: verl v0.9.1 AMD 快速上手文档（ROCm 支持）
+  url: https://github.com/volcengine/verl/blob/v0.9.1/docs/amd_tutorial/amd_quick_start.rst
+  kind: documentation
+  registered_at: '2026-10-20'
+  revision: tag v0.9.1；同 codeload 包（本文件 f7cbcab68c3e05c7aa50d40cbbe5491765d95b792e2da15f6f6314458bd18163）
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 tag 的 docs 目录；仓库根 LICENSE
+      identifier: Apache-2.0
+      url: https://github.com/volcengine/verl/blob/v0.9.1/LICENSE
+    notes: 仅链接与原创归纳。
+  notes: Batch 25（T06-04）取证：AMD/ROCm 侧官方 quick start 存在（docker/rocm 镜像与运行入口）。修订轮（B25-T04-C06）补充核对：软硬件范围——运行模式 Fully Async 与 Colocate、推理引擎 vLLM 与 SGLang、训练后端 FSDP/FSDP2/Megatron、GPU 目标 MI300X/MI325X（gfx942）与 MI350X/MI355X（gfx950）；软件基线预置镜像 amdagi/verl-dev:rocm7.14_torch2.12_release_0724（或 docker/rocm/Dockerfile.rocm 自建）、宿主需 ROCm 7.14 驱动栈与 /dev/kfd、/dev/dri 访问；文内另含 Feature Support Matrix。均为文档声明，任一具体组合×模型×版本的可用性未验证（unknown）。
+- id: src.verl.perf-best-practices-v0.9.1
+  title: verl v0.9.1 DAPO+Qwen3-235B 最佳实践（目标函数到配置映射与 off-policy 权衡）
+  url: https://github.com/volcengine/verl/blob/v0.9.1/docs/perf/best_practices.rst
+  kind: documentation
+  registered_at: '2026-10-20'
+  revision: tag v0.9.1；同 codeload 包（本文件 5cf6cfd9c6d846687fe0f0cd6d40f5eb80287406be7f10a8ab7bb42baf9ecbc5）
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 tag 的 docs 目录；仓库根 LICENSE
+      identifier: Apache-2.0
+      url: https://github.com/volcengine/verl/blob/v0.9.1/LICENSE
+    notes: 仅链接与原创归纳；性能数字只作来源记录。
+  notes: Batch 25（T06-04/T06-06）取证：DAPO/GRPO 目标函数展开（ratio、clip ε、组归一化 advantage、KL β）；train_batch_size 增大减少 rollout 次数但增加 off-policy drift 的权衡表述；数据须 parquet 且 data_source 匹配 reward 函数。作为"生成/训练吞吐与版本滞后权衡"的官方口径。
+- id: src.verl.ascend-profiling-v0.9.1
+  title: verl v0.9.1 昇腾 Profiling 采集指导（GRPO/DAPO on FSDP/MindSpeed）
+  url: https://github.com/volcengine/verl/blob/v0.9.1/docs/ascend_tutorial/zh/dev_guide/performance/ascend_profiling.rst
+  kind: documentation
+  registered_at: '2026-10-20'
+  revision: tag v0.9.1；同 codeload 包（本文件 80278b812bda6b126c1e2b58e589257b4f462e889315827c7067904b0ce46fa1）
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 tag 的 docs 目录；仓库根 LICENSE
+      identifier: Apache-2.0
+      url: https://github.com/volcengine/verl/blob/v0.9.1/LICENSE
+    notes: 仅链接与原创归纳。
+  notes: Batch 25（T06-06）取证：两级采集控制（全局 global_profiler：tool 可选 nsys/npu/torch/torch_memory、steps 步数列表、save_path；角色级 profiler：enable/all_ranks/ranks/tool_config）；NPU 工具 level_none/level0（推荐默认：应用+底层 NPU+算子执行）/level1（+AscendCL 与 AI Core 指标）/level2（+Runtime 与 AI CPU）；contents 含 npu/cpu/memory/shapes/module/stack，module 记录调用栈比 stack 开销低；采集对象为 FSDP/Megatron(MindSpeed) 后端的 GRPO/DAPO 训练。
+- id: src.verl.nsight-profiling-v0.9.1
+  title: verl v0.9.1 Nsight Systems profiling 使用指南（RL 训练采集样板）
+  url: https://github.com/volcengine/verl/blob/v0.9.1/docs/perf/nsight_profiling.md
+  kind: documentation
+  registered_at: '2026-10-20'
+  revision: tag v0.9.1；同 codeload 包（本文件 c89e235c02ae949e339833e987e6be9c78bd35ffe0f8aa6662c854a534d6fd6a）
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 tag 的 docs 目录；仓库根 LICENSE
+      identifier: Apache-2.0
+      url: https://github.com/volcengine/verl/blob/v0.9.1/LICENSE
+    notes: 仅链接与原创归纳。
+  notes: 'Batch 25（T06-06）取证，修订轮（B25-T06-C05）更正版本锚：nsight_profiling.md 自述"reference docker/Dockerfile.vllm.sglang.megatron"，但该文件在 v0.9.1 固定 tag 下不存在（文档陈旧引用）；实际核对 docker/Dockerfile.stable.sglang（v0.9.1 存在，SHA-256 99386acc562092ca81b167f681fd563b716c62fe87eff15b4348ac21d9dc2dd7）：ARG NSIGHT_VERSION=2025.6.1（L9），安装 nsight-systems 2025.6.1 并 symlink 至 /opt/nvidia/nsight-systems/2025.6.1（L52–59）——即 verl 使用面配套的 nsys 为 2025.6.1，与本库登记的 Nsight Systems 2025.3 归档目录页（src.nvidia.nsight-systems-2025.3-archive）分属不同版本，两者不互推。其余取证：capture-range 固定 cudaProfilerApi、capture-range-end 可调；controller/worker 的 nsys 选项经配置直传；多 RL 角色（Actor/Ref/Rollout/Critic/Reward）可组合进同一 Ray Actor，各角色 profiler 配置分立、共置 Worker 须一致 discrete；输出 worker_process_<PID>.<RID>.nsys-rep 落在各节点 /tmp/ray/session_latest/logs/nsight/（Ray 限制不可改）；torch.cuda.profiler.start/stop 对控制步级数据库；Profiling Output 列 CUDA kernel、memory、CPU-GPU synchronization、NVTX（无 OS runtime 能力声明）。'
+- id: src.verl.torch-profiling-v0.9.1
+  title: verl v0.9.1 PyTorch Profiler 使用指南（RL 训练采集样板）
+  url: https://github.com/volcengine/verl/blob/v0.9.1/docs/perf/torch_profiling.md
+  kind: documentation
+  registered_at: '2026-10-20'
+  revision: tag v0.9.1；同 codeload 包（本文件 38ff9641d832c4e7062f9abe358aee8cbd073fd7d3b312ffc2538bf92e0e575f）
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 tag 的 docs 目录；仓库根 LICENSE
+      identifier: Apache-2.0
+      url: https://github.com/volcengine/verl/blob/v0.9.1/LICENSE
+    notes: 仅链接与原创归纳。
+  notes: Batch 25（T06-06）取证：global_profiler.steps 步数列表驱动采集；角色级 enable/all_ranks/ranks/tool_config.torch 与 Nsight 指南同构——同一两层控制结构在两类工具上的应用对照。
+- id: src.paper.ppo-1707.06347
+  title: 'Proximal Policy Optimization Algorithms（arXiv:1707.06347 摘要）'
+  url: https://arxiv.org/abs/1707.06347
+  kind: paper
+  registered_at: '2026-10-20'
+  revision: arXiv API 摘要取回 2026-10-20（SHA-256 f7087c34c5c97448c5403babc4202256692a0c172026f5a1b9744a30c31401ea）；未取 PDF 全文
+  license:
+    status: unknown
+    scopes: []
+    notes: arXiv 分发条款未核对；仅链接并原创归纳摘要主张。
+  notes: 'Batch 25（T06-04）取证，复核轮三（C10）按摘要原文重写：摘要载明——提出策略梯度方法族（环境交互采样与 surrogate 目标的随机梯度上升交替）、相对标准策略梯度（每样本一次更新）允许多 epoch minibatch 更新、有 TRPO 的部分益处且更易实现/更通用/（经验上）更好的样本复杂度、实验（模拟机器人运动与 Atari 等 benchmark）中优于其他在线策略梯度方法。clipped 细节与免二阶导表述不在摘要文字内（由 verl 实现文档承载）；仅引用摘要确实写出的内容与作者报告，不构成任何目标环境结论。'
+- id: src.paper.grpo-deepseekmath-2402.03300
+  title: 'DeepSeekMath（GRPO 出处，arXiv:2402.03300 摘要）'
+  url: https://arxiv.org/abs/2402.03300
+  kind: paper
+  registered_at: '2026-10-20'
+  revision: arXiv API 摘要取回 2026-10-20（SHA-256 d4748da9ecf80f6abe1504459c620ebfc804d4395d4687c3918390f337fba28c）；未取 PDF 全文
+  license:
+    status: unknown
+    scopes: []
+    notes: arXiv 分发条款未核对；仅链接并原创归纳摘要主张。
+  notes: 'Batch 25（T06-04）取证，复核轮三（C10）按摘要原文收窄：GRPO（Group Relative Policy Optimization）在 DeepSeekMath 摘要中载明为 PPO 的变体、在增强数学推理能力的同时优化 PPO 的内存使用；"组内平均奖励为 baseline、免除 critic/value 模型"的机制展开不在摘要文字内（由 verl 实现文档承载）。论文为数学推理场景报告，组归一化等机制细节以论文原文为准（本条仅摘要级取证）。'
+- id: src.paper.dpo-2305.18290
+  title: 'Direct Preference Optimization: Your Language Model is Secretly a Reward Model（arXiv:2305.18290 摘要）'
+  url: https://arxiv.org/abs/2305.18290
+  kind: paper
+  registered_at: '2026-10-20'
+  revision: arXiv API 摘要取回 2026-10-20（SHA-256 fa8dde2b70effe36f0cc9d3617c685abe0cca40498653dcaf38d9c35df06b3ac）；未取 PDF 全文
+  license:
+    status: unknown
+    scopes: []
+    notes: arXiv 分发条款未核对；仅链接并原创归纳摘要主张。
+  notes: Batch 25（T06-04）取证：DPO 将偏好优化目标等价改写为对策略的直接损失，跳过显式 reward 模型与 RL 采样循环；论文报告相对 RLHF(PPO) 免 reward 模型在线采样的训练稳定性与简单性（其实验环境结论）。作为在线 RL 与离线偏好优化的对照锚。
+- id: src.paper.hybridflow-2409.19256
+  title: 'HybridFlow: A Flexible and Efficient RLHF Framework（arXiv:2409.19256 摘要）'
+  url: https://arxiv.org/abs/2409.19256
+  kind: paper
+  registered_at: '2026-10-20'
+  revision: arXiv API 摘要取回 2026-10-20（SHA-256 7da97dafe798a88df94941124caaae62192ef409e336e960b114591766b6a9e0）；未取 PDF 全文
+  license:
+    status: unknown
+    scopes: []
+    notes: arXiv 分发条款未核对；仅链接并原创归纳摘要主张。
+  notes: Batch 25（T06-04）取证：verl 对应系统论文，提出混合编程模型（单控制器控制流+多种计算流后端）与 3D-HybridEngine 等机制；论文报告与既有 RLHF 框架的吞吐对比（作者环境）。作为 verl 架构主张的系统论文出处。
+- id: src.pytorch.amp-grad-scaler-source-v2.6.0
+  title: PyTorch v2.6.0 GradScaler 实现源码（torch/amp/grad_scaler.py＋cuda shim＋FSDP ShardedGradScaler，冻结）
+  url: https://github.com/pytorch/pytorch/blob/v2.6.0/torch/amp/grad_scaler.py
+  kind: repository
+  registered_at: '2026-10-20'
+  revision: tag v2.6.0（commit 1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340）；raw 取回 2026-10-20（amp/grad_scaler.py SHA-256 eb4bc91fda9815ba40206e2dbb68f9845b85622fee3a92611f227b5845b20780、torch/cuda/amp/grad_scaler.py 5931b704656fa3889f8b30d84cd4ead7c951a7f0a4a956d84bb2afe4df67e9a8、torch/distributed/fsdp/sharded_grad_scaler.py a54ce5b209840eea354671c306ca24dea3b75d800333ee4dec29a4527cde080d）；已读未运行
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库根 LICENSE
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/v2.6.0/LICENSE
+    notes: 沿用既有 PyTorch 条目许可口径；仅链接并原创归纳。
+  notes: 'Batch 25（T06-05）取证，修订轮（B25-T05-C02）更正时序表述：一轮调用序为 scale(loss)→backward→unscale_（检查 inf/NaN）→scaler.step(optimizer)（普通路径按本轮结果决定是否调用底层 optimizer.step；融合/自定义 AMP 优化器路径可能实际调用 optimizer.step 而由优化器/内核按 found_inf 抑制参数更新——跳步判据不能是"参数数值是否变化"——合法更新也可能零增量（复核轮 R01；静态反例见同 commit SGD 全零梯度更新分支）；可靠观测＝按 optimizer 分层计数尝试/因非有限抑制/进入未抑制更新分支，参数增量独立记录）→update()（消费本轮结果并调 scale，不能撤销已执行更新）。scale 规则：本轮 inf/NaN 乘 backoff_factor；连续 growth_interval 轮无 inf/NaN 乘 growth_factor；默认 init_scale 2^16、growth 2.0、backoff 0.5、growth_interval 2000，断言 growth>1/backoff<1；cuda shim deprecated 转发 torch.amp.GradScaler("cuda")。ShardedGradScaler 继承 GradScaler、found_inf_per_device 状态与 _GeneralMultiDeviceReplicator。unscale_ 后 clip、有效 batch 边界 update 的使用纪律见 src.pytorch.amp-examples-2.6。'
+- id: src.pytorch.amp-tests-v2.6.0
+  title: PyTorch v2.6.0 autocast 与 FSDP GradScaler 官方测试（冻结）
+  url: https://github.com/pytorch/pytorch/blob/v2.6.0/test/test_autocast.py
+  kind: repository
+  registered_at: '2026-10-20'
+  revision: tag v2.6.0；raw 取回 2026-10-20（test_autocast.py SHA-256 df95ba0c7746d4b23eb2bd120fd995d1c06885b8ef36d9a4e682b99c2f34d37b、test/distributed/_composable/fsdp/test_fully_shard_grad_scaler.py f5e034a50e4c5e57a54442f9c6fa2afe362d96e4d726415a2e106e44286e660f）；已读未运行
+  license:
+    status: partial
+    scopes:
+    - scope: PyTorch v2.6.0 仓库测试代码
+      identifier: BSD-3-Clause
+      url: https://github.com/pytorch/pytorch/blob/v2.6.0/LICENSE
+    notes: 沿用既有 PyTorch 条目许可口径；仅链接并原创归纳。
+  notes: Batch 25（T06-05）取证，修订轮（B25-T05-C03）收窄：test_autocast.py 含 TestAutocastCPU/GPU/MPS/TorchAutocast 类（autocast 算子归属行为有官方测试锚）；test_fully_shard_grad_scaler.py 的 test_gradient_scaler 在 FSDP2 分片下、unscale 之后 update 之前断言 scaler._per_optimizer_states[id(opt)]["found_inf_per_device"] 与注入的 has_inf 一致——该状态是固定实现的内部状态而非公开 API（update 后会被重置，自建观测须绑定版本与时点）；该测试限 CUDA/FSDP2、要求 ≥4 GPU、skipIfRocm，是断言设计而非三平台接口或运行通过证明。测试通过标准属其套件，非本库阈值；v2.6.0 无独立 test_cuda_amp.py（已核对 tree，GradScaler 单测并入分布式套件）。
+- id: src.nvidia.megatron-grad-scaler-core-v0.19.2
+  title: Megatron-LM core_v0.19.2 loss scale 实现（Constant/Dynamic GradScaler＋Float16OptimizerWithFloat16Params，冻结）
+  url: https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/core/optimizer/grad_scaler.py
+  kind: repository
+  registered_at: '2026-10-20'
+  revision: tag core_v0.19.2（codeload 源码包 2026-10-20，包 SHA-256 4c16ccc2a0d4c1b6c96f59baaab99316ac3b39eca2ef960ddf4436a2962eb69a，与 Batch 24 登记一致；grad_scaler.py 81402e800476fce96b70d91ff2b799d889ac6ed9407fe74be7cd73d32449c2a7、optimizer.py 24609822f7c165c9be9f6e95945c873bf474cdce3ca06600b00b52c5d23b31e4）
+  license:
+    status: unknown
+    scopes: []
+    notes: 仓库主许可按既有 Megatron 条目口径（未逐文件核对头声明）；仅链接并原创归纳。
+  notes: 'Batch 25（T06-05）取证，修订轮二（B25-T05-C01 复核）补全状态机（源码静态推演，未运行）：初始 growth_tracker=0、hysteresis_tracker=hysteresis；非有限步 growth 清零、hys 减一，≤0 时 scale×backoff（min_scale 截断）且退避不重置计数；finite 步未达 growth_interval 时 hys 不复位；唯一复位分支＝完整连续 growth_interval 个 finite 步（两 tracker 复位、scale×growth_factor）。三类静态序列（真,假,真/真,真,真/真,真,假,假,假,真）已在正文示例。min_scale 只是下界，之后梯度恢复 finite 仍可正常更新（跳步按 found_inf_flag 决定而非 scale 是否等于下界，见 optimizer.py L755–774/L815–822）；docstring 的"consecutive"表述与代码状态机有出入。optimizer.py 的 MixedPrecisionOptimizer.get_loss_scale、Float16OptimizerWithFloat16Params（fp16 参数+fp32 master 权重类，master 权重承诺限此路径）与 FP32Optimizer.get_loss_scale 恒 1。Megatron 侧与 PyTorch GradScaler 不共用实现，语义以各自源码为准。'
+- id: src.pytorch.issue-200537
+  title: 'PyTorch issue 200537：autocast(bf16) 下 cuDNN LSTM/GRU 以 fp16 执行（静默精度）'
+  url: https://github.com/pytorch/pytorch/issues/200537
+  kind: issue
+  registered_at: '2026-10-20'
+  revision: opened 2026-10-10、closed 2026-10-14（关闭 commit cbffccce1e61987e927081fc97cc358b3a7624c3）；PR 200697 closed unmerged（内容经该 commit 以 "(#200697)" 标注落地 main）；2026-10-20 经 gh API 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: Issue/评论为用户生成内容；PyTorch 仓库 BSD-3-Clause 不自动覆盖讨论文本（沿用既有 issue 先例）。仅链接与有限事实归纳。
+  notes: Batch 25（T06-05）案例取证：报告者环境 nightly 2.16.0.dev20261010+cu130/cuDNN 9.26/RTX 3090（2.11.0+cu128、2.13.0+cu130 同样复现）；现象为 autocast("cuda", dtype=bfloat16) 下 nn.LSTM/GRU 输出/h/c 为 fp16，仅 cuDNN 路径异常（cudnn=False 与 LSTMCell/GRUCell 均正确 bf16，直接 .to(bfloat16) 调 cuDNN 也正确）；报告者定位 aten/src/ATen/cudnn/AutocastRNN.cpp 的 _cudnn_rnn_cast_reflatten 硬编码 at::kHalf（历史 autocast 仅 fp16 时代遗留），并指 ROCm miopen_rnn 包装（PR 121539）复制同一硬编码；修复链 commit cbffccce（eqy，改用 get_autocast_dtype(at::kCUDA)）＋test/test_cuda.py，2026-10-14 经 main 上源码核对已含 target_dtype=get_autocast_dtype；PR 200697 标准 merge 状态 closed unmerged、Skylion007 approved。报告者自述根因与修复方实现一致，本库未复现；ROCm 侧对应修复未单独核对（unknown）。
+- id: src.nvidia.nsight-systems-2025.3-archive
+  title: NVIDIA Nsight Systems 2025.3 归档文档目录页
+  url: https://docs.nvidia.com/nsight-systems/2025.3/
+  kind: documentation
+  registered_at: '2026-10-20'
+  revision: 归档版本 2025.3（页面标注 last updated 2026-04-26、© 2018-2025）；curl 字节级取回 2026-10-20（SHA-256 f8e799c12bfe87e9db0afd9468ac8fb8aae6666dbac6289610c7dfd2a008325d）；301 落 archive.docs.nvidia.com
+  license:
+    status: identified
+    scopes:
+    - scope: 文档站 Copyright and Licenses 页所述 NVIDIA 软件许可协议
+      identifier: proprietary
+      url: https://docs.nvidia.com/nsight-systems/2025.3/
+    notes: NVIDIA 文档为厂商许可；仅链接与目录级归纳，不复制正文。
+  notes: Batch 25（T06-06）取证（受限）：仅取得目录页——结构为 Release Notes/Installation Guide/User Guide/Archives。user-guide 与 quickstart 子页经 curl（含浏览器 UA）与 WebFetch 双路径均 AccessDenied/403，未取得工具细节正文；正文不转述未取得的 Nsight 命令与选项，工具使用侧样板见 src.verl.nsight-profiling-v0.9.1。取证限制如实保留。
+- id: src.ascend.torchnpu-profiler-source-7.2.0
+  title: TorchNPU v7.2.0 torch_npu/profiler/profiler.py 固定快照（NPU profiler 接口面）
+  url: https://raw.githubusercontent.com/Ascend/pytorch/bc51ab84cc6f35c77aab1c59886e0ea43681a317/torch_npu/profiler/profiler.py
+  kind: repository
+  registered_at: '2026-10-20'
+  revision: bc51ab84cc6f35c77aab1c59886e0ea43681a317；raw 取回 2026-10-20（SHA-256 a63f21d6214bb59cacdaca615e3d4683986cba0fd9010f6fa0a85bee8feebd56）
+  license:
+    status: partial
+    scopes:
+    - scope: Ascend/pytorch 固定 commit 根 LICENSE；第三方文件按各自声明核查
+      identifier: BSD-3-Clause
+      url: https://github.com/Ascend/pytorch/blob/bc51ab84cc6f35c77aab1c59886e0ea43681a317/LICENSE
+    notes: 沿用本库对 Ascend/pytorch 固定 commit 的已核对记录；仅链接并原创归纳。
+  notes: Batch 25（T06-06）取证：class profile(_KinetoProfile) 携 activities/schedule/on_trace_ready，__all__ 含 tensorboard_trace_handler，export_chrome_trace 存在——TorchNPU profiler 以 PyTorch Kineto profiler 接口面暴露 NPU 采集（与 torch.profiler 同构 API）；MindSpeed-LLM v2.2.0 的 get_profiler 即基于 torch_npu.profiler（ProfilerLevel/ExportType/AiCMetrics/schedule/tensorboard_trace_handler，见既有条目 src.ascend.mindspeed-llm-training-interface-v2.2.0 的源码，本次补充核对 training.py SHA 341c0792 与登记一致）。仅证明接口存在与集成关系，不证明任何模型已采集。
+- id: src.nvidia.megatron-training-log-core-v0.19.2
+  title: Megatron-LM core_v0.19.2 训练日志与计时实现（training_log/timers，冻结）
+  url: https://github.com/NVIDIA/Megatron-LM/blob/core_v0.19.2/megatron/training/training.py
+  kind: repository
+  registered_at: '2026-10-20'
+  revision: tag core_v0.19.2；同 codeload 包（training.py d968ef8216f63d6373372190ac895fc905234c116bba3e804d2951876e6ad98c、megatron/core/timers.py 14e76e6578adf7e621f68bba773727f87dd6ecab917887f48ce047475885ff2a）
+  license:
+    status: unknown
+    scopes: []
+    notes: 仓库主许可按既有 Megatron 条目口径；仅链接并原创归纳。
+  notes: Batch 25（T06-06）取证：training_log() 汇总 loss/计时/显存——elapsed_time_per_iteration＝区间耗时/迭代数；TFLOPs 口径＝num_floating_point_operations/（elapsed_time_per_iteration×10^12×world_size）；iteration-time 标量入 TB/wandb；log_throughput 开关才记录吞吐；能耗监控 energy/elapsed_time_per_iteration 得功率；advanced/skipped/nan iterations 分开计数；timers（barrier 选项）按区间名聚合。应用层口径由 Megatron 自定义（world_size 均摊、world_size=1 时不除），与 NCCL/硬件计数器口径不可直接相加比较。
+- id: src.pytorch.issue-189239-layout-regression
+  title: 'PyTorch issue 189239：Inductor 布局优化未计入 convolution_backward 致训练性能回归（含同期 MPS 反例 #192551）'
+  url: https://github.com/pytorch/pytorch/issues/189239
+  kind: issue
+  registered_at: '2026-10-20'
+  revision: opened 2026-07-08、closed 2026-09-23；引入侧 PR 178945 经 commit 9c6b1aa07d56（2026-05-13）落地、140baa4eec85（2026-05-21，message 描述 dilation guard 而所核 diff 仅 +4 行注释，guard 调用此前已存在）；同期 issue 192551（MPS，方向相反）opened 2026-08-07、closed 2026-08-17（关闭指向 #193623，早于本案修复落地，非次生）；2026-10-20 经 gh API 两轮观察（初审与修订轮）
+  license:
+    status: unknown
+    scopes: []
+    notes: Issue/评论为用户生成内容；PyTorch 仓库 BSD-3-Clause 不自动覆盖讨论文本（沿用既有 issue 先例）。仅链接与有限事实归纳。
+  notes: 'Batch 25（T06-07）案例取证，修订轮（B25-T07-C01–C06）更正：报告者环境 torch==2.14.0.dev20260706+cu130、triton==3.8.0+git43422b04、RTX 4080 SUPER（另 Intel Data Center GPU，型号未给出）、基准 batch=512/-n 10/--cold-start-latency/--disable-cudagraphs、公开命令未配置分布式、输入尺寸未给出。对照方向：默认配置（backward 图 layout_opt 被静默禁用）abs_latency 178.41ms/eager speedup 1.448819，强制 TORCHINDUCTOR_FORCE_LAYOUT_OPT=1 后 141.91ms/1.821338（speedup 为相对 eager 的比值而非版本对比；20%+ 为作者表述，约 20.5% 时延下降/25.7% 吞吐提升系作者数值的算术换算）。根因（报告者定位＋修复方向一致）：decide_layout_opt() 仅统计 aten.convolution.default，AOTAutograd 拆图后 backward 图 conv_nodes 为空→layout_opt=False→lowering 保持 NCHW；固定源码可确认节点计数与开关逻辑，完整因果排除（工具链交互等）未由该链建立。#192551 为同期独立的 MPS 镜像问题（强制 channels_last 有害）——其独立口径为小型 conv 网络、batch 256@32×32、bf16 autocast、Apple M5 Pro/macOS 27 下 compiled 相对 eager 的训练耗时（nightly 约 4.5×、2.13.0 约 9×，作者机器自测，详见 issue 正文与案例正文时间线），先于本案修复存在并关闭，作为平台边界反例而非次生回归。训练收敛/质量在该链中无记录（unknown）。作者报告，本库未复现。'
+- id: src.pytorch.layout-opt-fix-chain
+  title: PyTorch 布局回归修复链（PR 188236/191306＋落地 commit 82b424c7）
+  url: https://github.com/pytorch/pytorch/pull/191306
+  kind: issue
+  registered_at: '2026-10-20'
+  revision: 'PR 188236 创建 2026-06-26（早于 issue 189239）、2026-09-23 关闭（closed_at 05:31:12Z；对应落地 commit 82b424c7f91d——author 时间 05:31:00Z、MergeBot committer 时间 05:31:07Z，字段分列，Yang Shuxin，"[inductor]: Include convolution_backward in decide_layout_opt conv node detection (#188236)"，仅改 torch/_inductor/graph.py 与 kernel/conv.py）；PR 191306 opened 2026-07-28、closed 2026-08-28（维护者"already a pr out for this"；作者已 redesign 为 forward 决策向 lazy backward 传播，最终 head 含 compile_fx.py；携带 test/inductor/test_layout_optim.py 改动未随落地）；issue 189239 于 2026-09-23 关闭；2026-10-20 经 gh API 两轮观察'
+  license:
+    status: unknown
+    scopes: []
+    notes: 代码变更随 PyTorch 仓库 BSD-3-Clause；PR/评论为用户生成内容（沿用既有先例）。仅链接与有限事实归纳。
+  notes: 'Batch 25（T06-07）案例取证，修订轮（B25-T07-C05）更正 PR 生命周期：#188236 为修复主线，创建早于回归报告、经 MergeBot 以直接 commit 82b424c7 落地（API 原始字段 closed/merged=false 保留，其入库语义由 commit message "(#188236)"＋PR 关闭时间与 commit 落地时间对应建立）；#191306 是另一条被关闭的提案（非串行的第二轮失败），其测试改动与 redesign 方案均未落地。落地 commit 文件清单不含回归测试（不能写成"已带回归测试关闭"；也不据此断言此后全仓无相关测试）。修复具体版本归属（进入哪个 release tag）未逐 tag 核对（unknown）；PR #188236 Results 段的 Intel Data Center GPU 约 1.3×与 2026-09-02 作者评论的 RTX 4080 SUPER 1.3×+为 PR 作者自报，与落地 SHA 的同条件复测绑定未确认。'
+- id: src.ascend.mindspeed-llm-trl-ppo-v2.2.0
+  title: MindSpeed-LLM v2.2.0 TRL PPO 训练器源码（TrlPPOTrainer/TrlPPOEngine，冻结）
+  url: https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/mindspeed_llm/tasks/posttrain/trl_ppo/TrlPPOTrainer.py
+  kind: repository
+  registered_at: '2026-10-20'
+  revision: tag v2.2.0（codeload 源码包 2026-10-20，包 SHA-256 693f619a8b608726c23dc53a7e0d283684883149fb140951f169a297fe72936e；TrlPPOTrainer.py da079a2e1ee73bb44442e9580c70b5cb1a54c524e802cf56aee03a6e66f27d19、TrlPPOEngine.py 2b2fa41eb05a06efafef2984b6edbe073b8a70d4d87f92666d61d08c638f4b90）
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 tag 的 mindspeed_llm/tasks/posttrain/trl_ppo；根 LICENSE 声明范围
+      identifier: BSD-3-Clause
+      url: https://github.com/Ascend/MindSpeed-LLM/blob/v2.2.0/LICENSE
+    notes: 根 LICENSE 列出若干第三方文件其他许可；仅链接并原创归纳。
+  notes: Batch 25（T06-04）取证：MindSpeed-LLM v2.2.0 内置基于 Megatron 训练循环的 TRL PPO 训练器（TrlPPOTrainer 复用 megatron training_log/timers/forward_backward_func，TrlPPOEngine 管理 rollout_batch：context_length/sequence_lengths/actor_logprobs/ref_logprobs/values/scores 字段、compute_advantages_and_returns；rollout_batch_size 参数与 micro_batch_size 切换）；复用 src.ascend.mindspeed-llm-training-interface-v2.2.0 已登记的 training.py（本次补充核对其 get_profiler/is_profile_enabled 基于 torch_npu.profiler，ProfilerLevel/ExportType/AiCMetrics/schedule(wait/warmup/active)/tensorboard_trace_handler）。PPO 采样引擎实现细节与 NPU rollout 推理后端未逐文件核对（unknown）；未运行任何代码。
+- id: src.verl.install-v0.9.1
+  title: verl v0.9.1 主安装文档（NVIDIA/CUDA 路径的基础要求与后端范围）
+  url: https://github.com/volcengine/verl/blob/v0.9.1/docs/start/install.rst
+  kind: documentation
+  registered_at: '2026-10-20'
+  revision: tag v0.9.1；同 codeload 包（本文件 SHA-256 8ca5ce30c91222bc9b894b8cba25d69b44c64234ab7e185b20750127e29a33b3）
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 tag 的 docs 目录；仓库根 LICENSE
+      identifier: Apache-2.0
+      url: https://github.com/volcengine/verl/blob/v0.9.1/LICENSE
+    notes: 仅链接与原创归纳。
+  notes: Batch 25（T06-04 修订轮，发现 B25-T04-C06 补证）取证：Python>=3.10、CUDA>=12.8；训练后端 FSDP/FSDP2（研究原型推荐）与 Megatron-LM（规模推荐，该页声明支持 Megatron-LM core_v0.13.1）；推理后端 vLLM 0.18.0 及以后（更早版本不可用）、SGLang、TGI（调试/单卡探索）。为文档声明，不构成任意组合已验证。
+- id: src.verl.delta-transfer-source-v0.9.1
+  title: verl v0.9.1 delta 权重传输源码组（delta_weight_transfer/delta_checkpoint_engine/vllm_async_server/FSDP 导出）
+  url: https://github.com/volcengine/verl/blob/v0.9.1/verl/workers/rollout/vllm_rollout/delta_weight_transfer.py
+  kind: repository
+  registered_at: '2026-10-20'
+  revision: tag v0.9.1；同 codeload 包（delta_weight_transfer.py 3c04a12b4e83756e8a6d8b5f33c2902079db1f0495da929294c3f62966f9e3e1、delta_checkpoint_engine.py 8ffd19044d032eb6a1485006936c6581df386e321360ccb93701415ab2dce017、vllm_async_server.py 45818f36df0a1eb8bd4bbe067fe7973097c5c8a24616c4fa3144c43b5f497393、fsdp/transformer_impl.py 79d8779fb2a0b8a1ac7b3ec85fba2521ac8cae079925a497c4366fd77f8abfbe）
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 tag 源码；仓库根 LICENSE
+      identifier: Apache-2.0
+      url: https://github.com/volcengine/verl/blob/v0.9.1/LICENSE
+    notes: 仅链接与原创归纳，不复制实现。
+  notes: 'Batch 25（T06-04 复核轮二，B25-T04-C04/R02 补登记）取证：delta_weight_transfer.py 的 parallel_config 限制属 vLLM 消费端——vllm_async_server.py L1153–1164 检查 rollout 侧 data/pipeline parallel size（DP=1/PP=1）并排除量化/投机解码/PD 分离，delta 路径限 CUDA/BF16；训练侧经 delta_checkpoint_engine.py（disaggregated rollout：跨组传输＋rollout 侧本地 IPC 两跳）显式汇聚训练分片（支持非 DP=1 训练布局的汇聚导出）；FSDP transformer_impl.py 的 shard 导出路径注明 Non-LoRA base path（LoRA 适用性不由该组证据建立）；L234–240：上次 delta 更新未完成须重启整个作业并重接收 dense seed。生产者/消费者限制分别记录，不互推。'
+- id: src.verl.rollout-correction-config-v0.9.1
+  title: verl v0.9.1 rollout_correction 配置（bypass/decoupled 模式与 IS/RS 开关默认值）
+  url: https://github.com/volcengine/verl/blob/v0.9.1/verl/trainer/config/algorithm/rollout_correction.yaml
+  kind: repository
+  registered_at: '2026-10-20'
+  revision: tag v0.9.1；同 codeload 包（rollout_correction.yaml 25e3a347847f2272582b6faacdf59eb9463360313654115bf2fea00bbb257158）
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 tag 源码；仓库根 LICENSE
+      identifier: Apache-2.0
+      url: https://github.com/volcengine/verl/blob/v0.9.1/LICENSE
+    notes: 仅链接与原创归纳。
+  notes: 'Batch 25（T06-04 复核轮二，B25-T04-R01 补登记）取证：rollout_correction.yaml 默认 bypass_mode: false（Decoupled 三策略模式——训练侧重算 proximal 锚点）、rollout_is: null、rollout_rs: null（重要性权重与拒绝采样校正默认不启用，各按配置开启）；即 V0 默认路径不是 bypass，bypass 是显式启用的模式（ray_trainer.py 缺省同样为 false）。本条更正正文首轮"V0 默认（bypass）"的错误表述。'
