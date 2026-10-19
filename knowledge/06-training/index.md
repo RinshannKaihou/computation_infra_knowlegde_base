@@ -40,8 +40,8 @@ related_ids:
 ## 已有正文
 
 - [并行策略与训练状态](parallelism-and-state.md)：DP/FSDP/TP/PP 基础上补齐专家并行（token dispatch/combine）、序列维 SP/CP、组合身份与冲突检查、固定假设选型表和单步边界（Batch 24 修订，gpt-6.1-sol/xhigh 审阅已闭环的 draft，未实测）。
-- [训练框架组件、执行循环与平台职责对照](framework-execution.md)：训练驱动→autograd→分布式封装→optimizer→编译→算子后端→checkpoint 的职责图，PyTorch 2.6 / Megatron-Core core_v0.19.2 / MindSpeed-LLM v2.2.0 三组独立档案与各阶段故障分界（T06-02，Batch 24，gpt-6.1-sol/xhigh 审阅已闭环的 draft，未实测）。。
-- [预训练与微调工作流和状态契约](pretraining-and-finetuning.md)：预训练/继续预训练/全参 SFT/LoRA-PEFT 的目标、数据与状态契约、adapter 保存合并边界、观察口径与阶段切换验证（T06-03，Batch 24，gpt-6.1-sol/xhigh 审阅已闭环的 draft，未实测）。。
+- [训练框架组件、执行循环与平台职责对照](framework-execution.md)：训练驱动→autograd→分布式封装→optimizer→编译→算子后端→checkpoint 的职责图，PyTorch 2.6 / Megatron-Core core_v0.19.2 / MindSpeed-LLM v2.2.0 三组独立档案与各阶段故障分界（T06-02，Batch 24，gpt-6.1-sol/xhigh 审阅已闭环的 draft，未实测）。
+- [预训练与微调工作流和状态契约](pretraining-and-finetuning.md)：预训练/继续预训练/全参 SFT/LoRA-PEFT 的目标、数据与状态契约、adapter 保存合并边界、观察口径与阶段切换验证（T06-03，Batch 24，gpt-6.1-sol/xhigh 审阅已闭环的 draft，未实测）。
 - [Checkpoint 恢复一致性](checkpoint-state-consistency.md)。
 - [弹性训练与成员变更](elastic-training-and-membership.md)：rendezvous、成员变更与失败语义；PyTorch elastic 与 MindSpeed-LLM 副本机制的对照边界。
 

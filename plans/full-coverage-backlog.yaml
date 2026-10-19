@@ -2186,7 +2186,7 @@ topics:
     - T05-10
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 05.7-G2
     gap_text: 缺少控制面恢复、作业重建和资源账本校验流程
@@ -2195,7 +2195,7 @@ topics:
     - T05-04
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 在上述有限 v1 范围内，五方面均能定位到正文段落和精确支持来源；任务新增/修订稿及导航齐全，不能仅靠目录或邻域提及验收。
   - 每个平台/实现的适用和未知条件分开；发布/文档/源码版本固定后核对支持交集，不因概念相同推定兼容。
@@ -2277,7 +2277,7 @@ topics:
     - T06-01
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 06.2-G2
     gap_text: 缺少各策略选型和规模效率权衡
@@ -2285,7 +2285,7 @@ topics:
     - T06-01
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 3
     gap_ref: 06.2-G3
     gap_text: 缺少组合并行的映射/性能验证
@@ -2336,7 +2336,7 @@ topics:
     - T06-02
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 06.3-G2
     gap_text: 缺少 PyTorch/Megatron/MindSpeed 等实现责任对照
@@ -2344,7 +2344,7 @@ topics:
     - T06-02
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 3
     gap_ref: 06.3-G3
     gap_text: 缺少执行路径验证
@@ -2352,7 +2352,7 @@ topics:
     - T06-02
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
@@ -2392,7 +2392,7 @@ topics:
     - T06-03
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 06.4-G2
     gap_text: 缺少 RL rollout、训练/推理协同及权重同步

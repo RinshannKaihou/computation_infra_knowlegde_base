@@ -130,3 +130,13 @@
 ## 修订轮六补充（2026-10-19，复核第五轮发现处理）
 
 - S4-01 精确化：expert-DP 组（EDP=8、stride 2）跨两个节点、**每节点 4 个成员**，补完整组例 {0,2,4,6,8,10,12,14}；修正上一轮"只有相邻成员对同节点"的错误说法。
+
+## 交付后复查补充（2026-10-19，B24-PC-03/04/05）
+
+复查者 `claude-opus-5-5`，记录见 [batch-24-post-close-review](batch-24-post-close-review.md)。同 tag `core_v0.19.2` raw 取回，SHA-256 记入 `src.nvidia.megatron-lm-core-v0.19.2`：
+
+- 轴序：`parallel_state.py`（1f6e23a0…，与审阅轮 U12 一致）默认 `order="tp-cp-ep-dp-pp"` L617、专家 `expert_order` L886–893、`generate_masked_orthogonal_rank_groups` 文档式 L292。用该文件的 `RankGenerator` 对两组合成配置做纯算术复算（未初始化进程组）：TP2/CP2/PP2/DP8 的稠密组与正文一致；ETP2/EP4/PP2/EDP4 下 rank 37 的 EP 组 {33,35,37,39}、expert DP 组 {37,45,53,61}；ETP2/EP4/PP1/EDP8 下 rank 0 的 EP 组 {0,2,4,6}、expert DP 组 {0,8,…,56}。修订轮三至六的专家轴序约定 `[pp, ep, edp, etp]` 与默认值相反，已更正。
+- 专家编号：`moe/moe_layer.py`（189b0ce5…）L181–194，`local_expert_indices_offset = ep_rank × num_local_experts`。
+- scaler：`optimizer/grad_scaler.py`（81402e80…）`DynamicGradScaler.update` L131–153（hysteresis tracker 只在 growth_interval 窗口完成时恢复）、`ConstantGradScaler.update` 不调整 L43–52、`state_dict` L155–165；`optimizer/optimizer.py`（24609822…）`prepare_grads` L741–774、`step` L816–822；`optimizer/__init__.py`（5a657e3f…）L638–662；`training/arguments.py`（f7fad20b…，与 U07 一致）`--hysteresis` 默认 2 L2917、`--loss-scale-window` 默认 1000 L2915、`--min-loss-scale` 默认 1.0 L2913。
+- QKV：`models/gpt/gpt_layer_specs.py`（af25c83f…）`linear_qkv` column-parallel L324/L444；`transformer/attention.py`（a019cd00…）按 query group 交错 L1840–1841（重排 L1861–1867、拆分 L1887–1903）。
+- 2026-10-19 修订轮二（复核 R01/R02）：更正 hysteresis 状态机表述与上述三处坐标。
