@@ -8,8 +8,9 @@ platforms: [generic]
 source_refs:
   - src.pytorch.elastic-2.6
   - src.ascend.mindspeed-llm-ha-v2.2.0
-updated_at: "2026-10-08"
-summary: 解释弹性训练的机制底座（rendezvous、成员变更、失败语义）与两个固定样板的边界：PyTorch 2.6 elastic 只重建进程组、状态恢复是应用责任；MindSpeed-LLM 用副本机制支持缩容续训与 UCE 在线修复。
+  - src.ascend.mindio-ttp-constraints-mindxdl-600
+updated_at: "2026-10-20"
+summary: 解释弹性训练的机制底座（rendezvous、成员变更、失败语义）与两个固定样板的边界：PyTorch 2.6 elastic 只重建进程组、状态恢复是应用责任；MindSpeed-LLM 用副本机制支持缩容续训与 UCE 在线修复，其外部 mindio_ttp/taskd 组件的约束已按 MindX DL 6.0.0 文档线核对。
 related_ids:
   - training.parallelism-and-state
   - training.checkpoint-state-consistency
@@ -21,7 +22,8 @@ verification:
   evidence_refs:
     - src.pytorch.elastic-2.6
     - src.ascend.mindspeed-llm-ha-v2.2.0
-  notes: "已核对 PyTorch 2.6 elastic 系列文档与 MindSpeed-LLM v2.2.0 固定 commit 的 HA 文档及实现入口；两者版本体系不同，仅作机制对照；未运行弹性训练或故障注入。"
+    - src.ascend.mindio-ttp-constraints-mindxdl-600
+  notes: "已核对 PyTorch 2.6 elastic 系列文档、MindSpeed-LLM v2.2.0 固定 commit 的 HA 文档及实现入口，以及 MindX DL 6.0.0 的 MindIO TTP 约束页（渲染取回）；三条版本线互不拼接；未运行弹性训练或故障注入。"
 ---
 
 # 弹性训练与成员变更
@@ -59,11 +61,24 @@ verification:
 |---|---|---|
 | TTP（临终遗言） | 故障后校验优化器中间状态完整性/一致性，生成一次临终 checkpoint，恢复可回到故障前一刻 | “故障前一刻”的精确 step 语义未定义 |
 | UCE Step 级重计算 | NPU 卡内存 UCE 故障实时检测，检测到后基于副本在线修复故障卡并继续训练（`--enable-hbmfault-repair`，要求全局至少存在一个故障卡的副本卡） | “实时检测”的实现层级（芯片/驱动/框架）未指明 |
+| 空中加油（worker 重启） | 一般性故障时进程级重启修复故障节点继续训练（`--enable-worker-reboot`，须配合 Mind Cluster 组件；要求未故障节点中至少一份完整优化器数据；会将故障卡所在节点重启） | 与 MindIO ARF 组件的对应关系未由文档声明 |
 | 弹性训练 | 故障且无空闲资源时基于副本缩掉部分节点继续训练；有空闲资源后再扩容回原规模（`--enable-elastic-training`，剔除故障卡所在 DP 域对应节点；要求未故障节点中至少一份完整优化器数据；需配合 MindCluster 组件） | **仅支持 DP 粒度缩扩**；缩扩由谁驱动、通信组如何重建，文档未述 |
 
 弹性训练的文档约束（逐条，L75–84）：① 须同时开 `--enable-high-availability` 与 `--use-distributed-optimizer`；② 不支持 `use-custom-fsdp`、`reuse-fp32-param`；③ 仅支持 DP/TP/PP 并行；④ **缩容后不可再次缩容，扩容仅支持直接回到原有规模**。通用约束另有：ptd 切分下 DP size>1；MoE 时稠密与稀疏层 DP size 均>1；长序列并行时 dp_cp_size>1。依赖 `mindio_ttp` 与 `taskd` 两个 whl 包；`HIGH_AVAILABILITY` 环境变量优先级高于命令行参数。
 
-实现入口已确认存在：`mindspeed_llm/features_manager/high_availability/high_availability.py` 注册五个开关，`validate_args` 在代码层强制 mindio_ttp/taskd 导入、HA 先于弹性、拒绝 use_custom_fsdp/reuse_fp32_param/EP>1/CP>1，另有**文档未列**的两条断言（HA 与 `use_dist_ckpt`、`swap_optimizer` 冲突）。注意两边并非包含关系：开关组合与冲突约束以代码为更严，而缩容次数约束（④）仅见文档、代码中无对应断言。
+实现入口已确认存在：`mindspeed_llm/features_manager/high_availability/high_availability.py` 注册五个开关，`validate_args` 在代码层强制 mindio_ttp/taskd 导入、HA 先于弹性、拒绝 use_custom_fsdp/reuse_fp32_param/EP>1/CP>1，另有**文档未列**的两条断言（HA 与 `use_dist_ckpt`、`swap_optimizer` 冲突）。注意两边并非包含关系：开关组合与冲突约束以代码为更严，而缩容次数约束（④）仅见文档、代码中无对应断言。仓库内的 adaptor 调用面（`mindio_ttp.adaptor` 的 tft 系函数、`taskd.python.adaptor.elastic_training`）与缺包即 `sys.exit` 的行为亦已固定；adaptor 实现本体在外部 whl，未取得。
+
+### 外部组件约束：MindIO TTP（MindX DL 6.0.0 文档线）
+
+弹性/HA 功能依赖的 `mindio_ttp`、`taskd` whl 由 HA 文档外链到昇腾文档站，其约束页（[MindIO TFT 约束限制](https://www.hiascend.com/document/detail/zh/mindx-dl/600/clusterscheduling/ref/mindiottp/mindiotft005.html)，2026-10-20 取回）给出 MindSpeed 文档之外的一层硬边界：
+
+- **硬件与并行**：仅支持 A+K（Ascend+Kunpeng）组合硬件；Atlas 800 训练服务器（9000）不支持 MindIO UCE 与 ARF。仅支持 ZeRO-1，且总体要求 DP Size 为偶数；DP Size 另受副本数约束——副本数为 2 时要求 DP Size>1，其他副本数要求 DP Size 能被副本数整除；开启 MoE 前要求稠密层 DP Size>1，开启 MoE 后要求稠密层与稀疏层 DP Size 均>1。
+- **副本代价**：副本优化器在 ZeRO-1 基础上**以算代传**实现（在 DP 域上减少优化器 ZeRO-1 切分范围）；所需增加的片上内存总量（GB）＝模型参数量 N（单位 B，十亿）×12×副本数——这是**全局总量而非单卡需求**；原有配置直接启用可能导致启动期片上内存 OOM，官方口径是扩容增加片上内存总量后再使用。
+- **存活与切换**：Controller 1 活跃＋2 备份；Controller 切换与临终保存都要求健康卡数>world_size/2。
+- **临终 checkpoint 的一致性门**：副本数据不完整（故障过多）、OS 分片长时间处于修改状态或分片间 iteration 不一致时，一致性校验失败，**临终 checkpoint 不生成**；TTP 临终保存不走 ACP 异步路径，直接写持久化存储，保存完成后结束训练进程。
+- **级联故障**：不支持保存过程中再发生故障（临终保存即失败）；ARF 需≥2 节点、不支持 Controller 所在节点故障与级联故障，ARF 失败由 MindCluster 接管。
+
+版本线声明：该页属 MindX DL 6.0.0 文档线，与 MindSpeed-LLM v2.2.0 的关系仅为 HA 文档外链锚定，两者配套矩阵未见官方声明，不互推；taskd 下载页属 MindCluster 71RC1 线，同口径对待。
 
 ## 机制对照与边界
 
@@ -73,6 +88,7 @@ verification:
 | 失败后的状态从哪来 | 应用自己的 checkpoint（torchelastic 不恢复状态） | 副本 DP 组的优化器状态备份（在线），TTP 临终 checkpoint（离线） |
 | 缩扩粒度 | 节点/worker 组重建，应用负责状态 | 仅 DP 粒度；缩容一次、扩容回原规模 |
 | rank 稳定性 | rank 不稳定，禁止硬编码 | 未述 |
+| 外部组件硬约束 | 无（机制层无外部组件） | MindIO TTP：A+K only、9000 无 UCE/ARF、ZeRO-1 only、DP 偶数/整除、健康卡>world_size/2、临终一致性校验、不支持级联故障 |
 
 共同教训：**弹性机制解决“进程组还能不能继续”，训练状态正确性是另一件事**——前者由框架/平台提供，后者依赖 checkpoint 频率、副本覆盖与恢复验证（见[Checkpoint 恢复一致性](checkpoint-state-consistency.md)与[写入持久化边界](../04-data-storage/checkpoint-durability.md)）。
 
@@ -93,5 +109,6 @@ verification:
 
 - [PyTorch 2.6 elastic 文档](https://docs.pytorch.org/docs/2.6/elastic/run.html)（run/rendezvous/errors/agent/train_script 子页）。
 - [MindSpeed-LLM v2.2.0 高可用文档与实现入口](https://github.com/Ascend/MindSpeed-LLM/tree/53f3639c3da9c000a187c44cc0c08d55026ddded)。
-- 逐条主张与证据定位见[第十一批弹性训练来源记录](../../docs/research/batch-11-elastic-sources.md)。
-- 待确认：MindSpeed-LLM 弹性缩扩的内部驱动与通信组重建细节；MindIO TTP 约束限制外链页；UCE 检测的实现层级；TTP “故障前一刻”的时间语义；PyTorch 2.8 elastic 页未核对。
+- [MindIO TFT 约束限制页（MindX DL 6.0.0）](https://www.hiascend.com/document/detail/zh/mindx-dl/600/clusterscheduling/ref/mindiottp/mindiotft005.html)。
+- 逐条主张与证据定位见[第十一批弹性训练来源记录](../../docs/research/batch-11-elastic-sources.md)与[第二十六批 T06-08 来源记录](../../docs/research/batch-26-t06-08-sources.md)。
+- 待确认：MindSpeed-LLM 弹性缩扩的内部驱动与通信组重建细节；mindio_ttp/taskd whl 的接口实现与版本配套矩阵（下载页两次取回失败）；UCE 检测的实现层级；TTP “故障前一刻”的时间语义；MindSpeed 空中加油与 MindIO ARF 的对应关系；PyTorch 2.8 elastic 页未核对。

@@ -49,8 +49,8 @@ related_ids:
 - [RL rollout、权重同步与训练推理协同](rl-rollout-consistency.md)：在线 RL（PPO/GRPO，verl v0.9.1 样板）的采样—打分—更新—发布循环、权重同步与陈旧策略边界、同步/异步代价、一致性与吞吐观察及单变量验证；DPO 作离线对照（T06-04，Batch 25，gpt-6.1-sol/xhigh 审阅已闭环的 draft，未实测）。
 - [混合精度、算子适配与收敛验证](mixed-precision-and-convergence.md)：autocast/动态 loss scale/master 权重机制与三套实现分立边界、平台内重复性到单因素精度对照的流程、NaN/Inf 与 loss scale 分项观察、有限窗口收敛与质量判据及静默 dtype 案例（T06-05，Batch 25，gpt-6.1-sol/xhigh 审阅已闭环的 draft，未实测）。
 - [训练性能分解、profiling 与优化验证](performance-analysis.md)：有效产出与配置口径、应用级/系统级工具对照（含取证边界）、PP bubble/EP 热点/长度偏斜/通信等待分支、受害与最早瓶颈区分、单因素优化与吞吐质量双判据（T06-06，Batch 25，gpt-6.1-sol/xhigh 审阅已闭环的 draft，未实测）。
-- [Checkpoint 恢复一致性](checkpoint-state-consistency.md)。
-- [弹性训练与成员变更](elastic-training-and-membership.md)：rendezvous、成员变更与失败语义；PyTorch elastic 与 MindSpeed-LLM 副本机制的对照边界。
+- [Checkpoint 恢复一致性](checkpoint-state-consistency.md)：状态覆盖与截取一致性、API 完成观察点、Megatron core_v0.12.1 保存/装载职责、重分片各线支持/不支持/未知表、MindIO TTP 临终约束与恢复后验证分层（T06-08，Batch 26，draft，未实测）。
+- [弹性训练与成员变更](elastic-training-and-membership.md)：rendezvous、成员变更与失败语义；PyTorch elastic 与 MindSpeed-LLM 副本机制的对照边界，及 MindIO TTP 外部组件约束（T06-08，Batch 26，draft，未实测）。
 
 ## 本章范围
 

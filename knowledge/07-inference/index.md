@@ -10,7 +10,7 @@ source_refs:
 - src.ascend.vllm-ascend
 - src.ascend.agent-skills
 - src.stas.ml-engineering
-updated_at: '2026-10-08'
+updated_at: '2026-10-20'
 summary: 组织模型推理执行、服务流量、性能指标和故障恢复。
 related_ids:
 - software-stack.index
@@ -19,6 +19,9 @@ related_ids:
 - cluster-platform.index
 - reliability.index
 - inference.execution-and-kv-cache
+- inference.model-loading-and-readiness
+- inference.engine-backend-boundaries
+- inference.mindie-execution-profile
 - inference.latency-metrics
 - inference.ascend-inference-tail-latency-triage
 - inference.ascend-inference-tail-latency-source-case
@@ -35,6 +38,9 @@ related_ids:
 ## 已有正文
 
 - [推理执行与 KV cache](execution-and-kv-cache.md)。
+- [权重加载、引擎 ready 与启动失败诊断](model-loading-and-readiness.md)：启动五阶段边界、load-format 分派与格式不可互推、模型身份固定清单、health 与 ready 的区别、三平台小模型验证计划。
+- [推理引擎组件与平台功能交集档案](engine-backend-boundaries.md)：vLLM 上游/vLLM Ascend/MindIE 组件分层对照、调度与 KV 语义不互推、NVIDIA/AMD/Ascend 三份特性交集档案（支持/条件/未证实/冲突）与升级替换重核验检查表。
+- [MindIE 推理执行与配置样板](mindie-execution-profile.md)：MindIE LLM 3.1.0 文档线的四层执行架构、config.json 逐段语义（Server/Model/Schedule/HealthCheck）、PD 混部/分离、日志与三态健康检查、首失败边界与 Qwen 可追溯样板。
 - [推理延迟与吞吐指标字典](latency-metrics.md)。
 - [推理量化与输出质量验证](quantization-and-quality.md)：支持矩阵读法、质量验证证据与量化故障三层归因。
 - [Prefill/Decode 分离（PD 分离）与流量分配](pd-disaggregation.md)：动机与"不提升吞吐"的反面声明、vLLM connector 形态与外部代理职责、昇腾侧支持矩阵与限制。
@@ -55,9 +61,9 @@ related_ids:
 
 ## 二级主题地图
 
-- **07.1 模型加载、prefill、decode 与执行路径** — 已有[prefill/decode 基础草稿](execution-and-kv-cache.md)，模型加载专题待补。
-- **07.2 推理引擎及平台后端** — 已有[vLLM 与 vLLM Ascend 固定样板边界](execution-and-kv-cache.md)，其他引擎待补。
-- **07.3 Batch、KV cache、内存与缓存管理** — 已有[KV cache、前缀复用与抢占说明](execution-and-kv-cache.md)，具体容量验证待补。
+- **07.1 模型加载、prefill、decode 与执行路径** — 已有[prefill/decode 基础草稿](execution-and-kv-cache.md)与[权重加载、ready 与启动失败诊断](model-loading-and-readiness.md)（vLLM v0.14.0 固定 commit＋MindIE 文档快照）。
+- **07.2 推理引擎及平台后端** — 已有[vLLM 与 vLLM Ascend 固定样板边界](execution-and-kv-cache.md)与[引擎组件与平台功能交集档案](engine-backend-boundaries.md)（三线组件对照＋三平台特性矩阵）。
+- **07.3 Batch、KV cache、内存与缓存管理** — 已有[KV cache、前缀复用与抢占说明](execution-and-kv-cache.md)与[引擎组件档案](engine-backend-boundaries.md)的调度/KV 语义对照；具体容量验证待补。
 - **07.4 量化、算子优化与输出质量验证** — 已有[推理量化与输出质量验证](quantization-and-quality.md)；各量化方法的细节约束与实测待补。
 - **07.5 分布式推理、PD 分离与通信依赖** — 已有[PD 分离与流量分配](pd-disaggregation.md)（vLLM v0.14.0 与 vLLM Ascend v0.14.0rc1 固定样板）；扩缩容与生产级路由待补。
 - **07.6 路由、流控、扩缩容与版本发布** — 待建设。

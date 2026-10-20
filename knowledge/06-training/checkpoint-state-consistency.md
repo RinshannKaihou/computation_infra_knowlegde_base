@@ -12,11 +12,17 @@ source_refs:
   - src.ascend.mindspeed-llm-ha-v2.2.0
   - src.ascend.mindspeed-llm-checkpoint-v2.2.0
   - src.ascend.mindio-acp-v26.1.1
-updated_at: "2026-09-30"
-summary: 区分 checkpoint API 完成、对象装载成功与训练正确续接，说明状态覆盖、重分片条件和恢复后验证。
+  - src.ascend.mindio-ttp-constraints-mindxdl-600
+  - src.nvidia.megatron-checkpointing-core-v0.12.1
+  - src.pytorch.wheel-matrix-2.6.0
+updated_at: "2026-10-20"
+summary: 区分 checkpoint API 完成、对象装载成功与训练正确续接，说明状态覆盖、重分片条件与恢复后验证；v1 边界补 Megatron core_v0.12.1 保存/装载职责与 MindIO TTP 临终约束。
 related_ids:
   - data-storage.checkpoint-durability
   - training.parallelism-and-state
+  - training.elastic-training-and-membership
+  - training.pretraining-and-finetuning
+  - training.rl-rollout-consistency
   - communication.collectives-and-rank-progress
 verification:
   status: source_checked
@@ -27,7 +33,9 @@ verification:
     - src.ascend.mindspeed-llm-ha-v2.2.0
     - src.ascend.mindspeed-llm-checkpoint-v2.2.0
     - src.ascend.mindio-acp-v26.1.1
-  notes: 核对 PyTorch 2.6 DCP、并行与数值文档，以及固定 MindSpeed-LLM 和 MindIO 资料；未执行保存、恢复、故障注入或数值对照实验。
+    - src.nvidia.megatron-checkpointing-core-v0.12.1
+    - src.ascend.mindio-ttp-constraints-mindxdl-600
+  notes: 核对 PyTorch 2.6 DCP、并行与数值文档，固定 MindSpeed-LLM/MindIO 资料，以及 Megatron-LM core_v0.12.1 与 MindX DL 6.0.0 的 TTP 约束页；未执行保存、恢复、故障注入或数值对照实验，CPU 优先的 DCP 实验与精度方法保持未验证。
 ---
 
 # Checkpoint 恢复一致性
@@ -63,7 +71,7 @@ checkpoint 可以被保存和加载，不等于训练已经从同一逻辑状态
 | 并行映射 | 旧与目标 DP/TP/PP/EP/CP 维度、group/mesh 顺序、stage/shard placement、格式版本 | 只记录 world size，恢复端从当前环境猜旧布局 |
 | 运行身份 | checkpoint ID、模型/代码/数据修订、框架和必要依赖版本 | 把来自不同保存尝试或不同版本的分片组合起来 |
 
-PyTorch 2.6 DCP 只保存调用者提供的 `state_dict`，不会自动发现 scheduler、GradScaler、RNG、数据游标或业务 step（[Distributed Checkpoint](https://docs.pytorch.org/docs/2.6/distributed.checkpoint.html)）。应用需要显式构建状态清单，并定义这些对象属于哪个逻辑截取点。
+PyTorch 2.6 DCP 只保存调用者提供的 `state_dict`，不会自动发现 scheduler、GradScaler、RNG、数据游标或业务 step（[Distributed Checkpoint](https://docs.pytorch.org/docs/2.6/distributed.checkpoint.html)）。应用需要显式构建状态清单，并定义这些对象属于哪个逻辑截取点。EP/CP 维度进入同一核对框架：专家张量的分片归属与 context 并行的序列切分也是"并行映射"行的一部分，布局细节见[并行策略与训练状态](parallelism-and-state.md)。工作流层面（预训练、继续预训练、SFT、LoRA、RL rollout）各自的阶段转换点定义了不同截取语义——adapter 装载/合并边界见[预训练与微调工作流和状态契约](pretraining-and-finetuning.md)，RL 侧 policy 版本与 rollout 状态的截取见[RL rollout、权重同步与训练推理协同](rl-rollout-consistency.md)。
 
 固定 v2.6.0 的默认 planner 为各 rank 的普通 tensor/非 tensor 建立写入项，再按相同 `MetadataIndex` 去重、选择写入者；默认按计划存储量选择，不能固定理解为协调 rank。上游局部 docstring 仍称非协调 rank 不保存普通 tensor/非 tensor，与同文件实际循环不一致；这里按固定实现说明（[`default_planner.py` 69–113](https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/torch/distributed/checkpoint/default_planner.py#L69-L113)、[390–414](https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/torch/distributed/checkpoint/default_planner.py#L390-L414)、[`_dedup_save_plans.py` 15–58](https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/torch/distributed/checkpoint/_dedup_save_plans.py#L15-L58)）。
 
@@ -86,6 +94,15 @@ PyTorch 2.6 DCP 只保存调用者提供的 `state_dict`，不会自动发现 sc
 PyTorch 2.6 DCP `load` 要求目标 tensor 预先在目标设备分配，返回值为 `None`。固定实现对映射中的普通值完成反序列化后替换/填充映射；对 `Stateful` 值则在读取前调用 `state_dict()`，并在读取后、公共 `load` 返回前调用 `load_state_dict()`（[固定 v2.6.0 `state_dict_loader.py` 53–189](https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/torch/distributed/checkpoint/state_dict_loader.py#L53-L189)）。所以普通 dict 路径仍要显式执行对象后处理；`Stateful` 路径返回表示回调完成，但两种路径都还要验证状态间一致性与继续训练。
 
 MindSpeed-LLM v2.2.0 固定 [`save_checkpoint_wrapper`](https://github.com/Ascend/MindSpeed-LLM/blob/53f3639c3da9c000a187c44cc0c08d55026ddded/mindspeed_llm/training/checkpointing.py)也显示出类似边界：异步路径把 latest iteration tracker 更新注册为 finalize callback，而不是在调度后台保存时立即更新。该文件没有固定外部 `generate_state_dict` 和完整 load 语义，所以不能从一条“scheduled async save”日志推断恢复点已经可用。
+
+### 保存侧状态组装与加载入口：Megatron core_v0.12.1 样板
+
+MindSpeed-LLM v2.2.0 的外部状态实现已由其 install_guide 钉扎为 **Megatron-LM `core_v0.12.1`**（同链还需 MindSpeed 仓 `2.2.0_core_r0.12.1` 分支；[megatron/training/checkpointing.py](https://github.com/NVIDIA/Megatron-LM/blob/core_v0.12.1/megatron/training/checkpointing.py)）。该实现的职责边界：
+
+- **状态组装**：`generate_state_dict` 显式组装 `args`、`checkpoint_version`（3.0）、`iteration`，并按 `ckpt_format` 分支取模型与 optimizer 状态——`torch_dist` 走 `sharded_state_dict()`（分片表示），`torch`/`torch_dcp` 走普通 `state_dict` 系接口；另含 `opt_param_scheduler`、`rerun_state_machine` 与 RNG 状态（optimizer/scheduler 与 RNG 的组装分别受 `no_save_optim`/`no_save_rng` 条件控制）。注意完整 `args` 对象随状态保存，其中携带 consumed/skipped train samples 等数据计数（恢复端从 checkpoint args 取回这些计数并更新 microbatch 配置）；累计 FLOP 等由 MindSpeed 包装层另行补充。**args 内已有计数不等于任意 sampler/loader 游标、预取与 exactly-once 语义被自动覆盖**——后者仍需应用定义；`use_dist_ckpt` 形参已声明废弃。
+- **加载入口**：`_load_base_checkpoint` 按序判定——显式 `ckpt_step` 先行提供 iteration；其次若存在非持久 checkpoint 且其 iteration 不小于当前有效 iteration，直接采用（否则告警沿用持久版）；两者均未命中且无 tracker 文件时，才进入缺 checkpoint 分支：打印告警并从随机初始化开始，或按 `--exit-on-missing-checkpoint` 退出。
+
+两条直接推论：其一，缺 checkpoint 分支（显式 step、非持久与 tracker 均未命中时）与正常恢复在日志上可能只差几行告警——把启动成功当恢复成功是这里的典型错误，恢复后必须核对 iteration 与状态身份；其二，`torch`/`torch_dist`/`torch_dcp` 三种 `ckpt_format` 只是该实现的分派值，**跨并行度的重分片语义仍未从此实现证实**（见下节）。
 
 ## 相同布局恢复的应用责任
 
@@ -117,6 +134,18 @@ PyTorch 2.6 DCP 声明支持 load-time resharding，distributed state-dict API �
 因此，“DCP 支持重分片”是特定 state-dict 表示与目标对象之间的能力，不是“任意 world size 都可恢复”。改变 DP size 时还应先选择要保持的训练语义：相同 global batch、相同样本序列、相同 optimizer step，或只要求统计等价。这些目标会影响 per-rank batch、gradient accumulation、学习率规则、数据分区和允许重放量。
 
 固定 MindSpeed-LLM v2.2.0 的[高可用性文档](https://github.com/Ascend/MindSpeed-LLM/blob/53f3639c3da9c000a187c44cc0c08d55026ddded/docs/pytorch/features/high_availability.md)给出的是另一组明确限制：只按 DP 粒度缩扩，对 DP size、MoE、长序列、配置和并行组合有条件，缩容后不能再次缩容，扩容只能回原规模。该能力不能用 PyTorch DCP 文档补齐；也不能把 MindSpeed 的限制反向推广给所有 DCP 环境。
+
+各线对"新旧 world size/并行映射变化"的支持状态汇总（每行锚定各自来源，行间不互推）：
+
+| 线 | 支持声明 | 不支持/条件 | 未知 |
+|---|---|---|---|
+| PyTorch 2.6 DCP | load-time resharding（模型/optimizer 的分布式 state-dict 表示，条件见上） | 跨 PyTorch 版本不保证向后兼容；`broadcast_from_rank0` 需 `full_state_dict` 且不支持 legacy ShardedTensor | 任意第三方 shard、rank-local 文件、应用自定义字节的自动重分片 |
+| Megatron core_v0.12.1 | `ckpt_format` 三值（torch/torch_dist/torch_dcp）分派存在 | — | 跨并行度/跨 world size 直接重分片装载的行为（本轮未从源码证实） |
+| MindSpeed-LLM v2.2.0 HA | 副本 DP 组在线续训；弹性缩扩仅 DP 粒度 | 缩容一次、扩容仅回原规模；须 HA＋分布式优化器；无 custom-fsdp/reuse-fp32-param；仅 DP/TP/PP（代码另拒 EP>1/CP>1） | mid-step 恢复；缩扩的内部驱动与通信组重建 |
+| MindIO TTP（MindX DL 6.0.0 约束页） | 临终 checkpoint（一致性校验通过时） | 健康卡数须>world_size/2；副本不完整或分片校验失败则不生成；不支持级联故障 | 该页与 MindSpeed-LLM v2.2.0 的正式配套矩阵 |
+| torchrun/elastic | 进程组与 rank 重建 | 不保存/恢复任何训练状态（应用责任） | — |
+
+补充 MindIO TTP 临终保存的约束原文语义（[MindIO TFT 约束限制页](https://www.hiascend.com/document/detail/zh/mindx-dl/600/clusterscheduling/ref/mindiottp/mindiotft005.html)，MindX DL 6.0.0 文档线，2026-10-20 两次渲染取回一致；与 MindSpeed-LLM v2.2.0 仅以外链锚定、版本线不互推）：仅支持 A+K 组合硬件（Atlas 800 训练服务器 9000 不支持 UCE/ARF）；仅支持 ZeRO-1 且总体要求 DP Size 为偶数（副本数为 2 时要求 DP Size>1，其他副本数要求 DP Size 能被副本数整除）；副本优化器以算代传实现，所需增加的片上内存总量（GB）＝模型参数量 N（单位 B，十亿）×12×副本数（全局总量，非单卡需求）；**TTP 临终保存不使用 ACP 异步保存**，直接写持久化存储且保存后结束训练进程——这把"TTP 临终 checkpoint"与 MindIO ACP 的"内存暂存＋异步后端"路径划为两条不同的 I/O 链，不能互相推断可用性。
 
 ## 恢复后验证
 
@@ -153,4 +182,4 @@ PyTorch 2.6 的数值精度说明指出，浮点加法和乘法不满足结合�
 
 本文是来源核对后的概念框架，尚无本地 GPU/NPU、集群、存储或故障注入证据。MindIO ACP 固定 README 只支持“先在训练服务器内存暂存，再异步写后端可靠性存储”的 I/O 边界（[MindIO ACP v26.1.1](https://github.com/Ascend/mind-cluster/blob/44385c13d7b1d87def35f1604e8be4d16de6ca4e/component/mindio/acp/README.md)）；它不提供本页的训练状态 schema、数值一致性或与 MindSpeed-LLM v2.2.0 的配套证明。
 
-待确认：目标框架完整 save/load schema 与顺序、模型和 optimizer 迁移规则、DataLoader 精确恢复能力、设备与模型并行 RNG、PP mid-step 协议、MindSpeed 外部 Megatron commit 与 load/resharding 语义、目标 NPU 软件栈配套，以及具体模型的容差、验证窗口和允许进度损失。完整来源登记 YAML、固定定位和许可证范围见[第四批研究记录](../../docs/research/batch-04-training-sources.md)。
+待确认：目标框架完整 save/load schema 与顺序、模型和 optimizer 迁移规则、DataLoader 精确恢复能力、设备与模型并行 RNG、PP mid-step 协议、Megatron core_v0.12.1 的跨并行重分片语义与 `torch_dcp` 落盘布局互读性、mindio_ttp/taskd whl 接口与版本配套、目标 NPU 软件栈配套，以及具体模型的容差、验证窗口和允许进度损失。早期轮次的完整来源登记 YAML、固定定位和许可证范围见[第四批研究记录](../../docs/research/batch-04-training-sources.md)，v1 边界本轮（Megatron/MindIO TTP/wheel 边界）见[第二十六批 T06-08 来源记录](../../docs/research/batch-26-t06-08-sources.md)。

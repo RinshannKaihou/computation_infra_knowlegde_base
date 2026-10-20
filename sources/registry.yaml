@@ -500,7 +500,7 @@ sources:
       url: https://github.com/Ascend/MindSpeed-LLM/blob/53f3639c3da9c000a187c44cc0c08d55026ddded/LICENSE
     notes: 根 LICENSE 还列出若干第三方文件的其他许可；本条仅登记该 Markdown 文本，不覆盖文档引用的图片、外链 MindIO/TaskD 制品或其他第三方材料。本库不复制原图和长段正文。
   notes: 核对 distributed/replica optimizer 的 DP 状态布局、TTP/UCE/弹性功能描述，以及 DP size、MoE、长序列、并行方式和缩扩次数限制；没有安装相关 wheel、运行恢复或核验外链组件配套。该
-    tag README 指向 PyTorch 2.7.1 且多项 NPU 组件为在研，不能与 PyTorch 2.6 来源拼成支持组合。第十一批（2026-10-08）补充核对：high_availability.md 全文行号级内容（副本 DP 组机制、内存公式、TTP/UCE/弹性训练开关与四条弹性专属约束、mindio_ttp/taskd 依赖、HIGH_AVAILABILITY 环境变量优先级）与实现入口 mindspeed_llm/features_manager/high_availability/high_availability.py（五开关注册、validate_args 的 mindio_ttp/taskd 导入检查与 use_dist_ckpt/swap_optimizer/EP/CP 断言）；tests/ut 与 tests/st 无 HA 专项目录（tests/0day 等未枚举）。
+    tag README 指向 PyTorch 2.7.1 且多项 NPU 组件为在研，不能与 PyTorch 2.6 来源拼成支持组合。第十一批（2026-10-08）补充核对：high_availability.md 全文行号级内容（副本 DP 组机制、内存公式、TTP/UCE/弹性训练开关与四条弹性专属约束、mindio_ttp/taskd 依赖、HIGH_AVAILABILITY 环境变量优先级）与实现入口 mindspeed_llm/features_manager/high_availability/high_availability.py（五开关注册、validate_args 的 mindio_ttp/taskd 导入检查与 use_dist_ckpt/swap_optimizer/EP/CP 断言）；tests/ut 与 tests/st 无 HA 专项目录（tests/0day 等未枚举）。第二十六批（2026-10-20）补充核对：initialize_patch.py L26/L48 的 mindio_ttp.adaptor 导入（tft_init_controller_processor、ttp_initialize_replica_dp_group、tft_is_arf_reboot_node）；pretrain_gpt.py L200 的 taskd.python.adaptor.elastic_training 导入；posttrain base_trainer.py L204–206 缺 mindio_ttp 包时 sys.exit。HA 文档外链的 MindIO TTP 约束页已另行登记（src.ascend.mindio-ttp-constraints-mindxdl-600）。
 - id: src.ascend.mindspeed-llm-checkpoint-v2.2.0
   title: MindSpeed-LLM v2.2.0 固定 checkpoint wrapper 实现
   url: https://github.com/Ascend/MindSpeed-LLM/blob/53f3639c3da9c000a187c44cc0c08d55026ddded/mindspeed_llm/training/checkpointing.py
@@ -516,6 +516,7 @@ sources:
     notes: 只适用于该文件明确标示的代码；外部 Megatron、ModelOpt、MindIO、TorchNPU、制品与仓库其他文件另行核查。本库仅作原创解释和链接。
   notes: 核对 save_checkpoint_wrapper 对 model/optimizer/scheduler/RNG/iteration/累计 FLOP 的传递、legacy 与 distributed checkpoint
     分支、optimizer sharding 选项、异步格式限制及 tracker finalize 位置；generate_state_dict、完整 load 与 dist-checkpoint 语义属于未随本文件固定的外部依赖，未运行代码或硬件。
+    第二十六批（2026-10-20）补充核对：同文件 import 链 L21–33——megatron.training.checkpointing 的 generate_state_dict/_load_base_checkpoint/read_metadata/find_checkpoint_rank_0、megatron.core.dist_checkpointing.save 与 fully_parallel 策略；save_checkpoint_wrapper L145–285 内 generate_state_dict 调用（L210）与 dist_checkpointing.save（L236）。外部实现已钉为 Megatron-LM core_v0.12.1（src.nvidia.megatron-checkpointing-core-v0.12.1）；同 tag install_guide 确认 Megatron checkout core_v0.12.1、MindSpeed 仓 2.2.0_core_r0.12.1 分支。
 - id: src.vllm.inference-v0-14
   title: vLLM v0.14.0 推理执行、指标与服务基准固定快照
   url: https://github.com/vllm-project/vllm/tree/b17039bccc17b94a2ea107272ad7bc93508708df
@@ -551,7 +552,7 @@ sources:
     notes: 仓库根许可与 source package metadata 已直接核对。未下载 wheel、容器、CANN/HDK/torch-npu 包或其第三方 notices；生成网站和外链材料的许可另计。
   notes: tag v0.14.0rc1 解析到此 commit。固定 conf.py 的 substitutions 指向 vLLM v0.14.1、vLLM Ascend v0.14.0rc1 与 CANN image tag 8.5.0；PyTorch/torch-npu
     2.9.0 来自固定 README requirements；同 commit 的 version policy 存在 v0.14.1rc1 标注冲突。仅用于插件快照的 feature/hardware/model 边界，不与本文上游
-    vLLM v0.14.0 拼成配套，未安装或运行。第九批（2026-09-30）补充核对：platform.py 非 sleep mode 默认追加 PYTORCH_NPU_ALLOC_CONF=expandable_segments:True（与 max_split_size_mb/garbage_collection_threshold 互斥判断）、full graph OOM 警告；worker/worker.py 的 NPU determine_available_memory 与 "Available memory" 日志（与上游文案不同）；utils.py 的 block_size 默认/强制 128；faqs.md 的 OOM（FAQ 13）、MLA graph 限制（14）、aclgraph stream 耗尽（18）；release_notes 的 expandable_segments 默认化修复与 MLAPO 内存提示；model_runner_v1.py 中两处未决 OOM 注释。第十一批（2026-10-08）补充核对：supported_features.md 的 Quantization 行（W8A8 Functional、W4A8 在研）、docs/source/user_guide/feature_guide/quantization.md 量化用户指南（ModelSlim/LLM-Compressor 工具链）与 docs/source/developer_guide/evaluation/ 四份评估指南的存在性。第十二批（2026-10-08）补充核对 PD 分离：supported_features.md 的 Prefill Decode Disaggregation 行（Functional, xPyD is supported）、developer_guide/feature_guide/disaggregated_prefill.md（MooncakeConnector D 拉取与 MooncakeLayerwiseConnector P 逐层推送、异构 P/D 不支持、非对称 TP 仅 P_tp>D_tp 且整除、启动 DFX 校验）、tutorials/pd_disaggregation_mooncake_single_node.md（教程内版本引用 v0.11.0rc1 落后于本快照，只作步骤形态证据）、examples/disaggregated_prefill_v1/ 与 vllm_ascend/distributed/kv_transfer/ 的存在性。
+    vLLM v0.14.0 拼成配套，未安装或运行。第九批（2026-09-30）补充核对：platform.py 非 sleep mode 默认追加 PYTORCH_NPU_ALLOC_CONF=expandable_segments:True（与 max_split_size_mb/garbage_collection_threshold 互斥判断）、full graph OOM 警告；worker/worker.py 的 NPU determine_available_memory 与 "Available memory" 日志（与上游文案不同）；utils.py 的 block_size 默认/强制 128；faqs.md 的 OOM（FAQ 13）、MLA graph 限制（14）、aclgraph stream 耗尽（18）；release_notes 的 expandable_segments 默认化修复与 MLAPO 内存提示；model_runner_v1.py 中两处未决 OOM 注释。第十一批（2026-10-08）补充核对：supported_features.md 的 Quantization 行（W8A8 Functional、W4A8 在研）、docs/source/user_guide/feature_guide/quantization.md 量化用户指南（ModelSlim/LLM-Compressor 工具链）与 docs/source/developer_guide/evaluation/ 四份评估指南的存在性。第十二批（2026-10-08）补充核对 PD 分离：supported_features.md 的 Prefill Decode Disaggregation 行（Functional, xPyD is supported）、developer_guide/feature_guide/disaggregated_prefill.md（MooncakeConnector D 拉取与 MooncakeLayerwiseConnector P 逐层推送、异构 P/D 不支持、非对称 TP 仅 P_tp>D_tp 且整除、启动 DFX 校验）、tutorials/pd_disaggregation_mooncake_single_node.md（教程内版本引用 v0.11.0rc1 落后于本快照，只作步骤形态证据）、examples/disaggregated_prefill_v1/ 与 vllm_ascend/distributed/kv_transfer/ 的存在性。第二十六批（2026-10-20，T07-02）补充核对组件与平台覆盖：platform.py 的 NPUPlatform 继承 Platform 且 _enum 为 OOT（树外插件注册）、simple_compile_backend 字段默认 "eager"（仅该字段的 simple backend 范围——同实现另有 get_compile_backend、compilation mode、OOT compiler 与 use_inductor 分派及 ACL graph，完整默认执行路径未核）、supported_quantization 仅 ASCEND_QUANTIZATION_METHOD 与 COMPRESSED_TENSORS_METHOD、check_and_update_config/get_device_capability 责任面；子模块覆盖面清点（attention、core——含 recompute_scheduler/scheduler_dynamic_batch 两个核心覆盖件、device、distributed、eplb、kv_offload、lora、model_loader、compilation、_310p）；README 版本线（CANN 8.5.0 配套、vLLM 与 vllm-ascend 同版本、维护线 v0.7.3-dev/v0.9.1-dev/v0.11.0-dev、最新 release v0.11.0 于 2025-12）与 310p/A3 专用 Dockerfile。各覆盖件与上游对应件的语义差异未核对（unknown）。
 - id: src.prometheus.histograms-2026-09-29
   title: Prometheus 官方 histogram 与 quantile 聚合文档（2026-09-29 读取）
   url: https://prometheus.io/docs/practices/histograms/
@@ -6554,3 +6555,179 @@ sources:
       url: https://github.com/volcengine/verl/blob/v0.9.1/LICENSE
     notes: 仅链接与原创归纳。
   notes: 'Batch 25（T06-04 复核轮二，B25-T04-R01 补登记）取证：rollout_correction.yaml 默认 bypass_mode: false（Decoupled 三策略模式——训练侧重算 proximal 锚点）、rollout_is: null、rollout_rs: null（重要性权重与拒绝采样校正默认不启用，各按配置开启）；即 V0 默认路径不是 bypass，bypass 是显式启用的模式（ray_trainer.py 缺省同样为 false）。本条更正正文首轮"V0 默认（bypass）"的错误表述。'
+- id: src.vllm.model-loader-v0-14
+  title: vLLM v0.14.0 模型加载链固定源码切面
+  url: https://github.com/vllm-project/vllm/tree/b17039bccc17b94a2ea107272ad7bc93508708df/vllm/model_executor/model_loader
+  kind: repository
+  registered_at: '2026-10-20'
+  revision: b17039bccc17b94a2ea107272ad7bc93508708df（tag v0.14.0；与 src.vllm.inference-v0-14 同一 commit 的加载切面，含 __init__/base_loader/default_loader/utils/sharded_state_loader/weight_utils、models/registry.py、config/load.py、v1/worker/gpu_model_runner.py 调用点）
+  license:
+    status: partial
+    scopes:
+    - scope: 固定 commit 的仓库源码；带独立声明的文件和第三方内容另计
+      identifier: Apache-2.0
+      url: https://github.com/vllm-project/vllm/blob/b17039bccc17b94a2ea107272ad7bc93508708df/LICENSE
+    notes: 根许可沿用本库对该 commit 的已核对记录；本条仅覆盖列明文件的加载切面。
+  notes: Batch 26（T07-01）取证：LoadFormats 14 个内置值（auto/hf/bitsandbytes/dummy/fastsafetensors/gguf/mistral/npcache/pt/runai_streamer/runai_streamer_sharded/safetensors/sharded_state/tensorizer）；映射关系——默认 loader 对应 auto/hf/safetensors/fastsafetensors/mistral/npcache/pt 七种，dummy/bitsandbytes/gguf/runai_streamer/tensorizer 各有专用类，runai_streamer_sharded 与 sharded_state 同映射 ShardedStateLoader；未注册名称在 get_model_loader 查询时报 ValueError，配置层仅小写归一（留 register_model_loader 自定义注册口子，14 值非封闭全集）；auto 非无条件等同 hf——存在 consolidated*.safetensors 时自动改走 mistral 分支。LoadConfig 字段（load_format 小写归一、download_dir、model_loader_extra_config、ignore_patterns 默认 original/**/*）；_prepare_weights 规则（auto/hf=*.safetensors+*.bin，量化模型可能用 .pt 且受 fall_back_to_pt 与模式覆盖项影响；mistral=consolidated*.safetensors＋index；分片/合并并存时下载 index 去重）；base_loader.load_model 顺序为 initialize_model（arch 解析＋量化配置注入＋旧式类 Deprecation 警告）→load_weights→process_weights_after_loading（quant repack、CPU offload device_loading_context 往返、attention 后处理）→eval()，量化发生在 load_weights 之后；registry.py 的"Model architectures … are not supported for now"与历史架构移出报错、无 vLLM 实现时回退 Transformers 实现的警告；weight_utils 的非推理文件过滤名单（optimizer.bin/scheduler.pt/scaler.pt/training_args.bin 等）；sharded_state 格式 model-rank-{rank}-part-{part}.safetensors、按当前 TP rank 匹配且仅支持预分片（跨 TP/PP 重分片能力未证实）；普通 HF 格式的读取映射（模型实现 weight_loader、打包参数拆分、PP 缺失层跳过，llama.py 样板）；dtype 三层（文件记录/model_config.dtype 目标/check_if_supports_dtype 硬件检查）。gpu_model_runner.load_model（DeviceMemoryProfiler、LoRA、drafter、EPLB/eep_scale_up）与 reload_weights 原地重载；gpu_worker 初始化在装载前完成设备绑定、dtype 检查、分布式初始化与启动期内存检查。各文件 SHA-256 前 16 位见 docs/research/batch-26-t07-01-sources.md。未运行任何加载命令。
+- id: src.vllm.tokenizer-registry-v0-14
+  title: vLLM v0.14.0 tokenizer 解析固定源码切面
+  url: https://github.com/vllm-project/vllm/blob/b17039bccc17b94a2ea107272ad7bc93508708df/vllm/tokenizers/registry.py
+  kind: repository
+  registered_at: '2026-10-20'
+  revision: b17039bccc17b94a2ea107272ad7bc93508708df
+  license:
+    status: partial
+    scopes:
+    - scope: 固定 commit 的仓库源码；文件头 SPDX Apache-2.0
+      identifier: Apache-2.0
+      url: https://github.com/vllm-project/vllm/blob/b17039bccc17b94a2ea107272ad7bc93508708df/LICENSE
+    notes: 仅链接与原创归纳。
+  notes: Batch 26（T07-01）取证：get_tokenizer 经 HF/ModelScope 解析、tokenizer_mode 注册表；auto 切 mistral 模式须**同时**满足安装 mistral_common 且当前 tokenizer 名称/revision 对应文件匹配 tekken.json 或 tokenizer.model.v*（另有 tokenizer.tok.json 的 tiktoken 分支）；慢 tokenizer 警告；lru_cache 对象复用仅在缓存包装入口（cached_get_tokenizer），直接调用不共享该契约；vllm/transformers_utils/tokenizer.py 为指向新路径的 deprecation shim（为 lm-eval 兼容保留）。不证明各 tokenizer 类实现的正确性。
+- id: src.vllm.readiness-health-v0-14
+  title: vLLM v0.14.0 health/ready 探针固定源码切面
+  url: https://github.com/vllm-project/vllm/blob/b17039bccc17b94a2ea107272ad7bc93508708df/vllm/entrypoints/serve/instrumentator/health.py
+  kind: repository
+  registered_at: '2026-10-20'
+  revision: b17039bccc17b94a2ea107272ad7bc93508708df（另含 entrypoints/serve/__init__.py、entrypoints/api_server.py、entrypoints/grpc_server.py、v1/engine/async_llm.py）
+  license:
+    status: partial
+    scopes:
+    - scope: 固定 commit 的仓库源码；文件头 SPDX Apache-2.0
+      identifier: Apache-2.0
+      url: https://github.com/vllm-project/vllm/blob/b17039bccc17b94a2ea107272ad7bc93508708df/LICENSE
+    notes: 仅链接与原创归纳。
+  notes: Batch 26（T07-01）取证：OpenAI server 经 register_vllm_serve_api_routers→attach_health_router 挂载 /health，调用 engine_client.check_health()，EngineDeadError 时 503、否则 200——函数层只反映引擎错误标志，不重跑加载/warmup、不探测请求质量；**标准 OpenAI 入口在引擎构建与应用状态初始化完成后才开始提供 HTTP 服务**（run_server 构建顺序），该入口下 /health 在启动序列完成前不可达；legacy api_server 为另一进程形态，其 /health 无条件 200 只证明该 HTTP 进程存活；gRPC HealthCheck 的 healthy=!async_llm.errored。就绪判据应为启动序列完成＋确定输入请求成功，探针 200 不构成请求质量证据；uvicorn「Application startup complete」横幅属 uvicorn 标准行为未单独取证。
+- id: src.vllm.rocm-install-doc-v0-14
+  title: vLLM v0.14.0 ROCm 安装与 Feature x Hardware 文档
+  url: https://docs.vllm.ai/en/v0.14.0/getting_started/installation/gpu/
+  kind: documentation
+  registered_at: '2026-10-20'
+  revision: v0.14.0 documentation（GPU 安装页 AMD ROCm 节＋features 页 Feature x Hardware 矩阵；GPU 页 curl 字节快照，features 页两次 SSL 失败仅渲染取回）
+  license:
+    status: partial
+    scopes:
+    - scope: vLLM 仓库根许可证（文档站为生成站点）
+      identifier: Apache-2.0
+      url: https://github.com/vllm-project/vllm/blob/v0.14.0/LICENSE
+    notes: 生成站点不作为独立再分发许可依据；本库只链接并原创归纳。
+  notes: Batch 26（T07-01）取证：ROCm 6.3+ 配 torch 2.8.0+，MI350 需 ROCm 7.0+，Ryzen AI MAX/AI 300 需 7.0.2+；支持 gfx90a/942/950、Radeon RX 7900（gfx1100/1101）与 RX 9000（gfx1200/1201）、Ryzen AI（gfx1151/1150）；无预编译 ROCm wheel，须源码编译且文档声明 pip install . 对 ROCm 不可用，docker（rocm/vllm、rocm/vllm-dev）为推荐方式；ROCm Triton 指定 commit、ROCm flash attention v2.8.0 可选、AITER/MORI（EP/PD 分离）可选；PYTORCH_ROCM_ARCH 按架构设置。Feature x Hardware 矩阵 ROCm 行：✅ chunked prefill/prefix caching/LoRA/speculative decoding/CUDA graph/pooling/multimodal 等，❌ encoder-decoder 与 async output，❔ prompt-embeds；Volta 无 chunked prefill/prefix caching。**矩阵不覆盖加载格式与量化方法，不得从安装文档或矩阵推断 ROCm 的 loader/量化支持全集**。
+- id: src.ascend.mindie-llm-doc-latest
+  title: MindIE-LLM 官方文档站（模型支持列表＋快速入门，latest）
+  url: https://mindie-llm-doc.readthedocs.io/zh-cn/latest/user_guide/model_support_list/
+  kind: documentation
+  registered_at: '2026-10-20'
+  revision: latest 未定版；2026-10-20 取回（模型支持列表页页脚更新 2026-04-21；快速入门页同日）。**版本锚定 gate**：引用须带取回日期，定版引用待 T07-03 固定版本线后另行登记
+  license:
+    status: partial
+    scopes:
+    - scope: 文档站内容；MindIE-LLM 固定 commit README 声明文档按 CC BY-SA 4.0 提供
+      identifier: CC BY-SA-4.0
+      url: https://github.com/Ascend/MindIE-LLM/blob/69e5a5dd4b533eaffc7e198320435350825a36f7/README.md
+    notes: 声明取自固定 commit 的 README；README 对"本文档"的声明不自动覆盖站点全部页面与第三方内容，具体页面另计；未搬运原文，仅链接与原创归纳。
+  notes: Batch 26（T07-01）取证：模型支持列表为两级分级（充分验证支持/仅功能支持），逐模型给出最大上下文与 W8A8/W4A8/W8A16/LoRA/atbgraph/aclgraph 列及 Atlas 800I A2/A3、300I Duo 卡数（DeepSeek/Qwen/Llama/ERNIE/KIMI/GLM/Baichuan＋多模态族）。快速入门：modelWeightPath 读取权重目录 config.json 的 torch_dtype/vocab_size 字段并做属组/权限安全校验；worldSize 必须等于使用 NPU 数；trustRemoteCode 默认 false；服务化 config.json 权限 640；启动成功标志「Daemon start success!」；bin 目录 550 只读须在可写目录拉起（kernel_meta 生成）；--device 挂载须 rwm（rw 时 npu-smi 报错且 torch.npu.set_device 失败，A3 必现）；文档在特定容器部署语境给出切换用户后清理 /dev/shm 旧用户共享文件的示例——属有状态变更操作，沿用前须确认服务停妥、命名空间/归属、无其他消费者与既有授权，仅处理已识别的本实例遗留对象，不作为未限定环境的通配删除处方；shm-size 随 DP 增大（2/4/8/16→2/3/5/9g）；容器组件路径（CANN/CANN-NNAL-ATB/MindIE/ATB Models）与 whl/run 两种安装形态；curl POST /generate 验证。权重文件格式的硬性要求该页未逐字声明（unknown）。与 hiascend 产品文档线（mindie/310 等）不互推。
+- id: src.ascend.mindie-llm-repo-69e5a5dd
+  title: MindIE-LLM 开源仓 master 固定快照
+  url: https://github.com/Ascend/MindIE-LLM/tree/69e5a5dd4b533eaffc7e198320435350825a36f7
+  kind: repository
+  registered_at: '2026-10-20'
+  revision: 69e5a5dd4b533eaffc7e198320435350825a36f7（master 分支快照，2026-10-20 取回；仓库无 release tag——这是版本 gate，定版待 T07-03）
+  license:
+    status: identified
+    scopes:
+    - scope: 仓库源码；README 另有声明的文档（CC BY-SA 4.0）与第三方内容除外，第三方依赖另计
+      identifier: MulanPSL-2.0
+      url: https://github.com/Ascend/MindIE-LLM/blob/69e5a5dd4b533eaffc7e198320435350825a36f7/LICENSE.md
+    notes: LICENSE.md（木兰宽松许可证第 2 版）已直接核对（SHA-256 前 16 位 1b783a52f139dfb8）；README 另声明文档站内容 CC BY-SA 4.0。仅链接与原创归纳。
+  notes: Batch 26（T07-01）取证：README 版本说明表 MindIE 软件 2.3.0↔CANN 8.5.0；架构为 Python 框架（mindie_llm）＋C++ 引擎（src：调度器 FCFS/PDDS/Layerwise、KV Cache 块管理 LRU/Prefix Cache/CoW、gRPC/HTTP server）；README 记录 2025-12 开源、2026-04 文档站上线。开源仓版本线与 hiascend 产品文档线（如 mindie/310）不互推；引擎内部实现（scheduler/block_manager/worker）属 T07-03 范围，本条仅锚定仓库身份与 README 口径。
+- id: src.ascend.mindio-ttp-constraints-mindxdl-600
+  title: MindIO TFT（TTP）约束限制页（MindX DL 6.0.0 文档）
+  url: https://www.hiascend.com/document/detail/zh/mindx-dl/600/clusterscheduling/ref/mindiottp/mindiotft005.html
+  kind: documentation
+  registered_at: '2026-10-20'
+  revision: MindX DL 6.0.0 文档线；2026-10-20 渲染取回（hiascend JS 页面，无字节快照）
+  license:
+    status: unknown
+    scopes: []
+    notes: 公开可读不代表允许全文再分发；本文仅链接与原创归纳。
+  notes: Batch 26（T06-08）取证：仅支持 A+K（Ascend+Kunpeng）组合硬件；Atlas 800 训练服务器（9000）不支持 MindIO UCE/ARF；仅支持 ZeRO-1 且总体要求 DP Size 为偶数，副本数为 2 时要求 DP Size>1、其他副本数要求 DP Size 能被副本数整除；开启 MoE 前要求稠密层 DP>1、开启后稠密层与稀疏层 DP 均>1；副本优化器在 ZeRO-1 基础上以算代传实现（减少 DP 域上优化器切分范围）；增加片上内存总量（GB）＝模型参数量 N（B＝十亿）×12×副本数，为全局总量，OOM 时按官方口径扩容；Controller 1 活跃＋2 备份，切换与临终保存需健康卡数>world_size/2；副本不完整、OS 分片长时修改或分片间 iteration 不一致（一致性校验失败）则临终 checkpoint 不生成；TTP 不使用 ACP 异步保存，直接写持久化存储，临终保存后结束训练进程；不支持级联故障（保存中再故障即失败）；ARF 需≥2 节点、不支持 Controller 所在节点故障与级联故障，ARF 失败由 MindCluster 接管。2026-10-20 审阅修订（T06-08-C01/C04）：第二次渲染取回复核原文，订正 DP 偶数条件层级（属 ZeRO-1 总体条件）、副本数 2 的条件（DP>1 而非偶数）、MoE 开启前/开启后口径（非"新版本后"）、以算代传用语与内存公式量纲（N 为模型参数量、结果为全局总量 GB）。**该页与 MindSpeed-LLM v2.2.0 的关系仅为 high_availability.md 外链锚定，MindX DL 6.0.0 与 MindSpeed-LLM v2.2.0 版本线不互推**；与 src.ascend.mindio-acp-v26.1.1（ACP 线）以「TTP 不走 ACP 异步保存」划界。
+- id: src.nvidia.megatron-checkpointing-core-v0.12.1
+  title: Megatron-LM core_v0.12.1 checkpoint 生成/加载固定源码
+  url: https://github.com/NVIDIA/Megatron-LM/blob/core_v0.12.1/megatron/training/checkpointing.py
+  kind: repository
+  registered_at: '2026-10-20'
+  revision: tag core_v0.12.1（MindSpeed-LLM v2.2.0 install_guide 明确 checkout 该 tag；另钉 megatron/core/dist_checkpointing/serialization.py）
+  license:
+    status: identified
+    scopes:
+    - scope: 固定 tag 源码；仓库根 LICENSE（NVIDIA BSD-3-Clause）
+      identifier: BSD-3-Clause
+      url: https://github.com/NVIDIA/Megatron-LM/blob/core_v0.12.1/LICENSE
+    notes: LICENSE 已从 codeload 快照直接核对（NVIDIA 三条款 BSD）；带独立声明的文件另计，仅链接与原创归纳。
+  notes: Batch 26（T06-08）取证：generate_state_dict 组装 args、checkpoint_version 3.0、iteration，按 ckpt_format 分支——torch_dist→sharded_state_dict()（model 与 optimizer 同规则），torch/torch_dcp→state_dict_for_save_checkpoint()/state_dict()；另含 opt_param_scheduler、rerun_state_machine、rng_state（optimizer/scheduler 与 RNG 组装受 no_save_optim/no_save_rng 控制）；完整 args 对象随状态保存，恢复端从中取回 consumed/skipped train samples 等计数并更新 microbatch 配置（L1357–1370）；use_dist_ckpt 形参已声明 deprecated。_load_base_checkpoint 按序判定：显式 ckpt_step 先行提供 iteration；其次存在非持久 checkpoint 且其 iteration 不小于当前有效 iteration 时直接采用（否则告警沿用持久版）；均未命中且无 tracker 文件才进入缺 checkpoint 分支（告警＋随机初始化，或 --exit-on-missing-checkpoint 退出）。find_checkpoint_rank_0/read_metadata 辅助。serialization.py 本轮仅哈希钉扎，load 路径正文撰写再读；torch_dcp 落盘布局与 PyTorch DCP 原生目录的互读性未核（unknown）。
+- id: src.pytorch.wheel-matrix-2.6.0
+  title: PyTorch 2.6.0 官方历史版本安装矩阵页
+  url: https://pytorch.org/get-started/previous-versions/
+  kind: documentation
+  registered_at: '2026-10-20'
+  revision: 2026-10-20 渲染取回（2.6.0 节；无字节快照）
+  license:
+    status: unknown
+    scopes: []
+    notes: 站点内容许可未确立；仅链接与原创归纳，不搬运命令块之外的内容。
+  notes: Batch 26（T06-08）取证：PyTorch 2.6.0 提供 ROCm 6.1 与 ROCm 6.2.4 wheel（均仅 Linux），索引 https://download.pytorch.org/whl/rocm6.1 与 …/rocm6.2.4；另有 CUDA 11.8/12.4/12.6 与 CPU 构建，配套 torchvision 0.21.0、torchaudio 2.6.0。发行面版本边界：wheel 存在性不构成 DCP 或任何分布式功能在 ROCm 的行为声明；ROCm 构建下进程组后端映射未取证（unknown）。
+- id: src.vllm.core-components-v0-14
+  title: vLLM v0.14.0 调度与 KV 管理组件固定源码切面
+  url: https://github.com/vllm-project/vllm/tree/b17039bccc17b94a2ea107272ad7bc93508708df/vllm/v1/core
+  kind: repository
+  registered_at: '2026-10-20'
+  revision: b17039bccc17b94a2ea107272ad7bc93508708df（含 v1/core/sched/（scheduler.py、interface.py、request_queue.py、async_scheduler.py）与 kv_cache_manager.py）
+  license:
+    status: partial
+    scopes:
+    - scope: 固定 commit 的仓库源码；带独立声明的文件和第三方内容另计
+      identifier: Apache-2.0
+      url: https://github.com/vllm-project/vllm/blob/b17039bccc17b94a2ea107272ad7bc93508708df/LICENSE
+    notes: 根许可沿用本库对该 commit 的已核对记录；本条仅覆盖列明文件的组件切面。
+  notes: Batch 26（T07-02）取证：Scheduler 实现 SchedulerInterface 抽象（AsyncScheduler 为其子类），schedule() 产出 SchedulerOutput，按 token 进度统一调度、先处理 running 请求；请求队列 SchedulingPolicy 枚举与 FCFS/Priority 两种 RequestQueue。chunked prefill 是否启用由最终配置与模型条件决定——EngineArgs 在 enable_chunked_prefill 未设置时按 model_config.is_chunked_prefill_supported 推导默认（generate/pooling 分别处理覆盖；SchedulerConfig dataclass 默认仅供测试、实际取值由 EngineArgs 决定，pooling 门控注释限其原上下文）；SchedulerConfig 区分 max_num_batched_tokens（单迭代 token 预算）与 max_num_seqs（单迭代 sequence 上限）。KVCacheManager（usage、prefix cache stats、get_computed_blocks、allocate_slots、free、remove_skipped_blocks）＋KVCacheBlocks 抽象，配套 block_pool/kv_cache_coordinator/single_type_kv_cache_manager 分层。已核局部抢占链：allocate_slots 返回 None 后按序选择抢占对象（PRIORITY 分支按 priority/arrival_time、另一分支取 running 尾部，scheduler.py L351–401），_preempt_request 释放 KV/encoder cache、置 PREEMPTED、放回 waiting（L800–819）。完整调度算法（token 预算实现细节、完整触发路径、async 模式语义）未全面核对。
+- id: src.vllm.platforms-cuda-rocm-v0-14
+  title: vLLM v0.14.0 CUDA/ROCm 平台实现固定源码切面
+  url: https://github.com/vllm-project/vllm/blob/b17039bccc17b94a2ea107272ad7bc93508708df/vllm/platforms/rocm.py
+  kind: repository
+  registered_at: '2026-10-20'
+  revision: b17039bccc17b94a2ea107272ad7bc93508708df（含 platforms/cuda.py 与 rocm.py）
+  license:
+    status: partial
+    scopes:
+    - scope: 固定 commit 的仓库源码；文件头 SPDX Apache-2.0
+      identifier: Apache-2.0
+      url: https://github.com/vllm-project/vllm/blob/b17039bccc17b94a2ea107272ad7bc93508708df/LICENSE
+    notes: 仅链接与原创归纳。
+  notes: Batch 26（T07-02）取证：CudaPlatform 的 get_device_capability/get_device_total_memory/get_current_memory_usage（torch.cuda.max_memory_allocated）/check_and_update_config 责任面；ROCm 平台的 supported_quantization 列表（含条件追加 bitsandbytes）、use_rocm_custom_paged_attention、"V0 attention backends have been removed" 提示、ViT 注意力后端支持集与断言。能力声明的代码层取证，运行行为未实测；与 src.vllm.platform-interface-0.14（抽象责任面）互补。
+- id: src.ascend.mindie-llm-src-69e5a5dd
+  title: MindIE-LLM 引擎组件源码固定切面（scheduler/block_manager/engine）
+  url: https://github.com/Ascend/MindIE-LLM/tree/69e5a5dd4b533eaffc7e198320435350825a36f7/src
+  kind: repository
+  registered_at: '2026-10-20'
+  revision: 69e5a5dd4b533eaffc7e198320435350825a36f7（master 快照，版本 gate 见 src.ascend.mindie-llm-repo-69e5a5dd）
+  license:
+    status: identified
+    scopes:
+    - scope: src/ 目录源码；根 LICENSE.md（木兰宽松许可证第 2 版）
+      identifier: MulanPSL-2.0
+      url: https://github.com/Ascend/MindIE-LLM/blob/69e5a5dd4b533eaffc7e198320435350825a36f7/LICENSE.md
+    notes: 同 commit LICENSE.md 已直接核对；第三方依赖与另有声明内容除外，仅链接与原创归纳。
+  notes: Batch 26（T07-02）取证：src/ 分层——scheduler（pre/post 双调度器＋policy 子树：Policy 基类与 PolicyType 枚举 FCFS/PRIORITY——枚举存在不证明 PRIORITY 已实现；可构造策略经 PolicyFactory：PnD/Flex 分支按 layerwiseDisaggregated 构造 LayerwiseFcfsPolicy 或 FcfsPolicy（工厂注释：当前 Prefill/Decode 只支持 FCFS 调度策略）、P/D 分支构造 PDDSPolicy、其余角色抛错；KVTransferSchedulePolicy 继承 KVTransferPolicy（PD 的 KV 迁移调度）；PolicyHelper；dynamic_batch_size/recorder 与 stage_policy 在 policy/ 下，latency_predictor 在 scheduler/ 下与其同级；PreemptionMode 枚举 NONE/SWAP/RECOMPUTE；SchedulerConfig（config_info.h）有 maxPrefillBatchSize/maxPrefillTokens/maxBatchSize/dynamicBatchSizeEnable 等字段——字段名不等于运行边界：非 chunked 初始预算取 max(maxSeqLen, maxPrefillTokens)（scheduler.cpp L297–308），开 chunked prefill 时 SchedulingBudget 将共享 maxNumBatchedTokens_ 置为 maxPrefillTokens、maxNumSeqs_ 置为 maxBatchSize（scheduling_budget.cpp L17–34；构造函数初始化 partialPrefillOccupiedBudgetPerSlot_ 表，但已核 GetPrefillSlots L44–72 中读取该表的动态分支在固定实现中不可达——chunked 且 prefillChunkSize≠0 返回该配置值、否则返回 maxPrefillTokens，实际调用方 policy_helper.cpp L100–106 取 min(待计算 token、剩余共享预算、GetPrefillSlots())，即已核路径为配置切块＋剩余预算裁剪，slot 表动态消费不作为机制依据），MIX 路径先 running 后 waiting 共用同一预算且 decode 同样累计（fcfs_policy.cpp L92–111/L325–337、policy_helper.cpp L48–55）；已核抢占模式选择与 RECOMPUTE 分支（置 WAITING、FreeSeq、状态重置，fcfs_policy.cpp L468–510；该片段无队列插入，完整再入队链未核））；block_manager（block_allocator/block_obj/block_table/block_tracker/copy_on_write_tracker/ref_counter/self_attn_block_manager——自回归 token 的 KV 分配/交换/回收，提供 prefix caching 与 CoW，cacheBlockSize 当前默认 128、cpu/npuBlockNum 由模型侧 CacheManager 计算、request_single_block_manager）；engine（llm_engine、layerwise_mixin、lora_manager、buffered_responser、construct_execute_request、seq_group_builder_from_infer_req、model_exec_output_handler）；另有 config_manager/executor/kernels/llm_manager(+v2)/load_balance/py_interface/sequence/server/utils。类结构、可构造路径与有限调度语义级取证：PRIORITY 实现、抢占触发条件、分配算法、llm_manager 与 v2 并存关系未核（unknown）。文件 SHA-256 见 docs/research/batch-26-t07-02-sources.md。Batch 26（T07-03）补充：examples/atb_models/examples/models/qwen/README.md（SHA-256 前 16 位 09941aede58df7cc）逐模型特性矩阵（800I A2 与 300I Duo 的 TP world size、FP16/BF16/PagedAttention/W8A8/W8A16/KV cache 量化/稀疏量化/MOE 量化/MindIE Service/长序列/prefix_cache/FA3/functioncall/MultiLoRA）。与模型支持列表逐项对照（Qwen2-7B-Instruct，审阅修订 T07-03-C05）：共同证据仅 W8A8 两表均支持；**卡数差异未消解**——README 行 A2 TP 1/2/4/8、300I Duo TP 2/4/8（README 注明为对话测试可跑通配置、需考虑输入长度内存占用），支持列表为 A2 1/2/4、300I Duo 1/2、A3 1/2；两表口径不同，不取并集、不判某表过期；prefix_cache/MindIE Service 列仅 README 有不能互证。qwen/ 为文件目录（README＋convert_quant_weight 脚本＋校准 prompt anti_prompt_pdmix/calib_prompt_14b/72b.json，无子目录）；父目录 models/ 共 36 个条目＝34 个模型目录＋2 个 Python 工具文件（审阅修订 T07-03-C08）。README 另注 Qwen2 需 transformers≥4.40.1、7B 建议 BF16、300I Duo 仅 FP16。
+- id: src.ascend.mindie-llm-docs-69e5a5dd
+  title: MindIE-LLM 仓内文档树固定快照（架构/配置/PD/日志/版本说明书）
+  url: https://github.com/Ascend/MindIE-LLM/tree/69e5a5dd4b533eaffc7e198320435350825a36f7/docs
+  kind: repository
+  registered_at: '2026-10-20'
+  revision: 69e5a5dd4b533eaffc7e198320435350825a36f7（master 快照；release_notes 自述 MindIE LLM 3.1.0 正式版，配套 CANN 9.0.1/MindCluster 26.0.0/Ascend Extension for PyTorch 26.0.0，兼容矩阵见 notes；README 版本表 2.3.0↔CANN 8.5.0 与 release_notes 3.1.0 数值不同（未裁定，采信 release_notes 作文档线））
+  license:
+    status: partial
+    scopes:
+    - scope: 仓内 docs/ Markdown；README 声明文档按 CC BY-SA 4.0 提供
+      identifier: CC BY-SA-4.0
+      url: https://github.com/Ascend/MindIE-LLM/blob/69e5a5dd4b533eaffc7e198320435350825a36f7/README.md
+    notes: 声明取自固定 commit README 对"本文档"的表述，范围解释保留；具体页面第三方内容另计；仅链接与原创归纳。
+  notes: Batch 26（T07-03）取证（文件 SHA-256 见 docs/research/batch-26-t07-03-sources.md）：architecture_overview.md 四层架构（Server 服务化/OpenAI-vLLM-Triton 协议经 Endpoint；LLM Manager＝interface＋engine 编排 scheduler/executor/worker＋block manager＋kv connector；Text Generator＝preprocess/generate/postprocess，SpecDecoding/ChunkPrefill；Modeling＝CustomLayer＋Compilation，ACLGraph/ATBGraph）与 Python 核/C++ 核双层目录；service_parameter_configuration.md 的 config.json 语义（读取先校验文件大小∈(0MB,10MB]；ServerConfig：metricsPort 1027 Prometheus、maxLinkNum 并发模型（并发 maxLinkNum＋排队 2×，第 3×+1 拒绝，推荐 300）、inferMode standard=PD混部/dmi=PD分离、openAiSupport=vllm 兼容且热更新、tokenTimeout/e2eTimeout 在 PD 分离无效、distDPServerEnabled 仅大规模 EP；ModelConfig：npuMemSize -1 自动分配（总内存×0.8(NPU_MEMORY_FRACTION)−权重−运行时−系统，超限启动失败/卡死；多模态不支持 -1；PD 分离仅 atb 可 -1）、backendType atb|torch、kv_trans_timeout（PD D 节点拉 KV，仅 PD 生效）/kv_link_timeout（通信域建立，重试至成功或超时）；ScheduleConfig：templateType Standard|Mix(SplitFuse)、cacheBlockSize [1,128] 默认 128 且 16 整数倍、maxPrefillBatchSize/maxPrefillTokens 谁先达到谁组 batch、prefill/decodePolicyType 只能 0=FCFS、templateType 与 prefill/decodeTimeMsPerReq 在 PD 分离无效；maxPreemptCount 配置声明 >0 时限制一轮调度最多抢占数且 cpuMemSize≠0（源码已核路径显示该计数门控 SWAP 模式选择——FCFS 抢占默认 RECOMPUTE、仅 swapNum<maxPreemptCount 且可换出改 SWAP，未见 >0 总开关，"0=关闭全部抢占"不成立，文档与源码口径分立）；maxFirstTokenWaitTime（PD 分离不生效；maxQueueDelayMicroseconds 原表无此声明）；worldSize 单机须等于 NPU 数、PD 分离 D 侧须与下发身份设置的卡数一致、多机由 ranktable 决定（npuDeviceIds/worldSize 失效）、多机仅 Atlas 800I A2 且最多 4 机 32 卡、不支持 300I Duo、各节点采样参数不一致可能卡死；3.1.0 叠加约束：PD 混部不能同时开 Prefix Cache、SplitFuse 与 DP>1（PD 分离不受限）；dmi 部署示例指向外部 MindIE Motor 开发指南（未取证）；服务入口分立——run 包工作目录为 {MindIE安装目录}/latest/mindie-service（在该目录 nohup ./bin/mindieservice_daemon > output.log 2>&1 & 后台启动，不能在 bin 目录启动），whl 包入口 mindie_llm_server（从安装目录开始，启动目录须可写）；抢占定向验证可观察日志字段 requestId/seqId/preempt mode/maxPreemptCount config/swapNum（观察项非结果）；HealthCheckConfig：npuUsageThreshold 0=关/[1,100]=阈值，周期性虚拟推理（单 Token）＋NPU 利用率→健康/繁忙/异常三态）；prefill_decode_mixed_deployment.md（单机/多机混部前提与步骤、MIES_CONFIG_JSON_PATH、modelWeightPath 下 config.json 属组一致/非软链接/≤750 否则 Server 启动失败、证书 chmod 400、msprechecker 预检建议、mindieservice_daemon 启动）；log_overview.md（日志格式含组件枚举 motor/server/llm/llmmodels/sd、审计/调试两类、错误码参考在 hiascend 产品线 mindie/300 未登记、动态日志）；offline_inference.md（ATB Models 纯模型约束）；release_notes.md（3.1.0 版本与兼容矩阵、"各组件需要配套使用，请勿跨版本混用"）。**版本 gate（有限证据，审阅修订 T07-03-C01）**：仓内有 Read the Docs/MkDocs 构建配置（.readthedocs.yaml＋mkdocs.yml，docs_dir 指向 docs/zh，未锁定部署 commit）；model_support_list 仓内版与 latest 站点渲染经 Qwen2-7B-Instruct 行核对一致——抽查页级一致，不构成整站对应 69e5a5dd 的全局映射；latest 引用按页＋取回日期记录，站点↔快照与源码/产品包版本映射 unknown。README 版本表（2.3.0↔8.5.0）与 release_notes（3.1.0）数值不同：何者过期为本文推断（来源未裁定），本库采信 release_notes 作文档线。
