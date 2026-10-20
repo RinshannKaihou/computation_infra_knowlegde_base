@@ -6356,8 +6356,8 @@ tasks:
   work_units: 2
 - id: T07-04
   title: 补齐量化、算子优化与支持冲突边界
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 27
   operation: revise
   content_type: concept
@@ -6450,8 +6450,8 @@ tasks:
   work_units: 1
 - id: T07-06
   title: 分布式推理布局与并行选择
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 27
   operation: new
   content_type: concept
