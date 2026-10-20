@@ -3778,7 +3778,7 @@ batches:
   conservative_wave: 12
 - number: 27
   title: 推理服务
-  status: planned
+  status: done
   task_refs:
   - T07-04
   - T07-05
@@ -3794,6 +3794,8 @@ batches:
   minimal_predecessor_batches:
   - 26
   conservative_wave: 13
+  completed_at: '2026-10-21'
+  completion_record: docs/research/batch-27-source-audit.md
 - number: 28
   title: 推理服务、全景与导航
   status: planned
@@ -6405,8 +6407,8 @@ tasks:
   work_units: 2
 - id: T07-05
   title: 推理输出质量的对照评估方法与案例
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 27
   operation: new
   content_type: procedure
@@ -6499,8 +6501,8 @@ tasks:
   work_units: 2
 - id: T07-07
   title: 补齐 PD connector 前提、指标与失败链
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 27
   operation: revise
   content_type: concept
