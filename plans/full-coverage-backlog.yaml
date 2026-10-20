@@ -3742,7 +3742,7 @@ batches:
   completion_record: docs/research/batch-24-source-audit.md
 - number: 25
   title: 训练与后训练
-  status: planned
+  status: done
   task_refs:
   - T06-04
   - T06-05
@@ -3760,7 +3760,7 @@ batches:
   conservative_wave: 12
 - number: 26
   title: 训练与后训练、推理服务
-  status: planned
+  status: done
   task_refs:
   - T06-08
   - T07-01
@@ -6161,8 +6161,8 @@ tasks:
   work_units: 1
 - id: T06-08
   title: 核验恢复状态与弹性训练的 v1 边界
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 26
   operation: revise
   content_type: concept
@@ -6214,8 +6214,8 @@ tasks:
   work_units: 2
 - id: T07-01
   title: 权重加载、引擎 ready 与启动失败诊断
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 26
   operation: new
   content_type: procedure
@@ -6263,8 +6263,8 @@ tasks:
   work_units: 2
 - id: T07-02
   title: 推理引擎组件与平台功能交集档案
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 26
   operation: new
   content_type: reference
@@ -6311,8 +6311,8 @@ tasks:
   work_units: 2
 - id: T07-03
   title: MindIE 推理执行与配置样板
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 26
   operation: new
   content_type: reference

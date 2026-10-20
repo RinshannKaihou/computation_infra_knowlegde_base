@@ -879,40 +879,38 @@ topics:
 - topic_id: '07.1'
   title: 模型加载、prefill、decode 与执行路径
   domain_code: '07'
-  coverage_status: partial
+  coverage_status: covered_basic
   core_scope: 说明权重加载、引擎 ready、prefill/decode 及请求结束的执行和状态边界
-  present_scope: prefill/decode/请求状态路径与启动期内存异常已说明
+  present_scope: prefill/decode/请求状态路径与启动期内存异常已说明；T07-01 补齐启动五阶段边界、load-format
+    分派与格式不可互推、TP/PP 装载机制与 dtype 三层、模型身份固定清单、health/ready 区分与三平台小模型验证计划
   evidence_refs:
   - overview.inference-lifecycle
   - inference.execution-and-kv-cache
+  - inference.model-loading-and-readiness
   - inference.ascend-inference-oom-triage
   background_refs: []
-  gaps:
-  - 缺少模型权重加载/格式/分片机制
-  - 缺少加载失败到 ready 的完整诊断与验证
-  - 不能把 KV 加载当权重加载
+  gaps: []
   followup_priority: normal
-  recommended_action: add_or_extend
-  closure_criteria: 补齐所列缺口，给出适用条件、精确来源、观察/判断方法及验证判据；需要真实结果时另登记复现证据。
+  recommended_action: maintain
+  closure_criteria: 基础缺口已于 Batch 26（T07-01）关闭；MindIE 权重格式硬性要求等 unknown 保留，真实环境验证另记。
 - topic_id: '07.2'
   title: 推理引擎及平台后端
   domain_code: '07'
-  coverage_status: partial
+  coverage_status: covered_basic
   core_scope: 说明推理引擎组件、平台后端、模型能力与支持条件，并比较实现边界
-  present_scope: 已有 vLLM 平台插件及 vLLM Ascend 固定功能/启动样板
+  present_scope: 已有 vLLM 平台插件及 vLLM Ascend 固定样板；T07-02 补齐三线组件分层对照、调度/KV 有限语义对照、
+    三平台特性交集档案与升级替换检查表；T07-03 补齐 MindIE 四层架构、config 语义、PD、日志与健康检查、Qwen 样板
   evidence_refs:
   - software-stack.layers-and-boundaries
-  - overview.inference-lifecycle
   - inference.execution-and-kv-cache
+  - inference.engine-backend-boundaries
+  - inference.mindie-execution-profile
   - inference.ascend-inference-oom-triage
   background_refs: []
-  gaps:
-  - 缺少引擎组件和后端执行基础
-  - 缺少 MindIE 等引擎实质内容与比较
-  - 缺少模型/硬件/功能交集档案
+  gaps: []
   followup_priority: normal
-  recommended_action: add_or_extend
-  closure_criteria: 补齐所列缺口，给出适用条件、精确来源、观察/判断方法及验证判据；需要真实结果时另登记复现证据。
+  recommended_action: maintain
+  closure_criteria: 基础缺口已于 Batch 26（T07-02/T07-03）关闭；MindIE 产品包范围等 unknown 保留，真实环境验证另记。
 - topic_id: '07.3'
   title: Batch、KV cache、内存与缓存管理
   domain_code: '07'
