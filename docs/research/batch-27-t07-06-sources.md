@@ -85,3 +85,36 @@ MindIE-LLM @69e5a5dd（docs/zh/user_guide/feature/）：
 - 无新增来源条目（本轮文件均落在既有三个固定快照登记的 scope 内）。
 - 扩展 2 项 notes：src.vllm.inference-v0-14（docs/serving/ 五页＋config/parallel.py）、src.ascend.mindie-llm-docs-69e5a5dd（并行特性 6 页＋冲突两处）；src.ascend.vllm-ascend-v0-14-0rc1 notes 补并行五行状态。
 - registry 维持 542 sources；T07-06 正文进入撰写轮。
+
+## 初审修订轮（2026-10-21，响应 batch-27-t07-06-codex-review.md 的 C01–C11）
+
+- C01：所有权表拆分纯独立副本 DP 与 MoE DP attention 两行（attention TP=1 跨 DP 复制/TP>1 组内分片、专家跨 EP_SIZE=TP×DP 组分片，ep_deployment.md L40–59）；正文补 TP=2/DP=4 组合示意（标注本库归纳）。
+- C02：CP 与 SP 拆行——ring 传 KV＋FA2 分块修正仅是 MindIE CP 页声明；SP 同步机制与权重切分该页未声明（unknown）；两者均"不支持 BF16"分别标注；与训练 SP 语义区分。
+- C03：world_size 口径限定——TP×PP 为字段说明（L238–239），实际赋值 L539–547 乘 prefill_context_parallel_size，external_launcher 再乘 DP；正文公式限 PCP=1 且非 external launcher。
+- C04：dcp 校验改引实际断言——arg_utils.py L1387–1395（TP 整除）、config/vllm.py L830–854（block_size ≥且整除 interleave，限 DCP>1）、config/model.py L1076–1098（GQA：TP>H、dcp≤TP//H、每 KV head 的 q head 数整除）；DCP>1 以 TP>H 为前提写入选型表。
+- C05：MindIE 配置层级逐字段分列（tp/dp/cp/sp 在 ModelConfig；moe_tp/moe_ep 在 ModelConfig 模型项；ep_level 在 models.deepseekv2；local tp 参数表写 parallel_options 而同页示例直挂 deepseekv2——两处层级写法不一致照录）。
+- C06：执行后端"多机默认 Ray"标注为指南口径；实现条件补 parallel.py L590–631（mp 起步、CUDA nnodes>1 选 mp、GPU 不足报错、ray 分支）；要求记录最终生效后端。
+- C07：VLLM_HOST_IP 表述更正——每节点设本节点自身可达地址（各节点值不同）并与该节点 Ray 一致。
+- C08：选型表容量区间修正（单卡放不下、单机多卡放得下→TP）；补比较维度段（跨机通信代价/扩展效率限制因素/尾延迟因素，标本库归纳框架、数值 unknown）。
+- C09：ROCm 段独立成文——已证 EPLB is_cuda_alike() 门控（parallel.py L325–338）与安装文档口径（AITER/MORI 可选、docker 推荐）；all2all 后端/DCP/RCCL 判据 unknown；该验收子项布局组合级证据缺位，列为待补（正文与 registry source_refs 补 src.vllm.rocm-install-doc-v0-14）。
+- C10：单副本失败补最小证据/验证设计（六步证据链＋通过/失败判据，区分纯 DP 副本与 MoE 共享专家组；未执行）；三项验证补共用固定口径。
+- C11：锚点更正——supported_features 并行五行在 L23–26/L31；async EPLB 在 parallel.py L85–88；MindIE 约束与冲突直接链接各特性页具体行；所有权表 PP 行标注本库归纳。注：C11 称"registry 未见 Ascend notes 并行五行补记"与实际不符——该补记在 src.ascend.vllm-ascend-v0-14-0rc1 notes 末段（"第二十七批（2026-10-21，T07-06）重读 supported_features.md 并行五行…"），本轮已核存在，请复核时按 registry 实际内容判定。
+
+## 复核修订轮（2026-10-21，响应 batch-27-t07-06-codex-recheck.md 的 C02/C03/C05/C06/C07/C09/C11 与 N01）
+
+- C02：正文"常见误解"补训练 SP 的普通链接（knowledge/06-training/parallelism-and-state.md）。
+- C03/C06/C07：registry 的 src.vllm.inference-v0-14 notes T07-06 段同步——world_size 加"字段说明/实际赋值（L539–547 乘 PCP、external_launcher 乘 DP）"限定；执行后端区分指南口径与实现条件（L590–631）并要求记录最终生效后端；VLLM_HOST_IP 改"每节点自身可达地址、各节点值不同"。
+- C05：撤回初审带入的"tensor_parallel.md 同页参数表与示例不一致"——该页参数表与示例（L77 起有 "parallel_options": {）一致；真实差异是 tensor_parallel.md（用 parallel_options）与 optimization_and_tuning.md L70–85 示例（直挂 deepseekv2）两页之间。正文与来源记录同步更正。
+- C09 最小补证（新增 4 文件取回，vLLM@b17039bc）：platforms/rocm.py（SHA-256 前 16 位 b7fcec9a5263d8f9；L161–169 dist_backend "nccl"/device_type "cuda"/CUDA_VISIBLE_DEVICES、L508–512 通信器类 CudaCommunicator）；distributed/device_communicators/cuda_communicator.py（531b9f74e55f7f29；L126–174 all_reduce 顺序路径与 TP 组注释）；utils/nccl.py（574c956318442918；L17–35 HIP→librccl.so.1、cuda→libnccl.so.2、VLLM_NCCL_SO_PATH 覆盖）；docs/getting_started/installation/gpu.rocm.inc.md（3f0c7129c7e08347；L87–115 AITER 自建/MORI 用于 EP 或 PD）。"单节点 Dense TP、PP=DP=DCP=1、EP 关闭"的平台→通信器→库→路径链条有实现级证据；其余 ROCm 组合仍 unknown。
+- N01：AITER（可选自建组件，branch/commit 自选，validated 版本见 Dockerfile.rocm_base）与 MORI（文档声明用于 EP/PD 分离，gfx942;gfx950）分开陈述，不再混述；AITER 布局依赖 unknown。
+- C11：supported_features CP 行另链 L31；expert_parallel.md L25（双机交换机）、context_parallel.md L32（切分仅 2）补行级锚点；层级表更正为两页差异并互链。**registry YAML 截断修复**：src.ascend.vllm-ascend-v0-14-0rc1 的 notes 为不带引号 plain scalar，"issue #1608" 起被截为注释、整段 T07-06 并行五行补记未进解析值——已改为块标量（|-），解析后确认补记完整（issue #1608 与并行五行均在 parsed notes 中）；同类历史截断 Batch 21 条目（"tracker #8914 未打开"）一并修复。教训：notes 含 # 或 : 时必须用引号/块标量（authoring-guide §3 既有警告适用于 registry）。
+
+## 第二轮复核修订（2026-10-21，响应 batch-27-t07-06-codex-recheck-2.md 的 C09/C11/N02）
+
+- C09 路径闭环：补库名→实际加载桥接（cuda_communicator.py L56–63 构造 PyNcclCommunicator→pynccl.py L90–105 禁用/加载失败检查→pynccl_wrapper.py L311–318 ctypes.CDLL）；三层口径（默认库名选择／满足条件可走的实现路径／现场实际命中须日志确认）；初始化前提（SymmMemCommunicator 要求 is_cuda() 不在 ROCm 构造、custom/quick 受 use_custom_allreduce＋world_size>1 门控、ROCm 分支注释＝MI300 系列，L65–90）；硬件/依赖文档边界（gpu.rocm.inc.md L3–14：ROCm 6.3+/torch 2.8+、gfx90a/942/950/RX/Ryzen AI 及各自 ROCm 版本要求）。新增取回 pynccl.py（2194624b032558af）、pynccl_wrapper.py（bbbedf8b182a50ba）、gpu_worker.py 不需要。
+- N02：安装三项分别锚定——docker 推荐 L3–6、无预编译 wheel L22–24、ROCm Triton 固定 commit（f9e5bf54）L47–64；L87–115 仅归 AITER/MORI。
+- C11：tensor_parallel.md 补参数表 #L17-L34 与示例 #L75-L80 行级锚点。
+
+## 第三轮复核修订（2026-10-21，响应 batch-27-t07-06-codex-recheck-3.md 的 C09 残项）
+
+- "实际加载/实际库"断言收紧："库加载层"更名"库名选择层"——无覆盖项时 HIP 构建默认**返回** librccl.so.1（覆盖优先）；实际加载指向 pynccl_wrapper 的 ctypes.CDLL，且以 PyNcclCommunicator 初始化成功为前提（available 之后仍须 unique ID、同步、ncclCommInitRank、warmup all_reduce，pynccl.py L104–147）；进入普通 pynccl all_reduce 还须前序优化分支（symm-mem/quick/custom）未返回（cuda_communicator.py L126–174）。正文与 registry 有效 notes 同步收紧。

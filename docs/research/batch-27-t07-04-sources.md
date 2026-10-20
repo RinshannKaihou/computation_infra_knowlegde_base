@@ -104,3 +104,24 @@ MindIE-LLM @69e5a5dd（docs/zh/user_guide/ 下）：
 - 新登记 4 项：src.arxiv.awq-2306.00978、src.arxiv.gptq-2210.17323、src.arxiv.smoothquant-2211.10438（论文，abs 页摘要级，arXiv non-exclusive license 口径）＋ src.ascend.msmodelslim-msit（ModelSlim 工具仓入口，未固定 commit）。
 - 扩展 3 项 notes：src.vllm.inference-v0-14（量化 README 表/kvcache/fp8/quark/auto_awq/gptqmodel 页＋awq/gptq/fp8/kv_cache/config.model 实现）、src.ascend.vllm-ascend-v0-14-0rc1（quantization.md/supported_models.md/评估指南四份）、src.ascend.mindie-llm-docs-69e5a5dd（量化特性 9 页＋optimization_and_tuning）。
 - registry 538→542；T07-04 正文进入撰写轮。
+
+## 初审修订轮（2026-10-21，响应 batch-27-t07-04-codex-review.md 的 C01–C13）
+
+- C01/C02：来源记录与 registry 中"默认切 gptq_marlin/gptq_bitblas""ROCm 走 AITER 是自动的"等表述改为条件口径（警告建议＋override 条件；AITER 为谓词门控，谓词不通过时路径 unknown）；补充 gptq_marlin.py L215–240/L272–295 与 _aiter_ops.py L37–49/L829–831/L874–882 坐标。
+- C03：accumulation 单列——本轮所有 dtype 证据（quant_bias int32、deq_scale int64/fp32、反量化操作数）均为参数保存/操作数类型，不证明 MatMul/attention 累加器精度；累加精度 unknown。
+- C04：AWQ"显著通道缩放"从粒度表移出，标注为量化前预处理变换；"约 1%"按摘要口径为显著**权重**比例；产物布局引 awq.py L184–242 的 group_size 证据。
+- C05：GPTQ 机制收缩为摘要级（一次性权重量化＋近似二阶信息）；OBS 渊源/逐行/补偿细节标未取证。
+- C06：上游硬件表改为逐行忠实转述（GPTQ Volta ✅、BitBLAS 与 BitBLAS(GPTQ) 分行等）。
+- C07：E4M3 动态范围同快照冲突（kvcache.md ±240 vs fp8.md ±448）按两说并存记录，不裁定。
+- C08：MindIE 表"未单列"字段改标"该页未声明（unknown）"；dtype 列改"源权重/运行口径"并说明三类信息不互推。
+- C09：Grouped MatMul 出处更正为 feature/expert_parallel.md L13–14（限 DeepSeek-V3/R1、专家并行数>32）；补 Quark 融合反量化与 MindIE 通算融合两个融合例证；"KV 量化非延迟优化"限定为该快照 vLLM FP8 KV 实现。
+- C10：四份评估指南按工具分别记录路径覆盖（lm_eval 在线＋离线；evalscope/opencompass/ais_bench 为服务/API 路径）。
+- C11：FP8 E4M3 质量表述归属改为 vLLM 文档声明（所指研究未独立核对）。
+- C12：锚点更正——未知方法 ValueError 在 config/model.py L940–948；多模态 W8A8 行在 supported_models.md L77–81；MindIE 冲突两页补 #L10/#L11 锚点。
+- C13：GPTQ v2 与 SmoothQuant v7 的 registry 许可更正为 CC BY 4.0（版本页 license 链接复核）；AWQ v6 维持 arXiv non-exclusive。
+
+## 第二轮复核修订（2026-10-21，响应 batch-27-t07-04-codex-recheck-2.md 的 C09 残留）
+
+- 150MiB 归属更正：改为 compile_or_warm_up_model（gpu_worker.py L453–510）语义——非 enforce_eager 时实测 cuda_graph_memory_bytes；未显式指定 kv_cache_memory_bytes 时日志的 KV 配置建议值扣除权重＋峰值激活＋非 torch＋实测图内存＋150MiB 经验缓冲；determine_available_memory（L320–343）无该缓冲。registry 第九批旧摘要的"150MiB CUDAGraph 冗余"简写同步加更正括注。新增取回 gpu_worker.py（SHA-256 前 16 位 eb33b5f2bd389ac3，vLLM@b17039bc；复核者亦独立取回同哈希）。
+- FAQ 路径与归属更正：正确路径 docs/source/faqs.md（原 user_guide/faq/faqs.md 404）；FAQ 14（MLA head 比例限制）L152–160、FAQ 18（capture sizes stream 耗尽）L210–224；full graph OOM/挂起警告归 vllm_ascend/platform.py L308–326；FAQ 13 为一般 OOM 建议不属图模式。
+- "融合类优化改变内存布局"总括收缩为"按例证分别记录执行路径与内存影响"。

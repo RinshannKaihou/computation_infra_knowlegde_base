@@ -28,6 +28,7 @@ related_ids:
 - inference.ascend-inference-tail-latency-experiment
 - inference.ascend-inference-oom-triage
 - inference.quantization-and-quality
+- inference.distributed-inference-layouts
 - inference.pd-disaggregation
 ---
 
@@ -42,7 +43,8 @@ related_ids:
 - [推理引擎组件与平台功能交集档案](engine-backend-boundaries.md)：vLLM 上游/vLLM Ascend/MindIE 组件分层对照、调度与 KV 语义不互推、NVIDIA/AMD/Ascend 三份特性交集档案（支持/条件/未证实/冲突）与升级替换重核验检查表。
 - [MindIE 推理执行与配置样板](mindie-execution-profile.md)：MindIE LLM 3.1.0 文档线的四层执行架构、config.json 逐段语义（Server/Model/Schedule/HealthCheck）、PD 混部/分离、日志与三态健康检查、首失败边界与 Qwen 可追溯样板。
 - [推理延迟与吞吐指标字典](latency-metrics.md)。
-- [推理量化与输出质量验证](quantization-and-quality.md)：支持矩阵读法、质量验证证据与量化故障三层归因。
+- [推理量化与输出质量验证](quantization-and-quality.md)：量化机制（scale/粒度/校准）、格式–kernel–运行 dtype–accumulation 四层分立、优化开关≠命中、三平台支持矩阵与冲突保留、质量验证与三层归因。
+- [分布式推理布局与并行选择](distributed-inference-layouts.md)：DP/TP/PP/EP/SP/CP 的权重与 KV 所有权、KV 复制与 dcp、选型表、三平台布局限制与跨页冲突、跨机初始化与失败的可观察证据。
 - [Prefill/Decode 分离（PD 分离）与流量分配](pd-disaggregation.md)：动机与"不提升吞吐"的反面声明、vLLM connector 形态与外部代理职责、昇腾侧支持矩阵与限制。
 
 ## 本章范围
@@ -64,8 +66,8 @@ related_ids:
 - **07.1 模型加载、prefill、decode 与执行路径** — 已有[prefill/decode 基础草稿](execution-and-kv-cache.md)与[权重加载、ready 与启动失败诊断](model-loading-and-readiness.md)（vLLM v0.14.0 固定 commit＋MindIE 文档快照）。
 - **07.2 推理引擎及平台后端** — 已有[vLLM 与 vLLM Ascend 固定样板边界](execution-and-kv-cache.md)与[引擎组件与平台功能交集档案](engine-backend-boundaries.md)（三线组件对照＋三平台特性矩阵）。
 - **07.3 Batch、KV cache、内存与缓存管理** — 已有[KV cache、前缀复用与抢占说明](execution-and-kv-cache.md)与[引擎组件档案](engine-backend-boundaries.md)的调度/KV 语义对照；具体容量验证待补。
-- **07.4 量化、算子优化与输出质量验证** — 已有[推理量化与输出质量验证](quantization-and-quality.md)；各量化方法的细节约束与实测待补。
-- **07.5 分布式推理、PD 分离与通信依赖** — 已有[PD 分离与流量分配](pd-disaggregation.md)（vLLM v0.14.0 与 vLLM Ascend v0.14.0rc1 固定样板）；扩缩容与生产级路由待补。
+- **07.4 量化、算子优化与输出质量验证** — 已有[推理量化与输出质量验证](quantization-and-quality.md)（机制、四层分立、三平台矩阵与输出质量对照评估方法正文由后续任务交付）；昇腾侧量化实测待补。
+- **07.5 分布式推理、PD 分离与通信依赖** — 已有[分布式推理布局与并行选择](distributed-inference-layouts.md)（DP/TP/PP/EP/SP/CP 所有权与三平台限制）与[PD 分离与流量分配](pd-disaggregation.md)（vLLM v0.14.0 与 vLLM Ascend v0.14.0rc1 固定样板）；扩缩容与生产级路由待补。
 - **07.6 路由、流控、扩缩容与版本发布** — 待建设。
 - **07.7 TTFT、TPOT、吞吐、长尾与服务 SLO** — 已有[延迟与吞吐指标字典](latency-metrics.md)，已有[昇腾长尾诊断](ascend-inference-tail-latency-triage.md)、公开案例和负载实验设计；实测基线待补。
 - **07.8 OOM、请求失败、副本故障与服务恢复** — 已有[昇腾推理 OOM 诊断指南](ascend-inference-oom-triage.md)（按启动/图编译/prefill/decode/并发分阶段）；请求失败与副本恢复专题待补。
