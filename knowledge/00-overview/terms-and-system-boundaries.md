@@ -57,7 +57,7 @@ verification:
 | 设备（device） | 对主机可见、被驱动枚举、可被平台分配的计算端点 | 记录字段见[计算节点资源与拓扑参考](../01-hardware/resource-topology.md)；OS 设备节点、PCIe 端点、调度资源是同一物理实体在不同层的**映射候选**，但拆分、聚合或虚拟化会打破一一对应：例如 NVIDIA MIG 把一块物理 GPU 呈现为多个带独立 UUID 的 MIG 设备（[MIG Device Names](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/mig-device-names.html)，2026-10-08 观察），见[设备资源链](../05-cluster-platform/device-resource-chain.md)。不得以设备 ordinal 或设备节点数量推断物理端点或故障域数量 |
 | 板卡（card/module） | 承载芯片、内存与互联端口的可插拔实体（PCIe 卡、OAM 模块等） | 机型组成见[资源与拓扑参考](../01-hardware/resource-topology.md)；板卡可替换边界与故障域按机型手册 |
 | 节点（node/server） | 一台可独立安装 OS、拥有主机 CPU/内存/根复合体的服务器 | 同上；Kubernetes 的 worker node 指运行负载的节点机器（[Cluster Architecture](https://kubernetes.io/docs/concepts/architecture/)，2026-10-08 观察） |
-| 超节点（supernode/SuperPoD） | 厂商定义的、经节点内/柜内高速互联组织多台服务器的实体；组成、互联和维护边界按具体产品 | 主归属（2026-10-21 迁移，T01-05/T00-02 均已交付）：组成层次与机型样板见[计算节点资源与拓扑参考](../01-hardware/resource-topology.md)，三类参考架构与选择见[单机、集群与超节点的参考架构](reference-architectures.md)；未公开组成的产品不类推同构关系 |
+| 超节点（supernode） | 厂商定义的、经柜内或跨柜高速互联组织多台服务器/托盘的实体；组成、互联和维护边界按具体产品实现（Huawei SuperPoD、NVIDIA DGX SuperPOD 等为具体产品名，不是该通用概念的同义替换） | 主归属（2026-10-21 迁移，T01-05/T00-02 均已交付）：组成层次与机型样板见[计算节点资源与拓扑参考](../01-hardware/resource-topology.md)，三类参考架构与选择见[单机、集群与超节点的参考架构](reference-architectures.md)；未公开组成的产品不类推同构关系 |
 
 ### rank、worker、副本
 

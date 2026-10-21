@@ -42,8 +42,7 @@ policy:
   source_plan: plans/followup-source-acquisition.yaml
   scope_changes: 保留主题编号与任务ID；必要调整记录原因，同步路线图、任务/依赖/批次、主题映射与统计。
   mandatory_scope_gate: 必交分支的必要来源或真实证据不足时，保留 blocked_on_evidence / open；unknown 是边界记录，不自动把未交付的原范围改为 covered。
-  dependency_information: docs/batch-dependencies.md；机器可读视图 plans/batch-dependencies.yaml；以原 tasks[].depends_on
-    为权威。
+  dependency_information: docs/batch-dependencies.md；机器可读视图 plans/batch-dependencies.yaml；以原 tasks[].depends_on 为权威。
   parallel_execution: 批次依赖是保守聚合；可先做独立任务的来源准备，来源/输入及具体任务前置验收通过后推进该任务。context_topic_refs 不产生整主题等待；共享写入由同一集成角色串行处理。
 summary:
   topics: 63
@@ -824,9 +823,7 @@ topics:
     validation_refs: []
     status: closed
     closed_at: '2026-10-09'
-    closure_note: T02-04 交付 AMD ROCm 独立档案正文（ROCm Core SDK 10.1.0 × MI300X × Ubuntu 24.04.5 × amdgpu
-      31.60.0 文档样板）与 23 项独立来源登记，覆盖版本线/兼容矩阵/组件职责与版本/TheRock 打包/PyTorch 构建关系/安装验证入口/许可；兼容矩阵为
-      JS 选择器页未逐条件块独立核对、HIP/llvm 站标冲突、样板未实测等边界按审阅保留，档案为 documented 非 reproduced。
+    closure_note: T02-04 交付 AMD ROCm 独立档案正文（ROCm Core SDK 10.1.0 × MI300X × Ubuntu 24.04.5 × amdgpu 31.60.0 文档样板）与 23 项独立来源登记，覆盖版本线/兼容矩阵/组件职责与版本/TheRock 打包/PyTorch 构建关系/安装验证入口/许可；兼容矩阵为 JS 选择器页未逐条件块独立核对、HIP/llvm 站标冲突、样板未实测等边界按审阅保留，档案为 documented 非 reproduced。
   - audit_gap_index: 2
     gap_ref: 02.3-G2
     gap_text: 缺少三套栈的组成/能力对照
@@ -836,9 +833,7 @@ topics:
     validation_refs: []
     status: closed
     closed_at: '2026-10-09'
-    closure_note: T02-05 修订分层正文，交付编译/运行时/算子与数学库/通信/框架后端/引擎插件六职责域的三栈对照，证据态分列组件存在/平台声明/框架能力/实测（三栈实测均
-      not_run）；cuDNN/NCCL 独立于 CUDA Toolkit 按结构性负面证据表述，CANN 编译器组件职责页缺口与 CANN 8.3.RC1 精确 HDK/OS
-      交集 blocked 保留。
+    closure_note: T02-05 修订分层正文，交付编译/运行时/算子与数学库/通信/框架后端/引擎插件六职责域的三栈对照，证据态分列组件存在/平台声明/框架能力/实测（三栈实测均 not_run）；cuDNN/NCCL 独立于 CUDA Toolkit 按结构性负面证据表述，CANN 编译器组件职责页缺口与 CANN 8.3.RC1 精确 HDK/OS 交集 blocked 保留。
   - audit_gap_index: 3
     gap_ref: 02.3-G3
     gap_text: 现有两平台档案不能代替完整支持矩阵
@@ -857,9 +852,7 @@ topics:
   - 模型审阅、source_checked 和方法定义均不等于 reproduced；硬件实际验证及真实环境档案分别保留状态。
   content_acceptance_batch: 16
   content_acceptance_status: accepted
-  content_acceptance_note: 2026-10-09 主题范围复核通过（docs/topic-coverage-audit.md、plans/topic-coverage.yaml 升为已覆盖基础）；CANN
-    编译器组件职责页缺口、CANN 8.3.RC1 精确 HDK/OS 交集（blocked）、ROCm 10.1.0 兼容矩阵选择器页未逐条件块独立核对、ROCm
-    torch.compile 专项文档缺失、HIP/llvm 站标冲突等证据边界保留在档案与对照正文内；三栈对照限所选文档样板，未实测。
+  content_acceptance_note: 2026-10-09 主题范围复核通过（docs/topic-coverage-audit.md、plans/topic-coverage.yaml 升为已覆盖基础）；CANN 编译器组件职责页缺口、CANN 8.3.RC1 精确 HDK/OS 交集（blocked）、ROCm 10.1.0 兼容矩阵选择器页未逐条件块独立核对、ROCm torch.compile 专项文档缺失、HIP/llvm 站标冲突等证据边界保留在档案与对照正文内；三栈对照限所选文档样板，未实测。
   validation_refs:
   - V01
   retained_background_ids: []
@@ -891,10 +884,7 @@ topics:
     validation_refs: []
     status: closed
     closed_at: '2026-10-09'
-    closure_note: T02-06 交付机制正文（torch.compile/Dynamo/Inductor、CUDA Graphs 手动路径与 CUDAGraph
-      Trees、TorchNPU/TorchAir 与 CANN 图模式、HIP graphs、编译缓存组成/身份/落盘与开关），固定 PyTorch 2.6 文档与 v2.6.0
-      源码 commit 1eba9b3、TorchNPU 7.2.0 与 CANN 8.2.RC1.alpha001、ROCm docs-10.1.0 样板；CUDA Graphs
-      约束两档与 likely 措辞、Mega-Cache API 非 2.6、guard 复合变化观察等边界按审阅修订口径保留。
+    closure_note: T02-06 交付机制正文（torch.compile/Dynamo/Inductor、CUDA Graphs 手动路径与 CUDAGraph Trees、TorchNPU/TorchAir 与 CANN 图模式、HIP graphs、编译缓存组成/身份/落盘与开关），固定 PyTorch 2.6 文档与 v2.6.0 源码 commit 1eba9b3、TorchNPU 7.2.0 与 CANN 8.2.RC1.alpha001、ROCm docs-10.1.0 样板；CUDA Graphs 约束两档与 likely 措辞、Mega-Cache API 非 2.6、guard 复合变化观察等边界按审阅修订口径保留。
   - audit_gap_index: 2
     gap_ref: 02.4-G2
     gap_text: 缺少 GPU 对应路径
@@ -905,9 +895,7 @@ topics:
     validation_refs: []
     status: closed
     closed_at: '2026-10-09'
-    closure_note: T02-06/T02-07 交付 NVIDIA/AMD GPU 对应路径（CUDA 12.8 捕获约束与 compute-sanitizer、ROCm
-      docs-7.14.0 调试工具链/HIP 错误码体系、HIP graphs 与消融对照），不以 CUDA 路径外推 HIP 适用；ROCm torch.compile
-      专项文档缺失（10.1.0 文档线无对应页）与 AMD 编译失败版本化排障手册未取得的边界保留。
+    closure_note: T02-06/T02-07 交付 NVIDIA/AMD GPU 对应路径（CUDA 12.8 捕获约束与 compute-sanitizer、ROCm docs-7.14.0 调试工具链/HIP 错误码体系、HIP graphs 与消融对照），不以 CUDA 路径外推 HIP 适用；ROCm torch.compile 专项文档缺失（10.1.0 文档线无对应页）与 AMD 编译失败版本化排障手册未取得的边界保留。
   - audit_gap_index: 3
     gap_ref: 02.4-G3
     gap_text: 缺少编译缓存与性能/正确性权衡及独立案例
@@ -918,9 +906,7 @@ topics:
     validation_refs: []
     status: closed
     closed_at: '2026-10-09'
-    closure_note: T02-06 交付编译缓存组成/身份/落盘与开关、warmup/稳态、动态形状与 eager 对照方法（官方测试反例 A–D）；T02-07
-      交付主案例 pytorch#188355 + PR#188641（观察/归因/修复三层，v2.14.0 起含修复、回归测试 @skipIfRocm）与对照案例
-      pytorch#193735（未复现关闭）；guard 值独立入 key 未证明、冷缓存两维度、禁用开关限 Inductor 层等边界按审阅修订口径保留，案例为来源整理非本地复现。
+    closure_note: T02-06 交付编译缓存组成/身份/落盘与开关、warmup/稳态、动态形状与 eager 对照方法（官方测试反例 A–D）；T02-07 交付主案例 pytorch#188355 + PR#188641（观察/归因/修复三层，v2.14.0 起含修复、回归测试 @skipIfRocm）与对照案例 pytorch#193735（未复现关闭）；guard 值独立入 key 未证明、冷缓存两维度、禁用开关限 Inductor 层等边界按审阅修订口径保留，案例为来源整理非本地复现。
   closure_criteria:
   - 正文缺口须由实际交付的内容与精确来源验收关闭，新增/修订内容与已有证据组成五方面阅读闭环；真实证据缺口仅在独立验证轨道完成后关闭。
   - 精确上游证据、平台/版本/工具边界和未知项可追溯；资料尚未取得的 blocked_on_evidence 子项不能因任务规划或文档编写被标已覆盖。
@@ -928,9 +914,7 @@ topics:
   - 模型审阅、source_checked 和方法定义均不等于 reproduced；硬件实际验证及真实环境档案分别保留状态。
   content_acceptance_batch: 16
   content_acceptance_status: accepted
-  content_acceptance_note: 2026-10-09 主题范围复核通过（docs/topic-coverage-audit.md、plans/topic-coverage.yaml 升为已覆盖基础）；GPU
-    编译/图捕获/缓存路径与结论限固定文档样板与源码阅读、未实测（诊断文 not_verified），ROCm torch.compile
-    专项官方文档缺失、TorchAir 试验特性与产品矩阵限定、主案例回归测试 @skipIfRocm（ROCm 侧保持 unknown）等边界保留；案例为来源整理，非本地复现。
+  content_acceptance_note: 2026-10-09 主题范围复核通过（docs/topic-coverage-audit.md、plans/topic-coverage.yaml 升为已覆盖基础）；GPU 编译/图捕获/缓存路径与结论限固定文档样板与源码阅读、未实测（诊断文 not_verified），ROCm torch.compile 专项官方文档缺失、TorchAir 试验特性与产品矩阵限定、主案例回归测试 @skipIfRocm（ROCm 侧保持 unknown）等边界保留；案例为来源整理，非本地复现。
   validation_refs: []
   retained_background_ids: []
 - topic_id: '02.5'
@@ -1099,8 +1083,7 @@ topics:
   domain_code: '03'
   baseline_coverage_status: partial
   delivery_scope: 解释节点内、节点间、超节点的物理互联和共享故障域，建立 NVIDIA 与 Ascend 的有限来源样板。; 给出路径图、选择/放置条件、拓扑观测、链路/热点候选检查与独立验证入口。
-  platform_scope: NVIDIA/NCCL、AMD/ROCm/RCCL、Ascend/CANN/HCCL 分别选有限版本资料样板；以 IB/RoCE 和一组 NIC/交换机文档说明网络。节点内 NVLink/NVSwitch
-    与 HCCS/选定超节点分别取证。generic 仅为机制抽象；未获取的型号/版本/跨库兼容仍未知。
+  platform_scope: NVIDIA/NCCL、AMD/ROCm/RCCL、Ascend/CANN/HCCL 分别选有限版本资料样板；以 IB/RoCE 和一组 NIC/交换机文档说明网络。节点内 NVLink/NVSwitch 与 HCCS/选定超节点分别取证。generic 仅为机制抽象；未获取的型号/版本/跨库兼容仍未知。
   required_aspects:
   - 原理与边界
   - 设计与使用
@@ -1148,8 +1131,7 @@ topics:
   domain_code: '03'
   baseline_coverage_status: missing
   delivery_scope: 完成 Ethernet/IB/RoCE/RDMA 协议、verbs/QP/CQ/MR 和完成/错误语义。; 为 Linux/NIC/交换机各选版本化资料，形成 IB/RoCE 独立基线、拥塞/配置异常与恢复验证方法。
-  platform_scope: NVIDIA/NCCL、AMD/ROCm/RCCL、Ascend/CANN/HCCL 分别选有限版本资料样板；以 IB/RoCE 和一组 NIC/交换机文档说明网络。节点内 NVLink/NVSwitch
-    与 HCCS/选定超节点分别取证。generic 仅为机制抽象；未获取的型号/版本/跨库兼容仍未知。
+  platform_scope: NVIDIA/NCCL、AMD/ROCm/RCCL、Ascend/CANN/HCCL 分别选有限版本资料样板；以 IB/RoCE 和一组 NIC/交换机文档说明网络。节点内 NVLink/NVSwitch 与 HCCS/选定超节点分别取证。generic 仅为机制抽象；未获取的型号/版本/跨库兼容仍未知。
   required_aspects:
   - 原理与边界
   - 设计与使用
@@ -1196,8 +1178,7 @@ topics:
   domain_code: '03'
   baseline_coverage_status: partial
   delivery_scope: 建立实际物理路径、route/rail 与库测量层次映射。; 明确多租户争用/拥塞证据与跨节点、隔离/并发、消息大小基线矩阵及反例。
-  platform_scope: NVIDIA/NCCL、AMD/ROCm/RCCL、Ascend/CANN/HCCL 分别选有限版本资料样板；以 IB/RoCE 和一组 NIC/交换机文档说明网络。节点内 NVLink/NVSwitch
-    与 HCCS/选定超节点分别取证。generic 仅为机制抽象；未获取的型号/版本/跨库兼容仍未知。
+  platform_scope: NVIDIA/NCCL、AMD/ROCm/RCCL、Ascend/CANN/HCCL 分别选有限版本资料样板；以 IB/RoCE 和一组 NIC/交换机文档说明网络。节点内 NVLink/NVSwitch 与 HCCS/选定超节点分别取证。generic 仅为机制抽象；未获取的型号/版本/跨库兼容仍未知。
   required_aspects:
   - 原理与边界
   - 设计与使用
@@ -1258,8 +1239,7 @@ topics:
   domain_code: '03'
   baseline_coverage_status: partial
   delivery_scope: 覆盖核心 collective/P2P 原语数据流、ring/tree 有假设的代价模型。; 将原语映射到 DP/TP/PP/EP 工作负载、观测、契约异常和正确性/性能验证。
-  platform_scope: NVIDIA/NCCL、AMD/ROCm/RCCL、Ascend/CANN/HCCL 分别选有限版本资料样板；以 IB/RoCE 和一组 NIC/交换机文档说明网络。节点内 NVLink/NVSwitch
-    与 HCCS/选定超节点分别取证。generic 仅为机制抽象；未获取的型号/版本/跨库兼容仍未知。
+  platform_scope: NVIDIA/NCCL、AMD/ROCm/RCCL、Ascend/CANN/HCCL 分别选有限版本资料样板；以 IB/RoCE 和一组 NIC/交换机文档说明网络。节点内 NVLink/NVSwitch 与 HCCS/选定超节点分别取证。generic 仅为机制抽象；未获取的型号/版本/跨库兼容仍未知。
   required_aspects:
   - 原理与边界
   - 设计与使用
@@ -1312,8 +1292,7 @@ topics:
   domain_code: '03'
   baseline_coverage_status: partial
   delivery_scope: 分别形成 NCCL、RCCL、HCCL 的接口、支持条件、初始化/完成/错误和观测/测试档案。; 固定所选样板资料；HCCL API、Test 与目标环境的版本交集必须独立判断，未知支持不补写。
-  platform_scope: NVIDIA/NCCL、AMD/ROCm/RCCL、Ascend/CANN/HCCL 分别选有限版本资料样板；以 IB/RoCE 和一组 NIC/交换机文档说明网络。节点内 NVLink/NVSwitch
-    与 HCCS/选定超节点分别取证。generic 仅为机制抽象；未获取的型号/版本/跨库兼容仍未知。
+  platform_scope: NVIDIA/NCCL、AMD/ROCm/RCCL、Ascend/CANN/HCCL 分别选有限版本资料样板；以 IB/RoCE 和一组 NIC/交换机文档说明网络。节点内 NVLink/NVSwitch 与 HCCS/选定超节点分别取证。generic 仅为机制抽象；未获取的型号/版本/跨库兼容仍未知。
   required_aspects:
   - 原理与边界
   - 设计与使用
@@ -1372,8 +1351,7 @@ topics:
   domain_code: '03'
   baseline_coverage_status: covered
   delivery_scope: 维护已有通信域、rank/设备映射、调用/多组次序、进度/错误证据与两平台指南/案例/方案。; 加入 RCCL 独立契约入口并重新核对三库资料，使最终 v1 覆盖范围可追踪。
-  platform_scope: NVIDIA/NCCL、AMD/ROCm/RCCL、Ascend/CANN/HCCL 分别选有限版本资料样板；以 IB/RoCE 和一组 NIC/交换机文档说明网络。节点内 NVLink/NVSwitch
-    与 HCCS/选定超节点分别取证。generic 仅为机制抽象；未获取的型号/版本/跨库兼容仍未知。
+  platform_scope: NVIDIA/NCCL、AMD/ROCm/RCCL、Ascend/CANN/HCCL 分别选有限版本资料样板；以 IB/RoCE 和一组 NIC/交换机文档说明网络。节点内 NVLink/NVSwitch 与 HCCS/选定超节点分别取证。generic 仅为机制抽象；未获取的型号/版本/跨库兼容仍未知。
   required_aspects:
   - 原理与边界
   - 设计与使用
@@ -1408,8 +1386,7 @@ topics:
   domain_code: '03'
   baseline_coverage_status: partial
   delivery_scope: 覆盖超时、物理路径退化、热点/拥塞与库/网络/主机候选原因的区分。; 复用已有两个超时专题，补齐独立网络证据、一个上游退化案例与隔离/路径/争用对照方法。
-  platform_scope: NVIDIA/NCCL、AMD/ROCm/RCCL、Ascend/CANN/HCCL 分别选有限版本资料样板；以 IB/RoCE 和一组 NIC/交换机文档说明网络。节点内 NVLink/NVSwitch
-    与 HCCS/选定超节点分别取证。generic 仅为机制抽象；未获取的型号/版本/跨库兼容仍未知。
+  platform_scope: NVIDIA/NCCL、AMD/ROCm/RCCL、Ascend/CANN/HCCL 分别选有限版本资料样板；以 IB/RoCE 和一组 NIC/交换机文档说明网络。节点内 NVLink/NVSwitch 与 HCCS/选定超节点分别取证。generic 仅为机制抽象；未获取的型号/版本/跨库兼容仍未知。
   required_aspects:
   - 原理与边界
   - 设计与使用
@@ -1475,8 +1452,7 @@ topics:
   domain_code: '04'
   baseline_coverage_status: partial
   delivery_scope: 覆盖数据集/样本身份、变换、采样、多 worker/预取/缓存与恢复数据游标。; GPU/NPU 传输各自取证，补齐数据正确性、缓存失效和阶段等待的观察/诊断/验证。
-  platform_scope: Linux ext4/NVMe、Linux NFSv4.1、Ceph RGW 的 S3 API、Lustre 各选版本化官方文档/实现样板；Ceph RGW 不代表所有 S3 兼容实现。PyTorch/CUDA
-    与 TorchNPU/CANN 数据传输分别核对；实际存储配置与平台交集未知。
+  platform_scope: Linux ext4/NVMe、Linux NFSv4.1、Ceph RGW 的 S3 API、Lustre 各选版本化官方文档/实现样板；Ceph RGW 不代表所有 S3 兼容实现。PyTorch/CUDA 与 TorchNPU/CANN 数据传输分别核对；实际存储配置与平台交集未知。
   required_aspects:
   - 原理与边界
   - 设计与使用
@@ -1530,8 +1506,7 @@ topics:
   domain_code: '04'
   baseline_coverage_status: missing
   delivery_scope: 四类存储采用 Linux ext4/NVMe、Linux NFSv4.1、Ceph RGW/S3、Lustre 代表实现，每项绑定版本化材料。; 比较接口、缓存、一致性、持久性、容量与选型，提供独立基线、诊断、恢复/校验方法。
-  platform_scope: Linux ext4/NVMe、Linux NFSv4.1、Ceph RGW 的 S3 API、Lustre 各选版本化官方文档/实现样板；Ceph RGW 不代表所有 S3 兼容实现。PyTorch/CUDA
-    与 TorchNPU/CANN 数据传输分别核对；实际存储配置与平台交集未知。
+  platform_scope: Linux ext4/NVMe、Linux NFSv4.1、Ceph RGW 的 S3 API、Lustre 各选版本化官方文档/实现样板；Ceph RGW 不代表所有 S3 兼容实现。PyTorch/CUDA 与 TorchNPU/CANN 数据传输分别核对；实际存储配置与平台交集未知。
   required_aspects:
   - 原理与边界
   - 设计与使用
@@ -1583,10 +1558,8 @@ topics:
   title: 模型与 Checkpoint 的读写、传输和持久化
   domain_code: '04'
   baseline_coverage_status: partial
-  delivery_scope: 覆盖模型/Checkpoint 文件集合身份、暂存/传输/发布提交/持久化/读回与失败清理。; 复用 DCP/MindIO 写入与既有慢 I/O 指南；增加 NFS/RGW 语义与选定后端验证，引擎
-    ready 留给 07.1。
-  platform_scope: Linux ext4/NVMe、Linux NFSv4.1、Ceph RGW 的 S3 API、Lustre 各选版本化官方文档/实现样板；Ceph RGW 不代表所有 S3 兼容实现。PyTorch/CUDA
-    与 TorchNPU/CANN 数据传输分别核对；实际存储配置与平台交集未知。
+  delivery_scope: 覆盖模型/Checkpoint 文件集合身份、暂存/传输/发布提交/持久化/读回与失败清理。; 复用 DCP/MindIO 写入与既有慢 I/O 指南；增加 NFS/RGW 语义与选定后端验证，引擎 ready 留给 07.1。
+  platform_scope: Linux ext4/NVMe、Linux NFSv4.1、Ceph RGW 的 S3 API、Lustre 各选版本化官方文档/实现样板；Ceph RGW 不代表所有 S3 兼容实现。PyTorch/CUDA 与 TorchNPU/CANN 数据传输分别核对；实际存储配置与平台交集未知。
   required_aspects:
   - 原理与边界
   - 设计与使用
@@ -1647,8 +1620,7 @@ topics:
   domain_code: '04'
   baseline_coverage_status: partial
   delivery_scope: 串联数据/模型/Checkpoint 的内容身份、版本、端到端校验与应用一致性。; 区分 checksum/ETag/version/signature、scrub/读路径检查和训练状态验证，补齐四类代表后端条件与反例。
-  platform_scope: Linux ext4/NVMe、Linux NFSv4.1、Ceph RGW 的 S3 API、Lustre 各选版本化官方文档/实现样板；Ceph RGW 不代表所有 S3 兼容实现。PyTorch/CUDA
-    与 TorchNPU/CANN 数据传输分别核对；实际存储配置与平台交集未知。
+  platform_scope: Linux ext4/NVMe、Linux NFSv4.1、Ceph RGW 的 S3 API、Lustre 各选版本化官方文档/实现样板；Ceph RGW 不代表所有 S3 兼容实现。PyTorch/CUDA 与 TorchNPU/CANN 数据传输分别核对；实际存储配置与平台交集未知。
   required_aspects:
   - 原理与边界
   - 设计与使用
@@ -1710,8 +1682,7 @@ topics:
   domain_code: '04'
   baseline_coverage_status: partial
   delivery_scope: 给出四类后端独立负载/容量/元数据/缓存/争用/长尾基线口径。; 关联客户端→后端→worker/队列→传输/消费和 Checkpoint 各阶段的计时证据，验证处置时同时检查正确性与性能。
-  platform_scope: Linux ext4/NVMe、Linux NFSv4.1、Ceph RGW 的 S3 API、Lustre 各选版本化官方文档/实现样板；Ceph RGW 不代表所有 S3 兼容实现。PyTorch/CUDA
-    与 TorchNPU/CANN 数据传输分别核对；实际存储配置与平台交集未知。
+  platform_scope: Linux ext4/NVMe、Linux NFSv4.1、Ceph RGW 的 S3 API、Lustre 各选版本化官方文档/实现样板；Ceph RGW 不代表所有 S3 兼容实现。PyTorch/CUDA 与 TorchNPU/CANN 数据传输分别核对；实际存储配置与平台交集未知。
   required_aspects:
   - 原理与边界
   - 设计与使用
@@ -1770,8 +1741,7 @@ topics:
   domain_code: '04'
   baseline_coverage_status: partial
   delivery_scope: 区分挂载/客户端/后端可用性、降级/损坏和应用恢复状态错误。; 在四类实现资料支持范围内给出恢复条件、风险/停止/回服与故障域验证设计，保留一项官方案例/测试。
-  platform_scope: Linux ext4/NVMe、Linux NFSv4.1、Ceph RGW 的 S3 API、Lustre 各选版本化官方文档/实现样板；Ceph RGW 不代表所有 S3 兼容实现。PyTorch/CUDA
-    与 TorchNPU/CANN 数据传输分别核对；实际存储配置与平台交集未知。
+  platform_scope: Linux ext4/NVMe、Linux NFSv4.1、Ceph RGW 的 S3 API、Lustre 各选版本化官方文档/实现样板；Ceph RGW 不代表所有 S3 兼容实现。PyTorch/CUDA 与 TorchNPU/CANN 数据传输分别核对；实际存储配置与平台交集未知。
   required_aspects:
   - 原理与边界
   - 设计与使用
@@ -1830,8 +1800,7 @@ topics:
   domain_code: '05'
   baseline_coverage_status: partial
   delivery_scope: 覆盖镜像构建/制品身份、OCI/containerd、GPU CDI/toolkit 与 Ascend runtime/plugin 的暴露/权限/隔离职责。; 给出分别固定的运行环境清单、观测/异常、对照和已有案例入口；镜像和主机兼容独立判断。
-  platform_scope: Kubernetes/Kueue/Volcano/MindCluster 与 Slurm 各有独立生命周期/调度/恢复材料；NVIDIA GPU 与 Ascend NPU 的 runtime/plugin/shared-device
-    条件分别取证。Slurm NPU 或其他机型未证实支持保留 unknown，不能由 generic 推定兼容。
+  platform_scope: Kubernetes/Kueue/Volcano/MindCluster 与 Slurm 各有独立生命周期/调度/恢复材料；NVIDIA GPU 与 Ascend NPU 的 runtime/plugin/shared-device 条件分别取证。Slurm NPU 或其他机型未证实支持保留 unknown，不能由 generic 推定兼容。
   required_aspects:
   - 原理与边界
   - 设计与使用
@@ -1891,8 +1860,7 @@ topics:
   domain_code: '05'
   baseline_coverage_status: partial
   delivery_scope: 分别覆盖 Kubernetes Job/Pod/Kueue 与 Slurm Job/Step 生命周期、控制器/daemon 责任、退出/重试/取消与清理。; 从提交到应用进展及资源回收形成状态/证据/诊断/验证闭环，术语不机械等同。
-  platform_scope: Kubernetes/Kueue/Volcano/MindCluster 与 Slurm 各有独立生命周期/调度/恢复材料；NVIDIA GPU 与 Ascend NPU 的 runtime/plugin/shared-device
-    条件分别取证。Slurm NPU 或其他机型未证实支持保留 unknown，不能由 generic 推定兼容。
+  platform_scope: Kubernetes/Kueue/Volcano/MindCluster 与 Slurm 各有独立生命周期/调度/恢复材料；NVIDIA GPU 与 Ascend NPU 的 runtime/plugin/shared-device 条件分别取证。Slurm NPU 或其他机型未证实支持保留 unknown，不能由 generic 推定兼容。
   required_aspects:
   - 原理与边界
   - 设计与使用
@@ -1942,10 +1910,8 @@ topics:
   title: 设备发现、分配、健康上报与资源账本
   domain_code: '05'
   baseline_coverage_status: covered
-  delivery_scope: 保留现有 Kubernetes/Ascend 设备发现、健康、分配和账本链条。; 扩展 NVIDIA Plugin/CDI 与 Slurm GRES 独立视图，完成映射/健康变化/回收/平台恢复后校验的最终
-    v1 维护验收。
-  platform_scope: Kubernetes/Kueue/Volcano/MindCluster 与 Slurm 各有独立生命周期/调度/恢复材料；NVIDIA GPU 与 Ascend NPU 的 runtime/plugin/shared-device
-    条件分别取证。Slurm NPU 或其他机型未证实支持保留 unknown，不能由 generic 推定兼容。
+  delivery_scope: 保留现有 Kubernetes/Ascend 设备发现、健康、分配和账本链条。; 扩展 NVIDIA Plugin/CDI 与 Slurm GRES 独立视图，完成映射/健康变化/回收/平台恢复后校验的最终 v1 维护验收。
+  platform_scope: Kubernetes/Kueue/Volcano/MindCluster 与 Slurm 各有独立生命周期/调度/恢复材料；NVIDIA GPU 与 Ascend NPU 的 runtime/plugin/shared-device 条件分别取证。Slurm NPU 或其他机型未证实支持保留 unknown，不能由 generic 推定兼容。
   required_aspects:
   - 原理与边界
   - 设计与使用
@@ -1981,8 +1947,7 @@ topics:
   domain_code: '05'
   baseline_coverage_status: partial
   delivery_scope: 覆盖配额/排队/gang/准入/放置/拓扑，增加组启动失败/回退机制与有限配置策略例子。; Kubernetes/Kueue/Volcano/MindCluster 和 Slurm 两条路径分别说明观测、公平性/碎片权衡、异常与验证。
-  platform_scope: Kubernetes/Kueue/Volcano/MindCluster 与 Slurm 各有独立生命周期/调度/恢复材料；NVIDIA GPU 与 Ascend NPU 的 runtime/plugin/shared-device
-    条件分别取证。Slurm NPU 或其他机型未证实支持保留 unknown，不能由 generic 推定兼容。
+  platform_scope: Kubernetes/Kueue/Volcano/MindCluster 与 Slurm 各有独立生命周期/调度/恢复材料；NVIDIA GPU 与 Ascend NPU 的 runtime/plugin/shared-device 条件分别取证。Slurm NPU 或其他机型未证实支持保留 unknown，不能由 generic 推定兼容。
   required_aspects:
   - 原理与边界
   - 设计与使用
@@ -2038,10 +2003,8 @@ topics:
   title: 多租户、隔离、资源争用与容量管理
   domain_code: '05'
   baseline_coverage_status: missing
-  delivery_scope: 覆盖设备独占与 NVIDIA MIG/MPS/time slicing、Ascend 可核查共享模式及租户/主机/网络/存储边界。; 建立争用/公平性/容量准入观察与两租户对照、来源案例/反例；未证实
-    NPU 隔离保证保留未知。
-  platform_scope: Kubernetes/Kueue/Volcano/MindCluster 与 Slurm 各有独立生命周期/调度/恢复材料；NVIDIA GPU 与 Ascend NPU 的 runtime/plugin/shared-device
-    条件分别取证。Slurm NPU 或其他机型未证实支持保留 unknown，不能由 generic 推定兼容。
+  delivery_scope: 覆盖设备独占与 NVIDIA MIG/MPS/time slicing、Ascend 可核查共享模式及租户/主机/网络/存储边界。; 建立争用/公平性/容量准入观察与两租户对照、来源案例/反例；未证实 NPU 隔离保证保留未知。
+  platform_scope: Kubernetes/Kueue/Volcano/MindCluster 与 Slurm 各有独立生命周期/调度/恢复材料；NVIDIA GPU 与 Ascend NPU 的 runtime/plugin/shared-device 条件分别取证。Slurm NPU 或其他机型未证实支持保留 unknown，不能由 generic 推定兼容。
   required_aspects:
   - 原理与边界
   - 设计与使用
@@ -2100,8 +2063,7 @@ topics:
   domain_code: '05'
   baseline_coverage_status: missing
   delivery_scope: 分别定义 Kubernetes 和 Slurm 节点上下线、停止准入/drain/资源回收/重新准入。; 补齐组件版本变更、发布波次、失败停发/回退和跨层回服验收，真实演练单独推进。
-  platform_scope: Kubernetes/Kueue/Volcano/MindCluster 与 Slurm 各有独立生命周期/调度/恢复材料；NVIDIA GPU 与 Ascend NPU 的 runtime/plugin/shared-device
-    条件分别取证。Slurm NPU 或其他机型未证实支持保留 unknown，不能由 generic 推定兼容。
+  platform_scope: Kubernetes/Kueue/Volcano/MindCluster 与 Slurm 各有独立生命周期/调度/恢复材料；NVIDIA GPU 与 Ascend NPU 的 runtime/plugin/shared-device 条件分别取证。Slurm NPU 或其他机型未证实支持保留 unknown，不能由 generic 推定兼容。
   required_aspects:
   - 原理与边界
   - 设计与使用
@@ -2159,8 +2121,7 @@ topics:
   domain_code: '05'
   baseline_coverage_status: partial
   delivery_scope: 从调度/等待问题扩展到 Kubernetes API/etcd/控制器与 Slurm controller/worker/database 的故障。; 给出状态/证据分支、备份/恢复/作业重建风险、账本校验与应用持续进展验收。
-  platform_scope: Kubernetes/Kueue/Volcano/MindCluster 与 Slurm 各有独立生命周期/调度/恢复材料；NVIDIA GPU 与 Ascend NPU 的 runtime/plugin/shared-device
-    条件分别取证。Slurm NPU 或其他机型未证实支持保留 unknown，不能由 generic 推定兼容。
+  platform_scope: Kubernetes/Kueue/Volcano/MindCluster 与 Slurm 各有独立生命周期/调度/恢复材料；NVIDIA GPU 与 Ascend NPU 的 runtime/plugin/shared-device 条件分别取证。Slurm NPU 或其他机型未证实支持保留 unknown，不能由 generic 推定兼容。
   required_aspects:
   - 原理与边界
   - 设计与使用
@@ -2211,8 +2172,7 @@ topics:
   title: 训练计算过程与状态：权重、梯度、优化器、数据进度
   domain_code: '06'
   baseline_coverage_status: covered
-  delivery_scope: 训练 step、累积/更新/overflow 与状态提交；权重、梯度、optimizer/scheduler/scaler/RNG/数据及并行身份责任和完整 step 恢复契约。有限 v1
-    不承诺任意算法或 mid-step 无损恢复。
+  delivery_scope: 训练 step、累积/更新/overflow 与状态提交；权重、梯度、optimizer/scheduler/scaler/RNG/数据及并行身份责任和完整 step 恢复契约。有限 v1 不承诺任意算法或 mid-step 无损恢复。
   platform_scope:
     generic: 训练/后训练机制和状态契约；generic 不能证明某平台执行或兼容。
     nvidia: 锁定 PyTorch/CUDA/NCCL 和 Megatron Core 官方资料样板；训练工具/算子/性能结论限所选版本、模型和拓扑。
@@ -2238,8 +2198,7 @@ topics:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - 本主题已有基础 covered 只作为可复用输入；最终验收核对 v1 全五方面与新依赖/边界，不能以保留原状态代替验收。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
-  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh
-    审阅、修订与定向复核。
+  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
   content_acceptance_status: planned
@@ -2298,8 +2257,7 @@ topics:
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
-  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh
-    审阅、修订与定向复核。
+  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
   content_acceptance_status: planned
@@ -2356,8 +2314,7 @@ topics:
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
-  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh
-    审阅、修订与定向复核。
+  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
   content_acceptance_status: planned
@@ -2413,8 +2370,7 @@ topics:
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
-  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh
-    审阅、修订与定向复核。
+  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
   content_acceptance_status: planned
@@ -2475,8 +2431,7 @@ topics:
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
-  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh
-    审阅、修订与定向复核。
+  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
   content_acceptance_status: planned
@@ -2536,8 +2491,7 @@ topics:
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
-  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh
-    审阅、修订与定向复核。
+  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
   content_acceptance_status: planned
@@ -2574,8 +2528,7 @@ topics:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - 本主题已有基础 covered 只作为可复用输入；最终验收核对 v1 全五方面与新依赖/边界，不能以保留原状态代替验收。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
-  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh
-    审阅、修订与定向复核。
+  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
   content_acceptance_status: planned
@@ -2612,8 +2565,7 @@ topics:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - 本主题已有基础 covered 只作为可复用输入；最终验收核对 v1 全五方面与新依赖/边界，不能以保留原状态代替验收。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
-  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh
-    审阅、修订与定向复核。
+  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
   content_acceptance_status: planned
@@ -2624,8 +2576,7 @@ topics:
   title: 模型加载、prefill、decode 与执行路径
   domain_code: '07'
   baseline_coverage_status: partial
-  delivery_scope: 权重/tokenizer/config/格式/分片加载、引擎初始化/profiling/编译/warmup 到 ready，再连接 prefill/decode/请求结束；失败清理和确定输入验证，明确权重与
-    KV 不同。
+  delivery_scope: 权重/tokenizer/config/格式/分片加载、引擎初始化/profiling/编译/warmup 到 ready，再连接 prefill/decode/请求结束；失败清理和确定输入验证，明确权重与 KV 不同。
   platform_scope:
     generic: 请求、服务、缓存和可靠性共用模型，不推导特定 GPU/NPU 功能可用。
     nvidia: vLLM 上游 NVIDIA/CUDA 模型/功能/quantization/parallel/connector 限固定 ref 和官方硬件条件。
@@ -2673,8 +2624,7 @@ topics:
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
-  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh
-    审阅、修订与定向复核。
+  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
   content_acceptance_status: planned
@@ -2684,8 +2634,7 @@ topics:
   title: 推理引擎及平台后端
   domain_code: '07'
   baseline_coverage_status: partial
-  delivery_scope: vLLM 上游/Ascend 和 MindIE 的 frontend/scheduler/executor/worker/KV/backend 职责；NVIDIA/CUDA、AMD/ROCm、Ascend/CANN
-    的模型/硬件/功能交集和已知限制文档档案。
+  delivery_scope: vLLM 上游/Ascend 和 MindIE 的 frontend/scheduler/executor/worker/KV/backend 职责；NVIDIA/CUDA、AMD/ROCm、Ascend/CANN 的模型/硬件/功能交集和已知限制文档档案。
   platform_scope:
     generic: 请求、服务、缓存和可靠性共用模型，不推导特定 GPU/NPU 功能可用。
     nvidia: vLLM 上游 NVIDIA/CUDA 模型/功能/quantization/parallel/connector 限固定 ref 和官方硬件条件。
@@ -2735,8 +2684,7 @@ topics:
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
-  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh
-    审阅、修订与定向复核。
+  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
   content_acceptance_status: planned
@@ -2772,8 +2720,7 @@ topics:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - 本主题已有基础 covered 只作为可复用输入；最终验收核对 v1 全五方面与新依赖/边界，不能以保留原状态代替验收。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
-  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh
-    审阅、修订与定向复核。
+  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
   content_acceptance_status: planned
@@ -2832,8 +2779,7 @@ topics:
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
-  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh
-    审阅、修订与定向复核。
+  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
   content_acceptance_status: planned
@@ -2843,8 +2789,7 @@ topics:
   title: 分布式推理、PD 分离与通信依赖
   domain_code: '07'
   baseline_coverage_status: partial
-  delivery_scope: TP/PP/DP/EP 的布局、选型和观测，PD P/D/KV/connector/外部代理的职责、跨机前提/指标/完整失败链，vLLM NVIDIA/ROCm、Ascend 与 MindIE
-    分别取证。
+  delivery_scope: TP/PP/DP/EP 的布局、选型和观测，PD P/D/KV/connector/外部代理的职责、跨机前提/指标/完整失败链，vLLM NVIDIA/ROCm、Ascend 与 MindIE 分别取证。
   platform_scope:
     generic: 请求、服务、缓存和可靠性共用模型，不推导特定 GPU/NPU 功能可用。
     nvidia: vLLM 上游 NVIDIA/CUDA 模型/功能/quantization/parallel/connector 限固定 ref 和官方硬件条件。
@@ -2895,8 +2840,7 @@ topics:
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
-  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh
-    审阅、修订与定向复核。
+  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
   content_acceptance_status: planned
@@ -2952,8 +2896,7 @@ topics:
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
-  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh
-    审阅、修订与定向复核。
+  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
   content_acceptance_status: planned
@@ -2993,8 +2936,7 @@ topics:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - 本主题已有基础 covered 只作为可复用输入；最终验收核对 v1 全五方面与新依赖/边界，不能以保留原状态代替验收。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
-  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh
-    审阅、修订与定向复核。
+  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
   content_acceptance_status: planned
@@ -3057,8 +2999,7 @@ topics:
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
-  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh
-    审阅、修订与定向复核。
+  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
   content_acceptance_status: planned
@@ -3095,8 +3036,7 @@ topics:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - 本主题已有基础 covered 只作为可复用输入；最终验收核对 v1 全五方面与新依赖/边界，不能以保留原状态代替验收。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
-  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh
-    审阅、修订与定向复核。
+  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 32
   content_acceptance_status: planned
@@ -3155,8 +3095,7 @@ topics:
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
-  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh
-    审阅、修订与定向复核。
+  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 32
   content_acceptance_status: planned
@@ -3192,8 +3131,7 @@ topics:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - 本主题已有基础 covered 只作为可复用输入；最终验收核对 v1 全五方面与新依赖/边界，不能以保留原状态代替验收。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
-  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh
-    审阅、修订与定向复核。
+  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 32
   content_acceptance_status: planned
@@ -3230,8 +3168,7 @@ topics:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - 本主题已有基础 covered 只作为可复用输入；最终验收核对 v1 全五方面与新依赖/边界，不能以保留原状态代替验收。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
-  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh
-    审阅、修订与定向复核。
+  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 32
   content_acceptance_status: planned
@@ -3293,8 +3230,7 @@ topics:
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
-  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh
-    审阅、修订与定向复核。
+  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 32
   content_acceptance_status: planned
@@ -3353,8 +3289,7 @@ topics:
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
-  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh
-    审阅、修订与定向复核。
+  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 32
   content_acceptance_status: planned
@@ -3429,8 +3364,7 @@ topics:
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
-  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh
-    审阅、修订与定向复核。
+  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   - 文档覆盖关闭与真实环境证据关闭分别报告；验证方案 0/7 未执行状态保留，待实际环境准备和独立执行后才可满足实测证据目标。
   - G3 的实测证据在对应 V 工作包执行后逐环境验收；正文测试方法通过不关闭 G3。
@@ -3443,8 +3377,7 @@ topics:
   title: 可靠性指标、恢复损失、事故复盘与知识更新
   domain_code: 08
   baseline_coverage_status: partial
-  delivery_scope: 长期可靠性与有效产出/重算/重放/恢复损失统计，事故复盘→来源/正文修订→复核的维护方法；独立评测规范和公开教学/检索回归题组。真正独立材料/答案的外置隔离由 V12 管理，当前证据 gap
-    保持 open。
+  delivery_scope: 长期可靠性与有效产出/重算/重放/恢复损失统计，事故复盘→来源/正文修订→复核的维护方法；独立评测规范和公开教学/检索回归题组。真正独立材料/答案的外置隔离由 V12 管理，当前证据 gap 保持 open。
   platform_scope:
     generic: 跨领域证据/故障/验证/处置/维护与评测方法，不提供通用错误码或兼容保证。
     nvidia: 具体 GPU/DCGM/CUDA/NCCL 例子保留工具/硬件/版本/作者报告范围。
@@ -3495,8 +3428,7 @@ topics:
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
-  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh
-    审阅、修订与定向复核。
+  - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   - 独立诊断案例集的实物/隔离/评估证据由 V12 验收；公开教学或合成题组只用于示例，独立素材未获得时 G3 保持 open。
   content_acceptance_batch: 32
@@ -3798,7 +3730,7 @@ batches:
   completion_record: docs/research/batch-27-source-audit.md
 - number: 28
   title: 推理服务、全景与导航
-  status: planned
+  status: done
   task_refs:
   - T07-08
   - T07-09
@@ -3818,6 +3750,8 @@ batches:
   minimal_predecessor_batches:
   - 27
   conservative_wave: 14
+  completed_at: '2026-10-21'
+  completion_record: docs/research/batch-28-source-audit.md
 - number: 29
   title: 全景与导航、可靠性方法
   status: planned
@@ -4362,8 +4296,7 @@ tasks:
   - src.huawei.cann-82rc1alpha001-acl-runtime-memory
   - src.pytorch.cuda-semantics-2.6
   source_discovery:
-  - CUDA Driver/Runtime 初始化、stream/event 和错误语义；AscendCL 对应版本初始化、stream/event 与同步页及 HDK 驱动边界；AMD HIP/HSA runtime
-    官方接口；Linux ld.so 与进程库身份来源。
+  - CUDA Driver/Runtime 初始化、stream/event 和错误语义；AscendCL 对应版本初始化、stream/event 与同步页及 HDK 驱动边界；AMD HIP/HSA runtime 官方接口；Linux ld.so 与进程库身份来源。
   source_revision: null
   depends_on:
   - T01-04
@@ -4444,15 +4377,12 @@ tasks:
   - S21
   existing_source_ids: []
   source_discovery:
-  - AMD ROCm 官方版本化 release/system requirements/compatibility/install/validation 文档；HIP/HSA/rocBLAS/RCCL 组件资料；对应
-    PyTorch ROCm 发布与 wheel/容器资料。
+  - AMD ROCm 官方版本化 release/system requirements/compatibility/install/validation 文档；HIP/HSA/rocBLAS/RCCL 组件资料；对应 PyTorch ROCm 发布与 wheel/容器资料。
   source_revision: null
   depends_on: []
   context_topic_refs: []
   evidence_blockers:
-  - ROCm 官方 release 和具体设备/OS 样板需在领取任务时固定并登记，现有来源表没有可替代此取证的 AMD 来源。（2026-10-09 交付核对已解除：样板固定为
-    ROCm Core SDK 10.1.0 × MI300X × Ubuntu 24.04.5 × amdgpu 31.60.0，23 项来源完成登记，正文交付并通过 Batch 16
-    审阅；兼容矩阵选择器页未逐条件块独立核对、样板未实测等边界按审阅保留，见 docs/research/batch-16-rocm-profile-sources.md）
+  - ROCm 官方 release 和具体设备/OS 样板需在领取任务时固定并登记，现有来源表没有可替代此取证的 AMD 来源。（2026-10-09 交付核对已解除：样板固定为 ROCm Core SDK 10.1.0 × MI300X × Ubuntu 24.04.5 × amdgpu 31.60.0，23 项来源完成登记，正文交付并通过 Batch 16 审阅；兼容矩阵选择器页未逐条件块独立核对、样板未实测等边界按审阅保留，见 docs/research/batch-16-rocm-profile-sources.md）
   work_units: 2
 - id: T02-05
   title: CUDA、ROCm、CANN 三栈职责与能力对照
@@ -4521,8 +4451,7 @@ tasks:
   - src.ascend.torch-npu-v7.2.0-pytorch2.6.0
   - src.vllm.inference-v0-14
   source_discovery:
-  - PyTorch 对应 release 的 torch.compile/Dynamo/Inductor/graph breaks/缓存/CUDA graphs 官方文档和测试；CANN 图执行/算子编译与 TorchNPU
-    固定实现；ROCm PyTorch 编译支持文档。
+  - PyTorch 对应 release 的 torch.compile/Dynamo/Inductor/graph breaks/缓存/CUDA graphs 官方文档和测试；CANN 图执行/算子编译与 TorchNPU 固定实现；ROCm PyTorch 编译支持文档。
   source_revision: null
   depends_on:
   - T02-02
@@ -4558,17 +4487,13 @@ tasks:
   - src.pytorch.dispatcher-v2.6.0
   - src.pytorch.cuda-semantics-2.6
   source_discovery:
-  - PyTorch 官方 fixed release 的编译调试、graph break/guard/capture 约束与回归测试；AMD PyTorch 编译/调试官方说明；筛选一个证据完整的公开上游失败记录，不按
-    Issue 关闭判成功。
+  - PyTorch 官方 fixed release 的编译调试、graph break/guard/capture 约束与回归测试；AMD PyTorch 编译/调试官方说明；筛选一个证据完整的公开上游失败记录，不按 Issue 关闭判成功。
   source_revision: null
   depends_on:
   - T02-06
   context_topic_refs: []
   evidence_blockers:
-  - AMD GPU 编译路径和一项独立上游案例尚待取证，资料不够时不能从 NVIDIA 分支外推完成。（2026-10-09 交付核对已解除：AMD 侧以
-    ROCm docs-7.14.0 调试/日志/错误码与 docs-10.1.0 HIP graphs 取证，上游主案例 pytorch#188355 + PR#188641（合并
-    commit 0ab462c）与对照案例 pytorch#193735 交付，CUDA 路径未外推 HIP 适用；AMD 编译失败版本化排障手册未取得的边界保留，见
-    docs/research/batch-16-gpu-op-graph-triage-sources.md）
+  - AMD GPU 编译路径和一项独立上游案例尚待取证，资料不够时不能从 NVIDIA 分支外推完成。（2026-10-09 交付核对已解除：AMD 侧以 ROCm docs-7.14.0 调试/日志/错误码与 docs-10.1.0 HIP graphs 取证，上游主案例 pytorch#188355 + PR#188641（合并 commit 0ab462c）与对照案例 pytorch#193735 交付，CUDA 路径未外推 HIP 适用；AMD 编译失败版本化排障手册未取得的边界保留，见 docs/research/batch-16-gpu-op-graph-triage-sources.md）
   work_units: 2
 - id: T02-08
   title: 框架到设备后端的适配与能力核对
@@ -4638,8 +4563,7 @@ tasks:
   - src.pytorch.cuda-semantics-2.6
   - src.pytorch.profiler-2.6
   source_discovery:
-  - PyTorch 对应 release caching allocator/memory stats/snapshot、CUDA stream-ordered allocator/graphs 文档；AMD HIP memory/runtime
-    与 PyTorch ROCm allocator 说明和源码。
+  - PyTorch 对应 release caching allocator/memory stats/snapshot、CUDA stream-ordered allocator/graphs 文档；AMD HIP memory/runtime 与 PyTorch ROCm allocator 说明和源码。
   source_revision: null
   depends_on:
   - T02-02
@@ -4715,8 +4639,7 @@ tasks:
   - src.huawei.cann-82rc1alpha001-acl-runtime-memory
   - src.ascend.torch-npu-v7.2.0-pytorch2.6.0
   source_discovery:
-  - 目标 CANN 版本 AscendCL host memory/memcpy async/stream synchronize/event 页及相应源码/样例；TorchNPU 对应 pinned memory、non_blocking
-    和 stream 接口的官方说明/测试。
+  - 目标 CANN 版本 AscendCL host memory/memcpy async/stream synchronize/event 页及相应源码/样例；TorchNPU 对应 pinned memory、non_blocking 和 stream 接口的官方说明/测试。
   source_revision: null
   depends_on:
   - T02-02
@@ -5501,8 +5424,7 @@ tasks:
     state: planned_new
   objective: 建立独立 Slurm 有限样板：控制器/节点守护进程、Job/Step、GRES/TRES、分区/QOS/队列与提交到回收的状态。
   acceptance:
-  - 固定 Slurm release/commit 与官方文档，解释 slurmctld/slurmd/slurmdbd、Job/Step、pending/running/completing/terminal、cancel/requeue
-    与资源清理。
+  - 固定 Slurm release/commit 与官方文档，解释 slurmctld/slurmd/slurmdbd、Job/Step、pending/running/completing/terminal、cancel/requeue 与资源清理。
   - 说明 GRES/TRES、设备 autodetect/binding、cgroup 和健康/节点状态的职责；一种 NVIDIA GPU 条件以官方证据为例，NPU 插件/兼容没有证据即 unknown。
   - 分别给出 Slurm 状态、等待原因、配额/优先级/预留、节点 DRAIN/DOWN/RESUME 与成组资源条件，不能套用 K8s/Kueue/Volcano 同名术语。
   - 包含来源支持的提交/失败/重排队/清理观察样板及最小验证设计；不提交作业、不推断设备可用即应用成功。
@@ -6341,8 +6263,7 @@ tasks:
   - S26
   existing_source_ids: []
   source_discovery:
-  - 获取 MindIE/MindIE-LLM 官方 release notes、support/compatibility matrix、config 语义、model/load/scheduler/KV/分布式/PD
-    文档。
+  - 获取 MindIE/MindIE-LLM 官方 release notes、support/compatibility matrix、config 语义、model/load/scheduler/KV/分布式/PD 文档。
   - 选定 ref 后重新从文件树定位实现、测试、示例及许可，登记具体 URL/revision；当前 registry 尚无 MindIE 来源。
   source_revision: null
   depends_on:
@@ -6545,8 +6466,8 @@ tasks:
   work_units: 2
 - id: T07-08
   title: 请求路由、准入与流控
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 28
   operation: new
   content_type: concept
@@ -6577,7 +6498,7 @@ tasks:
   source_discovery:
   - 锁定一个代表性官方服务控制实现（如 KServe/Envoy 或所选引擎官方 router），获取 routing/queue/timeout/retry/cancellation 文档和测试。
   - 读取 Google SRE 官方 Handling Overload/Addressing Cascading Failures 章节；与具体实现选项分别引用。
-  source_revision: null
+  source_revision: vLLM v0.14.0 b17039bc；production-stack vllm-stack-0.1.9（20a65804）；Envoy latest（1.41.0-dev 线，2026-10-21 观察）；SRE 章节 2026-10-21 观察
   depends_on:
   - T07-02
   - T07-06
@@ -6589,8 +6510,8 @@ tasks:
   work_units: 2
 - id: T07-09
   title: 容量、扩缩容与冷启动决策
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 28
   operation: new
   content_type: procedure
@@ -6624,7 +6545,7 @@ tasks:
   - src.kubernetes.device-plugins-v1-32
   source_discovery:
   - 取得所选 KServe/Kubernetes HPA 或官方推理 router autoscaling 的版本化指标、缩容和 readiness 语义；模型/PD 特有指标需回查引擎实现。
-  source_revision: null
+  source_revision: K8s v1.32 静态快照；KServe website@3f4067e（0.20 线）；vLLM v0.14.0 b17039bc；production-stack vllm-stack-0.1.9
   depends_on:
   - T07-01
   - T07-08
@@ -6636,8 +6557,8 @@ tasks:
   work_units: 1
 - id: T07-10
   title: 服务版本发布、副本故障与恢复验证
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 28
   operation: new
   content_type: procedure
@@ -6673,7 +6594,7 @@ tasks:
   source_discovery:
   - 获取所选 KServe/Envoy/Kubernetes 官方 rollout/readiness/drain/termination/retry 文档及固定实现测试。
   - 读取各目标引擎 shutdown、worker/engine failure、请求取消和恢复语义，不把集群重启等同于请求正确恢复。
-  source_revision: null
+  source_revision: K8s v1.32 静态快照；KServe website@3f4067e；vLLM v0.14.0 b17039bc；Envoy latest（1.41.0-dev 线）
   depends_on:
   - T07-07
   - T07-08
@@ -6686,8 +6607,8 @@ tasks:
   work_units: 2
 - id: T07-11
   title: GPU 推理 OOM 与状态恢复诊断
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 28
   operation: new
   content_type: procedure
@@ -6719,7 +6640,7 @@ tasks:
   - src.nvidia.nvidia-smi-docs-latest-2026-09-30
   source_discovery:
   - 读取所选 PyTorch/vLLM NVIDIA 与 ROCm memory/allocator/OOM/troubleshooting 的官方文档与实现测试；AMD 特有缺失字段明确记录。
-  source_revision: null
+  source_revision: vLLM v0.14.0 b17039bc（锚点本轮重校）；复用 T02-09 PyTorch 2.6 与 nvidia-smi/amd-smi/hip-notes 既有登记
   depends_on:
   - T07-01
   - T07-02
@@ -6730,8 +6651,8 @@ tasks:
   work_units: 1
 - id: T00-02
   title: 单机、集群与超节点的参考架构及选择
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 28
   operation: new
   content_type: concept
@@ -6759,7 +6680,7 @@ tasks:
   - src.kueue.admission-v0.19.0
   source_discovery:
   - 取得实际可引用 NVIDIA 超节点系统指南及 Ascend 超节点官方架构/组件资料，固定机型与文档修订；结合独立的集群控制与数据路径文档核对。
-  source_revision: null
+  source_revision: 复用 Batch 14/18 已核登记（DGX GB UG 2026-09-17、A3 产品页/用户指南 13、DGX SuperPOD H100 RA 等），本轮无新增外部来源
   depends_on:
   - T01-05
   - T03-01
@@ -7155,8 +7076,7 @@ tasks:
   objective: 交付独立评测方法规范与公开教学/检索回归题组，说明证据引用、候选原因/下一项检查和未知表达；真正独立材料由 V12 外置隔离管理，不实现评测工程。
   acceptance:
   - 定义独立评测的 train/dev/held-out、来源时间截断/冻结、评审角色、泄漏/污染和答案证据强度；真正 holdout 的输入/答案须外置，按案例家族/版本/时间与正文隔离。
-  - 公开题组至少 8 个教学/检索回归条目，覆盖训练/推理/硬件/通信/存储/平台及无法判定样例；固定输入、证据 oracle、允许未知和 rubric。纳入 knowledge/catalog 后只能算公开教学，不得标独立
-    holdout。
+  - 公开题组至少 8 个教学/检索回归条目，覆盖训练/推理/硬件/通信/存储/平台及无法判定样例；固定输入、证据 oracle、允许未知和 rubric。纳入 knowledge/catalog 后只能算公开教学，不得标独立 holdout。
   - 真实案例来自固定公开证据且判据可追溯；合成夹具明确标注并只验证假设/规则，不证明事故发生率。
   - 定义引用精度、事实/平台边界、假设区分力、下一检查成本/有效性、错误处置、abstention 和恢复验证维度，避免只评文字流畅或根因命中率。
   - 公开样例与真正隔离输入/答案的角色区别、污染/换卷策略明确；独立评测集尚待 V12 获取/审查，不能用公开合成题组关闭该 gap，不宣称评测系统/分数/已运行测试。
@@ -7834,8 +7754,7 @@ validation:
     closed: 8
     open: 0
   scope: 规划结构、映射、来源/目标身份、DAG/批次和方案验收纪律；未执行新正文技术核验或真实环境验证。
-execution_status_note: 用户反馈 Batch 13 已运行并尝试并行 Batch 14；本次只整理依赖信息，未读取运行会话的产物与审阅结果。具体任务/批次阶段与完成状态须由实际执行会话更新，本次不将任何任务标为
-  done。
+execution_status_note: 用户反馈 Batch 13 已运行并尝试并行 Batch 14；本次只整理依赖信息，未读取运行会话的产物与审阅结果。具体任务/批次阶段与完成状态须由实际执行会话更新，本次不将任何任务标为 done。
 dependency_view_validation:
   status: passed
   checked_at: '2026-10-08'

@@ -39,7 +39,7 @@ verification:
 
 本流程处理昇腾 NPU 上推理服务的 “NPU out of memory” 类失败，目标是先确定 OOM 发生在哪个阶段、由哪一层抛出，再决定看什么证据。设备内存的分层机制（物理 HBM、框架 allocated/reserved、workspace 分配器、碎片）见[昇腾 NPU 内存与 OOM 证据](../02-software-stack/ascend-memory-oom-evidence.md)，本文只写引擎与请求层的判断。
 
-注意区分两类看似相似的现场：**启动/加载期失败**（服务起不来）与**运行期失败**（服务已运行一段时间后才报错），两者的证据完全不同；运行期 KV cache 不足在固定 vLLM 语义下通常不是 OOM，而是抢占重算（见步骤 5）。
+注意区分两类看似相似的现场：**启动/加载期失败**（服务起不来）与**运行期失败**（服务已运行一段时间后才报错），两者的证据完全不同；运行期 KV cache 不足在固定 vLLM 语义下通常不是 OOM，而是抢占重算（见步骤 5）。GPU（NVIDIA/AMD）的同问题对照见[GPU 推理 OOM 与状态恢复诊断](gpu-inference-oom-triage.md)——问题结构同构，字段与文案不互迁。
 
 ## 适用范围与前置条件
 

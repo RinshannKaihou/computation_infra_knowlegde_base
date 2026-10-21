@@ -126,19 +126,20 @@ topics:
 - topic_id: '00.4'
   title: 单机、集群与超节点的参考架构
   domain_code: '00'
-  coverage_status: missing
+  coverage_status: partial
   core_scope: 比较单机、集群和超节点的组成、数据/控制路径、共享依赖及选择条件
-  present_scope: 现有材料提供机型字段和流程背景，尚无三种架构的实质比较
-  evidence_refs: []
+  present_scope: 已有三类原创概念架构图与组件部署职责表、GB200 NVL72 与 Atlas 900 A3 SuperPoD 两个官方超节点样板（DGX SuperPOD RA 集群样板）、约束比较表、标为假设的设计示例与部署关系核对清单
+  evidence_refs:
+  - overview.reference-architectures
   background_refs:
   - hardware.resource-topology
   - overview.training-lifecycle
   - overview.inference-lifecycle
+  - communication.interconnect-paths
   gaps:
-  - 缺少参考架构图与组件部署关系
-  - 缺少规模、拓扑、故障域和成本约束下的选择与验收方法
+  - 缺少容量与成本/能耗量化的设计权衡与验收表（T00-03，Batch 29）
   followup_priority: normal
-  recommended_action: new_content
+  recommended_action: add_or_extend
   closure_criteria: 补齐所列缺口，给出适用条件、精确来源、观察/判断方法及验证判据；需要真实结果时另登记复现证据。
 - topic_id: '00.5'
   title: 设计目标与约束：可靠性、性能、容量、成本、能耗
@@ -881,8 +882,7 @@ topics:
   domain_code: '07'
   coverage_status: covered_basic
   core_scope: 说明权重加载、引擎 ready、prefill/decode 及请求结束的执行和状态边界
-  present_scope: prefill/decode/请求状态路径与启动期内存异常已说明；T07-01 补齐启动五阶段边界、load-format
-    分派与格式不可互推、TP/PP 装载机制与 dtype 三层、模型身份固定清单、health/ready 区分与三平台小模型验证计划
+  present_scope: prefill/decode/请求状态路径与启动期内存异常已说明；T07-01 补齐启动五阶段边界、load-format 分派与格式不可互推、TP/PP 装载机制与 dtype 三层、模型身份固定清单、health/ready 区分与三平台小模型验证计划
   evidence_refs:
   - overview.inference-lifecycle
   - inference.execution-and-kv-cache
@@ -898,8 +898,7 @@ topics:
   domain_code: '07'
   coverage_status: covered_basic
   core_scope: 说明推理引擎组件、平台后端、模型能力与支持条件，并比较实现边界
-  present_scope: 已有 vLLM 平台插件及 vLLM Ascend 固定样板；T07-02 补齐三线组件分层对照、调度/KV 有限语义对照、
-    三平台特性交集档案与升级替换检查表；T07-03 补齐 MindIE 四层架构、config 语义、PD、日志与健康检查、Qwen 样板
+  present_scope: 已有 vLLM 平台插件及 vLLM Ascend 固定样板；T07-02 补齐三线组件分层对照、调度/KV 有限语义对照、 三平台特性交集档案与升级替换检查表；T07-03 补齐 MindIE 四层架构、config 语义、PD、日志与健康检查、Qwen 样板
   evidence_refs:
   - software-stack.layers-and-boundaries
   - inference.execution-and-kv-cache
@@ -964,19 +963,22 @@ topics:
 - topic_id: '07.6'
   title: 路由、流控、扩缩容与版本发布
   domain_code: '07'
-  coverage_status: missing
+  coverage_status: covered_basic
   core_scope: 定义路由、准入/流控、扩缩容、版本发布与回退，维持服务质量和容量
-  present_scope: 现有正文说明外部代理职责和请求排队，尚无服务控制策略正文
-  evidence_refs: []
+  present_scope: 已有四层职责（入口路由/引擎调度/P-D 分配/健康发现）、路由算法比较（轮询/QPS/队列/session/kvaware/prefixaware/PD）、预算与背压分层、请求 ID/断连取消/流式重试边界、容量口径与四类触发器比较、冷启动/scale-to-zero/drain/PD 联动、灰度发布五步与副本故障处置、基线→切换→恢复验证设计
+  evidence_refs:
+  - inference.routing-and-flow-control
+  - inference.capacity-and-autoscaling
+  - inference.release-and-recovery
+  - inference.latency-metrics
+  - inference.pd-disaggregation
+  - cluster-platform.contention-capacity-validation
   background_refs:
   - inference.pd-disaggregation
   - inference.ascend-inference-tail-latency-triage
   - overview.inference-lifecycle
-  gaps:
-  - 缺少路由/流控算法与请求生命周期
-  - 缺少扩缩容和容量决策
-  - 缺少版本发布、摘除、回退与验证流程
-  followup_priority: high
+  gaps: []
+  followup_priority: normal
   recommended_action: new_content
   closure_criteria: 补齐所列缺口，给出适用条件、精确来源、观察/判断方法及验证判据；需要真实结果时另登记复现证据。
 - topic_id: '07.7'
@@ -998,19 +1000,18 @@ topics:
 - topic_id: '07.8'
   title: OOM、请求失败、副本故障与服务恢复
   domain_code: '07'
-  coverage_status: partial
+  coverage_status: covered_basic
   core_scope: 区分 OOM、请求失败与副本故障，验证请求/状态/质量/性能恢复
-  present_scope: 已有 NPU OOM 阶段诊断、错误/取消统计与 KV load failure 策略
+  present_scope: 已有 NPU/GPU 双侧 OOM 阶段诊断（昇腾＋GPU 指南）、错误四分类、副本故障/健康摘除/请求重试语义、服务恢复与状态清理验证（含所有者分立与接流门禁）
   evidence_refs:
   - inference.ascend-inference-oom-triage
-  - inference.ascend-inference-tail-latency-triage
+  - inference.gpu-inference-oom-triage
+  - inference.release-and-recovery
+  - inference.routing-and-flow-control
   - inference.latency-metrics
   - inference.pd-disaggregation
   background_refs: []
-  gaps:
-  - 缺少副本故障、健康摘除与请求重试语义
-  - 缺少服务恢复与状态清理验证
-  - 缺少 GPU 对应 OOM/恢复专题
+  gaps: []
   followup_priority: normal
   recommended_action: add_or_extend
   closure_criteria: 补齐所列缺口，给出适用条件、精确来源、观察/判断方法及验证判据；需要真实结果时另登记复现证据。
