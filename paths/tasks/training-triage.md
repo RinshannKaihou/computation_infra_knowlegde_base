@@ -11,7 +11,7 @@ source_refs:
 - src.ascend.torch-npu
 - src.nvidia.nccl-docs
 - src.stas.ml-engineering
-updated_at: '2026-10-08'
+updated_at: '2026-10-22'
 summary: 按问题和证据位置跨领域查找训练诊断知识。
 related_ids:
 - hardware.resource-topology
@@ -63,6 +63,18 @@ related_ids:
 - training.elastic-training-and-membership
 - data-storage.checkpoint-integrity-evidence
 - hardware.node-acceptance-triage
+- software-stack.gpu-op-graph-failure-triage
+- software-stack.gpu-memory-oom-evidence
+- software-stack.host-resource-pressure-and-device-access
+- software-stack.environment-installation-and-upgrade
+- training.performance-analysis
+- training.performance-regression-source-case
+- cluster-platform.control-plane-recovery
+- cluster-platform.node-drain-resource-reclamation
+- cluster-platform.accelerator-sharing-and-isolation
+- cluster-platform.contention-capacity-validation
+- data-storage.storage-client-backend-recovery
+- hardware.bmc-firmware-and-events
 tasks:
 - training-triage
 ---
@@ -95,6 +107,15 @@ tasks:
 | loss、梯度或迁移后的数值行为变化 | [06 训练](../../knowledge/06-training/index.md) | [02 软件栈](../../knowledge/02-software-stack/index.md)与[08 可靠性](../../knowledge/08-reliability/index.md)：精度语义和验证方法 |
 | checkpoint 读取失败或恢复后状态异常 | [06 训练](../../knowledge/06-training/index.md) | [04 数据存储](../../knowledge/04-data-storage/index.md)：文件与持久性；[Checkpoint 完整性与校验证据](../../knowledge/04-data-storage/checkpoint-integrity-evidence.md)：字节/文件损坏的分层发现能力；[08 可靠性](../../knowledge/08-reliability/index.md)：完成判据 |
 | 新节点或返修节点能否承担训练负载 | [新节点与返修节点验收](../../knowledge/01-hardware/node-acceptance-triage.md) | [健康证据](../../knowledge/01-hardware/health-evidence.md) 与[供电散热证据](../../knowledge/01-hardware/power-thermal-evidence.md)：被动证据层的边界 |
+| GPU 侧算子、编译或图执行失败（NVIDIA/AMD） | [GPU 算子、编译和图执行失败的定向诊断](../../knowledge/02-software-stack/gpu-op-graph-failure-triage.md) | [02 软件栈](../../knowledge/02-software-stack/index.md)：后端注册、动态编译、graph capture 与异步报错四分支；昇腾侧另见[昇腾算子与图编译失败诊断](../../knowledge/02-software-stack/ascend-op-graph-failure-triage.md) |
+| GPU 显存占用疑问或设备侧 OOM（NVIDIA/AMD） | [GPU 分配器、保留内存与 OOM 证据](../../knowledge/02-software-stack/gpu-memory-oom-evidence.md) | [06 训练](../../knowledge/06-training/index.md)：负载与并行配置；昇腾侧见[昇腾 NPU 内存与 OOM 证据](../../knowledge/02-software-stack/ascend-memory-oom-evidence.md) |
+| 主机内存/进程资源压力影响训练或设备访问 | [OS/进程资源压力与设备访问诊断](../../knowledge/02-software-stack/host-resource-pressure-and-device-access.md) | [NUMA 与 I/O 局部性](../../knowledge/01-hardware/numa-memory-and-io-locality.md) 与[05 集群平台](../../knowledge/05-cluster-platform/index.md)：局部性与限额 |
+| 训练吞吐退化、性能不达预期（非单 rank 异常） | [训练性能分解、profiling 与优化验证](../../knowledge/06-training/performance-analysis.md) | [慢 rank 诊断](../../knowledge/06-training/slow-rank-triage.md) 与[性能优化任务路径](performance-optimization.md)：先固定口径再分层 |
+| 平台/调度器故障后作业与队列状态异常 | [控制面故障、平台恢复与账本核对](../../knowledge/05-cluster-platform/control-plane-recovery.md) | [05 集群平台](../../knowledge/05-cluster-platform/index.md)：Kubernetes/Slurm 分支与恢复后账本核验 |
+| 节点摘除、drain 期间的作业与资源回收 | [节点摘除、drain 与资源回收流程](../../knowledge/05-cluster-platform/node-drain-resource-reclamation.md) | [弹性训练与成员变更](../../knowledge/06-training/elastic-training-and-membership.md)：缩容续训的状态责任 |
+| 多租户共享引起的争用或不公平 | [加速器共享与租户隔离机制](../../knowledge/05-cluster-platform/accelerator-sharing-and-isolation.md) | [多租户争用与容量验证](../../knowledge/05-cluster-platform/contention-capacity-validation.md)：利用率不等于可用容量 |
+| 存储客户端/后端异常影响数据读取或 checkpoint | [存储客户端、后端异常与恢复验证](../../knowledge/04-data-storage/storage-client-backend-recovery.md) | [04 数据存储](../../knowledge/04-data-storage/index.md)：先保留证据、保护恢复点 |
+| 固件身份或带外（BMC）事件需要核对 | [BMC、固件身份与跨层硬件事件](../../knowledge/01-hardware/bmc-firmware-and-events.md) | [健康证据](../../knowledge/01-hardware/health-evidence.md)：单一事件不可直接归因 |
 
 表中的首要入口是内容归属，不是根因结论。调查过程可能需要多次跨层回查。
 
@@ -102,6 +123,11 @@ tasks:
 
 - [昇腾平台路径](../platforms/ascend.md)：进一步定位 CANN/torch_npu 配套、HCCL、NPU 设备管理和训练恢复资料。
 - [NVIDIA 平台路径](../platforms/nvidia.md)：进一步定位驱动/CUDA、NCCL 与 GPU 相关资料。
+- [AMD 平台路径](../platforms/amd.md)：进一步定位 ROCm/HIP、RCCL 与 AMD GPU 相关资料。
+
+## 任务路径
+
+本页是排障首要入口；准备与运行阶段的完整路径另有分页：[选型与容量](selection-and-capacity.md) · [节点验收](node-acceptance.md) · [环境安装](environment-installation.md) · [性能优化](performance-optimization.md) · [迁移与升级](migration-and-upgrade.md) · [故障恢复](fault-recovery.md)（恢复验收要求正确性与持续进展双判据）。按角色阅读见[角色路径](../roles/reading-by-role.md)。
 
 ## 形成案例时保留什么
 

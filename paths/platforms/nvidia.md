@@ -11,7 +11,7 @@ source_refs:
 - src.nvidia.nccl-tests
 - src.stas.ml-engineering
 - src.infrasys.aiinfra
-updated_at: '2026-10-08'
+updated_at: '2026-10-22'
 summary: 通过各领域主目录定位 NVIDIA GPU 的全栈知识。
 related_ids:
 - overview.index
@@ -56,6 +56,37 @@ related_ids:
 - hardware.node-acceptance-triage
 - data-storage.checkpoint-integrity-evidence
 - inference.pd-disaggregation
+- hardware.accelerator-execution-and-data-movement
+- hardware.bmc-firmware-and-events
+- hardware.numa-memory-and-io-locality
+- hardware.node-selection-and-lifecycle
+- communication.interconnect-paths
+- software-stack.runtime-execution-and-library-loading
+- software-stack.operators-compilers-and-graphs
+- software-stack.dtype-layout-and-precision-semantics
+- software-stack.framework-backend-adaptation
+- software-stack.gpu-memory-oom-evidence
+- software-stack.gpu-op-graph-failure-triage
+- software-stack.host-resource-pressure-and-device-access
+- software-stack.environment-installation-and-upgrade
+- cluster-platform.container-image-runtime-baseline
+- cluster-platform.kubernetes-job-lifecycle
+- cluster-platform.slurm-jobs-and-device-resources
+- cluster-platform.accelerator-sharing-and-isolation
+- cluster-platform.contention-capacity-validation
+- training.framework-execution
+- training.pretraining-and-finetuning
+- training.rl-rollout-consistency
+- training.mixed-precision-and-convergence
+- training.performance-analysis
+- training.performance-regression-source-case
+- inference.engine-backend-boundaries
+- inference.model-loading-and-readiness
+- inference.gpu-inference-oom-triage
+- inference.output-quality-evaluation
+- inference.capacity-and-autoscaling
+- inference.routing-and-flow-control
+- inference.release-and-recovery
 ---
 
 # NVIDIA 平台知识路径
@@ -84,7 +115,7 @@ related_ids:
 
 ## 跨平台比较的阅读方式
 
-与[昇腾路径](ascend.md)使用相同的领域归属，先明确要比较的任务和环境，再比较具体机制。共同的知识问题包括设备可见性、集合通信进展、数值行为和恢复正确性；两平台的错误码、环境变量、诊断工具与支持边界分别查证。
+与[昇腾路径](ascend.md)、[AMD 路径](amd.md)使用相同的领域归属，先明确要比较的任务和环境，再比较具体机制。共同的知识问题包括设备可见性、集合通信进展、数值行为和恢复正确性；各平台的错误码、环境变量、诊断工具与支持边界分别查证。
 
 ## 原始资料入口
 
@@ -120,6 +151,51 @@ NCCL 资料仅覆盖平台知识的一部分；其余领域仍需逐项补齐对
 - [Checkpoint 完整性与校验证据](../../knowledge/04-data-storage/checkpoint-integrity-evidence.md)：torch.save CRC32、DCP 2.6 无应用层校验和与存储层 scrub 的分层边界。
 - [准入、调度与拓扑放置](../../knowledge/05-cluster-platform/admission-and-placement.md)：从配额与约束定位资源等待。
 - [慢 rank 诊断](../../knowledge/06-training/slow-rank-triage.md)：PyTorch 2.8/NCCL RAS 证据样板。
+
+## 硬件、固件与选型（Batch 13–31 交付）
+
+- [加速器执行单元、内存层次与数据移动机制](../../knowledge/01-hardware/accelerator-execution-and-data-movement.md)：NVIDIA H100 为三平台样板之一，术语不强行映射。
+- [BMC、固件身份与跨层硬件事件](../../knowledge/01-hardware/bmc-firmware-and-events.md)：NVIDIA DGX 侧固件身份清单与 Redfish 通用角色模型。
+- [NUMA、主机内存与 I/O 局部性的成对验证](../../knowledge/01-hardware/numa-memory-and-io-locality.md)：局部/远端成对测量方法。
+- [节点内、节点间与超节点互联路径参考](../../knowledge/03-communication/interconnect-paths.md)：DGX H100（NVLink 4 代/NVSwitch）样板与路径核对表。
+- [节点选型、隔离返修、长期管理与退役](../../knowledge/01-hardware/node-selection-and-lifecycle.md)：选型四步法与生命周期状态机（NVIDIA 侧含 DGX/RMA/Reimaging 证据锚点）。
+
+## 软件栈执行、算子与内存
+
+- [三平台安装基线、迁移升级与回退验证](../../knowledge/02-software-stack/environment-installation-and-upgrade.md)：NVIDIA（CUDA 12.8 样板）节与七层安装验证梯子。
+- [驱动初始化、运行时执行同步与库装载](../../knowledge/02-software-stack/runtime-execution-and-library-loading.md)：CUDA 12.8 样板的初始化→运算→同步→结果检查最小验证。
+- [算子分发、编译与计算图执行机制](../../knowledge/02-software-stack/operators-compilers-and-graphs.md)：PyTorch 2.6（CUDA 主样板）torch.compile 栈与编译缓存身份。
+- [dtype、layout 与有限精度语义](../../knowledge/02-software-stack/dtype-layout-and-precision-semantics.md)：CUDA 12.8 库侧精度开关条件句。
+- [框架到设备后端的适配与能力核对](../../knowledge/02-software-stack/framework-backend-adaptation.md)：PyTorch CUDA 内置路径的能力核对清单。
+- [GPU 分配器、保留内存与 OOM 证据](../../knowledge/02-software-stack/gpu-memory-oom-evidence.md)：CUDA/PyTorch 内存分层证据与记录表。
+- [GPU 算子、编译和图执行失败的定向诊断](../../knowledge/02-software-stack/gpu-op-graph-failure-triage.md)：后端注册/动态编译/graph capture/异步报错四分支。
+- [OS/进程资源压力与设备访问诊断](../../knowledge/02-software-stack/host-resource-pressure-and-device-access.md)：主机资源压力与设备访问分层取证。
+
+## 平台与作业管理
+
+- [镜像制品、容器运行时与设备暴露基线](../../knowledge/05-cluster-platform/container-image-runtime-baseline.md)：NVIDIA Toolkit 1.20.0/CDI 与设备插件样板。
+- [Kubernetes 作业全生命周期与控制器责任](../../knowledge/05-cluster-platform/kubernetes-job-lifecycle.md)与[Slurm 作业生命周期、设备资源与状态参考](../../knowledge/05-cluster-platform/slurm-jobs-and-device-resources.md)：两种调度器的作业状态边界。
+- [加速器共享与租户隔离机制](../../knowledge/05-cluster-platform/accelerator-sharing-and-isolation.md)：NVIDIA 整卡独占/MIG/MPS/time slicing 的条件与隔离边界。
+- [多租户争用、公平性与容量验证](../../knowledge/05-cluster-platform/contention-capacity-validation.md)：单租户基线到两租户并发的对照方法。
+
+## 训练与推理执行（Batch 24/25/27 交付为主）
+
+- [训练框架组件、执行循环与平台职责对照](../../knowledge/06-training/framework-execution.md)：PyTorch 2.6 档案的各阶段故障分界。
+- [预训练与微调工作流和状态契约](../../knowledge/06-training/pretraining-and-finetuning.md)与[RL rollout、权重同步与训练推理协同](../../knowledge/06-training/rl-rollout-consistency.md)：工作流状态契约与 rollout 一致性。
+- [混合精度、算子适配与收敛验证](../../knowledge/06-training/mixed-precision-and-convergence.md)：平台内重复性到单因素精度对照的流程。
+- [训练性能分解、profiling 与优化验证](../../knowledge/06-training/performance-analysis.md)与[训练吞吐回归来源案例](../../knowledge/06-training/performance-regression-source-case.md)：性能取证与 Inductor 布局回归公开反例（PyTorch #189239）。
+- [推理引擎组件与平台功能交集档案](../../knowledge/07-inference/engine-backend-boundaries.md)：vLLM 上游与 NVIDIA/CUDA 交集档案。
+- [权重加载、引擎 ready 与启动失败诊断](../../knowledge/07-inference/model-loading-and-readiness.md)：vLLM 装载链与四类启动阶段。
+- [GPU 推理 OOM 与状态恢复诊断](../../knowledge/07-inference/gpu-inference-oom-triage.md)：按首失败阶段定位 NVIDIA GPU 推理 OOM。
+- [推理输出质量的对照评估方法与案例](../../knowledge/07-inference/output-quality-evaluation.md)：输入身份固定与四层指标。
+- [容量、扩缩容与冷启动决策](../../knowledge/07-inference/capacity-and-autoscaling.md)与[请求路由、准入与流控](../../knowledge/07-inference/routing-and-flow-control.md)：容量口径与路由分层。
+- [服务版本发布、副本故障与恢复验证](../../knowledge/07-inference/release-and-recovery.md)：预热→递增→gate→drain 与恢复验证设计。
+
+以上均为固定来源下的文档样板与 draft 正文，不组成支持矩阵；各条目版本边界以正文为准。
+
+## 任务路径入口
+
+准备阶段：[选型与容量](../tasks/selection-and-capacity.md) · [节点验收](../tasks/node-acceptance.md) · [环境安装](../tasks/environment-installation.md)。运行阶段：[性能优化](../tasks/performance-optimization.md) · [迁移与升级](../tasks/migration-and-upgrade.md) · [故障恢复](../tasks/fault-recovery.md)。按角色阅读见[角色路径](../roles/reading-by-role.md)。
 
 ## 场景阅读入口
 

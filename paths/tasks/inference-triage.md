@@ -10,7 +10,7 @@ source_refs:
 - src.ascend.vllm-ascend
 - src.ascend.agent-skills
 - src.stas.ml-engineering
-updated_at: '2026-10-08'
+updated_at: '2026-10-22'
 summary: 按请求路径和观察证据跨领域查找推理诊断知识。
 related_ids:
 - hardware.index
@@ -50,6 +50,15 @@ related_ids:
 - inference.ascend-inference-oom-triage
 - inference.quantization-and-quality
 - inference.pd-disaggregation
+- inference.model-loading-and-readiness
+- inference.engine-backend-boundaries
+- inference.output-quality-evaluation
+- inference.capacity-and-autoscaling
+- inference.routing-and-flow-control
+- inference.release-and-recovery
+- inference.distributed-inference-layouts
+- inference.gpu-inference-oom-triage
+- data-storage.storage-client-backend-recovery
 tasks:
 - inference-triage
 ---
@@ -77,6 +86,14 @@ tasks:
 | 量化、迁移或升级后的输出质量变化 | [推理量化与输出质量验证](../../knowledge/07-inference/quantization-and-quality.md) | [07 推理](../../knowledge/07-inference/index.md) 与[02 软件栈](../../knowledge/02-software-stack/index.md)、[08 可靠性](../../knowledge/08-reliability/silent-errors-and-integrity.md)：精度语义和质量验证 |
 | P/D 分离部署的形态、连接器选择与支持边界 | [PD 分离与流量分配](../../knowledge/07-inference/pd-disaggregation.md) | [07 推理](../../knowledge/07-inference/index.md) 与[03 通信](../../knowledge/03-communication/index.md)：KV 传输依赖与代理层职责 |
 | 分布式推理异常或通信超时 | [03 通信](../../knowledge/03-communication/index.md) | [07 推理](../../knowledge/07-inference/index.md)：请求阶段与执行进展 |
+| GPU（NVIDIA/AMD）推理 OOM 或状态恢复 | [GPU 推理 OOM 与状态恢复诊断](../../knowledge/07-inference/gpu-inference-oom-triage.md) | [GPU 内存与 OOM 证据](../../knowledge/02-software-stack/gpu-memory-oom-evidence.md) 与[07 推理](../../knowledge/07-inference/index.md)：按首失败阶段定位 |
+| 权重加载失败、引擎未 ready 或启动失败 | [权重加载、引擎 ready 与启动失败诊断](../../knowledge/07-inference/model-loading-and-readiness.md) | [02 软件栈](../../knowledge/02-software-stack/index.md) 与[04 数据存储](../../knowledge/04-data-storage/index.md)：装载链与模型文件 |
+| 引擎能力或平台功能交集疑问 | [推理引擎组件与平台功能交集档案](../../knowledge/07-inference/engine-backend-boundaries.md) | [07 推理](../../knowledge/07-inference/index.md)：支持/条件/未证实/冲突分档 |
+| 输出质量差异需要系统性评估 | [推理输出质量的对照评估方法与案例](../../knowledge/07-inference/output-quality-evaluation.md) | [量化与质量验证](../../knowledge/07-inference/quantization-and-quality.md) 与[静默错误判定](../../knowledge/08-reliability/silent-errors-and-integrity.md) |
+| 容量不足、扩缩容或冷启动决策 | [容量、扩缩容与冷启动决策](../../knowledge/07-inference/capacity-and-autoscaling.md) | [05 集群平台](../../knowledge/05-cluster-platform/index.md) 与[性能优化任务路径](performance-optimization.md)：容量口径与触发器代价 |
+| 请求路由、准入或流控问题 | [请求路由、准入与流控](../../knowledge/07-inference/routing-and-flow-control.md) | [07 推理](../../knowledge/07-inference/index.md)：路由四层职责与重试边界 |
+| 服务发布、副本故障或恢复后验证 | [服务版本发布、副本故障与恢复验证](../../knowledge/07-inference/release-and-recovery.md) | [故障恢复任务路径](fault-recovery.md) 与[08 可靠性](../../knowledge/08-reliability/index.md)：恢复验证设计与记账 |
+| 存储后端异常影响模型加载或权重读回 | [存储客户端、后端异常与恢复验证](../../knowledge/04-data-storage/storage-client-backend-recovery.md) | [04 数据存储](../../knowledge/04-data-storage/index.md) 与[制品传输与读回](../../knowledge/04-data-storage/artifact-transfer-and-publication.md) |
 
 表中的首要入口是内容归属，不是根因结论。相同症状在不同引擎、平台和请求分布下可能需要不同证据。
 
@@ -84,6 +101,11 @@ tasks:
 
 - [昇腾平台路径](../platforms/ascend.md)：定位 NPU 软件栈、vLLM Ascend、设备管理和通信资料。
 - [NVIDIA 平台路径](../platforms/nvidia.md)：定位 GPU 软件栈、通信与设备相关资料。
+- [AMD 平台路径](../platforms/amd.md)：定位 ROCm/HIP、RCCL 与 AMD GPU 推理资料。
+
+## 任务路径
+
+本页是排障首要入口；准备与运行阶段的完整路径另有分页：[选型与容量](selection-and-capacity.md) · [节点验收](node-acceptance.md) · [环境安装](environment-installation.md) · [性能优化](performance-optimization.md) · [迁移与升级](migration-and-upgrade.md) · [故障恢复](fault-recovery.md)。按角色阅读见[角色路径](../roles/reading-by-role.md)。
 
 ## 形成案例时保留什么
 

@@ -11,7 +11,7 @@ source_refs:
 - src.ascend.mind-cluster
 - src.ascend.torch-npu
 - src.ascend.vllm-ascend
-updated_at: '2026-10-08'
+updated_at: '2026-10-22'
 summary: 通过各领域主目录定位昇腾 NPU 的全栈知识。
 related_ids:
 - overview.index
@@ -71,6 +71,34 @@ related_ids:
 - inference.pd-disaggregation
 - hardware.node-acceptance-triage
 - data-storage.checkpoint-integrity-evidence
+- hardware.accelerator-execution-and-data-movement
+- hardware.bmc-firmware-and-events
+- hardware.numa-memory-and-io-locality
+- hardware.node-selection-and-lifecycle
+- communication.interconnect-paths
+- software-stack.runtime-execution-and-library-loading
+- software-stack.operators-compilers-and-graphs
+- software-stack.dtype-layout-and-precision-semantics
+- software-stack.framework-backend-adaptation
+- software-stack.host-resource-pressure-and-device-access
+- software-stack.environment-installation-and-upgrade
+- cluster-platform.container-image-runtime-baseline
+- cluster-platform.kubernetes-job-lifecycle
+- cluster-platform.slurm-jobs-and-device-resources
+- cluster-platform.accelerator-sharing-and-isolation
+- cluster-platform.contention-capacity-validation
+- training.framework-execution
+- training.pretraining-and-finetuning
+- training.rl-rollout-consistency
+- training.mixed-precision-and-convergence
+- training.performance-analysis
+- inference.engine-backend-boundaries
+- inference.mindie-execution-profile
+- inference.model-loading-and-readiness
+- inference.distributed-inference-layouts
+- inference.output-quality-evaluation
+- inference.capacity-and-autoscaling
+- inference.release-and-recovery
 ---
 
 # 昇腾平台知识路径
@@ -110,9 +138,51 @@ related_ids:
 - 推理长尾、OOM 或输出质量变化：从 [07 推理](../../knowledge/07-inference/index.md)开始；OOM 另有[昇腾推理 OOM 诊断](../../knowledge/07-inference/ascend-inference-oom-triage.md)；量化支持与质量验证见[推理量化与输出质量验证](../../knowledge/07-inference/quantization-and-quality.md)（含 vLLM Ascend 量化指南与评估指南入口）；PD 分离的形态、连接器与昇腾限制见[PD 分离与流量分配](../../knowledge/07-inference/pd-disaggregation.md)。
 - 设备降速怀疑（温度/功耗/供电）：从[供电、散热与性能退化证据](../../knowledge/01-hardware/power-thermal-evidence.md)开始，注意 NPU 侧观测缺口。
 - Checkpoint 保存慢（MindIO/存储路径）：从[Checkpoint 慢写诊断](../../knowledge/04-data-storage/checkpoint-slow-io-triage.md)开始，含 MindIO ACP 分支；字节/文件是否损坏的分层证据见[Checkpoint 完整性与校验证据](../../knowledge/04-data-storage/checkpoint-integrity-evidence.md)（含 MindIO checker 的文件个数完备性语义）。
-- 新节点或返修节点能否投产：从[新节点与返修节点验收](../../knowledge/01-hardware/node-acceptance-triage.md)开始，昇腾侧用 ascend-dmi -dg/-s，注意 root/机型限制与无级别化套件的缺口。
+- [新节点或返修节点能否投产：从[新节点与返修节点验收](../../knowledge/01-hardware/node-acceptance-triage.md)开始，昇腾侧用 ascend-dmi -dg/-s，注意 root/机型限制与无级别化套件的缺口。
 
 这些是知识归属入口，不能仅凭症状确定根因。
+
+## 硬件、固件与选型（Batch 13–31 交付）
+
+- [加速器执行单元、内存层次与数据移动机制](../../knowledge/01-hardware/accelerator-execution-and-data-movement.md)：Ascend Atlas A2 为三平台样板之一，术语不强行映射。
+- [BMC、固件身份与跨层硬件事件](../../knowledge/01-hardware/bmc-firmware-and-events.md)：华为 iBMC 侧固件身份清单与告警事件记录方法（带外—带内映射仍未取得）。
+- [NUMA、主机内存与 I/O 局部性的成对验证](../../knowledge/01-hardware/numa-memory-and-io-locality.md)：局部/远端成对测量方法。
+- [节点内、节点间与超节点互联路径参考](../../knowledge/03-communication/interconnect-paths.md)：Atlas 800T A2＋Atlas 900 A3 SuperPoD 样板与路径核对表。
+- [节点选型、隔离返修、长期管理与退役](../../knowledge/01-hardware/node-selection-and-lifecycle.md)：选型四步法与生命周期状态机。
+
+## 软件栈执行、算子与内存（续）
+
+- [三平台安装基线、迁移升级与回退验证](../../knowledge/02-software-stack/environment-installation-and-upgrade.md)：Ascend（CANN 8.3.RCX 样板）节与七层安装验证梯子。
+- [驱动初始化、运行时执行同步与库装载](../../knowledge/02-software-stack/runtime-execution-and-library-loading.md)：CANN 8.2.RC1.alpha001 样板的初始化与库装载核对。
+- [算子分发、编译与计算图执行机制](../../knowledge/02-software-stack/operators-compilers-and-graphs.md)：TorchNPU/TorchAir 与 CANN 取证路径。
+- [dtype、layout 与有限精度语义](../../knowledge/02-software-stack/dtype-layout-and-precision-semantics.md)：CANN 8.2.RC1.alpha001 入口级精度开关条件句。
+- [框架到设备后端的适配与能力核对](../../knowledge/02-software-stack/framework-backend-adaptation.md)：TorchNPU 扩展后端（v7.2.0-pytorch2.6.0 固定快照）能力核对。
+- [OS/进程资源压力与设备访问诊断](../../knowledge/02-software-stack/host-resource-pressure-and-device-access.md)：主机资源压力与设备访问分层取证。
+
+## 平台与作业管理
+
+- [镜像制品、容器运行时与设备暴露基线](../../knowledge/05-cluster-platform/container-image-runtime-baseline.md)：MindCluster 固定 commit 的 device-plugin 实现样板。
+- [Kubernetes 作业全生命周期与控制器责任](../../knowledge/05-cluster-platform/kubernetes-job-lifecycle.md)与[Slurm 作业生命周期、设备资源与状态参考](../../knowledge/05-cluster-platform/slurm-jobs-and-device-resources.md)：两种调度器的作业状态边界（Slurm 侧 NPU 接入无一手证据）。
+- [加速器共享与租户隔离机制](../../knowledge/05-cluster-platform/accelerator-sharing-and-isolation.md)：昇腾静态/动态 vNPU、vCANN-RT 软切分的条件与隔离边界（跨 vNPU 故障隔离保证未证实）。
+- [多租户争用、公平性与容量验证](../../knowledge/05-cluster-platform/contention-capacity-validation.md)：单租户基线到两租户并发的对照方法。
+
+## 训练与推理执行（Batch 24/25/27 交付为主）
+
+- [训练框架组件、执行循环与平台职责对照](../../knowledge/06-training/framework-execution.md)：Megatron-Core 与 MindSpeed-LLM v2.2.0 档案的各阶段故障分界。
+- [预训练与微调工作流和状态契约](../../knowledge/06-training/pretraining-and-finetuning.md)与[RL rollout、权重同步与训练推理协同](../../knowledge/06-training/rl-rollout-consistency.md)：工作流状态契约与 rollout 一致性。
+- [混合精度、算子适配与收敛验证](../../knowledge/06-training/mixed-precision-and-convergence.md)：平台内重复性到单因素精度对照的流程；跨平台首差异另见[GPU→NPU 精度差异诊断](../../knowledge/06-training/gpu-npu-precision-difference-triage.md)。
+- [训练性能分解、profiling 与优化验证](../../knowledge/06-training/performance-analysis.md)：有效产出口径与性能取证。
+- [推理引擎组件与平台功能交集档案](../../knowledge/07-inference/engine-backend-boundaries.md)与[MindIE 推理执行与配置样板](../../knowledge/07-inference/mindie-execution-profile.md)：vLLM Ascend/MindIE 组件对照与平台交集档案。
+- [权重加载、引擎 ready 与启动失败诊断](../../knowledge/07-inference/model-loading-and-readiness.md)：MindIE 装载链与四类启动阶段。
+- [分布式推理布局与并行选择](../../knowledge/07-inference/distributed-inference-layouts.md)：vLLM Ascend 与 MindIE 的布局限制（跨页冲突照录）。
+- [推理输出质量的对照评估方法与案例](../../knowledge/07-inference/output-quality-evaluation.md)：输入身份固定与四层指标。
+- [容量、扩缩容与冷启动决策](../../knowledge/07-inference/capacity-and-autoscaling.md)与[服务版本发布、副本故障与恢复验证](../../knowledge/07-inference/release-and-recovery.md)：容量口径与恢复验证设计。
+
+以上均为固定来源下的文档样板与 draft 正文，不组成支持矩阵；各条目版本边界以正文为准。
+
+## 任务路径入口
+
+准备阶段：[选型与容量](../tasks/selection-and-capacity.md) · [节点验收](../tasks/node-acceptance.md) · [环境安装](../tasks/environment-installation.md)。运行阶段：[性能优化](../tasks/performance-optimization.md) · [迁移与升级](../tasks/migration-and-upgrade.md) · [故障恢复](../tasks/fault-recovery.md)。按角色阅读见[角色路径](../roles/reading-by-role.md)。
 
 ## 原始资料入口
 

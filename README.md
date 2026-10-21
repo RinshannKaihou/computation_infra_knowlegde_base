@@ -28,9 +28,9 @@
 | [07 推理与服务系统](knowledge/07-inference/index.md) | 引擎、KV cache、路由、服务质量与恢复 |
 | [08 可靠性与计算正确性方法](knowledge/08-reliability/index.md) | 故障模型、证据、归因、验证与度量 |
 
-平台入口：[昇腾](paths/platforms/ascend.md) · [NVIDIA](paths/platforms/nvidia.md)
+平台入口：[昇腾](paths/platforms/ascend.md) · [NVIDIA](paths/platforms/nvidia.md) · [AMD](paths/platforms/amd.md)
 
-任务入口：[训练问题定位](paths/tasks/training-triage.md) · [推理问题定位](paths/tasks/inference-triage.md)。这些入口是阅读路径，尚不是经过现场验证的操作流程。
+任务入口：[训练问题定位](paths/tasks/training-triage.md) · [推理问题定位](paths/tasks/inference-triage.md)。这些入口是阅读路径，尚不是经过现场验证的操作流程。另有按任务阶段的六条路径——[选型与容量](paths/tasks/selection-and-capacity.md)、[节点验收](paths/tasks/node-acceptance.md)、[环境安装](paths/tasks/environment-installation.md)、[性能优化](paths/tasks/performance-optimization.md)、[迁移与升级](paths/tasks/migration-and-upgrade.md)、[故障恢复](paths/tasks/fault-recovery.md)——与[按角色阅读路径](paths/roles/reading-by-role.md)。
 
 ## 已有正文
 
