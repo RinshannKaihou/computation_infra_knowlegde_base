@@ -6,9 +6,9 @@ domain: overview
 status: draft
 platforms: [generic]
 source_refs: [src.infrasys.aiinfra, src.stas.ml-engineering]
-updated_at: "2026-10-08"
+updated_at: "2026-10-21"
 summary: 建立系统全景、统一术语，并按任务与平台定位知识。
-related_ids: [hardware.index, software-stack.index, training.index, inference.index, reliability.index, overview.training-lifecycle, overview.inference-lifecycle, overview.terms-and-system-boundaries, overview.reference-architectures]
+related_ids: [hardware.index, software-stack.index, training.index, inference.index, reliability.index, overview.training-lifecycle, overview.inference-lifecycle, overview.terms-and-system-boundaries, overview.reference-architectures, overview.design-targets-and-tradeoffs]
 ---
 
 # 00 导读与系统全景
@@ -21,6 +21,7 @@ related_ids: [hardware.index, software-stack.index, training.index, inference.in
 - [一次推理请求的端到端路径](inference-lifecycle.md)：连接请求、调度、缓存、输出与服务指标。
 - [统一术语、先修关系与系统责任边界](terms-and-system-boundaries.md)：九领域共用术语、同名异义与按症状定位责任领域的方法。
 - [单机、集群与超节点的参考架构及选择](reference-architectures.md)：三类组织的控制/数据/管理路径、GB200 NVL72 与 Atlas 900 A3 SuperPoD 超节点样板、DGX SuperPOD 集群样板、约束比较与部署核对清单。
+- [设计目标与约束的权衡](design-targets-and-tradeoffs.md)：可靠性、性能、容量、成本、能耗五类目标的统一口径、有效产出定义、能耗测量边界、两个假设计算示例与三窗口验收表。
 
 ## 本章范围
 
@@ -32,7 +33,7 @@ related_ids: [hardware.index, software-stack.index, training.index, inference.in
 - **00.2 一次训练任务的端到端路径** — 已有[全流程导航](training-lifecycle.md)。
 - **00.3 一次推理请求的端到端路径** — 已有[全流程导航](inference-lifecycle.md)。
 - **00.4 单机、集群与超节点的参考架构** — 已有[参考架构及选择](reference-architectures.md)（三类概念架构＋两个官方超节点样板＋集群样板＋核对清单）。
-- **00.5 设计目标与约束：可靠性、性能、容量、成本、能耗** — 待建设（T00-03，Batch 29）。
+- **00.5 设计目标与约束：可靠性、性能、容量、成本、能耗** — 已有[设计目标与权衡](design-targets-and-tradeoffs.md)（口径表＋假设计算示例＋验收表模板）。
 - **00.6 按角色、任务与平台组织的阅读路径** — 待建设。
 
 ## 内容边界
@@ -63,4 +64,4 @@ related_ids: [hardware.index, software-stack.index, training.index, inference.in
 
 ## 首轮成果与后续
 
-已建立训练与推理端到端路径、统一术语与系统责任边界及参考架构；后续补充设计目标权衡和不同角色的阅读顺序。
+已建立训练与推理端到端路径、统一术语与系统责任边界、参考架构与设计目标权衡；后续补充不同角色的阅读顺序。

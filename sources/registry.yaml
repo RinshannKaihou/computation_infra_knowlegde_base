@@ -6934,3 +6934,61 @@ sources:
       url: https://github.com/vllm-project/production-stack/blob/main/LICENSE
     notes: 2026-10-21 实取 tag tarball 内 LICENSE 为 Apache 2.0；本库仅链接与原创归纳，未搬运代码。
   notes: Batch 28（T07-08/T07-09）取回核对：router 路由逻辑枚举 roundrobin/session/kvaware/prefixaware/disaggregated_prefill（routing_logic.py L53-58，sha 13bd003e7e132159）；QPS 最小路由＋uhashring 一致性哈希（L60-120）；SessionRouter 按请求头/体 session_key；KvawareRouter 依赖 LMCache 控制器（kv_aware_threshold 2000 token 默认）；请求统计为滑动窗 QPS/avg_latency（request_stats.py，sha e0e3c8a736794af3）。Helm：router HPA 为 CPU utilization 模板（hpa-router.yaml，sha d29be85957dfb192）；引擎侧 KEDA 集成在 values.yaml per-modelSpec（sha d879b85b83e9d1b0）——官方教程（autoscaling-keda.rst，sha 391c98658ab19d2c）以 vllm:num_requests_waiting 为 Prometheus 触发指标、threshold 5、pollingInterval 15s、cooldownPeriod 360s、min/max 1-3，scale-to-zero 置 minReplicaCount 0 加流量保活触发器；sleep-wakeup 模式教程（sha d62f16d2ac62184d） Sleeping 引擎不处理请求并释放 GPU 内存、router 支持睡眠引擎服务发现。全部为文档/源码结构级取证，未部署。
+- id: src.paper.avizienis-dependability-2004
+  title: Basic Concepts and Taxonomy of Dependable and Secure Computing（Avizienis/Laprie/Randell/Landwehr 2004）
+  url: https://www.landwehr.org/2004-aviz-laprie-randell.pdf
+  kind: paper
+  registered_at: '2026-10-21'
+  revision: IEEE TDSC 1(1):11–33, 2004; DOI 10.1109/TDSC.2004.2；共同作者 Landwehr 个人站点托管的全文 PDF，2026-10-21 全文取回核对
+  license:
+    status: unknown
+    scopes: []
+    notes: IEEE 版权论文；作者托管的公开副本不等于再分发许可。本库仅作原创归纳并链接，不复制图表或长段正文。
+  notes: Batch 29（T08-01）核对：§2.2 failure/error/fault 定义链（failure＝交付服务偏离正确服务的事件；error＝系统总状态中可能导致后续服务失效的部分；fault＝error 的判定或假设成因）与 dormant/active fault、vulnerability 定义；§2.2/§3.3 失效模式四视角（content/timing（early/late）、halt/silent/erratic、signaled/unsignaled＋检测机制自身的 false alarm、consistent/inconsistent=Byzantine）与 severity；§3.2.1 八维初等故障类与 31 组合类（Fig.4/5）、natural faults 编号 11–15、external faults 例含 power transients；§4/Fig.12–13 solid(hard) 与 elusive(soft) fault（激活可复现性）、intermittent faults 定义、组件失效成为所在系统永久/暂态 fault 与外部传播（A→B 服务接口）。取回全文仅用于核对定义，不外推任何发生率。
+- id: src.meta.oct4-2021-postmortem
+  title: More details about the October 4 outage（Santosh Janardhan，Meta 工程博客，2021-10-05）
+  url: https://engineering.fb.com/2021/10/05/networking/outage-details/
+  kind: documentation
+  registered_at: '2026-10-21'
+  revision: 原文发布 2021-10-05；2026-10-21 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: Meta 工程博客页面未给出明确再分发许可；本库仅作原创摘要并链接，不复制图表或长段正文。
+  notes: Batch 29（T08-02）核对：运营方复盘要点——例行维护中评估骨干容量的审计命令因工具 bug 无法正确停止，"unintentionally took down all the connections in our backbone network"；DNS 服务器在无法连接数据中心时主动停用并撤回 BGP 广播（declare themselves unhealthy and withdraw those BGP advertisements），服务器运行但互联网不可达；主用与带外网络访问同时失效（Our primary and out-of-band network access was down），须按安全协议现场进入；恢复时按既有 storm 演练经验渐进管理流量；后续措施＝复盘流程、寻找模拟此类事件的方式、加强测试与韧性、确认安全设计减慢恢复的取舍值得。原文未给精确时间戳与命令内容；无任何发生率数据。
+- id: src.cloudflare.oct-2021-facebook-outage
+  title: Understanding how Facebook disappeared from the Internet（Celso Martinho/Tom Strickx，Cloudflare 博客，2021-10-04）
+  url: https://blog.cloudflare.com/october-2021-facebook-outage/
+  kind: documentation
+  registered_at: '2026-10-21'
+  revision: 原文发布 2021-10-04（页面 JSON-LD 2021-10-04T21:08:52Z）；2026-10-21 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: Cloudflare 博客页面未给出明确再分发许可；本库仅作原创摘要并链接，不复制图表或长段正文。
+  notes: Batch 29（T08-02）核对：外部观测侧时间线——约 15:40 UTC 出现 Facebook 路由变更峰值、15:51 Cloudflare 开内部事故单（"Facebook DNS lookup returning SERVFAIL"）、约 15:50 facebook.com 在 1.1.1.1 停止解析、15:58 注意到 DNS 前缀路由停止宣告（示例 185.89.218.0/23 与 129.134.30.0/23 不在 BGP 表、129.134.0.0/17 仍在）；全球 resolver 查询量 30 倍增长并缓存 SERVFAIL；21:00 UTC 后 BGP 活动恢复、21:17 达峰、21:20 facebook.com DNS 可用、21:28 判定重新接入。文中根因表述为对 Meta 官方博客的转述（第二手）；Cloudflare 起初怀疑自家 resolver 的假设被观测反驳。
+- id: src.aws.backoff-jitter-2015
+  title: Exponential Backoff and Jitter（Marc Brooker，AWS Architecture Blog，2015-03-04）
+  url: https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
+  kind: documentation
+  registered_at: '2026-10-21'
+  revision: 原文发布 2015-03-04（含 2023 年更新说明）；2026-10-21 观察
+  license:
+    status: unknown
+    scopes: []
+    notes: AWS 博客页面未给出明确再分发许可；本库仅作原创摘要并链接，不复制图表或长段正文。
+  notes: Batch 29（T08-03）核对：以乐观并发控制实验说明纯指数退避后调用仍同步聚簇（"there are still clusters of calls"）、竞争未实质下降；三种 jitter 定义——Full Jitter（sleep 在 0 到 min(cap, base·2^attempt) 间完全随机）、Equal Jitter（保留一半退避、其余随机，避免极短睡眠）、Decorrelated Jitter（最大值随上次随机值扩大）；实验结论＝无 jitter 指数退避最差、Equal Jitter 次之、Full 与 Decorrelated 各有取舍（Full 更少工作量、Decorrelated 稍快），100 竞争客户端调用次数减半以上；建议 jittered backoff 为远程客户端标准做法；2023 更新注 AWS SDK 已内置（standard/adaptive 重试模式）。未给最大重试次数等具体数值建议。
+- id: src.mlcommons.inference-power-policy
+  title: MLPerf Inference 功耗测量政策 power_measurement.adoc（inference_policies 仓）
+  url: https://github.com/mlcommons/inference_policies/blob/master/power_measurement.adoc
+  kind: documentation
+  registered_at: '2026-10-21'
+  revision: master 快照（commit d3eba2f21026d868ad65cdcad2bb81e4a17ce3d3）2026-10-21 观察；内容对应 v1.0–v2.0 期规则口径
+  license:
+    status: identified
+    scopes:
+    - scope: 仓库根 LICENSE.md（Apache-2.0）
+      identifier: Apache-2.0
+      url: https://github.com/mlcommons/inference_policies/blob/master/LICENSE.md
+    notes: 2026-10-21 经 GitHub 页面确认仓库 SPDX 为 Apache-2.0；本库仅链接并原创归纳，不搬运原文。
+  notes: Batch 29（T00-03）核对：功耗按系统级墙表测量（at the wall），包含受 LoadGen 影响的全部组件（运行 LoadGen 的主机处理器、加速器、内存、风扇等），电源路径不得含电池或储能；v1.0–v2.0 仅支持 Yokogawa 功率分析仪、单表单 SUT（多表接单 SUT 不支持），Dynamic Ranging 用于保证测量精度；director（如带分析仪接口的标准 PC）＋SPEC 的 PTD 记录（PTD 仅可在 MLPerf Power workflow 中使用，须遵守 EULA），SUT 与 director 以 NTP 同步；仅在 performance 阶段评测功耗、以 LoadGen 记录的起止时间戳计算，功耗与性能须来自同一次运行；SUT 与分析仪在提交后至结果发布期间不得变更，无法复现的结果无效；该流程当时不适用于拆分式系统（disaggregated systems）。页面未给具体精度/采样率数值（unknown）。

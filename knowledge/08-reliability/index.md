@@ -6,9 +6,9 @@ domain: reliability
 status: draft
 platforms: [generic]
 source_refs: [src.ascend.mind-cluster, src.nvidia.nccl-docs, src.stas.ml-engineering]
-updated_at: "2026-09-30"
+updated_at: "2026-10-21"
 summary: 建立跨领域的故障模型、证据推理、恢复与验证方法。
-related_ids: [hardware.index, communication.index, data-storage.index, cluster-platform.index, training.index, inference.index, reliability.dimensions-and-failure-domains, reliability.evidence-and-hypotheses, reliability.silent-errors-and-integrity]
+related_ids: [hardware.index, communication.index, data-storage.index, cluster-platform.index, training.index, inference.index, reliability.dimensions-and-failure-domains, reliability.evidence-and-hypotheses, reliability.silent-errors-and-integrity, reliability.fault-models-and-propagation, reliability.correlated-failure-source-case, reliability.mitigation-and-recovery-principles]
 ---
 
 # 08 可靠性与计算正确性方法
@@ -24,14 +24,17 @@ related_ids: [hardware.index, communication.index, data-storage.index, cluster-p
 - [可靠性维度与故障域](dimensions-and-failure-domains.md)：可用性、正确性、性能与恢复目标。
 - [诊断中的证据、假设与结论](evidence-and-hypotheses.md)：观察、支持/反驳证据与下一项检查。
 - [静默错误与计算完整性判定](silent-errors-and-integrity.md)：SDC 与灰色退化的区别、日志盲区、检测方法与数值噪声扣除。
+- [故障模型、跨层传播与共享失效分析](fault-models-and-propagation.md)：fault→error→failure 三链、故障分类、训练与推理两张传播图、有限 FMEA 表与传播/同因区分方法。
+- [相关故障与冗余失效来源案例](correlated-failure-source-case.md)：Meta 2021-10-04 断网复盘＋外部观测双证据，共同原因、传播、放大与冗余独立性失效边界。
+- [隔离、重试预算、降级与恢复选择](mitigation-and-recovery-principles.md)：处置六字段、按目标维度选措施、重试预算与 jitter 退避、降级判据、恢复选择与有限故障对照设计。
 
 ## 二级主题地图
 
-- **08.1 可用性、正确性、性能稳定性与可恢复性** — [基础正文草稿](dimensions-and-failure-domains.md)；具体工具与案例继续补充。
-- **08.2 故障模型、故障域、传播与相关故障** — [基础正文草稿](dimensions-and-failure-domains.md)；具体工具与案例继续补充。
+- **08.1 可用性、正确性、性能稳定性与可恢复性** — [基础正文草稿](dimensions-and-failure-domains.md)；[处置选择](mitigation-and-recovery-principles.md)按四维组织措施。
+- **08.2 故障模型、故障域、传播与相关故障** — [故障模型与传播](fault-models-and-propagation.md)＋[相关故障案例](correlated-failure-source-case.md)；基础正文见[维度与故障域](dimensions-and-failure-domains.md)。
 - **08.3 可观测性、时间线与跨层证据关联** — [基础正文草稿](evidence-and-hypotheses.md)；具体工具与案例继续补充。
 - **08.4 故障发现、假设检验、归因与下一项检查** — [基础正文草稿](evidence-and-hypotheses.md)；具体工具与案例继续补充。
-- **08.5 隔离、冗余、重试、降级与恢复原则** — 待建设。
+- **08.5 隔离、冗余、重试、降级与恢复原则** — [隔离、重试预算、降级与恢复选择](mitigation-and-recovery-principles.md)；相关案例见[冗余失效来源案例](correlated-failure-source-case.md)。
 - **08.6 数值异常、静默错误与计算完整性的判定方法** — 已有[静默错误与计算完整性判定](silent-errors-and-integrity.md)；NPU 侧一手证据待补。
 - **08.7 验收、基准、压力测试与故障注入方法** — 待建设。
 - **08.8 可靠性指标、恢复损失、事故复盘与知识更新** — 待建设。
@@ -67,4 +70,4 @@ GPU 与 NPU 共用证据、假设和验证的表达方式；平台错误码、�
 
 ## 首轮成果与后续
 
-已有可靠性维度、故障域与证据推理方法，七组公开来源案例已按环境、时间线和结果边界整理；后续用独立案例与真实验证检验方法，完整入库复盘不作为未见评测。
+已有可靠性维度、故障域与证据推理方法，七组公开来源案例已按环境、时间线和结果边界整理；Batch 29 新增故障模型/传播、相关故障案例与处置选择三篇。后续用独立案例与真实验证检验方法，完整入库复盘不作为未见评测。
