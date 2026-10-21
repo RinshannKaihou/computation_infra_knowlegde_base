@@ -4895,6 +4895,17 @@ sources:
     scopes: []
     notes: kernel.org 文档页未核对许可；仅链接并原创归纳。
   notes: Batch 20 取证轮实开：内核 NFS 文档入口；挂载/导出选项语义以 nfs(5)/exports(5) 手册页为准，不混用协议规范与实现行为。
+- id: src.ietf.rfc9110
+  title: RFC 9110 HTTP Semantics（§9.2.2 Idempotent Methods）
+  url: https://www.rfc-editor.org/rfc/rfc9110.html
+  kind: documentation
+  registered_at: '2026-10-21'
+  revision: RFC 9110（2022-06）；2026-10-21 curl 取回 rfc9110.txt（502,941 字节）核对 §9.2.2 全文
+  license:
+    status: unknown
+    scopes: []
+    notes: IETF 文本许可未单独核对；仅链接并原创归纳。
+  notes: Batch 29（T08-03）核对 §9.2.2：幂等定义（多次相同请求的预期效果与单次相同；PUT/DELETE/safe 方法幂等）；幂等属性只覆盖用户所请求的效果，服务端日志/版本历史等副作用不保证幂等；通信失败致未读到响应时可自动重试幂等请求；非幂等请求不应自动重试，除非有办法确知其语义实际幂等或确认原请求从未被应用；代理不得自动重试非幂等请求、客户端不应自动重试已失败的自动重试。用于正文"无状态≠可自动重试"的判定依据。
 - id: src.ietf.rfc-8881
   title: RFC 8881 NFSv4.1 协议规范
   url: https://datatracker.ietf.org/doc/html/rfc8881
@@ -6944,7 +6955,7 @@ sources:
     status: unknown
     scopes: []
     notes: IEEE 版权论文；作者托管的公开副本不等于再分发许可。本库仅作原创归纳并链接，不复制图表或长段正文。
-  notes: Batch 29（T08-01）核对：§2.2 failure/error/fault 定义链（failure＝交付服务偏离正确服务的事件；error＝系统总状态中可能导致后续服务失效的部分；fault＝error 的判定或假设成因）与 dormant/active fault、vulnerability 定义；§2.2/§3.3 失效模式四视角（content/timing（early/late）、halt/silent/erratic、signaled/unsignaled＋检测机制自身的 false alarm、consistent/inconsistent=Byzantine）与 severity；§3.2.1 八维初等故障类与 31 组合类（Fig.4/5）、natural faults 编号 11–15、external faults 例含 power transients；§4/Fig.12–13 solid(hard) 与 elusive(soft) fault（激活可复现性）、intermittent faults 定义、组件失效成为所在系统永久/暂态 fault 与外部传播（A→B 服务接口）。取回全文仅用于核对定义，不外推任何发生率。
+  notes: Batch 29（T08-01）核对：§2.2（印刷页 13）failure/error/fault 定义链（failure＝交付服务偏离正确服务的事件；error＝系统总状态中可能导致后续服务失效的部分；fault＝error 的判定或假设成因）与 dormant/active fault、vulnerability 定义；§3.3.1（印刷页 18–19）失效模式四视角——领域 content/timing（early/late；halt/silent/erratic 属两者兼有时的细分）、可检测性 signaled/unsignaled＋检测机制自身的 false alarm、一致性 consistent/inconsistent=Byzantine、后果 severity；§3.2.1 八维初等故障类与 31 组合类（Fig.4/5）、natural faults 编号 11–15、external faults 例含 power transients；§3.5（印刷页 20–22）solid(hard) 与 elusive(soft) fault（激活可复现性）、intermittent faults 定义、休眠/激活循环、组件失效成为所在系统永久/暂态 fault 与外部传播（A→B 服务接口，Fig.10–13）。取回全文仅用于核对定义，不外推任何发生率。
 - id: src.meta.oct4-2021-postmortem
   title: More details about the October 4 outage（Santosh Janardhan，Meta 工程博客，2021-10-05）
   url: https://engineering.fb.com/2021/10/05/networking/outage-details/
@@ -6955,7 +6966,7 @@ sources:
     status: unknown
     scopes: []
     notes: Meta 工程博客页面未给出明确再分发许可；本库仅作原创摘要并链接，不复制图表或长段正文。
-  notes: Batch 29（T08-02）核对：运营方复盘要点——例行维护中评估骨干容量的审计命令因工具 bug 无法正确停止，"unintentionally took down all the connections in our backbone network"；DNS 服务器在无法连接数据中心时主动停用并撤回 BGP 广播（declare themselves unhealthy and withdraw those BGP advertisements），服务器运行但互联网不可达；主用与带外网络访问同时失效（Our primary and out-of-band network access was down），须按安全协议现场进入；恢复时按既有 storm 演练经验渐进管理流量；后续措施＝复盘流程、寻找模拟此类事件的方式、加强测试与韧性、确认安全设计减慢恢复的取舍值得。原文未给精确时间戳与命令内容；无任何发生率数据。
+  notes: Batch 29（T08-02）核对：运营方复盘要点——例行维护中的容量评估命令被下发，负责审查/阻止危险命令的审计工具因缺陷未能正确停止该命令（两类对象分开；命令内容与下发机制未披露），该命令"unintentionally took down all the connections in our backbone network"；DNS 服务器在无法连接数据中心时主动停用并撤回 BGP 广播（declare themselves unhealthy and withdraw those BGP advertisements），服务器运行但互联网不可达；主用与带外网络访问同时失效（Our primary and out-of-band network access was down），须按安全协议现场进入；恢复时按既有 storm 演练经验渐进管理流量；后续措施＝复盘流程、寻找模拟此类事件的方式、加强测试与韧性、确认安全设计减慢恢复的取舍值得。原文未给精确时间戳与命令内容；无任何发生率数据。
 - id: src.cloudflare.oct-2021-facebook-outage
   title: Understanding how Facebook disappeared from the Internet（Celso Martinho/Tom Strickx，Cloudflare 博客，2021-10-04）
   url: https://blog.cloudflare.com/october-2021-facebook-outage/
@@ -6966,7 +6977,7 @@ sources:
     status: unknown
     scopes: []
     notes: Cloudflare 博客页面未给出明确再分发许可；本库仅作原创摘要并链接，不复制图表或长段正文。
-  notes: Batch 29（T08-02）核对：外部观测侧时间线——约 15:40 UTC 出现 Facebook 路由变更峰值、15:51 Cloudflare 开内部事故单（"Facebook DNS lookup returning SERVFAIL"）、约 15:50 facebook.com 在 1.1.1.1 停止解析、15:58 注意到 DNS 前缀路由停止宣告（示例 185.89.218.0/23 与 129.134.30.0/23 不在 BGP 表、129.134.0.0/17 仍在）；全球 resolver 查询量 30 倍增长并缓存 SERVFAIL；21:00 UTC 后 BGP 活动恢复、21:17 达峰、21:20 facebook.com DNS 可用、21:28 判定重新接入。文中根因表述为对 Meta 官方博客的转述（第二手）；Cloudflare 起初怀疑自家 resolver 的假设被观测反驳。
+  notes: Batch 29（T08-02）核对：外部观测侧时间线——约 15:40 UTC 出现 Facebook 路由变更峰值、15:51 Cloudflare 开内部事故单（"Facebook DNS lookup returning SERVFAIL"）、约 15:50 facebook.com 在 1.1.1.1 停止解析、15:58 注意到 DNS 前缀路由停止宣告（示例 185.89.218.0/23 与 129.134.30.0/23 不在 BGP 表、129.134.0.0/17 仍在）；Cloudflare 自身解析流量约 30 倍于平时并缓存 SERVFAIL（图示数据视角为 1.1.1.1，作者以"全球解析器"概括、全球测量口径未披露）；21:00 UTC 后 BGP 活动恢复、21:17 达峰、21:20 facebook.com DNS 可用、21:28 外部视角暂定判断重新接入（应用恢复另需时间）。文中根因表述为对 Meta 官方博客的转述（第二手）；Cloudflare 起初怀疑自家 resolver 的假设作为本事件解释被多公共解析器 SERVFAIL 示例与 BGP 表观测削弱（不排除其所有潜在独立故障）。
 - id: src.aws.backoff-jitter-2015
   title: Exponential Backoff and Jitter（Marc Brooker，AWS Architecture Blog，2015-03-04）
   url: https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/

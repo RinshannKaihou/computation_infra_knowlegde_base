@@ -41,16 +41,16 @@ input_snapshot:
   local_reproduced_entries: 0
 summary:
   total_topics: 63
-  partial: 18
-  covered: 43
-  missing: 2
+  partial: 6
+  covered: 57
+  missing: 0
   followup_topics: 20
   unmapped_substantive_entries: 0
-  recomputed_at: '2026-10-19'
-  notes: 按 Batch 24 交付后复查的 topics 重算。本轮重算前保留的 summary 为 partial 34 / covered 22 / missing 7 / followup 41（含 Batch 13–16 的主题升级，首个入库提交 b89abb9 已是该值）；初始基线为 covered 12 / partial 44 / missing 7、followup 51（见 plans/full-coverage-backlog.yaml 的 summary）。input_snapshot、validation 与 documents 仍是登记日期 2026-10-08 的盘点输入快照，未重新生成。
+  recomputed_at: '2026-10-21'
+  notes: 按 Batch 29 交付后重算（00.4/00.5/08.2/08.5 四主题 partial→covered；covered 含 6 个 covered_basic）。此前各轮：Batch 24 后 43/18/2、Batch 27 后 51/10/2、Batch 28 后 53/10/0。初始基线为 covered 12 / partial 44 / missing 7、followup 51（见 plans/full-coverage-backlog.yaml 的 summary）。input_snapshot、validation 与 documents 仍是登记日期 2026-10-08 的盘点输入快照，未重新生成。
 batch_planning:
-  completed_batches: 01–24
-  next_batch: 25
+  completed_batches: 01–29
+  next_batch: 30
   planned_last_batch: 32
   planned_followup_batches: 20
   remaining_planned_batches: 8
@@ -126,39 +126,40 @@ topics:
 - topic_id: '00.4'
   title: 单机、集群与超节点的参考架构
   domain_code: '00'
-  coverage_status: partial
+  coverage_status: covered
   core_scope: 比较单机、集群和超节点的组成、数据/控制路径、共享依赖及选择条件
-  present_scope: 已有三类原创概念架构图与组件部署职责表、GB200 NVL72 与 Atlas 900 A3 SuperPoD 两个官方超节点样板（DGX SuperPOD RA 集群样板）、约束比较表、标为假设的设计示例与部署关系核对清单
+  present_scope: 已有三类原创概念架构图与组件部署职责表、GB200 NVL72 与 Atlas 900 A3 SuperPoD 两个官方超节点样板（DGX SuperPOD RA 集群样板）、约束比较表、标为假设的设计示例与部署关系核对清单；容量/成本/能耗量化权衡与验收表已由设计目标正文补齐（T00-03 交付）
   evidence_refs:
   - overview.reference-architectures
+  - overview.design-targets-and-tradeoffs
   background_refs:
   - hardware.resource-topology
   - overview.training-lifecycle
   - overview.inference-lifecycle
   - communication.interconnect-paths
-  gaps:
-  - 缺少容量与成本/能耗量化的设计权衡与验收表（T00-03，Batch 29）
-  followup_priority: normal
-  recommended_action: add_or_extend
-  closure_criteria: 补齐所列缺口，给出适用条件、精确来源、观察/判断方法及验证判据；需要真实结果时另登记复现证据。
+  gaps: []
+  followup_priority: maintain
+  recommended_action: maintain
+  closure_criteria: 在本行核心范围内维持正文、导航和来源一致；环境与版本变化时复核。
 - topic_id: '00.5'
   title: 设计目标与约束：可靠性、性能、容量、成本、能耗
   domain_code: '00'
-  coverage_status: partial
+  coverage_status: covered
   core_scope: 把可靠性、性能、容量、成本和能耗转成可比较的设计目标及权衡
-  present_scope: 已有可靠性目标、性能统计和功耗/散热证据；尚未组成设计决策方法
+  present_scope: 已有五类目标统一口径表（训练有效进展与推理 goodput 两侧定义、容量供给/需求四分、成本符号化假设、能耗四层级边界与不可混用规则）、五类冲突面、两个符号化假设计算示例（单机扩容与集群冗余/批处理，含量纲闭合推导与显式比较条件）与正常/故障/恢复三窗口验收表模板
   evidence_refs:
+  - overview.design-targets-and-tradeoffs
   - reliability.dimensions-and-failure-domains
-  - hardware.power-thermal-evidence
+  - hardware.rack-power-cooling-and-failure-domains
   - inference.latency-metrics
-  background_refs: []
-  gaps:
-  - 缺少容量与成本口径
-  - 缺少能耗/有效产出度量
-  - 缺少五类目标的权衡案例与验收表
-  followup_priority: normal
-  recommended_action: add_or_extend
-  closure_criteria: 补齐所列缺口，给出适用条件、精确来源、观察/判断方法及验证判据；需要真实结果时另登记复现证据。
+  - cluster-platform.contention-capacity-validation
+  background_refs:
+  - overview.reference-architectures
+  - training.performance-analysis
+  gaps: []
+  followup_priority: maintain
+  recommended_action: maintain
+  closure_criteria: 在本行核心范围内维持正文、导航和来源一致；引入市场价格或真实能耗测量时另登记可追溯来源并复核示例结论。
 - topic_id: '00.6'
   title: 按角色、任务与平台组织的阅读路径
   domain_code: '00'
@@ -1033,22 +1034,21 @@ topics:
 - topic_id: '08.2'
   title: 故障模型、故障域、传播与相关故障
   domain_code: 08
-  coverage_status: partial
+  coverage_status: covered
   core_scope: 建模故障种类、共享依赖、传播链和相关故障，检验冗余与隔离假设
-  present_scope: 已有故障域、共同原因/相关/独立边界及同步传播/灰色退化例子
+  present_scope: 已有故障域、共同原因/相关/独立边界及同步传播/灰色退化例子；新增 fault→error→failure 定义链与故障分类（存在持续/激活可复现/显隐性/相关性）、训练与推理两张跨层传播图、有限 FMEA 表（无概率）、传播/同因区分五步法与冗余独立性检查清单，以及 Meta 2021-10-04 断网的运营方复盘＋外部 BGP/DNS 观测双证据案例
   evidence_refs:
   - reliability.dimensions-and-failure-domains
+  - reliability.fault-models-and-propagation
+  - reliability.correlated-failure-source-case
   - hardware.resource-topology
   - communication.collectives-and-rank-progress
   - reliability.silent-errors-and-integrity
   background_refs: []
-  gaps:
-  - 缺少故障模型的系统分类
-  - 缺少跨层传播图与失效模式分析
-  - 缺少关联故障/冗余失效的完整来源案例
-  followup_priority: normal
-  recommended_action: add_or_extend
-  closure_criteria: 补齐所列缺口，给出适用条件、精确来源、观察/判断方法及验证判据；需要真实结果时另登记复现证据。
+  gaps: []
+  followup_priority: maintain
+  recommended_action: maintain
+  closure_criteria: 在本行核心范围内维持正文、导航和来源一致；环境与版本变化时复核。
 - topic_id: '08.3'
   title: 可观测性、时间线与跨层证据关联
   domain_code: 08
@@ -1084,22 +1084,22 @@ topics:
 - topic_id: '08.5'
   title: 隔离、冗余、重试、降级与恢复原则
   domain_code: 08
-  coverage_status: partial
+  coverage_status: covered
   core_scope: 比较隔离、冗余、重试、降级与恢复的目标、代价和失败边界
-  present_scope: 已有相关故障域/恢复门槛、训练副本与重启、KV 重算/失败的局部机制
+  present_scope: 已有相关故障域/恢复门槛、训练副本与重启、KV 重算/失败的局部机制；新增处置六字段与按四维目标的选择流程、重试五条边界（deadline/预算三件套/jitter 退避/幂等判定与流式三类中断）、隔离与降级三层表、恢复选择五行表（训练重算/弹性重建、推理切换/重算的条件化判据）、冗余独立性与故障预算、有限故障对照设计与授权边界
   evidence_refs:
+  - reliability.mitigation-and-recovery-principles
+  - reliability.fault-models-and-propagation
+  - reliability.correlated-failure-source-case
   - reliability.dimensions-and-failure-domains
   - training.elastic-training-and-membership
   - training.checkpoint-state-consistency
   - inference.pd-disaggregation
   background_refs: []
-  gaps:
-  - 缺少跨领域处置原则与选择流程
-  - 缺少重试预算、幂等/重放和降级策略
-  - 缺少冗余/隔离失效案例与验证
-  followup_priority: high
-  recommended_action: add_or_extend
-  closure_criteria: 补齐所列缺口，给出适用条件、精确来源、观察/判断方法及验证判据；需要真实结果时另登记复现证据。
+  gaps: []
+  followup_priority: maintain
+  recommended_action: maintain
+  closure_criteria: 在本行核心范围内维持正文、导航和来源一致；环境与版本变化时复核。
 - topic_id: '08.6'
   title: 数值异常、静默错误与计算完整性的判定方法
   domain_code: 08

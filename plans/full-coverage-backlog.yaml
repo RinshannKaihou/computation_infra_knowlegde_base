@@ -3754,7 +3754,7 @@ batches:
   completion_record: docs/research/batch-28-source-audit.md
 - number: 29
   title: 全景与导航、可靠性方法
-  status: planned
+  status: done
   task_refs:
   - T00-03
   - T08-01
@@ -3770,6 +3770,8 @@ batches:
   minimal_predecessor_batches:
   - 23
   conservative_wave: 11
+  completed_at: '2026-10-21'
+  completion_record: docs/research/batch-29-source-audit.md
 - number: 30
   title: 可靠性方法
   status: planned
@@ -6697,8 +6699,8 @@ tasks:
   work_units: 2
 - id: T00-03
   title: 容量、成本、能耗与可靠性目标的设计权衡
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 29
   operation: new
   content_type: reference
@@ -6740,8 +6742,8 @@ tasks:
   work_units: 2
 - id: T08-01
   title: 故障模型、跨层传播与共享失效分析
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 29
   operation: new
   content_type: concept
@@ -6787,8 +6789,8 @@ tasks:
   work_units: 2
 - id: T08-02
   title: 相关故障与冗余失效的公开案例
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 29
   operation: new
   content_type: case
@@ -6822,8 +6824,8 @@ tasks:
   work_units: 1
 - id: T08-03
   title: 隔离、重试预算、降级与恢复选择
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 29
   operation: new
   content_type: procedure

@@ -16,11 +16,12 @@
 | 每请求最多 3 次尝试、客户端 10% 重试比例预算、仅在紧邻上一层重试 | src.google.sre-handling-overload | [Handling Overload](https://sre.google/sre-book/handling-overload/)（Batch 28 已核） | 重试预算三件套的示例数值（标为 SRE 示例非推荐） |
 | 错误预算与 SLO 驱动发布冻结决策 | src.google.sre-implementing-slos | [Implementing SLOs](https://sre.google/workbook/implementing-slos/)（2026-09-29 已核） | 故障预算小节 |
 | 五类簇级断路器与 max_retries 并发上限；推荐 retry budgets 替代静态重试上限 | src.envoy.circuit-breaking-arch-latest-2026-10-21 | [Envoy Circuit Breaking](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/circuit_breaking)（Batch 28 已核，latest 可变页） | 预算三件套的服务级示例 |
-| Job backoffLimit 默认 6＋指数退避 | src.kubernetes.job-lifecycle-v1-32 | [Job 概念页](https://kubernetes.io/docs/concepts/workloads/controllers/job/)（v1.32 快照，Batch 22 已核） | 训练重启预算段 |
-| 容器重启退避 10s 起封顶 300s、运行 10 分钟重置 | src.kubernetes.pod-lifecycle-v1-32 | [Pod 生命周期页](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/)（v1.32 快照，Batch 28 已核） | 同上 |
-| torchrun CLI max-restarts 默认 0 与 WorkerSpec API 默认 3 须区分；elastic 只重建进程组、状态恢复是应用责任；checkpoint 是恢复前提 | src.pytorch.elastic-2.6 | [PyTorch 2.6 elastic/run](https://docs.pytorch.org/docs/2.6/elastic/run.html)（2026-10-08 核对，B11-C03 修订后口径） | 恢复选择表训练行 |
+| Job backoffLimit 默认 6＋指数退避＋Never/OnFailure 计数对象 | src.kubernetes.job-lifecycle-v1-32 | [Job 快照页](https://v1-32.docs.kubernetes.io/docs/concepts/workloads/controllers/job/)（Batch 22 已核） | 训练重启预算段 |
+| 容器重启退避 10s 起封顶 300s、运行 10 分钟重置 | src.kubernetes.pod-lifecycle-v1-32 | [Pod 生命周期快照页](https://v1-32.docs.kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/)（Batch 28 已核） | 同上 |
+| torchrun CLI max-restarts 默认 0 与 WorkerSpec API 默认 3 须区分；重启终止全部 worker（幸存内存不作保留前提）、状态恢复是应用责任、checkpoint 是恢复前提；文档概括与实现分支的差异——run.py elastic 示例把成员变化与失败合并概括，api.py 按 UNHEALTHY/FAILED（剩余预算大于零时扣减再重启）与 HEALTHY 等待新节点（不扣）分支 | src.pytorch.elastic-2.6 | [PyTorch 2.6 elastic/run](https://docs.pytorch.org/docs/2.6/elastic/run.html)＋固定 commit [run.py L157–165](https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/torch/distributed/run.py#L157-L165)与 [api.py L887–917](https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/torch/distributed/elastic/agent/server/api.py#L887-L917)（2026-10-08 核对，B11-C03 修订后口径） | 恢复选择表训练行；本文按实现分支表述，未逐路径核对的离开/故障组合 unknown |
 | 副本机制支持缩容续训与 UCE 在线修复；外部组件约束 | src.ascend.mindspeed-llm-ha-v2.2.0 | [high_availability.md](https://github.com/Ascend/MindSpeed-LLM/blob/53f3639c3da9c000a187c44cc0c08d55026ddded/docs/pytorch/features/high_availability.md)（v2.2.0 tag；2026-10-08 补核） | 恢复选择表训练行（Ascend 样板） |
-| 流式输出重试边界、KV 重算、副本切换与回滚验证 | 07 域既有正文 | [pd-disaggregation](../../knowledge/07-inference/pd-disaggregation.md)/[release-and-recovery](../../knowledge/07-inference/release-and-recovery.md)/[execution-and-kv-cache](../../knowledge/07-inference/execution-and-kv-cache.md)/[routing-and-flow-control](../../knowledge/07-inference/routing-and-flow-control.md) | 恢复选择与隔离小节的机制引用 |
+| 无状态≠可自动重试的判定依据（幂等定义、非幂等重试的两例外、代理禁令） | src.ietf.rfc9110（**初审修订轮新增**） | [RFC 9110 §9.2.2](https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2)（2026-10-21 curl 取回 rfc9110.txt 核对全文） | 重试第 5 条幂等判定的规范依据 |
+| 流式输出重试边界（限本库已核普通 chat/completion 路径）、KV 重算、副本切换与回滚验证 | 07 域既有正文 | [pd-disaggregation](../../knowledge/07-inference/pd-disaggregation.md)/[release-and-recovery](../../knowledge/07-inference/release-and-recovery.md)/[execution-and-kv-cache](../../knowledge/07-inference/execution-and-kv-cache.md)/[routing-and-flow-control](../../knowledge/07-inference/routing-and-flow-control.md) | 恢复选择与隔离小节的机制引用；其他引擎/版本的续传协议未调查（unknown） |
 
 ## 本文原创部分
 
@@ -29,6 +30,6 @@
 ## unknown 清单
 
 1. 本文全部"推荐配置"留空：重试次数/比例/退避基数/预算比例均须按目标环境设定，来源只提供机制与示例值（已标"示例非推荐"）。
-2. 训练侧"含恢复损失的可用产出折算"具体算法未定义（T08-06 可靠性统计范围）；本文只用符号 a'。
+2. 本篇未定义净产出折算符号（正文以"故障点−恢复点"直读步数损失）；训练侧有效产出/恢复损失的完整统计口径属 T08-06 与 [T00-03 设计目标正文](../../knowledge/00-overview/design-targets-and-tradeoffs.md)（净产出折算 a/a'、四对象分记）。
 3. 故障对照设计的统计方法（样本量、显著性）属 08.7/30 批，本文只给设计骨架。
 4. vLLM 侧重试/预取策略未在本轮重新取证（07 域既有登记未覆盖引擎内部 retry 参数），正文引用限于 KV 重算/副本切换机制层。
