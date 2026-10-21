@@ -39,10 +39,10 @@ verification:
 三条隔离纪律：
 
 1. **来源时间截断**：held-out 案例的发生时间晚于（或家族上独立于）train 侧全部材料，防止“复盘已在公开渠道流传”造成的答案泄漏；
-2. **冻结**：评测开始前冻结知识库版本（commit）、模型/配置与评分规则；任何一项变更即视为新评测轮，旧分数不可比；
+2. **冻结与可比性**：评测轮开始前冻结**测试条件**——题目输入、证据 oracle、评分口径（rubric 与权重）；被比较的**候选变量**（模型、提示词、知识库版本）须预先声明，逐轮记录其版本与独立性。两种变化的后果不同：候选变量变化＝同一协议下的受控比较（正是评测的目的）；测试条件变化＝试卷已换，旧分不可直接比，须重跑共同候选重建基线或停止直接比较，不混用不同试卷的裸分；
 3. **外置答案**：held-out 的输入与答案由 V12 工作包（[plans/validation-backlog.yaml](../../plans/validation-backlog.yaml)）按“有授权且可脱敏的独立案例及评测资源”另行获取与审查；**在 V12 交付前，本库不存在独立评测集，也不宣称任何独立评测结论**。
 
-公开研究中的同型做法可作参照：Cloud-OpsBench 用故障注入构造 452 个案例并以“状态快照”冻结现场保证 100% 可复现（[arXiv:2603.00468 §3.2](https://arxiv.org/abs/2603.00468)）；RCACopilot 用一年的真实 Microsoft 事故数据评测并报告 RCA accuracy 至 0.766（[arXiv:2305.15778](https://arxiv.org/abs/2305.15778)）——两者都声明了数据范围，但没有哪个公开基准能替代本地环境的独立 holdout。
+公开研究中的同型做法可作参照：Cloud-OpsBench 用故障注入构造 452 个案例并以“状态快照”冻结现场保证 100% 可复现（[arXiv:2603.00468v1 §3.2](https://arxiv.org/abs/2603.00468v1)）；RCACopilot 用一年的真实 Microsoft 事故数据评测并报告 RCA accuracy 至 0.766（[arXiv:2305.15778](https://arxiv.org/abs/2305.15778)）——两者都声明了数据范围，但没有哪个公开基准能替代本地环境的独立 holdout。
 
 ## 二、评审角色与污染控制
 
@@ -81,7 +81,7 @@ U 级案例是必需品：评测不含 U 级会训练出“逢题必答”的坏
 | abstention | U 级案例是否正确弃答并给出补证清单 | 强行归因到某硬件 |
 | 恢复验证 | 是否给出恢复完成的判据（不是“进程起来了”） | 无健康窗口判据即宣布恢复 |
 
-Cloud-OpsBench 的过程指标与本文维度同向，可作实现参照：除 Top-k 准确率与任务完成率外，它评轨迹对齐、工具相关性/覆盖（Relevance/Coverage）、诊断效率（MTTI/Steps），并定义三种失败模式指标——无效动作数（IAC，参数幻觉/非法调用）、冗余动作率（RAR）、零工具诊断率（ZTDR，不取证据直接下结论）（[§5 指标定义](https://arxiv.org/abs/2603.00468)）。ZTDR 即“abstention 反面”的工具化度量。
+Cloud-OpsBench 的过程指标与本文维度同向，可作实现参照：除 Top-k 准确率与任务完成率外，它评轨迹对齐、工具相关性/覆盖（Relevance/Coverage）、诊断效率（MTTI/Steps），并定义三种失败模式指标——无效动作数（IAC，参数幻觉/非法调用）、冗余动作率（RAR）、零工具诊断率（ZTDR，不取证据直接下结论）（[v1 §4.2 指标定义](https://arxiv.org/abs/2603.00468v1)）。**注意 ZTDR 不是 abstention 的度量**：它统计的是“未作任何有效工具调用即产出最终结论”的交互取证过程缺失，而 abstention 是“证据不足以在候选间区分时拒绝确定归因”——调过工具仍可能武断下结论（ZTDR 测不到），面对固定输入正确弃答也可能没有工具调用（会被 ZTDR 误伤）。二者按各自定义分别评。
 
 ## 五、公开题组的角色边界
 
@@ -95,8 +95,8 @@ Cloud-OpsBench 的过程指标与本文维度同向，可作实现参照：除 T
 
 ## 来源核对范围
 
-- [RCACopilot / Automatic RCA via LLMs for Cloud Incidents, arXiv:2305.15778v4](https://arxiv.org/abs/2305.15778)：本批核对摘要与登记口径——一年期真实 Microsoft 事故数据、RCA accuracy 至 0.766、诊断信息采集组件在生产使用四年以上。全文细节未逐节核读，仅引用摘要级事实。
-- [Cloud-OpsBench, arXiv:2603.00468v1](https://arxiv.org/abs/2603.00468)（CC BY 4.0）：本批全文核读——452 案例与 40 故障类型、State Snapshot 范式（确定性数字孪生、冻结现场）、K8s v1.31 测试床＋ChaosBlade 注入、指标定义（A@k、TCR、Trajectory Alignment、Relevance/Coverage、MTTI/Steps、IAC/RAR/ZTDR）、反猜测设计（搜索空间与证据链）。仅归纳，不复制其数据。
+- [RCACopilot / Automatic RCA via LLMs for Cloud Incidents, arXiv:2305.15778v4](https://arxiv.org/abs/2305.15778)（CC BY 4.0，v4 页面许可栏复核轮核对）：本批核对摘要与登记口径——一年期真实 Microsoft 事故数据、RCA accuracy 至 0.766、诊断信息采集组件在生产使用四年以上。全文细节未逐节核读，仅引用摘要级事实。
+- [Cloud-OpsBench, arXiv:2603.00468v1（固定 v1 入口）](https://arxiv.org/abs/2603.00468v1)（CC BY 4.0；无版本入口现展示 v2、未读）：本批全文核读 v1——452 案例与 40 故障类型、State Snapshot 范式（确定性数字孪生、冻结现场）、K8s v1.31 测试床＋ChaosBlade 注入、指标定义（**v1 §4.2**：A@k、TCR、Trajectory Alignment、Relevance/Coverage、MTTI/Steps、IAC/RAR/ZTDR）、反猜测设计（搜索空间与证据链）。仅归纳，不复制其数据。
 - [SRE Book, Ch.12 Effective Troubleshooting](https://sre.google/sre-book/effective-troubleshooting/)（既有登记）：假设—演绎与证据保全，是各维度的方法底座。
 - 逐条主张与读取范围见[第三十批 T08-08 来源记录](../../docs/research/batch-30-t08-08-sources.md)。
 - 待确认：V12 独立案例集的获取授权与脱敏审查；维权重与评分细则冻结版本。

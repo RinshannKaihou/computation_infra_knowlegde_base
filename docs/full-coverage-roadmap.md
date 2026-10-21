@@ -281,7 +281,9 @@
 
 **Batch 29 已于 2026-10-21 交付并通过审阅**：T00-03 容量、成本、能耗与可靠性目标的设计权衡（00.4 收口＋00.5）；T08-01 故障模型、跨层传播与共享失效分析；T08-02 相关故障与冗余失效的公开案例（Meta 2021-10-04 断网，运营方复盘＋Cloudflare 外部观测双证据）；T08-03 隔离、重试预算、降级与恢复选择。`gpt-6.1-sol / xhigh` 初审与定向复核：T08-01（10 项，初审＋2 轮复核闭环）、T08-02（7 项，初审＋1 轮）、T08-03（11 项，初审＋3 轮）、T00-03（10 项，初审＋2 轮）全部 CLOSED；四个审阅会话全部 turn_context 经核验为单一模型/档位（`[frontier_llm]` 命中均为文件引用）。来源登记 553→559（新增 Avizienis TDSC 2004、Meta 复盘、Cloudflare 外部观测、AWS backoff-jitter、MLPerf 功耗政策、RFC 9110）；00.4/00.5/08.2/08.5 升为已覆盖，统计重算 57/6/0；批次与四任务置 done（completion_record：batch-29-source-audit.md）。正文均为 draft，未做真实环境验证。记录见 [batch-29-source-audit](research/batch-29-source-audit.md) 与各轮 review/recheck。
 
-当前进展：**Batch 30 为下一批（按依赖图）**；Batch 29 已交付并通过审阅；以实际运行与验收记录为准。
+**Batch 30 已于 2026-10-21 交付并通过审阅**：T08-04 SDC 检测量化、训练传播与平台证据（修订 silent-errors-and-integrity，08.6 收口）；T08-05 统一测试选择、压力/注入与统计方法（08.7 方法面）；T08-06 可靠性统计、有效产出与恢复损失（Llama 3 有效训练时间＋Google MPG 三层分解）；T08-07 事故复盘、来源更新与知识维护；T08-08 诊断评测方法与十条公开教学题组（独立 holdout 仍由 V12 外置管理）。`gpt-6.1-sol / xhigh` 初审与定向复核：T08-04（14 项，初审＋5 轮）、T08-05（10 项，初审＋3 轮）、T08-06（16 项，初审＋4 轮）、T08-07（6 项，初审＋3 轮）、T08-08（11 项，初审＋3 轮）全部 CLOSED；各审阅会话均经 `~/.codex/sessions` 的 `turn_context` 核验单一模型/档位。来源登记 559→575（新增 Meta 检测量化 2203.08989、ACL 2025 LLM 训练 SDC 及其 arXiv v1 附录入口、Llama 3、Google MPG、SRE 三章、Kalibera-Jones、NIST 两项、msprobe、DCMI ECC、FaultDiag、RCACopilot、Cloud-OpsBench；OCP 补读至文末并核正页数、npu-smi 补 ECC 深页、Llama 3/MPG/Cloud-OpsBench 版本入口固定、多处许可核正）。08.6/08.7/08.8 升为已覆盖，统计重算 60/3/0；批次与五任务置 done（completion_record：batch-30-source-audit.md）。正文均为 draft，未做真实环境验证；08.7 真实执行 0/7 与 08.8 独立评测集仍由验证工作包推进。记录见 [batch-30-source-audit](research/batch-30-source-audit.md) 与各轮 review/recheck。
+
+当前进展：**Batch 31 为下一批（按依赖图）**；Batch 30 已交付并通过审阅；以实际运行与验收记录为准。
 
 知识库网站、搜索产品、API/MCP、现场适配器、自动评测执行框架和生产操作属于架构工程后续阶段，不纳入本次内容批次数。正文中的方法和有限教学题不代表上述工程已实现。
 

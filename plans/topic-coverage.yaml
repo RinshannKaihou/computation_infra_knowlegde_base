@@ -41,13 +41,13 @@ input_snapshot:
   local_reproduced_entries: 0
 summary:
   total_topics: 63
-  partial: 6
-  covered: 57
+  partial: 3
+  covered: 60
   missing: 0
   followup_topics: 20
   unmapped_substantive_entries: 0
   recomputed_at: '2026-10-21'
-  notes: 按 Batch 29 交付后重算（00.4/00.5/08.2/08.5 四主题 partial→covered；covered 含 6 个 covered_basic）。此前各轮：Batch 24 后 43/18/2、Batch 27 后 51/10/2、Batch 28 后 53/10/0。初始基线为 covered 12 / partial 44 / missing 7、followup 51（见 plans/full-coverage-backlog.yaml 的 summary）。input_snapshot、validation 与 documents 仍是登记日期 2026-10-08 的盘点输入快照，未重新生成。
+  notes: 按 Batch 30 交付后重算（08.6/08.7/08.8 三主题 partial→covered；covered 含 6 个 covered_basic；08.7 的真实环境结果与 08.8 的独立评测集仍由验证工作包另行推进）。此前各轮：Batch 24 后 43/18/2、Batch 27 后 51/10/2、Batch 28 后 53/10/0、Batch 29 后 57/6/0。初始基线为 covered 12 / partial 44 / missing 7、followup 51（见 plans/full-coverage-backlog.yaml 的 summary）。input_snapshot、validation 与 documents 仍是登记日期 2026-10-08 的盘点输入快照，未重新生成。
 batch_planning:
   completed_batches: 01–29
   next_batch: 30
@@ -1103,29 +1103,28 @@ topics:
 - topic_id: '08.6'
   title: 数值异常、静默错误与计算完整性的判定方法
   domain_code: 08
-  coverage_status: partial
+  coverage_status: covered
   core_scope: 区分数值噪声、软件/数据错误和硬件 SDC，用覆盖明确的校验与对照推进判定
-  present_scope: 已有误差背景、SDC 候选门槛、检测方法分层和字节/应用完整性边界
+  present_scope: 已有误差背景、SDC 候选门槛（静默三层：硬件检测未触发/应用间接症状/主动校验）、Fleetscanner/Ripple 检测量化（共同分母与时间终点分列）、真实不健康节点三层级训练传播（activation/梯度/optimizer 状态/参数/checkpoint 传播链）与 ABFT 实测反例、字节/元数据/指纹/差分/golden/任务质量各方法比较、NVIDIA/AMD/Ascend 按版本观测与校验清单；NPU SDC 发生率保持 unknown（不以 CPU/GPU 代填）
   evidence_refs:
   - reliability.silent-errors-and-integrity
   - training.gpu-npu-precision-difference-triage
   - training.gpu-npu-precision-difference-experiment
   - data-storage.checkpoint-integrity-evidence
+  - hardware.health-evidence
   background_refs: []
-  gaps:
-  - 缺少 NPU SDC 一手依据
-  - 缺少训练侧更完整的检测/传播与校验方法正文
-  - 部分检测分类目前只有目录级证据
-  followup_priority: normal
-  recommended_action: add_or_extend
-  closure_criteria: 补齐所列缺口，给出适用条件、精确来源、观察/判断方法及验证判据；需要真实结果时另登记复现证据。
+  gaps: []
+  followup_priority: maintain
+  recommended_action: maintain
+  closure_criteria: 在本行核心范围内维持正文、导航和来源一致；NPU SDC 一手材料出现或版本变化时复核。
 - topic_id: '08.7'
   title: 验收、基准、压力测试与故障注入方法
   domain_code: 08
-  coverage_status: partial
+  coverage_status: covered
   core_scope: 设计验收、基准、压力和故障注入的对象、对照、统计、预算与恢复判据
-  present_scope: 已有节点四层验收、通信基线及七份有停止/恢复条件的验证方案
+  present_scope: 已有节点四层验收、通信基线；新增统一测试选择矩阵（验收/基准/压力/注入×对象/故障模型/所问问题/检测覆盖/按层级分列的资源风险/恢复）、统计纪律（重复层级/随机化/warmup/均值与尾分位分列/多重比较/预注册判据与无结果/停止记录）、注入六字段与压力四声明、七份方案准备矩阵（设计→冻结→执行→复核分层，真实执行 0/7）
   evidence_refs:
+  - reliability.test-design-and-coverage
   - hardware.node-acceptance-triage
   - communication.bandwidth-baselines
   - communication.nccl-timeout-experiment
@@ -1136,32 +1135,30 @@ topics:
   - training.checkpoint-state-recovery-experiment
   - inference.ascend-inference-tail-latency-experiment
   background_refs: []
-  gaps:
-  - 缺少统一测试选择与覆盖矩阵
-  - 缺少压力测试/注入模型与统计方法
-  - 缺少基于真实环境的结果证据，实测另行推进
-  followup_priority: high
-  recommended_action: add_or_extend
-  closure_criteria: 补齐所列缺口，给出适用条件、精确来源、观察/判断方法及验证判据；需要真实结果时另登记复现证据。
+  gaps: []
+  followup_priority: maintain
+  recommended_action: maintain
+  closure_criteria: 方法与判读框架已覆盖基础范围；真实环境结果证据仍由 plans/validation-backlog.yaml 的 V 工作包另行推进（0/7 不变），实测前后均需按该方法声明口径。
 - topic_id: '08.8'
   title: 可靠性指标、恢复损失、事故复盘与知识更新
   domain_code: 08
-  coverage_status: partial
+  coverage_status: covered
   core_scope: 定义可靠性/恢复损失指标，记录事故时间线与复盘，并把新证据转成修订
-  present_scope: 已有指标记录、进度损失/恢复门槛和来源案例的调查记录结构
+  present_scope: 已有指标记录、进度损失/恢复门槛；新增可靠性统计框架（对象/窗口/分母/删失/重叠并集/聚合、MTB* 计算式与更新过程/HPP 边界、Llama 3 有效训练时间与 MPG 三层分解、事件/尝试/窗口三表 schema、合成计算例与训练 SLI/预算例）、事故复盘字段与三类材料区分、六步追溯链/四类复核触发/弃用规则、诊断评测方法（train/dev/held-out、答案证据四级、七维 rubric）与十条公开题组；独立评测集本体待 V12 外置获取
   evidence_refs:
+  - reliability.reliability-metrics-and-recovery-loss
+  - reliability.postmortem-and-knowledge-update
+  - reliability.diagnostic-evaluation-method
+  - reliability.diagnostic-evaluation-fixtures
   - reliability.dimensions-and-failure-domains
   - training.checkpoint-state-consistency
   - training.elastic-training-and-membership
   - inference.latency-metrics
   background_refs: []
-  gaps:
-  - 缺少有效训练产出、重算/回放损失和长期可靠性统计
-  - 缺少正式事故复盘与知识更新方法
-  - 缺少独立诊断评测集
-  followup_priority: normal
-  recommended_action: add_or_extend
-  closure_criteria: 补齐所列缺口，给出适用条件、精确来源、观察/判断方法及验证判据；需要真实结果时另登记复现证据。
+  gaps: []
+  followup_priority: maintain
+  recommended_action: maintain
+  closure_criteria: 方法框架已覆盖基础范围；独立评测集与真实事件统计分别由 V12/现场采集另行推进，不以方法正文替代。
 documents:
 - content_id: overview.index
   path: knowledge/00-overview/index.md

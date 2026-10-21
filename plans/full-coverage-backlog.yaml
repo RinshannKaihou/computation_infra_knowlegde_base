@@ -3774,7 +3774,9 @@ batches:
   completion_record: docs/research/batch-29-source-audit.md
 - number: 30
   title: 可靠性方法
-  status: planned
+  status: done
+  completed_at: '2026-10-21'
+  completion_record: docs/research/batch-30-source-audit.md
   task_refs:
   - T08-04
   - T08-05
@@ -6873,8 +6875,8 @@ tasks:
   work_units: 2
 - id: T08-04
   title: 补齐 SDC 检测、训练传播与平台证据
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 30
   operation: revise
   content_type: concept
@@ -6920,8 +6922,8 @@ tasks:
   work_units: 2
 - id: T08-05
   title: 统一测试选择、压力/注入与统计方法
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 30
   operation: new
   content_type: reference
@@ -6974,8 +6976,8 @@ tasks:
   work_units: 2
 - id: T08-06
   title: 可靠性统计、有效产出与恢复损失
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 30
   operation: new
   content_type: reference
@@ -7018,8 +7020,8 @@ tasks:
   work_units: 1
 - id: T08-07
   title: 事故复盘、来源更新与知识维护
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 30
   operation: new
   content_type: procedure
@@ -7059,8 +7061,8 @@ tasks:
   work_units: 1
 - id: T08-08
   title: 诊断评测方法与公开教学题组
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 30
   operation: new
   content_type: reference

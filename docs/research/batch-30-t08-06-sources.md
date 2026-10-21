@@ -6,8 +6,8 @@
 
 | 主张 | 登记 ID | 精确位置 | 支持范围 |
 |---|---|---|---|
-| 有效训练时间定义（useful training over elapsed time）与 >90%；54 天 466/47/419 中断；约 78% confirmed-or-suspected 硬件、GPU 58.7%、SDC 1.4%、NCCL watchdog 归 Unknown 1.7%；仅 3 次人工介入、日均≥1 次中断；checkpoint 每卡 1 MB–4 GB、Tectonic 240 PB/2 TB/s（峰 7 TB/s）；NCCL flight recorder | src.arxiv.llama3-infrastructure（**本轮新增**） | [arXiv:2407.21783v3](https://arxiv.org/abs/2407.21783) §2 基础设施段与 Table 5（2026-10-21 HTML 核读；百分比经 GPU 类六行求和=58.7% 自洽核对；Faulty GPU 行绝对计数 148 与 30.1% 不自洽，只引用百分比） | 16K H100、405B 预训练、54 天快照与其归因口径；不外推 |
-| MPG＝SG×RG×PG 定义（SG 全体所需芯片同时可用/fleet 容量；RG 已存 checkpoint 有效 chip-time/allocated、最后 checkpoint 到失败间不计；PG 理想/实际执行时间）；occupancy 不区分产出的批评；分量定位优化（Table 2） | src.arxiv.mpg-tpu-goodput-2025（**本轮新增**） | [arXiv:2502.06982v1](https://arxiv.org/abs/2502.06982) §4.1/§4.3/§5（2026-10-21 全文核读） | Google 内部 TPU fleet；示例数值未引用 |
+| 有效训练时间定义（useful training over elapsed time）与 >90%；54 天 466/47/419 中断；约 78% confirmed-or-suspected 硬件、GPU 58.7%、SDC 1.4%、NCCL watchdog 归 Unknown 1.7%；仅 3 次人工介入、日均≥1 次中断；checkpoint 每卡 1 MB–4 GB、Tectonic 240 PB/2 TB/s（峰 7 TB/s）；NCCL flight recorder | src.arxiv.llama3-infrastructure（**本轮新增**） | [arXiv:2407.21783v3](https://arxiv.org/abs/2407.21783v3) §3.3.1（印刷页 9）/§3.3.4（印刷页 13）与 Table 5（2026-10-21 HTML 核读；复核轮更正初稿误写的 §2/§2.2 定位；百分比经 GPU 类六行求和=58.7% 自洽核对；Faulty GPU 行绝对计数 148 与 30.1% 不自洽，只引用百分比） | 16K H100、405B 预训练、54 天快照与其归因口径；不外推 |
+| MPG＝SG×RG×PG 定义（SG 全体所需芯片同时可用/fleet 容量；RG 已存 checkpoint 有效 chip-time/allocated、最后 checkpoint 到失败间不计；PG 理想/实际执行时间）；occupancy 不区分产出的批评；分量定位优化（Table 2） | src.arxiv.mpg-tpu-goodput-2025（**本轮新增**） | [arXiv:2502.06982v1](https://arxiv.org/abs/2502.06982v1) §4.1/§4.3/§5（2026-10-21 全文核读 v1，固定入口） | Google 内部 TPU fleet；示例数值未引用 |
 | OCP §5.3.1：频繁 checkpoint 压低 runtime goodput、epoch 末 checkpoint 不足、exascale checkpoint 时间逼近 MTTF 的风险 | src.ocp.sdc-in-ai-2025（既有登记，Batch 30 补读） | §5.3.1/§5.4（p.21–22） | 机制性讨论 |
 
 ## 复用来源与主张定位
@@ -16,13 +16,13 @@
 |---|---|---|---|
 | SLI/错误预算口径（推理侧记账的联动样板） | src.google.sre-implementing-slos | 章节（2026-09-29 已核） | SRE 工程口径 |
 | 症状/观测区分（事件起止按可观测证据定义的底座） | src.google.sre-monitoring-distributed-systems | 章节（2026-09-29 已核） | 同上 |
-| MTBI 22.61× 为仿真、非常生产 A/B | src.usenix.superbench-atc24 | 局限节（第十二批已核） | Azure GPU |
+| MTBI 22.61× 为仿真、非常生产 A/B | src.usenix.superbench-atc24 | ATC PDF §5.2（印刷页 845，Table 4 复算 262.05/11.59；复核轮更正初稿误写的"局限节"定位；此前批次的 arXiv 版读取记录保留历史原文） | Azure GPU |
 | vLLM finish reason 语义、goodput 绑定 SLO、幸存者偏差 | src.vllm.inference-v0-14 | 经 [latency-metrics](../../knowledge/07-inference/latency-metrics.md) 转引（固定源码锚点） | vLLM v0.14.0 |
 | elastic 重启语义 | src.pytorch.elastic-2.6 | 文档＋实现分支口径（Batch 11/29 已核） | PyTorch 2.6 |
 
 ## 本文原创部分
 
-统计框架要素表（对象/窗口/分母/事件起止/删失/缺失/重叠/聚合）、MTBF/MTTR 使用边界三条、六类量记账表（有效产出/已提交/重算/丢失/恢复三段/健康窗口）、事件表与窗口聚合 YAML schema、合成计算例（168h 窗口、量纲闭合：161.0/168.0≈95.8% vs 165.5/168.0≈98.5%；32 卡→512 卡的分母 factor 演示）、"同一症状四维结论不同"对照表。
+统计框架要素表（对象/窗口/分母/事件起止/删失/缺失/重叠/聚合）、MTBF/MTTR 使用边界三条、六类量记账表（有效产出/已提交/重算/丢失/恢复三段/健康窗口）、事件表与窗口聚合 YAML schema、合成计算例（168h 窗口、量纲闭合：161.0/168.0≈95.8% vs 164.0/168.0≈97.6%——初稿的 165.5 h 口径已被修订正文取代，见下方各轮修订记录；32 卡→512 卡的分母 factor 演示）、"同一症状四维结论不同"对照表。
 
 ## unknown 清单
 
@@ -30,3 +30,38 @@
 2. MTBF/MTTR 的分布检验方法（更新过程检验等）未登记原始统计来源，正文只给使用边界。
 3. MPG 论文示例 fleet 数值未读未引。
 4. Llama 3 Table 5 绝对计数的渲染不自洽问题（148 vs 30.1%）——后续版本 PDF 若自洽可更新口径。
+
+## 复核轮修订记录（初审后，12 项全改）
+
+- C01：MTBF/MTTF 改按对象区分（可修复/不可修复，NIST apr121）；描述性均值与更新过程/HPP 推断分列（独立性/同分布/恒定率三种证据分开）；"非常数 hazard≠非 i.i.d."（Weibull 反例）；MTTR 样本为恢复时长。新登记 NIST e-Handbook 章节来源。
+- C02：Table 5 冲突改"来源自身未解冲突"（HTML/PDF 同此），逐行复算数字照录（百分比合计 94.9%、GPU 六行计数 268=64.0% vs 报告 58.7%、148=35.3% vs 30.1%）；引用处就近标注"论文报告值、计数未能共同核实"；registry 同步。
+- C03："重算/回放产出为零"改为"被丢弃的尝试产出为零；成功重放并保存会推进状态"；六类量表、合成例时间线各段显式归属；进程存在时长改为口径声明（本例与在线一致）。
+- C04：fleet 例显式设定重叠情况（互不重叠 81920 卡·时 vs 完全重合 2560 卡·时，差 32 倍），写明"任一卡不可用即整作业停摆"前提；加载/预热归 RG 不扣 SG；删"PG 与故障无关"表述。
+- C05："正确性无损"改为前提化结论（恢复点早于污染、状态一致、恢复后校验通过）；SDC 分支写明"污染与耗时是独立记账量"。
+- C06：目标 RTO 与实际恢复时长分列（NIST CSRC 定义新登记）；三个终点（服务恢复 2.0h/重放完成 5.0h/追平高水位）分开；checkpoint 减半改条件化（失败相位反例照录）。
+- C07：训练 SLI 迁移补"好事件/总事件"结构（有效保留时间/考核总时间、合格已保存 step/全部进展机会），只考核已保存 step 标为条件性质量 SLI＋另记产出损失。
+- C08：schema 增表 2 尝试/请求表（outcome 五类、SLO 阈值与通过数、质量/降级、进展归属与去重键、分段 spans）；observed_end 可空＋observation_cutoff；重叠规则改事件关联键＋区间并集。
+- C09：Llama 3 章节定位改 §3.3.1（印刷页 9）/§3.3.4（印刷页 13），正文/notes/sources/registry 同步；SuperBench 仿真边界改引 ATC PDF §5.2（印刷页 845）。
+- C10：MPG 登记入口固定 v1（abs 现为 v2 未读），许可改 CC BY 4.0（v1 原页核对），正文链接同步。
+- C11：PyTorch elastic 链接对齐登记入口 docs/2.6/elastic/run.html。
+- C12：正文补 checkpoint 状态一致性与弹性训练的正文内链接。
+
+## 第二轮修订记录（复核后）
+
+- C01：交付 MTB* 计算式（apr451 点估计量/间隔均值声明、MTBI 不含计划内、零事件与删失规则）；一般更新过程（间隔 i.i.d.，可非指数）与 HPP（附加恒定率）分开；"非常数 hazard≠非 i.i.d."保留。
+- C03：161.0 h 明确"已含成功重放"（164 运行−3 丢弃），删除重复计入句；六类量与 RG 行注明成功保存的重放不扣 RG。
+- C04：区间种类先声明（初稿的"物理不可用 2.0 h"表述已被第三轮修订取代——物理硬件缺失时段本合成例未定义、保持 unknown；现行口径＝作业不可承接 2.0 h/追平 3.0 h/有效进展中断合计 5.0 h/丢弃尝试单列），作业级损失按有效进展中断并集（前提：任一卡缺席即停摆），给完整比率 95.2%/3.0%，卡级 160 卡·时（0.186%）。
+- C07：补完整合成 SLI/预算例（SLI 同单位、SLO 95%、预算 8.4 h、消耗按坏时间 7.0/8.4＝83.33%——初稿自述的 84% 系从舍入后的 4.2% 再算，已被第三轮修订取代、零样本与维护周规则同轮交付）。
+- C08：表 2 加 object_key；SLO checks 逐条（指标/观测值/阈值/passed，好请求＝全过，goodput＝好请求÷窗口秒）；事件表加 related_event_ids＋主事件归一规则；窗口表字段同步。
+- C09：本记录遗留的 §2/"局限节"定位已就地更正（保留历史并标注更正）。
+- C10：本记录 MPG 链接改 v1 固定入口。
+- N01：SG 扣减条件改"任一所需资源缺席的区间"。
+- N02：维护口径统一（计入考核、分母 168 h；换口径须整体重算）。
+- N03：追平与重放完成在本例同为 5.0 h（重合注明，语义分列）。
+
+## 第三轮修订记录（复核二后）
+
+- C01：年龄相关 hazard（同一寿命分布内部，如浴盆形）与跨样本分布变化（ROCOF/日历时间/批次）分开表述；apr171 标注为 HPP 页，一般更新过程完整方法来源待定。
+- C03/C04/C07/N10 的记录同步：165.5 h、"物理不可用 2.0 h"、84% 三处初稿口径就地标注取代关系（见上）；fleet 子例改为**独立的抽象区间集合对比**——原因：32 起完整事件（丢弃 3＋不可承接 2＋追平 3）串行嵌入同一作业至少需 258 h＞168 h，原"同前合成设定"与单作业时间线不可同时成立，第三轮起明确解耦并声明该算术（N10 关闭路径）。
+- C03：SG 行"加载/编译/重放扣 RG"改为"加载/编译及被丢弃未保存重试扣 RG；成功保存的重放不扣"，与 RG 行/第六节一致。
+- C08：窗口表 primary_count 明确只对 same_cause 归组（independent_overlap 各自计数）；goodput 分母恒为窗口秒数、缺测请求不减时间分母；total/indeterminate 分列，可判样本合格比例另名报告。

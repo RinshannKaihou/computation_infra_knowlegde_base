@@ -16,14 +16,22 @@
 |---|---|---|---|
 | 假设—演绎、证据保全、主动测试副作用 | src.google.sre-effective-troubleshooting | 章节（2026-09-29 已核） | 方法论 |
 | 症状/观测与覆盖纪律（复盘字段"采集覆盖"的底座） | src.google.sre-monitoring-distributed-systems | 章节（2026-09-29 已核） | 同上 |
-| 公开复盘映射示例（事件时刻 vs 外部发现时刻、双证据） | src.meta.oct-2021-facebook-outage / src.cloudflare.oct-2021-facebook-outage | 两篇（Batch 29 全文核读）；库内整理见 [correlated-failure-source-case](../../knowledge/08-reliability/correlated-failure-source-case.md) | 单一事件的运营方＋观测方证据 |
+| 公开复盘映射示例（事件时刻 vs 外部发现时刻、双证据） | src.meta.oct4-2021-postmortem / src.cloudflare.oct-2021-facebook-outage | 两篇（Batch 29 全文核读）；库内整理见 [correlated-failure-source-case](../../knowledge/08-reliability/correlated-failure-source-case.md) | 单一事件的运营方＋观测方证据 |
 
 ## 本文原创部分
 
-复盘必填字段表（在 SRE 模板上加"实体/版本/工作键、采集覆盖、假设三分"三组）、三类材料区分表（本地/公开/合成）、五步追溯链（登记→反查→修订→定向审阅→导航）与责任角色、四类复核触发表、弃用四规则、"流程不创建的东西"负面清单、公开复盘映射示例的字段对应。
+复盘必填字段表（在 SRE 模板上加"实体/版本/工作键、采集覆盖、假设三分"三组）、三类材料区分表（本地/公开/合成）、六步追溯链（登记→反查→修订→定向审阅→导航→结构检查与 catalog 重建）与责任角色、四类复核触发表、弃用四规则、"流程不创建的东西"负面清单、公开复盘映射示例的字段对应。
 
 ## unknown 清单
 
 1. 本地事故复盘：当前无本地事件，流程未在真实事故上执行过（verification: source_checked 而非 reproduced）。
 2. 行动项跟踪载体：当前以条目内表格承载，未选定外部跟踪系统（SRE 的 Requiem 类工具仅作方向参考）。
 3. 与外部厂商联合复盘、法律责任边界、客户通报模板：超出本文范围未写。
+
+## 复核轮修订记录（初审后）
+
+- C01：映射示例重写——删除"撤销未生效"与"第二起故障叠加"（原文无据）；机制顺序（命令→审计失效→断连→主动撤回 BGP 宣告，DNS 服务器仍在运行）与外部发现时刻（15:51/15:58）分列；恢复期风险标注为预防性担忧；命令细节保持 unknown。
+- C02：证据保全行收缩为按现场已部署工具的条件执行＋采集缺口记录；NCCL flight recorder 例子改挂 Llama 3 §3.3.4（已登记来源）并注明其配置前提未登记；"转储前先拷贝"改条件化表述。
+- C03：追溯链补第 6 步（make check/build 重建 catalog、核对受影响 ID、失败阻断完成），登记者确认生成结果；完成判据同步。（第二轮：本记录原创部分原写的"五步"同步更正为六步。）
+- C04：正文 Meta URL 对齐登记入口（networking/outage-details/）；取证记录 ID 更正为 src.meta.oct4-2021-postmortem。（第二轮补证；第三轮补齐可核对证据：2026-10-21 作者本地 `curl -sL`（跟随重定向，30 s 上限）请求登记入口 https://engineering.fb.com/2021/10/05/networking/outage-details/ → HTTP 200、重定向 1 次、最终 URL=https://engineering.fb.com/2021/10/05/networking-traffic/outage-details/、页面 title="More details about the October 4 outage - Engineering at Meta"、HTML canonical 指向 networking-traffic 形态（正文 88403 字节）；直接请求 networking-traffic 形态亦 200——登记入口经重定向到达与复核方独立核读相同的文章。该证据已同步 registry notes。复核方工具的 DNS 失败不构成反证。）
+- C05："SRE 模板一周内发布"改为好案例表现与反例的对照（非统一时限）。
