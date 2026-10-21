@@ -103,6 +103,9 @@ topics:
   - data-storage.training-data-path
   - training.parallelism-and-state
   - training.checkpoint-state-consistency
+  - training.framework-execution
+  - training.pretraining-and-finetuning
+  - training.rl-rollout-consistency
   background_refs: []
   gaps: []
   followup_priority: maintain
@@ -118,6 +121,9 @@ topics:
   - overview.inference-lifecycle
   - inference.execution-and-kv-cache
   - inference.latency-metrics
+  - inference.release-and-recovery
+  - inference.routing-and-flow-control
+  - inference.capacity-and-autoscaling
   background_refs: []
   gaps: []
   followup_priority: maintain
@@ -171,6 +177,7 @@ topics:
   - path.platform.nvidia
   - path.task.training-triage
   - path.task.inference-triage
+  - path.role.reading-by-role
   background_refs: []
   gaps:
   - 缺少学习者、架构设计与运维角色路径
@@ -378,9 +385,9 @@ topics:
 - topic_id: '02.7'
   title: 环境配套、安装验证、迁移与升级
   domain_code: '02'
-  coverage_status: partial
+  coverage_status: covered_basic
   core_scope: 用制品/环境身份判断配套，完成安装基线、迁移/升级对照和回退验证
-  present_scope: 配套证据两轴、固定档案、错配诊断/案例/验证方案已经串联
+  present_scope: 配套证据两轴、三平台固定档案、错配诊断/案例/验证方案，及三平台安装验证梯子、迁移升级变化矩阵与回退边界（T02-12，文档样板未实测）
   evidence_refs:
   - software-stack.compatibility-evidence
   - software-stack.ascend-version-mismatch-triage
@@ -388,11 +395,10 @@ topics:
   - software-stack.ascend-version-mismatch-experiment
   - software-stack.ascend-documented-profile
   - software-stack.nvidia-documented-profile
+  - software-stack.amd-rocm-documented-profile
+  - software-stack.environment-installation-and-upgrade
   background_refs: []
-  gaps:
-  - 缺少完整安装验证流程
-  - 缺少迁移/升级的变化清单、兼容检查和回退方法
-  - 已有样板不是可直接部署的整套环境
+  gaps: []
   followup_priority: normal
   recommended_action: add_or_extend
   closure_criteria: 补齐所列缺口，给出适用条件、精确来源、观察/判断方法及验证判据；需要真实结果时另登记复现证据。

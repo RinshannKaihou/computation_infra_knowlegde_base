@@ -283,7 +283,9 @@
 
 **Batch 30 已于 2026-10-21 交付并通过审阅**：T08-04 SDC 检测量化、训练传播与平台证据（修订 silent-errors-and-integrity，08.6 收口）；T08-05 统一测试选择、压力/注入与统计方法（08.7 方法面）；T08-06 可靠性统计、有效产出与恢复损失（Llama 3 有效训练时间＋Google MPG 三层分解）；T08-07 事故复盘、来源更新与知识维护；T08-08 诊断评测方法与十条公开教学题组（独立 holdout 仍由 V12 外置管理）。`gpt-6.1-sol / xhigh` 初审与定向复核：T08-04（14 项，初审＋5 轮）、T08-05（10 项，初审＋3 轮）、T08-06（16 项，初审＋4 轮）、T08-07（6 项，初审＋3 轮）、T08-08（11 项，初审＋3 轮）全部 CLOSED；各审阅会话均经 `~/.codex/sessions` 的 `turn_context` 核验单一模型/档位。来源登记 559→575（新增 Meta 检测量化 2203.08989、ACL 2025 LLM 训练 SDC 及其 arXiv v1 附录入口、Llama 3、Google MPG、SRE 三章、Kalibera-Jones、NIST 两项、msprobe、DCMI ECC、FaultDiag、RCACopilot、Cloud-OpsBench；OCP 补读至文末并核正页数、npu-smi 补 ECC 深页、Llama 3/MPG/Cloud-OpsBench 版本入口固定、多处许可核正）。08.6/08.7/08.8 升为已覆盖，统计重算 60/3/0；批次与五任务置 done（completion_record：batch-30-source-audit.md）。正文均为 draft，未做真实环境验证；08.7 真实执行 0/7 与 08.8 独立评测集仍由验证工作包推进。记录见 [batch-30-source-audit](research/batch-30-source-audit.md) 与各轮 review/recheck。
 
-当前进展：**Batch 31 为下一批（按依赖图）**；Batch 30 已交付并通过审阅；以实际运行与验收记录为准。
+**Batch 31 已于 2026-10-21 交付并通过审阅**：T06-09 训练主题五方面入口与交付核对（06 index 八主题×五方面表＋账面同步 9 项）；T07-12 推理主题入口及缓存/SLO 边界核对（07 index 同构＋账面同步 18 项）；T02-12 三平台安装基线、迁移升级与回退验证（CUDA 12.8/CANN 8.3.RCX/ROCm 10.1.0 三份文档样板的七层安装梯子、十一项变化矩阵、B0/N/R 对照与回退边界，未实测）；T00-04 训练与推理端到端路径终态核对（pretrain/SFT/RL 分支入口、副本变更/失败重试/恢复验证入口、平台分支）；T00-05 学习者/架构设计/运维三角色阅读路径（含逐链检查与纸面演练）。`gpt-6.1-sol / xhigh` 初审与定向复核：T06-09（3 项，初审＋2 轮，一次 resume 档位失配轮作废）、T07-12（4 项，初审＋1 轮）、T02-12（28 项，初审＋5 轮）、T00-04（2 项，初审＋1 轮）、T00-05（5 项，初审＋2 轮）全部 CLOSED；每轮经 `~/.codex/sessions` 的 `turn_context` 核验单一模型/档位。来源登记 575→577（新增 NVIDIA 驱动安装指南、CANN 升级/卸载五页；CUDA 安装指南核读并入既有条目；ROCm 安装页补读并更正 Uninstalling 误记）。02.7 升已覆盖，00.2/00.3 维护验收，00.6 保持部分覆盖（任务/平台路径属 Batch 32），统计重算 61/2/0；批次与五任务置 done（completion_record：batch-31-source-audit.md）。正文均为 draft，未做真实环境验证。记录见 [batch-31-source-audit](research/batch-31-source-audit.md) 与各轮 review/recheck。
+
+当前进展：**Batch 32 为下一批（末批，按依赖图）**；Batch 31 已交付并通过审阅；以实际运行与验收记录为准。
 
 知识库网站、搜索产品、API/MCP、现场适配器、自动评测执行框架和生产操作属于架构工程后续阶段，不纳入本次内容批次数。正文中的方法和有限教学题不代表上述工程已实现。
 

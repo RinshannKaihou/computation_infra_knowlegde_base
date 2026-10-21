@@ -2253,7 +2253,7 @@ topics:
     - T06-06
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
@@ -2357,7 +2357,7 @@ topics:
     - T06-04
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 3
     gap_ref: 06.4-G3
     gap_text: 缺少一致性/吞吐验证
@@ -2366,7 +2366,7 @@ topics:
     - T06-04
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
@@ -2411,7 +2411,7 @@ topics:
     - T06-05
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 06.5-G2
     gap_text: 缺少收敛与训练质量判断方法
@@ -2419,7 +2419,7 @@ topics:
     - T06-05
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 3
     gap_ref: 06.5-G3
     gap_text: 算子适配与精度策略的端到端案例待补
@@ -2427,7 +2427,7 @@ topics:
     - T06-05
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
@@ -2471,7 +2471,7 @@ topics:
     - T06-06
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 06.6-G2
     gap_text: 缺少并行负载不均/热点与吞吐优化权衡
@@ -2479,7 +2479,7 @@ topics:
     - T06-06
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 3
     gap_ref: 06.6-G3
     gap_text: 缺少性能回归来源案例
@@ -2487,7 +2487,7 @@ topics:
     - T06-07
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
@@ -2604,7 +2604,7 @@ topics:
     - T07-01
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 07.1-G2
     gap_text: 缺少加载失败到 ready 的完整诊断与验证
@@ -2612,7 +2612,7 @@ topics:
     - T07-01
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 3
     gap_ref: 07.1-G3
     gap_text: 不能把 KV 加载当权重加载
@@ -2620,7 +2620,7 @@ topics:
     - T07-01
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
@@ -2663,7 +2663,7 @@ topics:
     - T07-02
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 07.2-G2
     gap_text: 缺少 MindIE 等引擎实质内容与比较
@@ -2671,7 +2671,7 @@ topics:
     - T07-03
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 3
     gap_ref: 07.2-G3
     gap_text: 缺少模型/硬件/功能交集档案
@@ -2680,7 +2680,7 @@ topics:
     - T07-03
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
@@ -2759,7 +2759,7 @@ topics:
     - T07-04
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 07.4-G2
     gap_text: 缺少评估指南正文/可执行方案及质量案例
@@ -2767,7 +2767,7 @@ topics:
     - T07-05
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 3
     gap_ref: 07.4-G3
     gap_text: KV 量化与 dtype 组合、部分硬件支持冲突待核
@@ -2775,7 +2775,7 @@ topics:
     - T07-04
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
@@ -2819,7 +2819,7 @@ topics:
     - T07-06
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 07.5-G2
     gap_text: 缺少跨机连接器前提/指标及完整失败链
@@ -2827,7 +2827,7 @@ topics:
     - T07-07
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 3
     gap_ref: 07.5-G3
     gap_text: 其他引擎 PD 机制待补
@@ -2836,7 +2836,7 @@ topics:
     - T07-07
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
@@ -2876,7 +2876,7 @@ topics:
     - T07-08
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 07.6-G2
     gap_text: 缺少扩缩容和容量决策
@@ -2884,7 +2884,7 @@ topics:
     - T07-09
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 3
     gap_ref: 07.6-G3
     gap_text: 缺少版本发布、摘除、回退与验证流程
@@ -2892,7 +2892,7 @@ topics:
     - T07-10
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
@@ -2978,7 +2978,7 @@ topics:
     - T07-10
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 07.8-G2
     gap_text: 缺少服务恢复与状态清理验证
@@ -2987,7 +2987,7 @@ topics:
     - T07-11
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 3
     gap_ref: 07.8-G3
     gap_text: 缺少 GPU 对应 OOM/恢复专题
@@ -2995,7 +2995,7 @@ topics:
     - T07-11
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
@@ -3793,7 +3793,9 @@ batches:
   conservative_wave: 12
 - number: 31
   title: 训练与后训练、推理服务、执行栈、全景与导航
-  status: planned
+  status: done
+  completed_at: '2026-10-21'
+  completion_record: docs/research/batch-31-source-audit.md
   task_refs:
   - T06-09
   - T07-12
@@ -7111,8 +7113,8 @@ tasks:
   work_units: 2
 - id: T06-09
   title: 训练主题的五方面入口与交付核对
-  status: planned
-  readiness: needs_content_inputs
+  status: done
+  readiness: delivered
   batch: 31
   operation: navigation
   content_type: index
@@ -7129,7 +7131,7 @@ tasks:
   targets:
   - path: knowledge/06-training/index.md
     content_id: training.index
-    state: existing
+    state: delivered
   objective: 在领域入口形成八主题的五方面阅读表，复核新增/既有来源、平台与未验证边界，供完整覆盖验收。
   acceptance:
   - 8 个原主题各有原理、设计、观测、处置、验证/案例入口；同文可承担多项，不能用目录标题替代正文。
@@ -7159,8 +7161,8 @@ tasks:
   work_units: 1
 - id: T07-12
   title: 推理主题入口及缓存/SLO 最终边界核对
-  status: planned
-  readiness: needs_content_inputs
+  status: done
+  readiness: delivered
   batch: 31
   operation: navigation
   content_type: index
@@ -7177,7 +7179,7 @@ tasks:
   targets:
   - path: knowledge/07-inference/index.md
     content_id: inference.index
-    state: existing
+    state: delivered
   objective: 整合新增引擎、服务控制与既有缓存/长尾内容，逐主题核验原五方面。
   acceptance:
   - 8 个原主题完整链接原理/设计/观测/处置/验证案例，covered 07.3/07.7 仍核查缓存身份、batch 生命周期、统计分母和 SLO 边界。
@@ -7214,8 +7216,8 @@ tasks:
   work_units: 1
 - id: T02-12
   title: 三平台安装基线、迁移升级与回退验证
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 31
   operation: new
   content_type: procedure
@@ -7225,7 +7227,7 @@ tasks:
   targets:
   - path: knowledge/02-software-stack/environment-installation-and-upgrade.md
     content_id: software-stack.environment-installation-and-upgrade
-    state: planned_new
+    state: delivered
   objective: 按制品/环境身份构造安装验证梯子和迁移/升级变化矩阵，连接现有错配专题及三平台档案。
   acceptance:
   - 安装验证依次检查目标硬件/OS支持、固件/驱动、用户态库、实载路径、后端设备初始化、最小算子/同步、结果检查；各平台步骤和来源分别定位，不提供猜测命令。
@@ -7269,8 +7271,8 @@ tasks:
   work_units: 2
 - id: T00-04
   title: 训练与推理端到端路径的终态范围验收
-  status: planned
-  readiness: needs_source_preparation
+  status: done
+  readiness: delivered
   batch: 31
   operation: revise
   content_type: concept
@@ -7281,10 +7283,10 @@ tasks:
   targets:
   - path: knowledge/00-overview/training-lifecycle.md
     content_id: overview.training-lifecycle
-    state: existing
+    state: delivered
   - path: knowledge/00-overview/inference-lifecycle.md
     content_id: overview.inference-lifecycle
-    state: existing
+    state: delivered
   objective: 对已有两个基础已覆盖主题执行有限的最终 v1 链路核对，补齐后训练/服务生命周期链接而不复制领域正文。
   acceptance:
   - 训练路径覆盖准入、加载、初始化、step、保存、异常恢复和持续进展，并给出 pretrain/SFT/RL rollout 分支入口及状态责任。
@@ -7327,8 +7329,8 @@ tasks:
   work_units: 1
 - id: T00-05
   title: 学习者、架构设计与运维角色阅读路径
-  status: planned
-  readiness: needs_content_inputs
+  status: done
+  readiness: delivered
   batch: 31
   operation: navigation
   content_type: path
@@ -7338,7 +7340,7 @@ tasks:
   targets:
   - path: paths/roles/reading-by-role.md
     content_id: path.role.reading-by-role
-    state: planned_new
+    state: delivered
   objective: 在一份角色路径中为学习者、架构设计者、运维/可靠性人员分别安排先修、阅读顺序、问题目标与完成检查。
   acceptance:
   - 三类角色各有明确进入条件、知识目标和可回答的问题；引用主干正文而不保存重复解释。
