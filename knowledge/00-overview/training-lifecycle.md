@@ -11,18 +11,24 @@ source_refs:
   - src.pytorch.distributed-2.8
   - src.pytorch.parallel-training-state-2.6
   - src.pytorch.dcp-2.6
-updated_at: "2026-09-30"
-summary: 沿资源、数据、训练状态和进展四条线理解一次训练任务，并为每个阶段指向下一层知识。
+updated_at: "2026-10-21"
+summary: 沿资源、数据、训练状态和进展四条线理解一次训练任务，并为每个阶段指向下一层知识；含 pretrain/SFT/RL rollout 分支入口与终态核对。
 related_ids:
   - hardware.resource-topology
   - software-stack.layers-and-boundaries
+  - software-stack.environment-installation-and-upgrade
   - communication.collectives-and-rank-progress
   - data-storage.training-data-path
   - data-storage.checkpoint-durability
   - cluster-platform.device-resource-chain
   - cluster-platform.admission-and-placement
   - training.parallelism-and-state
+  - training.framework-execution
+  - training.pretraining-and-finetuning
+  - training.rl-rollout-consistency
   - training.checkpoint-state-consistency
+  - training.elastic-training-and-membership
+  - training.performance-analysis
 verification:
   status: source_checked
   evidence_refs:
@@ -31,7 +37,7 @@ verification:
     - src.pytorch.distributed-2.8
     - src.pytorch.parallel-training-state-2.6
     - src.pytorch.dcp-2.6
-  notes: 已核对所引用的 Kubernetes v1.32 与 PyTorch 2.6/2.8 固定文档；本文为现有知识的导航性整理，未运行训练、调度、保存、GPU/NPU 或集群实验。
+  notes: 已核对所引用的 Kubernetes v1.32 与 PyTorch 2.6/2.8 固定文档；本文为现有知识的导航性整理，未运行训练、调度、保存、GPU/NPU 或集群实验。2026-10-21 T00-04 终态核对：新增工作流分支/状态责任/异常恢复/平台分支各入口均链接 06/02 域已交付正文（其来源与审阅记录见各自正文），本文原有来源快照不变。
 ---
 
 # 一次训练任务的端到端路径
@@ -77,6 +83,30 @@ flowchart LR
 
 Kubernetes v1.32 的 Device Plugin 文档把注册、持续设备上报和 `Allocate` 分为不同接口；`Allocate` 返回的是容器运行时配置，而不是框架计算成功证明（[Device Plugins](https://v1-32.docs.kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/device-plugins/)）。因此图中的资源分配、容器访问和框架 ready 是三个不同状态。
 
+## 工作流分支与状态责任（pretrain / SFT / RL rollout）
+
+这张总览图是各工作流共用的骨架；不同工作流在同一阶段上的状态责任与验证要求不同，进入分支正文：
+
+| 分支 | 与总览的差异点 | 分支正文 |
+|---|---|---|
+| 预训练/继续预训练 | 全量参数与完整状态契约；数据以 token 流为主 | [预训练与微调工作流和状态契约](../06-training/pretraining-and-finetuning.md) |
+| 全参 SFT / LoRA-PEFT | 阶段切换的状态继承、adapter 保存/合并边界 | 同上（含阶段切换验证） |
+| RL rollout（PPO/GRPO 在线，DPO 离线对照） | 采样—打分—更新—发布循环横跨训练与推理；权重版本同步与陈旧策略边界使"step 进展"有第二重含义 | [RL rollout、权重同步与训练推理协同](../06-training/rl-rollout-consistency.md) |
+
+状态责任的共同基线：参数/梯度/optimizer/调度器/scaler/RNG/数据进度由谁持有、何时提交，见[并行策略与训练状态](../06-training/parallelism-and-state.md)的状态责任矩阵；训练驱动→autograd→分布式封装→optimizer→编译→算子后端各环节的职责与**首失败分界**见[训练框架组件、执行循环与平台职责对照](../06-training/framework-execution.md)——该文同时是"初始化"阶段（总览图 S→M 框架后端就绪）的分诊入口。
+
+## 异常恢复与持续进展的验证入口
+
+- 保存与恢复的完整语义：截取一致性、API 完成观察点、恢复后验证分层（结构→逐字段→同输入单步→持续窗口）见[Checkpoint 恢复一致性](../06-training/checkpoint-state-consistency.md)；本文"重启与续训"行是其总览入口。
+- 成员变更/弹性：rendezvous 语义与 PyTorch elastic、MindSpeed 副本机制对照见[弹性训练与成员变更](../06-training/elastic-training-and-membership.md)——缩容继续的前提是状态恢复是应用责任。
+- 持续进展的判定：有效产出口径、慢 rank/受害与最早瓶颈区分见[训练性能分解、profiling 与优化验证](../06-training/performance-analysis.md)——"指标要绑定阶段和观察点"一节的分母/窗口要求与该文一致。
+- 环境前置：进入本路径前，平台软件栈的安装验证/迁移升级/回退见[三平台安装基线、迁移升级与回退验证](../02-software-stack/environment-installation-and-upgrade.md)（文档样板，未实测）。
+
+## 平台分支
+
+- NVIDIA 与昇腾的平台入口见[昇腾专题](../../paths/platforms/ascend.md)与[NVIDIA 专题](../../paths/platforms/nvidia.md)；训练框架三组档案（PyTorch 2.6 / Megatron-Core core_v0.19.2 / MindSpeed-LLM v2.2.0）见 06 域[框架执行](../06-training/framework-execution.md)。
+- AMD/ROCm：软件栈文档样板见[AMD ROCm 档案](../02-software-stack/amd-rocm-documented-profile.md)，精度对照方法见[混合精度与收敛验证](../06-training/mixed-precision-and-convergence.md)；Megatron/MindSpeed 侧无 AMD 对应档案，相关组合保持 unknown，不画成已支持。
+
 ## 四条同时推进的线
 
 | 阅读线 | 需要跟踪的对象 | 容易混淆的完成点 |
@@ -118,4 +148,4 @@ Kubernetes v1.32 的 Device Plugin 文档把注册、持续设备上报和 `Allo
 
 本文没有选择可部署的 GPU 或 NPU 软件组合。CUDA 的内存传输和 stream 语义不能补写 TorchNPU/CANN 的未知行为；PyTorch 的并行/state-dict 样板也不能替代 MindSpeed、其他框架或平台的实现资料。目标环境必须另行固定硬件、固件、驱动、运行时、框架后端、通信库、容器和模型配置。
 
-作业准入、队列、gang 与拓扑放置的概念边界见[对应专页](../05-cluster-platform/admission-and-placement.md)，目标配置与运行结果仍待验证。强化学习 rollout、专家并行、pipeline mid-step 恢复和精确 DataLoader worker 游标也不由这张总览证明。来源选择与已知缺口见[第五批研究记录](../../docs/research/batch-05-overview-sources.md)。
+作业准入、队列、gang 与拓扑放置的概念边界见[对应专页](../05-cluster-platform/admission-and-placement.md)，目标配置与运行结果仍待验证。专家并行与 pipeline mid-step 恢复、精确 DataLoader worker 游标等边界不由这张总览证明：专家并行见[并行策略与训练状态](../06-training/parallelism-and-state.md)，mid-step 无损恢复不承诺（见[Checkpoint 恢复一致性](../06-training/checkpoint-state-consistency.md)的截取边界），RL rollout 循环见其分支正文。来源选择与已知缺口见[第五批研究记录](../../docs/research/batch-05-overview-sources.md)；2026-10-21 终态核对（T00-04）只补链接与分支入口，不改变上述边界。

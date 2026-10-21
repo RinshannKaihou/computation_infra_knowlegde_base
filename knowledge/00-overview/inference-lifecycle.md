@@ -11,14 +11,20 @@ source_refs:
   - src.vllm.inference-v0-14
   - src.ascend.vllm-ascend-v0-14-0rc1
   - src.prometheus.histograms-2026-09-29
-updated_at: "2026-09-30"
-summary: 沿请求、执行、KV 状态、资源与服务指标理解一次推理请求，并区分引擎机制、设备后端和观察边界。
+updated_at: "2026-10-21"
+summary: 沿请求、执行、KV 状态、资源与服务指标理解一次推理请求，并区分引擎机制、设备后端和观察边界；含副本变更/失败重试/恢复验证入口与终态核对。
 related_ids:
   - hardware.resource-topology
   - software-stack.layers-and-boundaries
+  - software-stack.environment-installation-and-upgrade
   - cluster-platform.device-resource-chain
   - inference.execution-and-kv-cache
   - inference.latency-metrics
+  - inference.engine-backend-boundaries
+  - inference.routing-and-flow-control
+  - inference.capacity-and-autoscaling
+  - inference.release-and-recovery
+  - inference.gpu-inference-oom-triage
   - reliability.dimensions-and-failure-domains
 verification:
   status: source_checked
@@ -28,7 +34,7 @@ verification:
     - src.vllm.inference-v0-14
     - src.ascend.vllm-ascend-v0-14-0rc1
     - src.prometheus.histograms-2026-09-29
-  notes: 已核对 vLLM v0.14.0、vLLM Ascend v0.14.0rc1、Kubernetes v1.32 与 2026-09-29 读取的 Prometheus 固定/动态来源；未运行模型服务、请求、benchmark、GPU/NPU 或集群实验。
+  notes: 已核对 vLLM v0.14.0、vLLM Ascend v0.14.0rc1、Kubernetes v1.32 与 2026-09-29 读取的 Prometheus 固定/动态来源；未运行模型服务、请求、benchmark、GPU/NPU 或集群实验。2026-10-21 T00-04 终态核对：新增副本变更/失败重试/恢复验证/平台分支各入口均链接 07/02 域已交付正文（其来源与审阅记录见各自正文），本文原有来源快照不变。
 ---
 
 # 一次推理请求的端到端路径
@@ -68,6 +74,25 @@ flowchart LR
 | 请求成功但结果错误，或恢复后服务可用但性能/正确性未达标 | [可靠性维度与故障域](../08-reliability/dimensions-and-failure-domains.md) | 协议成功、正确性、性能稳定性与可恢复性需要分别定义 |
 
 Kubernetes Device Plugin 的 `Allocate` 可以提供设备节点、挂载、环境变量或 CDI 等容器配置，但这不证明推理引擎后端已经加载，也不证明目标模型、算子或指标可用（[Kubernetes v1.32 Device Plugins](https://v1-32.docs.kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/device-plugins/)）。因此资源层和请求执行层之间需要独立 ready 与最小功能证据。
+
+## 副本变更、失败/重试与恢复验证入口
+
+请求路径之外，服务副本生命周期会改变上图前提；相关入口：
+
+| 变化 | 与请求路径的关系 | 入口正文 |
+|---|---|---|
+| 副本扩缩容与冷启动 | 改变"到达与排队"层的容量与分母；缩容 drain 时**新请求**经实际路由收敛转向其他可服务副本，**在途流**按 drain 契约完成/取消（超期或终态不明按重试边界处理，不承诺已输出流透明续传或 KV 自动迁移——见目标正文） | [容量、扩缩容与冷启动决策](../07-inference/capacity-and-autoscaling.md) |
+| 版本发布 | 灰度五步（预热/递增/gate/drain/回退）改变副本集合与模型版本 | [服务版本发布、副本故障与恢复验证](../07-inference/release-and-recovery.md) |
+| 请求失败与重试 | 请求身份、幂等与断连/取消/流式重试的边界决定"完成"判据 | [请求路由、准入与流控](../07-inference/routing-and-flow-control.md) |
+| 副本/引擎故障 | liveness/readiness/推理质量三层分开，摘除与恢复验证分层 | [服务版本发布、副本故障与恢复验证](../07-inference/release-and-recovery.md)（含 PD 单侧故障分支） |
+| 启动/执行期 OOM | 加载、图编译、prefill/decode 各首失败阶段的分诊 | [GPU 推理 OOM 诊断](../07-inference/gpu-inference-oom-triage.md)（NVIDIA/AMD）与[昇腾推理 OOM 诊断](../07-inference/ascend-inference-oom-triage.md) |
+
+恢复验证的判据与本文"失败过滤与聚合同样属于口径"一致：恢复后须同时核对延迟分布、失败/取消计数与输出质量（见[发布恢复验证设计](../07-inference/release-and-recovery.md)），不以副本 ready 代替请求恢复。环境前置（引擎安装、平台栈升级与回退）见[三平台安装基线、迁移升级与回退验证](../02-software-stack/environment-installation-and-upgrade.md)（文档样板，未实测）。
+
+## 平台分支
+
+- 引擎侧：三线分立——本页**上游 vLLM** 执行/计时细节均限 b17039bc 固定快照；vLLM Ascend 限 52d4acf 固定快照（其文档构建变量指向 vLLM v0.14.1，差异见文末既有说明）；MindIE 的组件与交集入口对应其**仓内文档线自述的 3.1.0**（开源仓 69e5a5dd 快照，产品包/latest 支持表映射仍 unknown，见[MindIE 执行档案](../07-inference/mindie-execution-profile.md)）。三平台特性交集（支持/条件/未证实/冲突分列）见[推理引擎组件与平台功能交集档案](../07-inference/engine-backend-boundaries.md)。
+- AMD/ROCm：特性交集的 AMD 行与 [GPU 推理 OOM 诊断](../07-inference/gpu-inference-oom-triage.md) 的 ROCm 取证差异；vLLM ROCm 安装边界（无预编译 wheel、docker 推荐）见其登记文档。MindIE PD 混部/分离等昇腾侧语义见[MindIE 执行档案](../07-inference/mindie-execution-profile.md)。未列入交集档案的组合保持 unknown，不画成已支持。
 
 ## 请求、状态、资源与指标怎样对应
 
@@ -123,6 +148,6 @@ vLLM Ascend `v0.14.0rc1` 固定功能矩阵把 chunked prefill 和 automatic pre
 
 ## 适用边界与待建设项
 
-本文没有固定网关、认证、路由、限流、代理 flush、服务发现、扩缩容或版本发布实现；这些节点只能按目标部署补证据。也没有提供 KV bytes/token、并发上限、设备利用率、TTFT/TPOT 阈值或调优参数。
+本文没有固定网关、认证、路由、限流、代理 flush、服务发现、扩缩容或版本发布实现；这些控制面环节的方法档案与固定样板（Envoy/K8s v1.32/KServe/production-stack 等，均未实测）见 07 域[路由与流控](../07-inference/routing-and-flow-control.md)、[容量与扩缩容](../07-inference/capacity-and-autoscaling.md)与[发布与恢复](../07-inference/release-and-recovery.md)，本页只保留请求侧口径。也没有提供 KV bytes/token、并发上限、设备利用率、TTFT/TPOT 阈值或调优参数。
 
-对其他引擎、GPU/NPU 插件和协议，应复用“请求阶段—状态—资源—观测边界”的记录方法，重新读取其调度、cache 和指标实现。缺少版本、模型、硬件、请求分布、cold/warm 状态与错误计数时，性能值不可当作通用基线。来源选择和未解决条件见[第五批研究记录](../../docs/research/batch-05-overview-sources.md)。
+对其他引擎、GPU/NPU 插件和协议，应复用"请求阶段—状态—资源—观测边界"的记录方法，重新读取其调度、cache 和指标实现。缺少版本、模型、硬件、请求分布、cold/warm 状态与错误计数时，性能值不可当作通用基线。来源选择和未解决条件见[第五批研究记录](../../docs/research/batch-05-overview-sources.md)；2026-10-21 终态核对（T00-04）只补链接与入口，不改变上述边界。

@@ -1513,7 +1513,7 @@ sources:
   notes: 核对 Product Specifications 表：GPU Memory Bandwidth 为 3.35TB/s（H100 SXM）与 3.9TB/s（H100 NVL）；GPU Memory 80GB/94GB；页面不再单列 H100 PCIe（非 NVL）列；Accelerated Data Analytics 节另有 "3 terabytes per second (TB/s) of memory bandwidth per GPU" 宣传语（不绑定 SKU）。与 H100 白皮书 V1.01 的 3000 GB/s（preliminary）口径分列。
 - id: src.amd.rocm-bandwidth-test-d7f5efe
   title: ROCm rocm_bandwidth_test（固定 commit d7f5efe）
-  url: https://github.com/ROCm/rocm_bandwidth_test
+  url: https://github.com/ROCm/rocm_bandwidth_test/tree/d7f5efe854b82baa21f34a978841e341de354b97
   kind: repository
   registered_at: '2026-10-08'
   revision: d7f5efe854b82baa21f34a978841e341de354b97（默认分支 develop HEAD，2026-07-08）
@@ -2526,7 +2526,7 @@ sources:
       identifier: BSD-3-Clause（文本逐字核对；GitHub 许可证识别为 NOASSERTION）
       url: https://github.com/NVIDIA/cuda-samples/blob/v12.8/LICENSE
     notes: 文件头与根 LICENSE 已核对为 BSD 三条款文本；GitHub 识别 NOASSERTION 如实记录；本库仅链接与原创归纳。
-  notes: 研究记录 kind 为 code，按 schema 枚举归入 repository。2026-10-09 核对 vectorAdd.cu 最小流程：cudaMalloc ×3 → cudaMemcpy H2D ×2（同步版）→ kernel 启动 → 立即 cudaGetLastError() 检查 pre-launch 错误 → cudaMemcpy D2H（对 host 同步，兼作同步点）→ 逐元素 fabs 误差大于 1e-5 校验失败即 EXIT_FAILURE → cudaFree；每步错误以 cudaGetErrorString 打印。是三平台官方示例中唯一含显式数值结果校验者。注意与已登记 src.nvidia.cuda-samples-bandwidthtest-2026-10-08（master 分支观察）固定基准不同，引用带 tag/commit。
+  notes: 研究记录 kind 为 code，按 schema 枚举归入 repository。2026-10-09 核对 vectorAdd.cu 最小流程：cudaMalloc ×3 → cudaMemcpy H2D ×2（同步版）→ kernel 启动 → 立即 cudaGetLastError() 检查 pre-launch 错误 → cudaMemcpy D2H（对 host 同步，兼作同步点）→ 逐元素 fabs 误差大于 1e-5 校验失败即 EXIT_FAILURE → cudaFree；每步错误以 cudaGetErrorString 打印。是三平台官方示例中唯一含显式数值结果校验者。注意与已登记 src.nvidia.cuda-samples-bandwidthtest-2026-10-08（master 分支观察）固定基准不同，引用带 tag/commit。 Batch 31（T02-12）扩展核读：同 tag v12.8 的 Samples/1_Utilities/bandwidthTest（README：测量 device-to-device、host-to-device pageable/pinned 及反向拷贝带宽；README 未定义显式通过阈值，输出为各拷贝类型带宽数值；README 列 CUDA Toolkit 12.5（原文照录，未标注更高版本要求）、SM 5.0–9.0）——正文安装梯子 L6 的传输样例入口用此固定 tag 树。
 - id: src.amd.rocm-examples-58fd61ac
   title: ROCm rocm-examples（HIP-Basic/saxpy 与 HIP-Basic/streams，固定 commit）
   url: https://github.com/ROCm/rocm-examples/tree/58fd61ac9ed7313b84542f90ea3fc2ca9bd60813
@@ -2670,7 +2670,7 @@ sources:
       identifier: MIT
       url: https://rocm.docs.amd.com/en/docs-10.1.0/about/license.html
     notes: 同 src.amd.rocm-release-notes-10.1.0 的许可口径；本库仅链接并原创归纳。
-  notes: 选择器驱动单页（全部安装方法变体内嵌、锚点含选择器状态串，引用指页面+方法名）。核对：五种安装方式对比表（package manager（apt/dnf/zypper，系统级）、amdgpu-install（仅 Radeon/Ryzen）、pip（venv）、tarball（免 root/自定义目录）、Runfile（引导式、可含驱动））；apt 注册 stable.repo.amd.com/rocm/core/packages/ubuntu{2604,2404,2204}/ 仓库（GPG key stable.repo.amd.com/rocm/gpg/packages.gpg）后 sudo apt install amdrocm10.1（或按架构 amdrocm10.1-gfx942 等）；GPU 访问权限两种方式（sudo usermod -a -G render,video $LOGNAME，或 /etc/udev/rules.d/70-amdgpu.rules：KERNEL=="kfd", GROUP="render", MODE="0666" 与 SUBSYSTEM=="drm", KERNEL=="renderD*", GROUP="render", MODE="0666"，改完需重启，容器环境在宿主机配置）；安装后验证入口 rocminfo、amd-smi version、pip freeze | grep rocm、rocm-sdk CLI、Windows hipinfo（示例输出为厂商样例，非本库实测）；卸载 sudo apt autoremove amdrocm10.1 及架构变体；旧流 ROCm 7.2.4 或更早须先卸载再装 10.1.0，跨大版本（7.14→10.1）原地升级路径未见官方明确声明，正文按先卸后装写。权限（video/render、udev）与驱动重装（dmesg 有错重装 amdgpu）等排错内容散落各节，未发现面向 KFD 初始化失败/驱动-用户态版本不匹配的独立排错页。
+  notes: 选择器驱动单页（全部安装方法变体内嵌、锚点含选择器状态串，引用指页面+方法名）。核对：五种安装方式对比表（package manager（apt/dnf/zypper，系统级）、amdgpu-install（仅 Radeon/Ryzen）、pip（venv）、tarball（免 root/自定义目录）、Runfile（引导式、可含驱动））；apt 注册 stable.repo.amd.com/rocm/core/packages/ubuntu{2604,2404,2204}/ 仓库（GPG key stable.repo.amd.com/rocm/gpg/packages.gpg）后 sudo apt install amdrocm10.1（或按架构 amdrocm10.1-gfx942 等）；GPU 访问权限两种方式（sudo usermod -a -G render,video $LOGNAME，或 /etc/udev/rules.d/70-amdgpu.rules：KERNEL=="kfd", GROUP="render", MODE="0666" 与 SUBSYSTEM=="drm", KERNEL=="renderD*", GROUP="render", MODE="0666"，改完需重启，容器环境在宿主机配置）；安装后验证入口 rocminfo、amd-smi version、pip freeze | grep rocm、rocm-sdk CLI、Windows hipinfo（示例输出为厂商样例，非本库实测）；卸载 sudo apt autoremove amdrocm10.1 及架构变体；旧流 ROCm 7.2.4 或更早须先卸载再装 10.1.0，跨大版本（7.14→10.1）原地升级路径未见官方明确声明，正文按先卸后装写。权限（video/render、udev）与驱动重装（dmesg 有错重装 amdgpu）等排错内容散落各节，未发现面向 KFD 初始化失败/驱动-用户态版本不匹配的独立排错页。 Batch 31（T02-12）补读同页：runfile 安装器对应 gpu-access=user（组）或 gpu-access=all（udev）选项；"If you have ROCm 7.2.4 or older installed, please uninstall it before proceeding"页内多处出现；pip 安装的验证另有 which rocm-sdk、ls .venv/bin。Uninstalling 节经原始 HTML 复核存在（"Use your package manager to remove the installed packages"，sudo apt autoremove amdrocm10.1 及 gfx950/gfx942/gfx90a/gfx908/gfx1201/gfx1200/gfx1100/gfx1101/gfx1102 等架构变体；本条 2026-10-21 首次补读曾误记"无专门卸载章节"——两轮网页转换读取漏掉该节，本轮已按原始 HTML 更正）；完整版本回退与依赖恢复（降级回旧版本并恢复依赖至可用）未见专门说明，保持 unknown；仓库与缓存清理步骤见 Uninstalling 节（sudo rm /etc/apt/sources.list.d/amdrocm-stable.sources、sudo rm -rf /var/cache/apt/*、sudo apt clean、sudo apt update）。
 - id: src.amd.rocm-therock-transition-docs-10.1.0
   title: Transition guide from legacy ROCm release stream（TheRock 打包）
   url: https://rocm.docs.amd.com/en/docs-10.1.0/about/transition-guide-TheRock.html
@@ -2960,7 +2960,7 @@ sources:
       identifier: NVIDIA CUDA Toolkit EULA
       url: https://docs.nvidia.com/cuda/archive/12.8.0/eula/index.html
     notes: 官方归档入口指向该 EULA；未完成具体文件及再分发条件核验，本库仅作原创归纳与链接。
-  notes: 核对 §3.12.2 Table 4 meta-packages（Linux）：cuda-toolkit-12-8 Installs all CUDA Toolkit packages required to develop CUDA applications. Does not include the driver.；cuda-runtime-12-8 含运行所需 Toolkit 包以及 Driver 包；另有 cuda-compiler-12-8、cuda-libraries-12-8、cuda-tools-12-8 等。同表 cuda-12-8 行残留 Remains at version 12.5 until an additional version of CUDA is installed 字样，疑模板缺陷，不引用。release notes Table 1 的 NVIDIA Linux Driver 570.86.10 是发布捆绑口径，与本表元包依赖口径（toolkit 不含驱动、runtime 含驱动包）并存不矛盾，正文分列两口径。
+  notes: 核对 §3.12.2 Table 4 meta-packages（Linux）：cuda-toolkit-12-8 Installs all CUDA Toolkit packages required to develop CUDA applications. Does not include the driver.；cuda-runtime-12-8 含运行所需 Toolkit 包以及 Driver 包；另有 cuda-compiler-12-8、cuda-libraries-12-8、cuda-tools-12-8 等。同表 cuda-12-8 行残留 Remains at version 12.5 until an additional version of CUDA is installed 字样，疑模板缺陷，不引用。release notes Table 1 的 NVIDIA Linux Driver 570.86.10 是发布捆绑口径，与本表元包依赖口径（toolkit 不含驱动、runtime 含驱动包）并存不矛盾，正文分列两口径。 Batch 31（T02-12）补读：Ch.2 预安装动作（GPU/gcc 核对、安装方式选择、"Handle Conflicting Installation Methods"先移除冲突方法）；§3.12.3.7 并列安装句写 cuda-toolkit-X.Y、同节锁定句写 cuda-toolkit-X-Y、表列 cuda-toolkit-12-8——上游模板不一致照录，正文引用用具体坐标 cuda-toolkit-12-8；§5.4 runfile 卸载用 toolkit bin 内 cuda-uninstaller；§10.3.3 并列多版本经 update-alternatives 选择活动版本（依赖 /usr/local/cuda 等软链接的应用适用）；§10.2.2 安装后验证走 cuda-samples deviceQuery（"a device was found"/"the test passed"）与 bandwidthTest，缺 /dev/nvidia* 文件会失败、SELinux 系统可能需 setenforce 0（该节未以 nvidia-smi/nvcc -V 作为验证命令）；§11 Debian/Ubuntu 卸载为按 cuda/cublas/cufft/cufile/curand/cusolver/cusparse/gds-tools/npp/nvjpeg/nsight/nvvm 通配 purge＋autoremove --purge -V（通配不区分并列安装的多个版本）。
 - id: src.huawei.cann-83rc1-package-list-2026-10-09
   title: CANN 社区版 8.3.RC1《准备软件包》（instg_0003 三表；附 instg_0002 安装命令矩阵）
   url: https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/83RC1/softwareinst/instg/instg_0003.html
@@ -7225,3 +7225,25 @@ sources:
       url: https://arxiv.org/abs/2502.12340
     notes: 该许可不是本库再分发的通用授权；本库仅作原创归纳与链接，不复制图表或长段正文。
   notes: Batch 30 复核轮新增：作为 ACL 正式版条目的**附录定位入口**登记（复审要求正文外链与登记入口逐字映射）；技术主张与读数范围见 src.acl.sdc-llm-training-2502 的 notes。
+- id: src.huawei.cann-83rcx-upgrade-uninstall-2026-10-21
+  title: CANN community 8.3.RCX 安装指南升级与卸载（instg_0027–0033，doc_center/source 静态镜像核读）
+  url: https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/83RC1/softwareinst/instg/instg_0098.html
+  kind: documentation
+  registered_at: '2026-10-21'
+  revision: 页头 8.3.RCX / URL 路径 83RC1（沿用既有 install 条目的版本标识不一致边界）；2026-10-21 经静态镜像核读 instg_0027/0028/0029/0030/0031/0032/0033 及安装后配置 instg_0094
+  license:
+    status: unknown
+    scopes: []
+    notes: 厂商网页未见再分发许可；本库仅链接与原创归纳，不复制长段正文。
+  notes: Batch 31（T02-12）核读：升级前必读（instg_0028）——升级中禁止其他维护操作、会导致业务中断、建议提前切走/停止业务、升级后须核对全部版本配套、"如果需要从高版本回退至低版本，需卸载高版本后重新安装所需版本"（无原地降级路径）、默认升级 latest 软链接指向版本、同时升级时顺序固件>驱动>CANN；升级固件/驱动（instg_0029）——.run --upgrade，固件回显 "Firmware package upgraded successfully!"、驱动 "Driver package upgraded successfully!"，reboot 后 npu-smi info 验证；升级 CANN（instg_0030）——yum/conda 指定目标版本号、.run --upgrade，Toolkit 升级前磁盘要求"可用空间>已占用+10G"（df -h/du -sh），Kernels 8.0.0 起独立升级且随 Toolkit/NNAE/NNRT 升级会被自动卸载须按配套重装；卸载 CANN（instg_0032）——脚本卸载（推荐）按包分列：Toolkit/NNRT 为 <安装路径>/ascend-toolkit|nnrt/<version>/<arch>-linux/script、NNAE 为 <安装路径>/nnae/<version>/script、Kernels 为对应包 opp_kernel/script、NNAL 为 <安装路径>/nnal/atb/<version>/scripts，各目录执行 ./uninstall.sh；或 xxx.run --uninstall（读 /etc/Ascend/ascend_cann_install.info 或 $HOME/Ascend/ 下 Install_Path），Yum 卸载按 Kernels>CANN 顺序、conda remove ascend::xxx；卸载驱动和固件（instg_0033）——/usr/local/Ascend/driver/script/uninstall.sh 与 /usr/local/Ascend/firmware/script/uninstall.sh，两者无先后顺序要求。Kernels 自动卸载的前提是"跟随 Toolkit/NNAE/NNRT 安装"（升级宿主包时被自动卸载须按配套重装）；独立安装的 Kernels（8.0.0 起）不适用该通则。驱动/固件安装本体见既有 cann-83rcx-install 条目（instg_0005）。安装后配置（instg_0094）：source ascend-toolkit/set_env.sh 或手动 export ASCEND_TOOLKIT_HOME/LD_LIBRARY_PATH/PATH 等环境变量清单；运行依赖 g++ 与指定 Python 第三方库（protobuf==3.20.0、numpy>=1.19.2,<=1.24.0 等）；验证走官方推理样例，输出 top1–top5 概率与样例示例信息比对（形态比对）。
+- id: src.nvidia.driver-installation-guide-latest-2026-10-21
+  title: NVIDIA Driver Installation Guide（latest 可变页，2026-10-21 观察）
+  url: https://docs.nvidia.com/datacenter/tesla/driver-installation-guide/latest/index.html
+  kind: documentation
+  registered_at: '2026-10-21'
+  revision: latest 可变页（Ubuntu 与 version-locking 两节 2026-10-21 读取；示例分支 575/580、590 提及包名去分支化），非固定历史快照
+  license:
+    status: unknown
+    scopes: []
+    notes: 公开可读不等于允许全文再分发；本库仅链接并作原创归纳，不复制长段正文。
+  notes: Batch 31（T02-12）核读两节：Ubuntu 节（linux-headers 前置；local repo 装 nvidia-driver-local-repo-<发行版>-<版本> 包并复制其 keyring、network repo 装 cuda-keyring 包——两种仓库路径不同；apt install nvidia-open 主路径、升级 apt dist-upgrade；T02-12 第三轮复核补充核读 Post-installation Actions 的 Verify the Driver Version 节——cat /proc/driver/nvidia/version 核验已加载驱动版本，latest 页 2026-10-21）；version-locking 节（nvidia-driver-pinning-<branch> 与 nvidia-driver-pinning-<version> 锁包，建议先装锁包再装驱动；APT Pin-Priority>=1000 允许降级，版本锁包"can be used to install, downgrade or upgrade to specific versions"；DNF versionlock / Zypper addlock（Zypper 锁为排除式）；Ubuntu 580 及以前包名带分支、590 起去分支化，分支切换仅在 590+ 支持）。驱动设备文件语义另见 src.nvidia.driver-readme-580.105.08（固定 README），两入口分立不合并。
