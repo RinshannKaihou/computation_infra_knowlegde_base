@@ -937,7 +937,7 @@ sources:
   url: https://www.opencompute.org/documents/sdc-in-ai-ocp-whitepaper-final-pdf
   kind: paper
   registered_at: '2026-09-30'
-  revision: 2025-08-27；Version History 页提取为空，精确版本号未知；已读印刷页 1–19/29
+  revision: 2025-08-27（Version History 表：1.0 于 2025-08-26 released）；已读全文（第九批 p.1–19，Batch 30 补读至文末；本次 pdfinfo 重核文件为 30 页，此前按 29 页记，页脚 PAGE N 与文件页序一致）
   license:
     status: identified
     scopes:
@@ -945,7 +945,7 @@ sources:
       identifier: CC-BY-SA-4.0
       url: https://www.opencompute.org/documents/sdc-in-ai-ocp-whitepaper-final-pdf
     notes: CC BY-SA 4.0 要求署名与相同方式共享；本库仅作原创归纳与链接，不复制图表与长段正文。
-  notes: 多厂商（NVIDIA/Meta/Google/AMD/Intel/ARM/Microsoft 员工署名）白皮书。已核对：故障结局分类 benign / fault corrected / DUE（detected unrecoverable error）/ SDC 四类（图 1，p.8）；小延迟缺陷与 DVFS 裕量（§3.2.1，p.9，机制性陈述）；fault-masking 掩盖 SDC（执行摘要 p.3、§3.3 p.10）；Meta 同一检查六个月后失败的磨损案例（§5.0，p.15）；fleet 检测三法与 70% 重叠覆盖、分析法多检出 41%（§5.1，p.15–16）；训练侧 NaN 传播与梯度方差污染（§5.1.1，p.16–17）；Google Gemini 确定性重放+空闲扫描+热备（§5.1.4.1，p.19）。§5.2 之后未读。
+  notes: 多厂商（NVIDIA/Meta/Google/AMD/Intel/ARM/Microsoft 员工署名）白皮书。已核对：故障结局分类 benign / fault corrected / DUE（detected unrecoverable error）/ SDC 四类（图 1，p.8）；小延迟缺陷与 DVFS 裕量（§3.2.1，p.9，机制性陈述）；fault-masking 掩盖 SDC（执行摘要 p.3、§3.3 p.10）；Meta 同一检查六个月后失败的磨损案例（§5.0，p.15）；fleet 检测三法与 70% 重叠覆盖、分析法多检出 41%（§5.1，p.15–16）；训练侧 NaN 传播与梯度方差污染（§5.1.1，p.16–17）；Google Gemini 确定性重放+空闲扫描+热备（§5.1.4.1，p.19）。Batch 30（T08-04）补读 §5.2–§7 至文末：端到端完整性校验（checksum/hash 多阶段校验、低成本、需后续纠正/回滚，§5.2.1）；复制与一致性校验（空间冗余、关键层冗余执行/影子模型、开销在规模上可能不可行，§5.2.2）；整数剩余校验（模小素数并行计算、便宜、面向整数/量化数据，§5.2.3）；checkpoint/重启为时间冗余的向后恢复（epoch 末不足、提频增存储/IO 与编排开销并压低 runtime goodput、引用 [27] 即 MPG 论文，§5.3.1）；ABFT 为前向恢复（校验和编入矩阵乘/attention 算法、适度开销，§5.3.2）；§5.4 对 AI 的含义（exascale 下 checkpoint 时间可逼近 MTTF、全复制成本不可行、固有非确定性掩盖/混淆检测、迭代式训练中错误影响取决于时机与位置、建议轻量检测+选择性 checkpoint+定向冗余的分层法）；§6 开放问题（FIT/AVF 与 AI 正确性指标的鸿沟、部分容错是附带而非设计保证、層特定敏感性、注入研究与标准化基准、大海捞针、NaN/loss 尖峰归因困难）。
 - id: src.kernel.docs-sysctl-vm-v6.16
   title: Linux kernel v6.16 sysctl vm 文档（dirty/writeback 参数）
   url: https://github.com/torvalds/linux/blob/038d61fd642278bab63ee8ef722c50d10ab01e8f/Documentation/admin-guide/sysctl/vm.rst
@@ -1211,7 +1211,7 @@ sources:
     status: unknown
     scopes: []
     notes: 华为文档版权页声明未经书面许可不得摘抄复制；本库仅链接并作原创归纳。
-  notes: 训练线首个版本化 npu-smi 证据；逐命令支持矩阵显式含 Atlas 800T A2 训练服务器与 Atlas 900 A2 PoD 集群基础单元（另含 800I A2/200T A2 Box16/A200I A2 Box/A300I A2）。核对 npusmi_0002–0181 存在页：温度（npusmi_0023/0024，NPU Temperature (C)、MCU LM75A_TE/LM75B_TE）、功耗（0025/0026，NPU Real-time Power(W)）、电压（0027）、频率成对字段 Aicore Freq(MHZ)（输出说明仅称「Aicore频率」）vs Aicore curFreq(MHZ)（「Aicore当前频率」）（0016；示例为利用率 0、Freq 1850、curFreq 800，页面未给标称/判定阈值语义，差异不能单独判定节流）、watch 表（0012）、sensors（0039，Soc Max/SFP/NDIE/HBM Temperature）、内存信息（0019，HBM Temperature/Clock Speed）、health 五态与 Error Code（0029/0030）、降P启动（0177/0178/0099：仅 HCCS/PCIe 服务器形态，HCCS 款 msnpureport 日志与 iBMC ipmcget 两法均有效、PCIe 款仅方法一有效，ipmcset -d npuisolation 设置）。负面确认（限定范围）：已逐页核对的命令文档页中未找到与 NVIDIA throttle reason 位图相同的公开接口，不排除其他工具/日志/后续版本存在等价能力；npusmi_0008 的 info -h 类型清单含 pwm-mode、pwm-duty-ratio、cpu-freq-up（该页无逐类型机型支持矩阵，类型出现不证明训练机型支持，各类型命令页支持矩阵未逐条核对）。doc_center/source 为静态 HTML；document/detail 形态需 JS 渲染；不存在页与 latest 路径返回 403。2026-10-08 B13-C06/C07/C08 修订。 2026-10-09 B13-R01 修订：负面扫描仅限列明的 npu-smi 命令页；同版本 A2 DCMI dcmi_077 已公开当前原因位图，见独立来源登记，不再用该扫描否定平台能力。
+  notes: 训练线首个版本化 npu-smi 证据；逐命令支持矩阵显式含 Atlas 800T A2 训练服务器与 Atlas 900 A2 PoD 集群基础单元（另含 800I A2/200T A2 Box16/A200I A2 Box/A300I A2）。核对 npusmi_0002–0181 存在页：温度（npusmi_0023/0024，NPU Temperature (C)、MCU LM75A_TE/LM75B_TE）、功耗（0025/0026，NPU Real-time Power(W)）、电压（0027）、频率成对字段 Aicore Freq(MHZ)（输出说明仅称「Aicore频率」）vs Aicore curFreq(MHZ)（「Aicore当前频率」）（0016；示例为利用率 0、Freq 1850、curFreq 800，页面未给标称/判定阈值语义，差异不能单独判定节流）、watch 表（0012）、sensors（0039，Soc Max/SFP/NDIE/HBM Temperature）、内存信息（0019，HBM Temperature/Clock Speed）、health 五态与 Error Code（0029/0030）、降P启动（0177/0178/0099：仅 HCCS/PCIe 服务器形态，HCCS 款 msnpureport 日志与 iBMC ipmcget 两法均有效、PCIe 款仅方法一有效，ipmcset -d npuisolation 设置）。负面确认（限定范围）：已逐页核对的命令文档页中未找到与 NVIDIA throttle reason 位图相同的公开接口，不排除其他工具/日志/后续版本存在等价能力；npusmi_0008 的 info -h 类型清单含 pwm-mode、pwm-duty-ratio、cpu-freq-up（该页无逐类型机型支持矩阵，类型出现不证明训练机型支持，各类型命令页支持矩阵未逐条核对）。doc_center/source 为静态 HTML；document/detail 形态需 JS 渲染；不存在页与 latest 路径返回 403。2026-10-08 B13-C06/C07/C08 修订。 2026-10-09 B13-R01 修订：负面扫描仅限列明的 npu-smi 命令页；同版本 A2 DCMI dcmi_077 已公开当前原因位图，见独立来源登记，不再用该扫描否定平台能力。 Batch 30（T08-04）补核 npusmi_0034（查询所有芯片 ECC 错误计数）：`npu-smi info -t ecc -i id` 输出 HBM Single/Double Bit Error Count（片上内存单/多比特当前计数）、HBM Single/Double Bit Aggregate Total Err Cnt（生命周期累计）、Isolated Pages Count（单比特两项为预留固定输出 0）与 Next-Isolated Pages Count（多比特待隔离 0–64，经复位 NPU/重启系统/iBMC 或 AC 上下电刷新为已隔离数）；四项计数的最大支持统计值均为 4294967295；支持矩阵与既有登记一致（物理机/容器/直通虚拟机 root）。ECC 计数为 signaled 错误证据，不构成 SDC 检出或发生率证据。
 - id: src.huawei.hdk-26.1x-a2-health-fault-def-02-2026-10-08
   title: Atlas A2 中心推理和训练硬件 26.1.x 健康管理故障定义 02（xlsx）
   url: https://www.hiascend.com/doc_center/source/zh/HDK/2610/A2/A2healthmanagement/hma2_01.html
@@ -7003,3 +7003,179 @@ sources:
       url: https://github.com/mlcommons/inference_policies/blob/master/LICENSE.md
     notes: 2026-10-21 经 GitHub 页面确认仓库 SPDX 为 Apache-2.0；本库仅链接并原创归纳，不搬运原文。
   notes: Batch 29（T00-03）核对：功耗按系统级墙表测量（at the wall），包含受 LoadGen 影响的全部组件（运行 LoadGen 的主机处理器、加速器、内存、风扇等），电源路径不得含电池或储能；v1.0–v2.0 仅支持 Yokogawa 功率分析仪、单表单 SUT（多表接单 SUT 不支持），Dynamic Ranging 用于保证测量精度；director（如带分析仪接口的标准 PC）＋SPEC 的 PTD 记录（PTD 仅可在 MLPerf Power workflow 中使用，须遵守 EULA），SUT 与 director 以 NTP 同步；仅在 performance 阶段评测功耗、以 LoadGen 记录的起止时间戳计算，功耗与性能须来自同一次运行；SUT 与分析仪在提交后至结果发布期间不得变更，无法复现的结果无效；该流程当时不适用于拆分式系统（disaggregated systems）。页面未给具体精度/采样率数值（unknown）。
+- id: src.arxiv.sdc-detection-wild-2203
+  title: Detecting silent data corruptions in the wild — arXiv:2203.08989v1
+  url: https://arxiv.org/abs/2203.08989
+  kind: paper
+  registered_at: '2026-10-21'
+  revision: arXiv:2203.08989v1, submitted 2022-03-16（仅 v1；2026-10-21 核对）
+  license:
+    status: identified
+    scopes:
+    - scope: "论文全文（页面明示 License: CC BY-NC-ND 4.0）"
+      identifier: CC-BY-NC-ND-4.0
+      url: https://arxiv.org/abs/2203.08989
+    notes: NC/ND 条款禁止商用与改编再分发；本库仅作原创归纳与链接，不搬运图表或长段正文。
+  notes: Batch 30（T08-04）全文核读（arXiv HTML）：Meta CPU SDC 检测量化——硅测试漏斗六阶段（§3）；四类触发因素（§4：数据随机化、电气 f/V/I、环境温湿度与热点、生命周期含每日重复同一计算 6 个月后失败的磨损实验）；Fleetscanner 搭维护窗口 drain 阶段跑分钟级测试（§5.1）、Ripple 与负载共置毫秒级 always-on（§5.2，shadow A/B 与 footprint tax）；表 1 与 §6 量化（lifetime ≈68M 次/≈40 亿 fleet 秒 vs 每月 ≈25 亿次/≈1 亿 fleet 秒；该 CPU 缺陷族 93% 覆盖、23%/7% 独有覆盖、15 天 vs 5–6 个月达同等覆盖；Ripple 总 77%）。范围限 Meta fleet 与所研究 CPU 缺陷族；不含 GPU/NPU。
+- id: src.acl.sdc-llm-training-2502
+  title: 'Understanding Silent Data Corruption in LLM Training — ACL 2025（arXiv:2502.12340v1）'
+  url: https://aclanthology.org/2025.acl-long.996/
+  kind: paper
+  registered_at: '2026-10-21'
+  revision: ACL 2025 Long, pp. 20372–20394；arXiv:2502.12340v1（2025-02-17，仅 v1）；2026-10-21 全文核读
+  license:
+    status: partial
+    scopes:
+    - scope: arXiv 对该版本的公开分发
+      identifier: arXiv non-exclusive distribution license（页面明示 perpetual, non-exclusive）
+      url: https://arxiv.org/abs/2502.12340
+    notes: 该许可不是本库再分发的通用授权；本库仅作原创归纳与链接，不复制图表或长段正文。
+  notes: Batch 30（T08-04）全文核读含附录：15 台经 fleet 管理压力测试筛出的真实不健康节点（含由健康转不健康样本）＋健康节点配对；fleet 管理测试为全节点集合通信压力＋计算单元压力＋小规模 LLM 训练与预计算 golden truth 比对（§3.1）；XLA 确定性指令序＋计算同步/参数同步在三层级隔离影响（§3.2）；RQ1 失配频率/严重度逐节点表（§4.2，如 Node 11 fwd/attn 2.89e-2、severity 至 9.63e+12、发生不均匀有尖峰）；RQ2 WCNTS 最大 5.1%（§5.2）；RQ3 loss 几乎重合但参数漂移至不同极小值、微调分歧率不大于换随机种子、个别节点 loss 尖峰致 Node 6 CosmosQA 精度 0（§6.2）；静默性论证（§7.1）；ABFT 校验和矩阵乘 float32 全线性层仅 Node 14 被标出，三条失败解释与 bf16 假阳性（§7.2、附录 D.1–D.4）；局限（§9：仅 15 台临时持有节点、单节点 TP、同步开销降低 SDC 发生率、尖峰仅见微调）。
+- id: src.arxiv.llama3-infrastructure
+  title: The Llama 3 Herd of Models — 基础设施与训练可靠性段（arXiv:2407.21783）
+  url: https://arxiv.org/abs/2407.21783
+  kind: paper
+  registered_at: '2026-10-21'
+  revision: arXiv:2407.21783v3（2026-10-21 核对 HTML 版）；§2 基础设施段
+  license:
+    status: partial
+    scopes:
+    - scope: arXiv 对该版本的公开分发
+      identifier: arXiv non-exclusive distribution license
+      url: https://arxiv.org/licenses/nonexclusive-distrib/1.0/license.html
+    notes: 本库仅作原创归纳与链接，不复制图表或长段正文。
+  notes: Batch 30（T08-06）核读 §2：有效训练时间定义（useful training over elapsed time）并达 >90%，同时自动集群维护每天至少引起一次中断；54 天快照 466 次中断（47 计划/419 意外）；约 78% 归因 confirmed or suspected 硬件，GPU 类合计 58.7%（Faulty GPU 30.1%、HBM3 17.2%、SRAM 4.5%、系统处理器 4.1%、SDC 1.4%、热接口+传感器 1.4%；百分比自洽，Table 5 Faulty GPU 行绝对计数与 30.1% 在 HTML 渲染下不能自洽核对，本库只引用百分比）；软件 12.9%、网络 8.4%、计划外主机维护 7.6%、NCCL watchdog 超时归 Unknown 1.7%；仅 3 次显著人工介入；checkpoint 每卡 1 MB–4 GB、目标压低 GPU 暂停并提频以减少恢复后损失；Tectonic 240 PB/持续 2 TB/s（峰值 7 TB/s）承接突发写；NCCL flight recorder 环形缓冲自动转储。限其 16K H100 环境与归因口径。
+- id: src.arxiv.mpg-tpu-goodput-2025
+  title: ML Fleet Efficiency — ML Productivity Goodput（arXiv:2502.06982v1）
+  url: https://arxiv.org/abs/2502.06982
+  kind: paper
+  registered_at: '2026-10-21'
+  revision: arXiv:2502.06982v1（2025-02；仅 v1）；2026-10-21 全文核读
+  license:
+    status: partial
+    scopes:
+    - scope: arXiv 对该版本的公开分发
+      identifier: arXiv non-exclusive distribution license
+      url: https://arxiv.org/licenses/nonexclusive-distrib/1.0/license.html
+    notes: 本库仅作原创归纳与链接，不复制图表或长段正文。
+  notes: Batch 30（T08-06）核读 §1–§5：Google TPU fleet 效率框架——MPG＝Scheduling Goodput×Runtime Goodput×Program Goodput（§4.3）；SG＝应用全部所需芯片同时可用时间/舰队容量（chip-time）；RG＝已保存进 checkpoint 的有效 chip-time/allocated chip-time，论文明示最后 checkpoint 与失败/抢占之间的工作不计入（§4.3 Runtime Goodput）；PG＝按未优化 HLO 图估计的理想执行时间/实际执行时间；对传统 occupancy 不区分产出的批评（§4.1）；按分量定位优化与 Table 2 分解（§5）。OCP SDC 白皮书 §5.3.1 的 goodput 引用即本文。示例 fleet 数值未引用。
+- id: src.google.sre-testing-reliability
+  title: Google SRE Book — Testing for Reliability（Ch.17）
+  url: https://sre.google/sre-book/testing-reliability/
+  kind: documentation
+  registered_at: '2026-10-21'
+  revision: web chapter observed 2026-10-21（原文 2017，O'Reilly）
+  license:
+    status: identified
+    scopes:
+    - scope: 章节正文（页脚明示 CC BY-NC-ND 4.0）
+      identifier: CC-BY-NC-ND-4.0
+      url: https://sre.google/sre-book/testing-reliability/
+    notes: NC/ND 条款；本库仅作原创归纳与链接，不复制图表或长段正文。
+  notes: Batch 30（T08-05）全文核读：测试与 MTTR/MTBF 关系（失败测试证明不可靠、push 前拦截＝零 MTTR）；传统测试层级 unit/integration/system（smoke/performance/regression）；生产测试 configuration test（与版本控制配置文件比对）与 stress test（找极限，如数据库写满失败点）；rollouts entangle tests（生产不属于单一版本）；canary 不是测试而是结构化用户验收、指数放量脚注（0.1%→1%→10%→100%、每天约一个数量级）；break-glass 机制；production probes 与新旧组合矩阵。不含 GPU/NPU 内容。
+- id: src.paper.kalibera-jones-effectsize-2020
+  title: Quantifying Performance Changes with Effect Size Confidence Intervals — arXiv:2007.10899
+  url: https://arxiv.org/abs/2007.10899
+  kind: paper
+  registered_at: '2026-10-21'
+  revision: arXiv:2007.10899（2020-07-22）；2026-10-21 全文核读
+  license:
+    status: partial
+    scopes:
+    - scope: arXiv 对该版本的公开分发
+      identifier: arXiv non-exclusive distribution license
+      url: https://arxiv.org/licenses/nonexclusive-distrib/1.0/license.html
+    notes: 本库仅作原创归纳与链接，不复制图表或长段正文。
+  notes: Batch 30（T08-05）全文核读：对统计显著性用于性能比较的批评与效应量置信区间（ratio of means）方法（§1–§2）；既有推荐综述（§2.3：georges07 自适应执行至 CI 宽度 1–2%、CI 非重叠视觉检验及其语义局限、Jain 对轻微重叠回退统计检验）；随机效应模型与各层重复（§5–§7）；warm-up 计为执行成本 c1、稳态样本数随之升高；最优重复数公式（§7.4 Eq.13–14，只依赖相邻层方差比与成本比）；bootstrap 置信区间（§7.2.1 单系统、§7.3.1 均值比）与 bootstrap vs 渐近（§8.3.1）。本库不据此给通用最小样本量。
+- id: src.google.sre-postmortem-culture
+  title: 'Google SRE Workbook — Postmortem Culture: Learning from Failure（Ch.10）'
+  url: https://sre.google/workbook/postmortem-culture/
+  kind: documentation
+  registered_at: '2026-10-21'
+  revision: web chapter observed 2026-10-21（原文 2018，O'Reilly）
+  license:
+    status: identified
+    scopes:
+    - scope: 章节正文（CC BY-NC-ND 4.0，SRE Workbook 全书口径）
+      identifier: CC-BY-NC-ND-4.0
+      url: https://sre.google/workbook/postmortem-culture/
+    notes: NC/ND 条款；本库仅作原创归纳与链接，不复制图表或长段正文。
+  notes: Batch 30（T08-07）全文核读：无责复盘原则（针对 what 而非 who、行动项改进系统而非人）、好坏复盘对照案例、模板字段（摘要/影响/根因与触发/时间线/经验教训（顺利/不顺/侥幸）/行动项表）、行动项须有单一负责人、优先级、类型（prevent/mitigate/detect/repair/investigate）与跟踪 bug、发布时机（一周内 vs 四个月反例）、复盘库（Requiem）与行动项闭环跟踪、Postmortem Reading Club 与 Wheel of Misfortune 演练。仅归纳。
+- id: src.google.sre-managing-incidents
+  title: Google SRE Book — Managing Incidents（Ch.14）
+  url: https://sre.google/sre-book/managing-incidents/
+  kind: documentation
+  registered_at: '2026-10-21'
+  revision: web chapter observed 2026-10-21（原文 2017，O'Reilly）
+  license:
+    status: identified
+    scopes:
+    - scope: 章节正文（页脚明示 CC BY-NC-ND 4.0）
+      identifier: CC-BY-NC-ND-4.0
+      url: https://sre.google/sre-book/managing-incidents/
+    notes: NC/ND 条款；本库仅作原创归纳与链接，不复制图表或长段正文。
+  notes: Batch 30（T08-07）全文核读：基于 ICS/NIMS 的递归职责分离——Incident Command（全局状态、未授权职责默认保留）、Ops（唯一改动系统的组）、Communication（对内对外与事件文档）、Planning（长期事项/交接/偏差记录供回退）；实时事件文档要求（并发可编辑、模板、关键信息置顶、事后保留）；尽早宣布的触发（需第二团队/用户可见/一小时无解）；明确口头交接；指挥点与留痕频道；"Stop the bleeding, restore service, and preserve the evidence for root-causing"；演练与轮换。仅归纳。
+- id: src.ascend.msprobe-26.2.0.b110
+  title: MindStudio Probe（msprobe）PyTorch 精度比对文档（tag MindStudio_26.2.0.B110_001）
+  url: https://github.com/Ascend/msprobe/blob/tag_MindStudio_26.2.0.B110_001/docs/zh/user_guide/accuracy_compare/pytorch_accuracy_compare_instruct.md
+  kind: documentation
+  registered_at: '2026-10-21'
+  revision: tag MindStudio_26.2.0.B110_001；2026-10-21 核对比对指令文档与 README
+  license:
+    status: unknown
+    scopes: []
+    notes: 该 tag 根目录未见 LICENSE 文件（raw 探测 404；GitHub API 限流未列目录）；本库仅作原创归纳与链接，不复制其表格或长段正文。
+  notes: Batch 30（T08-04）核对：昇腾全场景精度调试工具（2025-12-31 全面开源；数据采集→精度比对→可视化）；比对模式（真实数据/统计数据/MD5）与指标——RE=|（N−B）/B|、Cosine、EucDist、MaxAbsErr、MaxRelativeErr、千分之一/千分之五误差比例、统计量（max/min/mean/L2 norm）相对误差、CRC-32、Requires_grad Consistent；官方阈值口径 Cosine 实际可接受 >0.99、MaxAbsErr <0.001、千分位比例仅作趋势参考不参与判定；error 标记规则（nan/inf、千分之一比例 input>0.9 且 output<0.6、norm 相对误差 input<0.1 且 output>0.5、梯度不一致、CRC/dtype/shape 不一致）与 warning 规则（output 为 input 误差 10 倍等）；占位输入 API（_reduce_scatter_base 等）与冗余 API（empty/to 等）豁免；文档明示 NPU 与 CPU/GPU 差异随模型执行不断累积、同一 API 可能因输入差异大到无法比对。2026-03-28 公告 ADump 模块日落下线（README）。离线比对工具，不是 SDC 检出或发生率证据。
+- id: src.huawei.hdk-26.1x-a2-dcmi-ecc
+  title: Atlas A2 DCMI dcmi_get_device_ecc_info（HDK 26.1.x）
+  url: https://www.hiascend.com/doc_center/source/zh/HDK/2610/A2/A2DCMI/dcmi_047.html
+  kind: documentation
+  registered_at: '2026-10-21'
+  revision: HDK 26.1.x（URL 路径 2610）；2026-10-21 逐字段核对
+  license:
+    status: unknown
+    scopes: []
+    notes: 华为文档版权页声明未经书面许可不得摘抄复制；本库仅作原创归纳与链接。
+  notes: Batch 30（T08-04）核对：函数原型与 dcmi_ecc_info 结构体（enable_flag：0 未使能/1 使能；single_bit_error_cnt/double_bit_error_cnt 当前计数，系统重启清零；total_*_cnt 生命周期累计；*_isolated_pages_cnt，其中单比特为预留恒 0）；input_type 枚举含 DDR/SRAM/HBM/NPU/HBM 记录地址等，但该接口仅支持 DCMI_DEVICE_TYPE_HBM；文档注明"如果查询到多比特错误，需要进行相关问题定位和处理"；支持矩阵（物理机裸机 root/运行用户组、普通容器 root；容器 AVI 不支持）。ECC 计数是 signaled 错误证据，不构成 SDC 检出或发生率证据。
+- id: src.ascend.faultdiag-v26.1.1
+  title: MindCluster Ascend FaultDiag 用户指南（v26.1.1 固定 commit）
+  url: https://github.com/Ascend/mind-cluster/blob/44385c13d7b1d87def35f1604e8be4d16de6ca4e/docs/zh/faultdiag/ascend-faultdiag/05_usage/04_fault_diagnosis.md
+  kind: documentation
+  registered_at: '2026-10-21'
+  revision: v26.1.1；commit 44385c13d7b1d87def35f1604e8be4d16de6ca4e；2026-10-21 核对概述/日志清洗/故障诊断/附录四页
+  license:
+    status: partial
+    scopes:
+    - scope: mind-cluster 仓库根 LICENSE（Apache-2.0，既有登记 src.ascend.mind-cluster-v26.1.1 同口径）
+      identifier: Apache-2.0
+      url: https://github.com/Ascend/mind-cluster/blob/44385c13d7b1d87def35f1604e8be4d16de6ca4e/LICENSE
+    notes: 本库仅作原创归纳与链接，不复制文档图表或长段正文。
+  notes: Batch 30（T08-07/08）核对（文件树按固定 commit 重新定位，发现 URL 的 03_log_parsing 实际位于 docs/zh/faultdiag/ascend-faultdiag/05_usage/）：ascend-fd 提供日志清洗＋故障诊断；诊断类型含根因节点分析（按 HCCL 报错定位根因/首错节点与根因节点链）、故障事件分析（按故障知识图谱输出故障分类/名称/描述/建议方案/关键日志/传播链）、-p 性能劣化（计算降频、CPU 抢占、网络拥塞）；终端最多展示 16 条、完整结果在 diag_report.json；示例报告（RoCE 重传超次→Link Down 传播链）为文档示例非真实事故。规则匹配输出是候选假设，不构成根因证明；未执行任何诊断。
+- id: src.arxiv.rcacopilot-2305.15778
+  title: Automatic Root Cause Analysis via Large Language Models for Cloud Incidents（RCACopilot）
+  url: https://arxiv.org/abs/2305.15778
+  kind: paper
+  registered_at: '2026-10-21'
+  revision: arXiv:2305.15778v4（2023-11-13）；2026-10-21 核对摘要页
+  license:
+    status: partial
+    scopes:
+    - scope: arXiv 对该版本的公开分发
+      identifier: arXiv non-exclusive distribution license
+      url: https://arxiv.org/licenses/nonexclusive-distrib/1.0/license.html
+    notes: 本库仅作原创归纳与链接；正式发表版与全文细节未逐节核读。
+  notes: Batch 30（T08-08）核对摘要级：微软侧 LLM 赋能云端事故 RCA 的 on-call 系统（诊断信息聚合、根因类别预测与解释叙事）；以一年期真实 Microsoft 事故数据评测，RCA accuracy 至 0.766；诊断信息采集组件生产使用四年以上。作为"真实事故数据集评测诊断能力"的公开样板引用；未引用全文细节与部署数字。
+- id: src.arxiv.cloud-opsbench-2603.00468
+  title: Cloud-OpsBench — A Reproducible Benchmark for Agentic Root Cause Analysis in Cloud Systems
+  url: https://arxiv.org/abs/2603.00468
+  kind: paper
+  registered_at: '2026-10-21'
+  revision: arXiv:2603.00468v1（2026-02-28）；2026-10-21 全文核读
+  license:
+    status: identified
+    scopes:
+    - scope: "论文全文（页面明示 License: CC BY 4.0）"
+      identifier: CC-BY-4.0
+      url: https://arxiv.org/abs/2603.00468
+    notes: CC BY 4.0 允许署名转载；本库仍仅作原创归纳与链接，不复制其数据集或图表。
+  notes: Batch 30（T08-08）全文核读：面向 agentic RCA 的大规模可复现基准——452 个故障案例、40 种故障类型覆盖 K8s 全栈；State Snapshot 范式（故障瞬间的确定性数字孪生：控制面对象+指标+日志冻结，mocked 工具接口保证 100% 可复现）；测试床 K8s v1.31（华为云 ECS 4 节点）＋Prometheus/Istio＋ChaosBlade 注入；复现步骤三元组（Prerequisites/Fault Artifact/Activation Sequence）；真值＝Stage/Component/Root Cause 三元组＋规则反演的专家轨迹；指标＝Top-k Accuracy（A@k）、Task Completion Rate、Trajectory Alignment、Tool Relevance/Coverage、MTTI/Steps、IAC（无效动作数）/RAR（冗余动作率）/ZTDR（零工具诊断率）；反猜测靠组合搜索空间与严格因果先后。作为评测维度与可复现构造的方法参照；其数据/代码仓（LLM4Ops/Cloud-OpsBench）未读取，模型分数未引用。

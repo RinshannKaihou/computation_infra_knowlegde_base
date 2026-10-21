@@ -8,7 +8,7 @@ platforms: [generic]
 source_refs: [src.ascend.mind-cluster, src.nvidia.nccl-docs, src.stas.ml-engineering]
 updated_at: "2026-10-21"
 summary: 建立跨领域的故障模型、证据推理、恢复与验证方法。
-related_ids: [hardware.index, communication.index, data-storage.index, cluster-platform.index, training.index, inference.index, reliability.dimensions-and-failure-domains, reliability.evidence-and-hypotheses, reliability.silent-errors-and-integrity, reliability.fault-models-and-propagation, reliability.correlated-failure-source-case, reliability.mitigation-and-recovery-principles]
+related_ids: [hardware.index, communication.index, data-storage.index, cluster-platform.index, training.index, inference.index, reliability.dimensions-and-failure-domains, reliability.evidence-and-hypotheses, reliability.silent-errors-and-integrity, reliability.fault-models-and-propagation, reliability.correlated-failure-source-case, reliability.mitigation-and-recovery-principles, reliability.test-design-and-coverage, reliability.reliability-metrics-and-recovery-loss, reliability.postmortem-and-knowledge-update, reliability.diagnostic-evaluation-method, reliability.diagnostic-evaluation-fixtures]
 ---
 
 # 08 可靠性与计算正确性方法
@@ -23,7 +23,12 @@ related_ids: [hardware.index, communication.index, data-storage.index, cluster-p
 
 - [可靠性维度与故障域](dimensions-and-failure-domains.md)：可用性、正确性、性能与恢复目标。
 - [诊断中的证据、假设与结论](evidence-and-hypotheses.md)：观察、支持/反驳证据与下一项检查。
-- [静默错误与计算完整性判定](silent-errors-and-integrity.md)：SDC 与灰色退化的区别、日志盲区、检测方法与数值噪声扣除。
+- [静默错误与计算完整性判定](silent-errors-and-integrity.md)：SDC 与灰色退化的区别、日志盲区、Fleetscanner/Ripple 检测量化、真实节点上的训练传播与 ABFT 反例、检测方法分层与数值噪声扣除、NVIDIA/AMD/Ascend 平台证据清单。
+- [统一测试选择、压力/注入与统计方法](test-design-and-coverage.md)：验收/基准/压力/注入四类测试的选择矩阵、统计纪律与预注册判据、注入六字段与压力声明、七份方案的准备矩阵（真实执行 0/7）。
+- [可靠性统计、有效产出与恢复损失](reliability-metrics-and-recovery-loss.md)：统计框架与 MTBF/MTTR 边界、有效训练时间与 MPG 三层分解、六类量记账、事件表 schema 与合成计算例。
+- [事故复盘、来源更新与知识维护](postmortem-and-knowledge-update.md)：复盘字段与假设三分、三类材料区分、更新→修订→审阅→导航追溯链、四类复核触发与弃用规则。
+- [诊断评测方法规范](diagnostic-evaluation-method.md)：train/dev/held-out 与外置隔离、泄漏控制、答案证据强度四级、七维 rubric。
+- [诊断评测公开题组](diagnostic-evaluation-fixtures.md)：九条固定输入/oracle/判据的公开教学与检索回归条目（含 U 级与合成条目），不构成独立 holdout。
 - [故障模型、跨层传播与共享失效分析](fault-models-and-propagation.md)：fault→error→failure 三链、故障分类、训练与推理两张传播图、有限 FMEA 表与传播/同因区分方法。
 - [相关故障与冗余失效来源案例](correlated-failure-source-case.md)：Meta 2021-10-04 断网复盘＋外部观测双证据，共同原因、传播、放大与冗余独立性失效边界。
 - [隔离、重试预算、降级与恢复选择](mitigation-and-recovery-principles.md)：处置六字段、按目标维度选措施、重试预算与 jitter 退避、降级判据、恢复选择与有限故障对照设计。
@@ -35,9 +40,9 @@ related_ids: [hardware.index, communication.index, data-storage.index, cluster-p
 - **08.3 可观测性、时间线与跨层证据关联** — [基础正文草稿](evidence-and-hypotheses.md)；具体工具与案例继续补充。
 - **08.4 故障发现、假设检验、归因与下一项检查** — [基础正文草稿](evidence-and-hypotheses.md)；具体工具与案例继续补充。
 - **08.5 隔离、冗余、重试、降级与恢复原则** — [隔离、重试预算、降级与恢复选择](mitigation-and-recovery-principles.md)；相关案例见[冗余失效来源案例](correlated-failure-source-case.md)。
-- **08.6 数值异常、静默错误与计算完整性的判定方法** — 已有[静默错误与计算完整性判定](silent-errors-and-integrity.md)；NPU 侧一手证据待补。
-- **08.7 验收、基准、压力测试与故障注入方法** — 待建设。
-- **08.8 可靠性指标、恢复损失、事故复盘与知识更新** — 待建设。
+- **08.6 数值异常、静默错误与计算完整性的判定方法** — [静默错误与计算完整性判定](silent-errors-and-integrity.md)（Batch 30 补齐检测量化、训练传播与平台证据；NPU SDC 发生率保持 unknown）。
+- **08.7 验收、基准、压力测试与故障注入方法** — [统一测试选择、压力/注入与统计方法](test-design-and-coverage.md)；真实环境结果证据仍由验证工作包推进（实测 0/7）。
+- **08.8 可靠性指标、恢复损失、事故复盘与知识更新** — [可靠性统计、有效产出与恢复损失](reliability-metrics-and-recovery-loss.md)＋[事故复盘、来源更新与知识维护](postmortem-and-knowledge-update.md)＋[诊断评测方法](diagnostic-evaluation-method.md)/[公开题组](diagnostic-evaluation-fixtures.md)（独立评测集待 V12 外置获取）。
 
 ## 内容边界
 
@@ -70,4 +75,4 @@ GPU 与 NPU 共用证据、假设和验证的表达方式；平台错误码、�
 
 ## 首轮成果与后续
 
-已有可靠性维度、故障域与证据推理方法，七组公开来源案例已按环境、时间线和结果边界整理；Batch 29 新增故障模型/传播、相关故障案例与处置选择三篇。后续用独立案例与真实验证检验方法，完整入库复盘不作为未见评测。
+已有可靠性维度、故障域与证据推理方法，七组公开来源案例已按环境、时间线和结果边界整理；Batch 29 新增故障模型/传播、相关故障案例与处置选择三篇；Batch 30 补齐 SDC 检测/传播/平台证据、统一测试方法、可靠性统计、事故复盘与诊断评测方法及公开题组。后续用独立案例与真实验证检验方法（独立评测集由验证工作包外置管理），完整入库复盘不作为未见评测。
