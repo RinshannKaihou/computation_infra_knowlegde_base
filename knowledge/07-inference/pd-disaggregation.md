@@ -124,7 +124,7 @@ PD 场景下 P/D 两侧**各自走完整的权重加载**（加载链与失败�
 
 ## 流量分配是外部职责
 
-vLLM v0.14.0 核心**不含** P/D 路由与负载分配：文档明确生产级 PD 分离"highly related to infrastructure"，需要自研 connector 或第三方组件。仓库内可得的代理均为 toy/benchmark 性质：测试用代理用 `itertools.cycle` 轮询选实例，以 `max_tokens=1`＋`do_remote_decode=True` 触发远端 decode（[toy_proxy_server.py L66–68、L161–173](https://github.com/vllm-project/vllm/blob/b17039bccc17b94a2ea107272ad7bc93508708df/tests/v1/kv_connector/nixl_integration/toy_proxy_server.py#L161-L173)）；XpYd 演示代理（[disagg_proxy_demo.py](https://github.com/vllm-project/vllm/blob/b17039bccc17b94a2ea107272ad7bc93508708df/examples/online_serving/disaggregated_serving/disagg_proxy_demo.py)）注明 PDController 就绪后将移除。因此"引擎开了 PD 分离"不等于"流量已被合理分配"——路由策略、负载感知与故障摘除是引擎之外需要单独设计和验证的一层（生产路由属 07.6 主题，待建设）。
+vLLM v0.14.0 核心**不含** P/D 路由与负载分配：文档明确生产级 PD 分离"highly related to infrastructure"，需要自研 connector 或第三方组件。仓库内可得的代理均为 toy/benchmark 性质：测试用代理用 `itertools.cycle` 轮询选实例，以 `max_tokens=1`＋`do_remote_decode=True` 触发远端 decode（[toy_proxy_server.py L66–68、L161–173](https://github.com/vllm-project/vllm/blob/b17039bccc17b94a2ea107272ad7bc93508708df/tests/v1/kv_connector/nixl_integration/toy_proxy_server.py#L161-L173)）；XpYd 演示代理（[disagg_proxy_demo.py](https://github.com/vllm-project/vllm/blob/b17039bccc17b94a2ea107272ad7bc93508708df/examples/online_serving/disaggregated_serving/disagg_proxy_demo.py)）注明 PDController 就绪后将移除。因此"引擎开了 PD 分离"不等于"流量已被合理分配"——路由策略、负载感知与故障摘除是引擎之外需要单独设计和验证的一层（见[请求路由、准入与流控](routing-and-flow-control.md)与[容量与扩缩容](capacity-and-autoscaling.md)）。
 
 ## 昇腾侧（vLLM Ascend）与 MindIE 对照
 

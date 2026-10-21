@@ -57,7 +57,7 @@ verification:
 | 设备（device） | 对主机可见、被驱动枚举、可被平台分配的计算端点 | 记录字段见[计算节点资源与拓扑参考](../01-hardware/resource-topology.md)；OS 设备节点、PCIe 端点、调度资源是同一物理实体在不同层的**映射候选**，但拆分、聚合或虚拟化会打破一一对应：例如 NVIDIA MIG 把一块物理 GPU 呈现为多个带独立 UUID 的 MIG 设备（[MIG Device Names](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/mig-device-names.html)，2026-10-08 观察），见[设备资源链](../05-cluster-platform/device-resource-chain.md)。不得以设备 ordinal 或设备节点数量推断物理端点或故障域数量 |
 | 板卡（card/module） | 承载芯片、内存与互联端口的可插拔实体（PCIe 卡、OAM 模块等） | 机型组成见[资源与拓扑参考](../01-hardware/resource-topology.md)；板卡可替换边界与故障域按机型手册 |
 | 节点（node/server） | 一台可独立安装 OS、拥有主机 CPU/内存/根复合体的服务器 | 同上；Kubernetes 的 worker node 指运行负载的节点机器（[Cluster Architecture](https://kubernetes.io/docs/concepts/architecture/)，2026-10-08 观察） |
-| 超节点（supernode/SuperPoD） | 厂商定义的、经节点内/柜内高速互联组织多台服务器的实体；组成、互联和维护边界按具体产品 | **当前主归属为本条目**（定义即上行文字）；背景阅读：[计算节点资源与拓扑参考](../01-hardware/resource-topology.md)的机型组成与共享故障域记录方法。专题正文计划在 Batch 14（T01-05）与 Batch 28（T00-02）交付，交付后主归属迁移；未公开组成的产品不类推同构关系 |
+| 超节点（supernode/SuperPoD） | 厂商定义的、经节点内/柜内高速互联组织多台服务器的实体；组成、互联和维护边界按具体产品 | 主归属（2026-10-21 迁移，T01-05/T00-02 均已交付）：组成层次与机型样板见[计算节点资源与拓扑参考](../01-hardware/resource-topology.md)，三类参考架构与选择见[单机、集群与超节点的参考架构](reference-architectures.md)；未公开组成的产品不类推同构关系 |
 
 ### rank、worker、副本
 
@@ -162,4 +162,4 @@ flowchart TB
 - [Volcano v1.15.0 PodGroup](https://volcano.sh/docs/v1.15.0/concepts/podgroup/)：调度相位实例。
 - [NVIDIA MIG Device Names](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/mig-device-names.html)（可变网页，2026-10-08 观察）：物理 GPU 与逻辑设备不一一对应的反例。
 - 逐条主张与证据定位见[第十三批术语来源记录](../../docs/research/batch-13-terms-sources.md)。
-- 待确认：超节点术语在 T01-05/T00-02 交付后需回填定义链接；其他领域新增正文引入的新同名异义应回本页登记。
+- 待确认：其他领域新增正文引入的新同名异义应回本页登记。（2026-10-21 更新：超节点术语主归属已于 Batch 28 迁移至专题正文——见上文条目行；2026-10-08 的路径可达性验收记录为历史口径。）
