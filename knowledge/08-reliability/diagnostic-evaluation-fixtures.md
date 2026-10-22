@@ -18,7 +18,7 @@ source_refs:
   - src.ascend.faultdiag-v26.1.1
   - src.pytorch.dcp-2.6
   - src.arxiv.sdc-llm-training-2502-v1
-updated_at: "2026-10-21"
+updated_at: "2026-10-22"
 summary: 十条公开教学/检索回归题组：证据 oracle 均来自已登记公开证据的固定锚点，判据允许 unknown 并配七维 rubric；覆盖训练/推理/硬件/通信/存储/平台与无法判定样例；PTF-08 的本地情境、PTF-09 全条、PTF-10 的现场情境为显式标注的合成内容（判据证据仍来自公开来源）。本题组只作公开教学与检索回归，不是独立 holdout（独立集由 V12 外置管理）。
 related_ids:
   - reliability.diagnostic-evaluation-method
@@ -34,7 +34,7 @@ verification:
     - src.arxiv.sdc-detection-wild-2203
     - src.acl.sdc-llm-training-2502
     - src.arxiv.llama3-infrastructure
-  notes: "每条题目的证据 oracle 均取自本库已登记来源的固定观察（Issue 正文/复盘/论文固定节/固定 tag 文档），逐条在正文内给出锚点；三处合成内容显式标注（PTF-08 本地情境、PTF-09 全条、PTF-10 现场情境——其判据证据仍为公开来源事实）；未运行任何评测，无分数。"
+  notes: "每条题目的证据 oracle 均取自本库已登记来源的固定观察（Issue 正文/复盘/论文固定节/固定 tag 文档），逐条在正文内给出锚点；三处合成内容显式标注（PTF-08 本地情境、PTF-09 全条、PTF-10 现场情境——其判据证据仍为公开来源事实）；未运行任何评测，无分数。 2026-10-22 IQ-05 重核 Issue 118369 正文及候选分支评论，PTF-02 保留故障数量与根因 unknown；仅修订教学判据，未运行评测。"
 ---
 
 # 诊断评测公开题组
@@ -52,12 +52,12 @@ verification:
 - **判据**：正确路径＝识别为“缺失 FQN 的存在性检查”类机制问题而非数据损坏；给出“用固定版本 state_dict 路径对照”类检查。**边界**：首个含修复的发行版本未知（登记口径），据此答“已随某版本修复”不得分。
 - **rubric 侧重**：假设区分力、事实/平台边界。
 
-### PTF-02 通信·rank 缺席与 watchdog 超时（证据强度：本事件根因 U；缺席参与者机制为已登记机制依据）
+### PTF-02 通信·同序号 watchdog 超时与故障数量未知（证据强度：本事件根因 U；缺席参与者为候选机制）
 
-- **输入**：8 rank 训练，rank 1–7 在 SeqNum 880 的 Broadcast 上 watchdog 超时；rank 0 无同类日志且利用率快照为 0%。维护者未确认根因，Issue 以 stale 关闭。问：这是 7 起独立故障还是 1 起故障的表现？候选假设排序与下一项检查？
+- **输入**：8 rank 训练，rank 1–7 在 SeqNum 880 的 Broadcast 上 watchdog 超时；所给片段没有 rank 0 的同类日志，利用率快照中 GPU 0 为 0%。维护者未确认根因，Issue 以 stale 关闭。问：现有证据能否确定故障数量？候选假设排序与下一项检查？
 - **证据 oracle**：[Issue #118369](https://github.com/pytorch/pytorch/issues/118369)（opened 2024-01-26；2026-05-05 stale 关闭、无修复链接）；[集合通信与 rank 进度](../03-communication/collectives-and-rank-progress.md)的缺席参与者机制。
-- **判据**：正确方向＝“单点缺席经同步屏障表现为全体超时”（传播≠多起）；下一项检查应指向 rank 0 侧证据（主机状态/进程存活）。**边界**：根因未确认（stale≠修复），答案保持 suspected；断言“rank 0 宕机为 confirmed”不得分。
-- **rubric 侧重**：假设区分力、abstention（部分）。
+- **判据**：正确方向＝不能按超时日志条数计故障，**故障数量与根因仍未知**。优先检验共同阻塞、参与者未到达同一 collective 或操作次序分叉；rank 0 未按时参与是高优先级候选，日志缺失与 transport 未完成仍需保留。下一项检查应补齐 rank 0 及其他 rank 在同一 process group 中的调用次序、最后完成点、进程栈与前序异常，并说明如何区分上述候选。**边界**：缺日志与 0% 利用率不证明 rank 0 宕机或缺席，七条超时也不证明恰好一个首因；stale≠修复。合理保留多个候选并明确故障数量 unknown 的答案应得分，不要求复述单点缺席故事；断言单一确定机制或将故障数确认为 1/7 均不满足判据。
+- **rubric 侧重**：假设区分力、abstention、下一项检查。
 
 ### PTF-03 推理·平台 容器内设备可见性（证据强度 A）
 

@@ -1,3 +1,8 @@
+# 生命周期（2026-10-22）：未来可选，当前休眠。
+# 当前暂无实测环境；本文件不启动验证，planned 不表示当前执行承诺或排期。
+# 仅在出现具体需求、匹配资源和已有执行授权后取用相关方案，不启动整套验证计划。
+# 下方任务、准备记录与未执行事实保持不变；归档不产生通过、就绪或复现结论。
+# 当前入口：../docs/current-status.md；归档说明：../docs/archive/README.md。
 schema_version: 1
 plan_type: validation_backlog
 created_at: '2026-10-08'

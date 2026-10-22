@@ -1,3 +1,7 @@
+# 生命周期（2026-10-22）：历史冻结，原地逻辑归档。
+# 保留第二轮任务、交付状态和历史约定；不是当前任务队列，不据此续写批次。
+# 下方解析数据不变；历史状态不表示当前承诺或执行授权。
+# 当前入口：../docs/current-status.md；归档说明：../docs/archive/README.md。
 schema_version: 1
 plan_type: content_backlog
 round: 2

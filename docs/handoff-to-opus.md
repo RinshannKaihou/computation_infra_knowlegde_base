@@ -1,5 +1,7 @@
 # 交给 Opus 的续作提示词
 
+> 归档声明（2026-10-22；优先于下文历史指令）：本文中的“当前”“下一批”、模型与 CLI 约定均指当时快照，不再生效；原始记录、证据与待验证事实保留，不据此启动续作。日常入口：[当前状态](current-status.md)；[归档索引](archive/README.md)。
+
 > 历史归档：本文件保留首轮交接提示词及当时的状态、建议和模型记录，不作为当前续作指令。当前入口见 [README](../README.md)，覆盖与开放项见[主题盘点](topic-coverage-audit.md)，现行编写与审阅规则见[写作指南](authoring-guide.md)。
 
 **当前审阅约定（2026-10-08 用户更新）：`gpt-6.1-sol / xhigh`。** batch 10、11、12 的审阅、修订和[定向复核](research/batch-10-11-12-codex-recheck.md)已完成，13 项发现全部关闭，三批在原范围内通过，见[三批审阅汇总](research/batch-10-11-12-codex-review-summary.md)。下文首轮模型配置与实际执行记录属于历史；当前及后续审阅按本段和[写作指南第 7 节](authoring-guide.md#7-批次审阅约定)执行。

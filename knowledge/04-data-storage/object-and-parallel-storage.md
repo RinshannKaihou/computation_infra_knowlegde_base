@@ -26,7 +26,7 @@ verification:
     - src.ceph.repo-v19.2.7
     - src.lustre.ops-manual-2x
     - src.lustre.release-info-wiki
-  notes: "最终核对范围（修订与第五次定向复核已完成；记录见 docs/research/batch-20-t04-03-claude-recheck-5.md）：Squid S3 三页条目、RGW 索引部署入口、v19.2.7 src/rgw 定位、Lustre 手册 §1/§12/§19/§20/§22/§23/§34/§39 与术语表；latest 页仅边界；未做任何创建/读写实测。"
+  notes: "最终核对范围（修订与第五次定向复核已完成；记录见 docs/research/batch-20-t04-03-claude-recheck-5.md）：Squid S3 三页条目、RGW 索引部署入口、v19.2.7 src/rgw 定位、Lustre 手册 §1/§12/§19/§20/§22/§23/§34/§39 与术语表；latest 页仅边界；未做任何创建/读写实测。 2026-10-22 IQ-03 重核 Lustre §1.3.1/§19.5 的未写入空间与组合布局边界；条带覆盖判据仅为验证设计，未执行。"
 ---
 
 # 对象与并行存储版本化参考
@@ -89,7 +89,11 @@ verification:
 | 对象发布负向 | Abort 未完成上传；前置：该 upload-id 在 List uploads 可见；预期：Abort 后 List uploads 不再列出该上传 | 仍列出即失败 | 未执行，留空 |
 | 跨客户端读回 | 发布完成；预期：读回字节与清单一致；`content-md5` 只覆盖请求体，与读回哈希分开记录 | 哈希不一致即失败 | 未执行，留空 |
 | Lustre 多客户端 | 各客户端写互不重叠区间并关闭，第三客户端读回逐区间比对；预期：区间哈希全对（重叠写顺序不定，不作通过条件；锁争用影响性能见 §34.10） | 任一区间哈希错即失败 | 未执行，留空 |
-| 条带条件 | 文件大小 ≥ stripe_size × stripe_count（保证每 OST 被写到）；预期：getstripe 布局符合设定且读回哈希对 | 任一不符即失败 | 未执行，留空 |
+| 条带写入覆盖（普通 RAID0 布局） | 固定单一普通 RAID0 布局与目标对象/OST 映射；从偏移 0 实际连续写入至少 `stripe_size × stripe_count` 字节，无空洞、无布局变更，写入成功并完成关闭；预期：getstripe 布局符合设定、读回哈希正确，且与该文件/测试窗口可关联的对象或 OST 写入观测覆盖全部预期目标 | 布局/哈希不符或观测显示目标未收到写入即失败；缺少可归属的写入证据时，覆盖结论为 unknown，不能判通过 | 未执行，留空 |
+
+**覆盖判据的依据与反例**：[手册 §1.3.1 Lustre File System and Striping](https://doc.lustre.org/lustre_manual.xhtml#lustre_striping) 说明普通 RAID0 按条带轮转，未写入的数据不在 OST 上预留空间。因此逻辑文件大小达到一个条带周期（例如仅扩展长度的稀疏文件）不能证明每个目标实际收到写入；`getstripe` 证明布局，读回哈希证明所读内容，二者本身都不能替代逐目标写入证据。上表的连续实际写入与观测要求是本库验证设计，不是已执行结果。
+
+[§19.5 PFL](https://doc.lustre.org/lustre_manual.xhtml#pfl) 的 composite layout 为不同 extent 配置不同子布局，不能套用单一 `stripe_size × stripe_count` 覆盖整文件。PFL、DoM、FLR 等其他布局须分别按组件范围、目标位置或镜像设计验证；目标版本的采集接口、计数器含义与证据归属方法尚未固定，仍需另行取证。
 
 不填实测值，不标 reproduced。
 

@@ -1,6 +1,10 @@
 # AI 算力基础设施与计算可靠性知识库
 
-面向 Human 与 Agent，共同覆盖 GPU/NPU、训练/后训练/推理。内容按系统领域组织，可靠性贯穿各章，平台和任务入口串联同一份正文。
+主要服务昇腾用户，面向 Human 与 Agent，提供系统学习、资料查询和工程判断参考。内容覆盖 GPU/NPU、训练/后训练/推理，按系统领域组织；其他平台内容用于比较和按需查阅。
+
+**当前处于使用与按需维护阶段，批量内容建设已结束。** 暂无实测或故障注入环境；来源核对与未验证说明随正文保留，不妨碍学习和查询。旧路线图、批次、交接和模型/CLI 约定已退出当前执行流程。
+
+[当前状态与使用方式](docs/current-status.md) · [昇腾入口](paths/platforms/ascend.md) · [历史归档](docs/archive/README.md)
 
 ## 从这里开始
 
@@ -43,6 +47,8 @@
 
 ## 场景专题
 
+高频排障快速分流：[NCCL 超时](knowledge/03-communication/nccl-timeout-triage.md#快速分流先找下一项检查) · [GPU 推理 OOM（NVIDIA/AMD）](knowledge/07-inference/gpu-inference-oom-triage.md#快速分流先找下一项检查) · [Checkpoint 恢复](knowledge/06-training/checkpoint-state-recovery-triage.md#快速分流先找下一项检查)。三篇首屏按“现象→证据→判断分支→下一项检查”组织，详细机制与来源保留在下层；这些是文档入口，未经过现场验证。
+
 每组分别提供诊断流程、真实来源案例和待执行实验设计。
 
 | 主题 | 指南 | 案例 | 实验 |
@@ -63,9 +69,11 @@
 
 目前没有部署网站、向量数据库、知识 API 或现场工具执行服务。可以先通过编辑器或仓库浏览器阅读 Markdown，后续发布网站时保留现有内容。
 
-## 添加内容
+## 按需维护
 
-按主题的主要归属维护正文，外部资料登记在[来源表](sources/registry.yaml)。环境档案、真实验证和独立评测证据由[验证任务](plans/validation-backlog.yaml)管理；准备实例见[实例清单](plans/v00-preparation-instances.yaml)。
+围绕实际问题、发现的错误和来源变化维护正文，不按旧批次继续填充。按主题的主要归属维护内容，外部资料登记在[来源表](sources/registry.yaml)。需要编辑时阅读[写作指南](docs/authoring-guide.md)；日常查询从上方阅读入口进入即可。
+
+真实验证和独立评测仍无执行证据。[原验证计划](plans/validation-backlog.yaml)与[准备实例](plans/v00-preparation-instances.yaml)作为未来可选方案保留；待有具体需求与相应条件时再选择适用部分，不是当前排期或知识库使用门槛。
 
 先读[写作指南](docs/authoring-guide.md)，再选择模板：
 
@@ -120,10 +128,12 @@ Agent 编辑内容前参阅[AGENTS.md](AGENTS.md)。
 
 Git 日常操作、提交检查与远程备份说明见[版本管理指南](docs/git-workflow.md)。正文、来源、计划和审阅记录纳入版本管理，`build/`、本地环境与缓存通过忽略规则排除。
 
-设计依据：[内容总目录](content-outline.md) · [架构建议](architecture-proposal.md) · [调研备忘录](research-memo-2026-09-29.md)。这些文档记录设计和调研，不属于已经完成的技术知识条目。
+[内容地图与归属边界](content-outline.md)继续用于维护主目录。[早期架构建议](architecture-proposal.md)与[调研备忘录](research-memo-2026-09-29.md)已归档，记录当时的设计设想，不作为当前开发待办或能力声明。
 
 仓库自身的对外发布许可尚未决定；第三方内容保留各自许可与署名要求。初始来源登记以链接和许可范围说明为主，未镜像外部全文。
 
-## 维护与历史记录
+## 当前状态与历史记录
 
-[主题覆盖与证据缺口](docs/topic-coverage-audit.md) · [批次收尾分析](docs/research/batch-01-32-closure-audit.md) · [交付历史归档](docs/archive/readme-delivery-history.md)
+[当前状态与待确认项](docs/current-status.md) · [历史归档索引](docs/archive/README.md)。详细覆盖基线和旧计划按需从归档索引查阅；来源审计与原评审报告保留原路径供追溯。
+
+[2026-10-22 独立质量审计](docs/research/independent-quality-audit-2026-10-22.md) · [IQ-01–IQ-08 修订与定向核对](docs/research/independent-quality-audit-2026-10-22-fixes.md)

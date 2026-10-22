@@ -20,7 +20,8 @@ source_refs:
 - src.ascend.mind-cluster-v26.1.1
 - src.ascend.docker-runtime-44385c13
 - src.kubernetes.device-plugins-v1-32
-updated_at: "2026-10-18"
+- src.nvidia.container-toolkit-1.20.0
+updated_at: "2026-10-22"
 summary: 区分租户、容器、设备、显存、算力与故障域边界，比较 NVIDIA 整卡独占/MIG/MPS/time slicing 与 Ascend 静态/动态 vNPU、vCANN-RT 软切分的条件与隔离边界；跨 vNPU 故障隔离保证保留未证实。
 related_ids:
 - cluster-platform.device-resource-chain
@@ -37,7 +38,8 @@ verification:
   - src.ascend.ascend-device-plugin-44385c13
   - src.ascend.virtual-instance-hdk-44385c13
   - src.ascend.virtual-instance-vcann-44385c13
-  notes: "2026-10-18 经 FetchURL/审阅轮只读核对 MIG Guide（supported-gpus/concepts/deployment-considerations）、MPS（index/when-to-use-mps）、k8s-device-plugin v0.20.1 固定 commit README、A100 显存错误恢复页、mind-cluster v26.1.1 固定 commit 的 ascend-device-plugin README 与虚拟化实例（HDK/vCANN-RT）文档；未固定驱动/CANN 最低版本、未创建 MIG 或 vNPU、未启动 MPS、未配置 time slicing。"
+  - src.nvidia.container-toolkit-1.20.0
+  notes: "2026-10-18 经 FetchURL/审阅轮只读核对 MIG Guide（supported-gpus/concepts/deployment-considerations）、MPS（index/when-to-use-mps）、k8s-device-plugin v0.20.1 固定 commit README、A100 显存错误恢复页、mind-cluster v26.1.1 固定 commit 的 ascend-device-plugin README 与虚拟化实例（HDK/vCANN-RT）文档；未固定驱动/CANN 最低版本、未创建 MIG 或 vNPU、未启动 MPS、未配置 time slicing。 2026-10-22 IQ-06 定向重核固定 README 警告与 Container Toolkit 1.20.0 GPU Enumeration 的运行条件；未运行容器或配置设备注入。"
 ---
 
 # 加速器共享与租户隔离机制
@@ -76,7 +78,9 @@ NVIDIA 官方对照表把三种 CUDA 并发机制放在一起（[MIG Concepts，
 
 ### 整卡独占
 
-device plugin 默认把每块 GPU 作为一个 `nvidia.com/gpu` 单位上报；容器请求 1 个单位时获得整卡访问。README 同时给出一个容易忽略的反例：**若容器没有声明 GPU 请求，插件会把机器上的全部 GPU 暴露进容器**（[README，Running GPU Jobs](https://github.com/NVIDIA/k8s-device-plugin/blob/487d7a93894b0f3ad08097169593972eb3ca8206/README.md)）。因此“容器里能看到 8 张卡”既可能是分配了 8 张，也可能是根本没有走设备分配路径。
+device plugin 默认把每块 GPU 作为一个 `nvidia.com/gpu` 单位上报；容器请求 1 个单位时获得整卡访问。[固定 README 的 Running GPU Jobs 警告](https://github.com/NVIDIA/k8s-device-plugin/blob/487d7a93894b0f3ad08097169593972eb3ca8206/README.md#running-gpu-jobs)指出未请求 GPU 时可能暴露全部设备的风险。**这需要结合运行时与镜像条件判断**：例如启用 NVIDIA runtime、按环境变量枚举设备且镜像保留 `NVIDIA_VISIBLE_DEVICES=all` 时，无 GPU 资源请求也可能暴露全部 GPU；不能概括为插件在所有容器中都会无条件注入全部设备。
+
+[Container Toolkit 1.20.0 GPU Enumeration](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/1.20.0/docker-specialized.html#gpu-enumeration) 区分：`all` 暴露全部 GPU（基础 CUDA 镜像默认值）；`none` 不暴露 GPU，但启用驱动能力；`void`、空或未设置时，所述路径的运行时行为等同 `runc`，不暴露 GPU 或驱动能力。调查时对照 GPU requests/limits、实际 runtime/RuntimeClass、镜像与 Pod 的有效环境变量，以及 envvar/CDI/设备挂载等注入路径；显式 CDI 或其他注入不能仅按环境变量判定。因此容器中可见设备数本身不能证明调度器分配了相同数量的 GPU。
 
 整卡独占提供的是设备级排他，不提供卡内分区；多租户场景下它最安全，但粒度最粗。
 
@@ -121,7 +125,7 @@ time slicing 让多个工作负载按时间片交错使用同一 GPU。插件通
 
 | 路线 | 已核对的条件（有限样板） | 尚未建立/保留未知 |
 |---|---|---|
-| 整卡独占 | device plugin 默认按 `nvidia.com/gpu` 上报；未声明请求会暴露全部 GPU；Kubernetes 扩展资源按整数分配，插件不应把同一资源 ID 重复分给两个容器 | 跨容器的物理分配互斥现场证据、特权/host 访问旁路、运行时之外的设备共享 |
+| 整卡独占 | device plugin 默认按 `nvidia.com/gpu` 上报；启用 NVIDIA runtime 且按 `NVIDIA_VISIBLE_DEVICES=all` 枚举时，无资源请求也可能暴露全部 GPU（条件见上文）；Kubernetes 扩展资源按整数分配，插件不应把同一资源 ID 重复分给两个容器 | runtime/镜像变量与实际注入路径、跨容器的物理分配互斥现场证据、特权/host 访问旁路、运行时之外的设备共享 |
 | MIG | 文档样板：A100/A30 需 CUDA 11 + R525（≥525.53），B200 需 CUDA 12 + R570（≥570.133.20）；仅 CUDA 支持的 Linux；插件 v0.20.1 `mig-strategy=none/single/mixed`；命名/枚举随 R470/R570 变化。注意 NCCL 当前不支持 MIG；R570 仅同 GPU 内 MIG P2P，跨 GI CUDA IPC 不支持。**Deployment 页另列 H100/H200 为 CUDA 12 + R450；该行与其它官方版本材料冲突，本表不采用，保留为未消歧** | 完整 profile 组合与现场组合；MPS-on-MIG 的插件/驱动分层（驱动支持、插件不支持）；H100/H200 驱动下限 |
 | MPS | 示例样板：A100-SXM4-40GB；Linux；CUDA 11 + R525（≥525.53，取自 MIG Deployment 的 A100 条件）；k8s-device-plugin v0.20.1（README 前提驱动 ~=384.81 由 R525 满足；toolkit ≥1.7.0；K8s ≥1.10）；**本样板只采用动态限额（active-thread/显存上限）与 Legacy MPS v2 控制路径；静态 SM 分区与 MPS v3 不属于该样板（概念另列）**；功能范围＝整卡共享；插件 MPS experimental；MIG 启用时插件不支持 MPS（驱动层另可支持） | MPS 功能自身的最低驱动/CUDA 版本（本样板是组件交集，不是 MPS 功能认证）；插件 experimental 的长期支持；跨客户端错误隔离 |
 | time slicing | 示例样板：A100-SXM4-40GB；Linux；CUDA 11 + R525（≥525.53）；插件 v0.20.1 的 `sharing.timeSlicing` 配置 + NVIDIA 容器运行时；不使用 MPS daemon；节点级 replicas；与 MPS 互斥；无隔离声明 | 实测争用/尾延迟数据；不同插件版本的实现差异 |

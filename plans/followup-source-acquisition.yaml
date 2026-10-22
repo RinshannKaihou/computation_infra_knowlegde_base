@@ -1,3 +1,7 @@
+# 生命周期（2026-10-22）：历史冻结，原地逻辑归档。
+# 保留补充来源的发现入口和原工作包范围；不是当前采集队列，不据此启动新任务。
+# 下方 planned、null 等历史字段保持不变，不代表对应正文尚未交付或当前仍有采集承诺。
+# 当前入口：../docs/current-status.md；归档说明：../docs/archive/README.md。
 schema_version: 1
 plan_type: followup_source_acquisition
 created_at: '2026-10-08'

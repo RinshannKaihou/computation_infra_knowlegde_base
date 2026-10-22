@@ -1,3 +1,7 @@
+# 生命周期（2026-10-22）：历史冻结，原地逻辑归档。
+# 保留已交付批次的任务依赖、调度设计和核对记录；不是当前任务队列或续作指令。
+# 下方解析数据不变；旧依赖图不驱动新的写作批次。
+# 当前入口：../docs/current-status.md；归档说明：../docs/archive/README.md。
 schema_version: 1
 plan_type: batch_dependency_view
 created_at: '2026-10-08'

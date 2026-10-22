@@ -8,8 +8,8 @@ platforms: [generic]
 source_refs:
   - src.pytorch.dcp-2.6
   - src.pytorch.dcp-fix-edd8d35
-updated_at: "2026-09-30"
-summary: 以 PyTorch DCP 为样板，从恢复点身份、目标结构、对象装载、应用状态到继续训练逐层定位 checkpoint 恢复异常。
+updated_at: "2026-10-22"
+summary: 首屏提供现象、证据、判断分支与下一项检查，下层保留机制、版本条件与精确来源。以 PyTorch DCP 为样板，从恢复点身份、目标结构、对象装载、应用状态到继续训练逐层定位 checkpoint 恢复异常。
 related_ids:
   - training.checkpoint-state-consistency
   - data-storage.checkpoint-durability
@@ -22,18 +22,37 @@ verification:
   evidence_refs:
     - src.pytorch.dcp-2.6
     - src.pytorch.dcp-fix-edd8d35
-  notes: 已核对 PyTorch 2.6 DCP 文档和固定源码，以及后续 optimizer missing-state 修订；未执行保存、加载、训练或 GPU/NPU 验证。
+  notes: 已核对 PyTorch 2.6 DCP 文档和固定源码，以及后续 optimizer missing-state 修订；未执行保存、加载、训练或 GPU/NPU 验证。 2026-10-22 增加快速分流与详细依据两层，文档检查记录见 docs/research/triage-guide-usability-2026-10-22.md；未新增现场验证。
 ---
 
 # Checkpoint 恢复状态异常诊断指南
 
-## 目标与触发条件
+## 快速分流：先找下一项检查
+
+本页以 PyTorch DCP 2.6 为机制样板，后续修复另按固定 commit 核对。先固定 checkpoint/save attempt、目标版本与 world size/布局；保护最后已知可恢复点。
+
+| 现象 | 先要哪些证据 | 当前可走的判断分支 | 下一项检查 |
+|---|---|---|---|
+| 找不到 checkpoint、分片/metadata 不齐或 I/O 报错 | 保存身份、发布状态、分片清单 | 先查存储与恢复点选择 | 核对是否同一次已提交保存；转[持久化边界](../04-data-storage/checkpoint-durability.md) |
+| DCP 规划/读取报 missing key、shape/layout 错误 | 保存 schema、目标结构、FQN、版本 | schema/映射/兼容候选；不等于字节损坏 | 对比保存与目标清单，找首个不匹配；见[完整分支](#步骤与判断分支) |
+| load 返回 None，不清楚对象是否装好 | 传入值是普通 dict 还是 Stateful、回调/装载记录 | 两种路径的对象应用边界不同 | 先核对显式装载或 Stateful 回调结果；见[DCP 责任边界](#pytorch-dcp-的责任边界) |
+| optimizer state 缺失，strict=False 能跳过吗 | 参数是否实际更新、应有 state、缺失 FQN、实际版本 | 惰性状态与意外丢状态都保留 | 逐项判定缺失是否契约允许，不能直接改 strict；见[strict 分支](#optimizer-state-缺失的-strict-分支) |
+| 已装载，但 step/LR/样本顺序或 loss 异常 | scheduler/scaler/RNG/游标及逻辑 step | 跨对象时间或应用状态不一致候选 | 先查是否保存、装载顺序及 rank-local 映射；见[最早异常分流](#最早异常怎样分流) |
+| world size 变化后能 load，或首步已成功 | 新布局、rank-local 身份、恢复目标与持续窗口记录 | tensor 重分片/首步成功不能覆盖全部恢复语义 | 明确保 global batch/样本/step 还是统计等价，再检查映射；见[布局变化](#world-size-或布局变化) |
+
+**文档分流完成 ≠ 恢复已验证**：本轮可输出“最早异常边界＋候选＋缺失项＋下一项检查”；“可恢复”结论仍需[完整状态与持续窗口判据](#完成判据)。无法定义状态映射或验证会覆盖原恢复点时，先[停止](#停止条件与恢复安排)。
+
+## 详细诊断与依据
+
+按需展开：[证据字段](#需要的证据) · [DCP 机制](#pytorch-dcp-的责任边界) · [strict 条件](#optimizer-state-缺失的-strict-分支) · [恢复判据](#完成判据) · [精确来源](#来源与验证记录)。
+
+### 目标与触发条件
 
 当 checkpoint 找不到或读不全、DCP 规划/读取报错、模型或 optimizer 应用状态失败、恢复后 step/LR/数据进度异常，或任务可以运行但轨迹偏离时，本流程定位最早出现分叉的边界。
 
 流程只选择 PyTorch Distributed Checkpoint（DCP）作为具体样板。其他框架的 strict 选项、状态格式和重分片保证必须另查。训练恢复应先定义目标：回到完整 optimizer step、允许多少重放、是否保持精确样本序列，以及 world size/布局是否变化；详细语义见[Checkpoint 恢复一致性](checkpoint-state-consistency.md)。
 
-## 适用范围与前置条件
+### 适用范围与前置条件
 
 - 固定 run/attempt、checkpoint ID、保存 attempt、框架和 reader/writer 版本、模型/代码/数据修订、world size 与并行布局。
 - 先按[写入与持久化边界](../04-data-storage/checkpoint-durability.md)确认所选恢复点已经发布且分片/metadata 属于同一次保存。存储不完整与训练状态不一致须分开。
@@ -41,7 +60,7 @@ verification:
 - 保存原始错误、strict/partial-load 选项、目标对象构造和装载顺序。宽松装载不是无条件成功策略。
 - 在最后一个已知可恢复点完成验证前，不允许新运行覆盖它。生产恢复、checkpoint 修改和继续训练需要独立授权与回退。
 
-## 需要的证据
+### 需要的证据
 
 | 证据组 | 同一对象/时点应记录 | 用途 | 缺失时如何处理 |
 |---|---|---|---|
@@ -52,7 +71,7 @@ verification:
 | 装载结果 | DCP 读取、对象 `set_state_dict/load_state_dict`、missing/unexpected、strict 分支 | 定位 DCP 与对象后处理边界 | 保留首个错误，不用连锁异常替代 |
 | 继续训练 | step/LR/scaler/RNG/数据身份、同输入一步和持续窗口 | 判断训练是否从目标逻辑点续接 | 未运行时只报告“已装载”，不能写恢复正确 |
 
-## PyTorch DCP 的责任边界
+### PyTorch DCP 的责任边界
 
 PyTorch 2.6 DCP 保存调用者提供的 state dict，不会自动发现 scheduler、GradScaler、RNG、数据游标或业务 step（[Distributed Checkpoint](https://docs.pytorch.org/docs/2.6/distributed.checkpoint.html)）。`load` 要求目标 tensor 已在目标设备和布局分配，返回值为 `None`，但返回前发生什么取决于传入映射的值：对普通 dict/非 `Stateful` 值，DCP 完成反序列化并替换或填充目标映射，应用仍需按对象契约调用 model/optimizer 的装载 API；对 `Stateful` 值，DCP 先调用其 `state_dict()` 取得读取目标，读取完成后会在公共 `load` 返回前调用该对象的 `load_state_dict()`（[固定 v2.6.0 `state_dict_loader.py` 53–189](https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/torch/distributed/checkpoint/state_dict_loader.py#L53-L189)）。因此 `Stateful` 调用的 `load` 返回能够证明回调已返回，却仍不能证明 missing/unexpected 处置、跨对象逻辑时间或继续训练正确。
 
@@ -60,7 +79,7 @@ PyTorch 2.6 DCP 保存调用者提供的 state dict，不会自动发现 schedul
 
 所以，每 rank 都传同名 `rng` 或 `cursor` 不保证保留每份 rank-local 内容。应用必须给它们不冲突的逻辑身份、明确的聚合表示或自定义方案，并验证恢复到新 rank 的映射。不能把 planner 的去重选择者固定理解为协调 rank。
 
-## 步骤与判断分支
+### 步骤与判断分支
 
 | 步骤 | 检查或动作 | 运行影响 | 预期证据与解释 | 下一步 |
 |---|---|---|---|---|
@@ -71,7 +90,7 @@ PyTorch 2.6 DCP 保存调用者提供的 state dict，不会自动发现 schedul
 | 5 | 审计模型、optimizer 和 trainer/application state | 只读比较 | 离散身份精确核对；缺失字段按契约拒绝或记录宽松处置 | 符合进 6；不符停止 |
 | 6 | 用固定输入运行一次 forward/backward/update，再观察预定窗口 | 消耗计算和数据；须隔离授权 | 一步验证更新边界；持续窗口验证进度、样本和数值轨迹 | 满足完成判据后发布恢复点 |
 
-### 最早异常怎样分流
+#### 最早异常怎样分流
 
 | 最早异常 | 优先检查 | 不能推出 |
 |---|---|---|
@@ -82,25 +101,25 @@ PyTorch 2.6 DCP 保存调用者提供的 state dict，不会自动发现 schedul
 | 对象装载完成，scheduler/scaler/RNG/游标/step 不符 | 状态是否保存、截取边界、装载顺序、rank-local 映射 | 权重一致足以续训 |
 | 同输入一步成功，持续窗口偏离 | 输入身份、随机性、数据进度、optimizer state、浮点顺序 | 首步成功已证明长期正确 |
 
-## optimizer state 缺失的 strict 分支
+### optimizer state 缺失的 strict 分支
 
 后续 PyTorch main 的固定 [commit `edd8d356…`](https://github.com/pytorch/pytorch/commit/edd8d356b6d9a00cfa34fa323578e5cf1c7e0463)修改 `_split_optim_state_dict`：`requires_grad` 参数的 FQN 存在于已保存 optimizer state 时才加载；缺失且 strict 为真时抛出解释性 `RuntimeError`，strict 为假时跳过该缺失 state。该提交修的是特定分支，不等于宽松装载后训练语义自动正确。
 
 诊断时必须记录：目标参数是否有权重、是否要求梯度、保存前是否参与实际 update、optimizer 是否应有 state、缺失是否被契约允许。若 strict false 跳过一个预期应存在的 moment/variance，API 不报错仍属于待处置异常。固定提交在 2025-11-05 合入 main；首个包含它的发行版本和 backport 本页未核实，不能按版本号猜测。
 
-## world size 或布局变化
+### world size 或布局变化
 
 PyTorch 2.6 文档声明 DCP 支持 load-time resharding，但前提是保存表示和目标 distributed object 受支持、目标对象先按新布局初始化、模型/optimizer 使用稳定 canonical FQN，且 shape/dtype/layout/格式满足 API 条件。文档也明确不保证 saved state dict 跨 PyTorch 版本向后兼容。
 
 重分片只处理相应 tensor/state-dict 表示，不会自动转换 scheduler、scaler、RNG、数据进度、global step 或每 rank 应用状态。world size 改变时要先定义保持 global batch、样本顺序、optimizer step 还是只要求统计等价；定义不清即停止。
 
-## 停止条件与恢复安排
+### 停止条件与恢复安排
 
 以下情况停止继续 load 或训练：恢复点身份/版本未知；目标结构或转换规则不明确；宽松装载丢弃字段但没有逐项批准；rank-local 状态映射无法解释；world size/布局变化超出固定资料；验证将覆盖最后可用 checkpoint；需要生产写入、共享资源或不可回退变更。
 
 所有验证使用恢复点的只读副本和新输出路径。失败时保留原 checkpoint、目标结构清单、首个错误和对照结果，销毁临时对象，回退到最后已确认点。不要让失败恢复运行发布“最新”标记。
 
-## 完成判据
+### 完成判据
 
 完成诊断需分别给出：
 
@@ -113,7 +132,7 @@ PyTorch 2.6 文档声明 DCP 支持 load-time resharding，但前提是保存表
 
 离散 key、shape、计数、样本身份与映射通常应精确相等。浮点量的 bitwise/close 规则须按版本、布局和目标风险预先定义；不同运算顺序时不能盲目以 bitwise 作为唯一门槛。
 
-## 来源与验证记录
+### 来源与验证记录
 
 - [PyTorch 2.6 Distributed Checkpoint](https://docs.pytorch.org/docs/2.6/distributed.checkpoint.html)
 - [固定 v2.6.0 默认 planner 去重实现](https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/torch/distributed/checkpoint/_dedup_save_plans.py#L15-L58)

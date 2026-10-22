@@ -1,3 +1,8 @@
+# 生命周期（2026-10-22）：历史冻结，原地逻辑归档。
+# 保留已交付内容任务、验收、例外和证据缺口；不是当前任务队列，不据此续写批次。
+# 下方 in_progress、planned_new 等历史字段保持不变，不表示当前仍需启动内容建设。
+# 未关闭事项由当前状态页列明，未知条件和未验证事实不因归档而改变。
+# 当前入口：../docs/current-status.md；归档说明：../docs/archive/README.md。
 schema_version: 1
 plan_type: full_coverage_backlog
 created_at: '2026-10-08'

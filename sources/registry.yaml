@@ -291,8 +291,10 @@ sources:
       identifier: BSD-3-Clause
       url: https://github.com/pytorch/pytorch/blob/v2.8.0/LICENSE
     notes: 版本化文档页由项目文档生成；本库仅链接并原创归纳，未复制示例或网站资产。
-  notes: 已核对 ProcessGroup、rank、组创建与多 NCCL group 次序、同步/异步 collective 和若干 API 的 size 契约；另核对 v2.8.0 commit ba56102387ef21a3b04b357e5b183d48f0afefc7
-    的 ProcessGroupNCCL.cpp，区分 Work 完成、异常与 CPU 等待条件；未核对发行二进制及其内置通信库版本。第十批（2026-09-30）补充核对：distributed.html 的 #torch-distributed-debug（OFF/INFO/DETAIL；DETAIL 按 rank 分行的 forward/backward/comm 统计与 per-collective 一致性检查）、#logging 矩阵、monitored_barrier 仅 GLOO、NCCL_DEBUG_SUBSYS=COLL 用途；同 commit 的 TraceUtils.h（desync 报告实现）、FlightRecorder.hpp（entry 字段与 CPU 侧发现时刻的限定）、ProcessGroupNCCL.cpp 的默认值（TRACE_BUFFER_SIZE 2000、HEARTBEAT_TIMEOUT_SEC 480s、WAIT_TIMEOUT_DUMP_MILSEC 15000ms）。
+  notes: >-
+    已核对 ProcessGroup、rank、组创建与多 NCCL group 次序、同步/异步 collective 和若干 API 的 size 契约；另核对 v2.8.0 commit ba56102387ef21a3b04b357e5b183d48f0afefc7
+    的 ProcessGroupNCCL.cpp，区分 Work 完成、异常与 CPU 等待条件；未核对发行二进制及其内置通信库版本。第十批（2026-09-30）补充核对：distributed.html 的 #torch-distributed-debug（OFF/INFO/DETAIL；DETAIL 按 rank 分行的 forward/backward/comm 统计与 per-collective 一致性检查）、#logging 矩阵、monitored_barrier 仅 GLOO、NCCL_DEBUG_SUBSYS=COLL 用途；同 commit 的 TraceUtils.h（desync 报告实现）、FlightRecorder.hpp（entry 字段与 CPU 侧发现时刻的限定）、ProcessGroupNCCL.cpp 的默认值（TRACE_BUFFER_SIZE 2000、HEARTBEAT_TIMEOUT_SEC 480s、WAIT_TIMEOUT_DUMP_MILSEC 15000ms）。 2026-10-22 IQ-01 重核同页 #torch.distributed.init_process_group：timeout 默认 NCCL 10 分钟、其他后端 30 分钟，应用可显式覆盖；独立于 NCCL_IB_TIMEOUT，未运行通信测试。
+
 - id: src.huawei.hccl-api-cann-8.0-rc1-alpha003
   title: CANN 8.0.RC1.alpha003 集合通信接口参考 01
   url: https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/80RC1alpha003/apiref/hcclapiref/CANN%208.0.RC1.alpha003%20%E9%9B%86%E5%90%88%E9%80%9A%E4%BF%A1%E6%8E%A5%E5%8F%A3%E5%8F%82%E8%80%83%2001.pdf
@@ -5041,7 +5043,7 @@ sources:
     status: unknown
     scopes: []
     notes: Oracle/Intel 版权声明；许可未核对，只链接并原创归纳。
-  notes: Batch 20 取证轮实开：命名空间/分条/元数据与数据路径/客户端缓存与锁/一致性以本手册为准；3FS 不在本期范围。
+  notes: Batch 20 取证轮实开：命名空间/分条/元数据与数据路径/客户端缓存与锁/一致性以本手册为准；3FS 不在本期范围。2026-10-22 IQ-03 定向重取同一官方 XHTML URL（curl 成功取回），核对 §1.3.1（锚 lustre_striping，未写入数据不在 OST 预留空间）与 §19.5（锚 pfl，按 extent 的组合子布局）；普通 RAID0 的连续实际写入与逐目标写入观测是本库验证设计，未做 Lustre 实测。
 - id: src.ceph.repo-v19.2.7
   title: ceph/ceph 固定 tag v19.2.7（RGW 实现/测试定位）
   url: https://github.com/ceph/ceph/tree/v19.2.7/src/rgw
@@ -5248,7 +5250,7 @@ sources:
     status: unknown
     scopes: []
     notes: 文档页许可未核对；只链接并原创归纳。
-  notes: Batch 21 取证轮实开：host driver/容器库/设备文件/环境变量/挂载入口；第四轮补：两端消费配置对与 legacy/hook 访问丢失场景依据；CDI 规范细节见 cncf-tags（未登记，unknown）。
+  notes: Batch 21 取证轮实开：host driver/容器库/设备文件/环境变量/挂载入口；第四轮补：两端消费配置对与 legacy/hook 访问丢失场景依据；CDI 规范细节见 cncf-tags（未登记，unknown）。2026-10-22 IQ-06 补核同版本 docker-specialized.html#gpu-enumeration：NVIDIA_VISIBLE_DEVICES 的 all（基础 CUDA 镜像默认）、none、void/空/未设置具有不同 GPU 与驱动能力暴露语义；以启用 NVIDIA runtime 且按环境变量枚举设备的路径为边界，不能代替显式 CDI 或其他注入路径调查。未运行容器。
 - id: src.nvidia.k8s-device-plugin-v0.20.1
   title: NVIDIA k8s-device-plugin v0.20.1
   url: https://github.com/NVIDIA/k8s-device-plugin/tree/487d7a93894b0f3ad08097169593972eb3ca8206
@@ -6889,7 +6891,9 @@ sources:
       identifier: CC-BY-4.0
       url: https://github.com/kubernetes/website/blob/main/LICENSE
     notes: 沿用既有 K8s v1.32 条目许可口径；仅链接并原创归纳。
-  notes: Batch 28（T07-10）核对：五阶段 Pending/Running/Succeeded/Failed/Unknown；重启策略 Always 默认、指数退避 10s 起封顶 300s、运行 10min 重置；删除时序原文——删除请求记录宽限期（默认 30s）→Terminating；kubelet 本地关闭（preStop 在宽限期非 0 时先跑、超时一次性 2s 延展；SIGTERM 发各容器 PID1、无 sidecar 时任意顺序）与控制面 EndpointSlice 摘除**并行**；terminating 端点保留但 ready 恒 false（1.26 前兼容）、LB 不再使用；宽限期到 SIGKILL；readiness 失败→端点控制器从匹配 Service 端点摘除；readinessGates 自定义就绪条件缺省 False、须经 status PATCH 设置；强制删除 --force --grace-period=0 后 Pod 可能仍在节点运行；PodGC 阈值与 out-of-service taint 行为。
+  notes: >-
+    Batch 28（T07-10）核对：五阶段 Pending/Running/Succeeded/Failed/Unknown；重启策略 Always 默认、指数退避 10s 起封顶 300s、运行 10min 重置；删除时序原文——删除请求记录宽限期（默认 30s）→Terminating；kubelet 本地关闭（preStop 在宽限期非 0 时先跑、超时一次性 2s 延展；SIGTERM 发各容器 PID1、无 sidecar 时任意顺序）与控制面 EndpointSlice 摘除**并行**；terminating 端点保留但 ready 恒 false（1.26 前兼容）、LB 不再使用；宽限期到 SIGKILL；readiness 失败→端点控制器从匹配 Service 端点摘除；readinessGates 自定义就绪条件缺省 False、须经 status PATCH 设置；强制删除 --force --grace-period=0 后 Pod 可能仍在节点运行；PodGC 阈值与 out-of-service taint 行为。 2026-10-22 IQ-02 重核 #pod-phase：Pending 的上位定义是 Pod 已接受但有容器尚未完成设置并准备运行，调度/下载镜像只是示例；Running 还要求全部容器已创建；未部署或提交 Pod。
+
 - id: src.kubernetes.probes-v1-32
   title: Kubernetes v1.32 liveness/readiness/startup 探针概念文档（静态快照）
   url: https://v1-32.docs.kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/
@@ -6931,7 +6935,7 @@ sources:
       identifier: Apache-2.0
       url: https://github.com/kserve/website/blob/main/LICENSE
     notes: 同上 KServe 口径；仅链接并原创归纳。
-  notes: Batch 28（T07-09）核对：KPA 仅 Knative 模式，scaleMetric 默认 concurrency（可 rps/cpu/memory），autoscaling.knative.dev/target 为软限、containerConcurrency 硬限；minReplicas 默认 1、置 0 可缩到零；60s 稳定窗、2x 目标并发进 6s panic 窗。LLMInferenceService 集成 WVA（llm-d/workload-variant-autoscaler）：按 KV cache 利用率/队列深度/请求饱和度等推理特有指标算副本数并发布 wva_desired_replicas 指标，HPA（经 Prometheus Adapter 外部指标）或 KEDA（直连 PromQL）作执行器直通执行（target=1）；spec.scaling 与 spec.replicas 互斥；KEDA 路径 idleReplicaCount 允许低于 minReplicas（触发器全部不活跃时），须小于 minReplicas。
+  notes: Batch 28（T07-09）核对：KPA 仅 Knative 模式，scaleMetric 默认 concurrency（可 rps/cpu/memory），autoscaling.knative.dev/target 为软限、containerConcurrency 硬限；minReplicas 默认 1、置 0 可缩到零；60s 稳定窗、2x 目标并发进 6s panic 窗。LLMInferenceService 集成 WVA（llm-d/workload-variant-autoscaler）：按 KV cache 利用率/队列深度/请求饱和度等推理特有指标算副本数并发布 wva_desired_replicas 指标，HPA（经 Prometheus Adapter 外部指标）或 KEDA（直连 PromQL）作执行器直通执行（target=1）；spec.scaling 与 spec.replicas 互斥。2026-10-22 IQ-07 更正：KServe 集成说明不替代 KEDA 字段规范；KEDA v2.18 的 idleReplicaCount 仅支持 0，设置时须小于 minReplicaCount；常驻 n 个副本应省略 idleReplicaCount、设置 minReplicaCount=n，见 src.keda.scaledobject-spec-2.18。KServe 的 minReplicas 与 KEDA 的 minReplicaCount 是不同路径字段，集成样板实际 KEDA 版本仍需核查。
 - id: src.vllm.production-stack-v0-1-9
   title: vLLM Production Stack（router/KEDA/helm，tag vllm-stack-0.1.9）
   url: https://github.com/vllm-project/production-stack
@@ -7247,3 +7251,14 @@ sources:
     scopes: []
     notes: 公开可读不等于允许全文再分发；本库仅链接并作原创归纳，不复制长段正文。
   notes: Batch 31（T02-12）核读两节：Ubuntu 节（linux-headers 前置；local repo 装 nvidia-driver-local-repo-<发行版>-<版本> 包并复制其 keyring、network repo 装 cuda-keyring 包——两种仓库路径不同；apt install nvidia-open 主路径、升级 apt dist-upgrade；T02-12 第三轮复核补充核读 Post-installation Actions 的 Verify the Driver Version 节——cat /proc/driver/nvidia/version 核验已加载驱动版本，latest 页 2026-10-21）；version-locking 节（nvidia-driver-pinning-<branch> 与 nvidia-driver-pinning-<version> 锁包，建议先装锁包再装驱动；APT Pin-Priority>=1000 允许降级，版本锁包"can be used to install, downgrade or upgrade to specific versions"；DNF versionlock / Zypper addlock（Zypper 锁为排除式）；Ubuntu 580 及以前包名带分支、590 起去分支化，分支切换仅在 590+ 支持）。驱动设备文件语义另见 src.nvidia.driver-readme-580.105.08（固定 README），两入口分立不合并。
+- id: src.keda.scaledobject-spec-2.18
+  title: KEDA v2.18 ScaledObject specification
+  url: https://keda.sh/docs/2.18/reference/scaledobject-spec/
+  kind: documentation
+  registered_at: '2026-10-22'
+  revision: v2.18 版本化文档；2026-10-22 核对 idleReplicaCount、minReplicaCount 与 cooldownPeriod 小节
+  license:
+    status: unknown
+    scopes: []
+    notes: 本轮未核对网页正文的再分发许可；仅链接并原创归纳，不镜像全文。
+  notes: IQ-07/08 定向取证：idleReplicaCount 仅支持 0，设置时须小于 minReplicaCount；需常驻 n 个副本时省略 idleReplicaCount、设置 minReplicaCount=n。cooldownPeriod 从最后一次触发器报告活跃后计时，仅作用于缩至 0，普通 1↔N 副本变化由 HPA 处理。本条只证明 v2.18 规范边界，未核对 KServe/production-stack 样板的实际 KEDA 版本，未部署或测试扩缩容。

@@ -12,7 +12,8 @@ source_refs:
   - src.vllm.inference-v0-14
   - src.vllm.model-loader-v0-14
   - src.google.sre-implementing-slos
-updated_at: "2026-10-21"
+  - src.keda.scaledobject-spec-2.18
+updated_at: "2026-10-22"
 summary: 把请求/token 需求、SLO/goodput 目标、模型加载时间与资源预算连成可验证的扩缩容决策：先建立单副本与集群容量口径，再比较请求率、队列、并发/token/KV 与设备指标四类触发器的滞后、振荡与冷启动代价；覆盖最小冗余、scale-to-zero 条件、扩容 ready gate、缩容 drain 与 PD 双池联动，并给出有限增压/阶跃/收缩的对照与容量不足判据。
 related_ids:
   - inference.routing-and-flow-control
@@ -32,7 +33,8 @@ verification:
     - src.kserve.autoscaling-v0-20-3f4067e
     - src.vllm.production-stack-v0-1-9
     - src.vllm.inference-v0-14
-  notes: "已核对 v1.32 HPA 任务页（公式/容差/稳定窗/behavior 默认）、KServe kpa-autoscaler 与 llmisvc-autoscaling（WVA）文档、production-stack autoscaling-keda 教程与 helm 模板、vLLM v0.14.0 弹性扩缩容与排空实现。未部署任何 autoscaler、未压测容量。逐条主张与定位见 docs/research/batch-28-t07-09-sources.md。"
+    - src.keda.scaledobject-spec-2.18
+  notes: "已核对 v1.32 HPA 任务页（公式/容差/稳定窗/behavior 默认）、KServe kpa-autoscaler 与 llmisvc-autoscaling（WVA）文档、production-stack autoscaling-keda 教程与 helm 模板、vLLM v0.14.0 弹性扩缩容与排空实现。2026-10-22 补核 KEDA v2.18 ScaledObject 规范的 idleReplicaCount/cooldownPeriod（IQ-07/08），不构成与上述集成样板的版本配套声明。未部署任何 autoscaler、未压测容量。逐条主张与定位见 docs/research/batch-28-t07-09-sources.md 与 independent-quality-audit-2026-10-22-fixes.md。"
 ---
 
 # 容量、扩缩容与冷启动决策
@@ -58,14 +60,17 @@ verification:
 | 加速器设备指标（GPU/NPU 利用率、设备内存） | 设备侧压力；主机 CPU/内存不能替代（KPA 文档亦提示 GPU 利用率随任务波动） | 采集粒度与窗口影响判读；静态权重占用高≠无服务容量（可用容量看 KV/并发余量） | 概念级条目（本库归纳）；版本化 exporter/指标名按平台档案核对，未取得前保留 unknown，不发明统一阈值 |
 | 推理特有指标（KV 利用率、请求饱和度） | 引擎内部压力，最贴近真实瓶颈 | 依赖指标暴露与采集链路（Prometheus）；各引擎指标名/口径按版本核对 | KServe LLMInferenceService×WVA：按 KV cache 利用率、队列深度、请求饱和度算副本数，发布 `wva_desired_replicas`，HPA（经 Prometheus Adapter）/KEDA 直通执行（[llmisvc-autoscaling](https://kserve.github.io/website/docs/model-serving/generative-inference/llmisvc/autoscaling/llmisvc-autoscaling)） |
 
-振荡控制的三板斧（各样板均有实现）：**稳定窗**（K8s 缩容默认 stabilizationWindow 300s，窗口内取最高建议——与控制器 flag `--horizontal-pod-autoscaler-downscale-stabilization` 默认 5min 是同一默认机制的两个视图，**不叠加**计算）、**冷却期**（KEDA cooldownPeriod）、**变化率限制**（K8s behavior 策略，默认缩容 Percent 100 / periodSeconds 15s——15s 是默认策略的周期，非所有策略固定值）。上表 HPA 行的容差 0.1 与 15s 同步周期也均为**默认值**（可配置）；资源指标要求 Pod 设置 requests 的条件限定于 utilization 类计算。指标出错时的方向不对称是通用设计：K8s 在某指标出错时**跳过缩容、允许扩容**（保守放大而非保守缩小）。
+振荡控制按作用范围区分：**稳定窗**（K8s 缩容默认 stabilizationWindow 300s，窗口内取最高建议——与控制器 flag `--horizontal-pod-autoscaler-downscale-stabilization` 默认 5min 是同一默认机制的两个视图，**不叠加**计算）、**缩至零的冷却期**（[KEDA v2.18 `cooldownPeriod`](https://keda.sh/docs/2.18/reference/scaledobject-spec/#cooldownperiod)，从最后一次触发器报告活跃后计时，只作用于缩至 0；普通 1↔N 副本变化由 HPA 控制）、**变化率限制**（K8s behavior 策略，默认缩容 Percent 100 / periodSeconds 15s——15s 是默认策略的周期，非所有策略固定值）。上表 HPA 行的容差 0.1 与 15s 同步周期也均为**默认值**（可配置）；资源指标要求 Pod 设置 requests 的条件限定于 utilization 类计算。指标出错时的方向不对称是通用设计：K8s 在某指标出错时**跳过缩容、允许扩容**（保守放大而非保守缩小）。
 
 ## 冷启动与资源供给
 
 - **冷启动构成**：新副本从调度到可服务 = 镜像拉取＋调度等待 → 权重加载（load-format 分派、分片/量化影响读取量；TP 每进程读全量权重使读取时间随 TP 规模增长，官方建议转分片 checkpoint 解耦，[conserving_memory.md](https://github.com/vllm-project/vllm/blob/b17039bc/docs/configuration/conserving_memory.md)）→ profiling/KV 容量计算 → warmup/图捕获 → ready（五阶段边界见[权重加载与引擎 ready](model-loading-and-readiness.md)）。来源中有**示例性**耗时/冷启动描述（如 sleep-wakeup 教程的样例日志、KPA 文档的冷启动解释），但均不构成可迁移基线——本文目标部署的各阶段耗时是待测变量（教程示例不作为本部署性能预期）；readiness 探针/ready gate 决定流量何时进来（机制见[服务发布与恢复](release-and-recovery.md)）。
 - **扩容 ready gate（两个不同机制，勿混用）**：① 副本级——新副本须经 readiness/预热并计入路由可服务集合（控制面机制，见[服务发布与恢复](release-and-recovery.md)）；② 引擎内**弹性 EP 拓扑重配置**——`scale_elastic_ep` 先轮询现有 DP 引擎空闲（`wait_for_requests_to_drain`，默认 300s，超时抛 TimeoutError——该次变更应停止并保留证据），再增减 DP core 数（[async_llm.py L801-855](https://github.com/vllm-project/vllm/blob/b17039bccc17b94a2ea107272ad7bc93508708df/vllm/v1/engine/async_llm.py#L801-L855)）；扩缩容标志为真时，已挂载的 ScalingMiddleware 对**新进入**的 HTTP 请求回 503，在途流继续排空（标志的设置/清除方与异常恢复链未核，unknown）。② 是**同一逻辑服务的 DP engine cores 分布式拓扑重配置**（固定实现要求 Ray DP 后端：向现有 cores 发分布式重配置请求、创建新 cores 并等待其 ready 与既有 cores 完成重配置，[core_client.py L1278-1358](https://github.com/vllm-project/vllm/blob/b17039bccc17b94a2ea107272ad7bc93508708df/vllm/v1/engine/core_client.py#L1278-L1358)）——不是 K8s 副本层面的变更；新 core ready 也不等于副本 readiness/路由传播成立，② 不检查也不替代 ① 。
 - **缩容 drain**：缩掉的副本先从路由/端点摘除、排空在途流式请求再退出（K8s 侧 preStop＋宽限期语义见[服务发布与恢复](release-and-recovery.md)）；**被移除进程的本地 KV/prefix cache 不保留**——缩容后的缓存效果取决于缓存所在层（外部缓存/offload 路径按所选实现核对，见[PD 分离](pd-disaggregation.md)）与路由变化、前缀命中、负载的共同作用；TTFT 是否变差是**待验证风险**，不预设必然恶化或必然恢复。
-- **scale-to-zero**：KServe KPA 置 `minReplicas: 0` 且无流量时缩零（仅 Knative/serverless 模式，见下节模式分支）；production-stack KEDA 教程用 `minReplicaCount: 0`＋流量保活触发器（该触发器的作用是**有流量时防止缩零**）；KEDA 路径另有 `idleReplicaCount` 允许低于 minReplicas（须小于 minReplicas）。适用条件：低峰流量可接受冷启动时延、且入口层能把冷启动期的请求排队或返回明确状态；**不适合** P99 严格且流量突增的模式。**从零重新激活是独立的未证前提**：零副本时引擎自身的 waiting 类指标不再可观测，谁继续观测新流量、产生可用指标并触发从零扩容须单独核查——本轮来源未核 KEDA 激活语义与保活触发器之外的重唤链路，该样板的重新激活链未证（unknown），缩零配置不构成完整可用方案。睡眠模式变体：vLLM sleep/wakeup 让引擎驻留进程但释放资源（如 GPU 内存，production-stack [sleep-wakeup 教程](https://github.com/vllm-project/production-stack/blob/20a658044af0dea70e9e0136494bb9979cfd9fab/docs/source/use_cases/sleep-wakeup-mode.rst)）；唤醒成本依 sleep level 与实现而异（固定 commit 的 worker 对不同 level 有不同处理），本文未核完整恢复路径，不预设"唤醒=全量权重重载"或"只省进程重启"任一结论（须测）。
+- **scale-to-zero 的配置与适用条件**：KServe KPA 置 `minReplicas: 0` 且无流量时缩零（仅 Knative/serverless 模式，见下节模式分支）；production-stack KEDA 教程用 `minReplicaCount: 0`＋流量保活触发器（该触发器的作用是**有流量时防止缩零**）。低峰流量需能接受冷启动时延，入口层需能把冷启动期的请求排队或返回明确状态；P99 严格且流量突增时须另外验证容量与时延预算。
+- **KEDA 的空闲副本限制**：[v2.18 `idleReplicaCount`](https://keda.sh/docs/2.18/reference/scaledobject-spec/#idlereplicacount) 仅支持 **0**，且设置时须小于 `minReplicaCount`；不能因为 `2 < 5` 就把 `minReplicaCount: 5`、`idleReplicaCount: 2` 当成受支持配置。若要保留 n 个常驻副本，应省略 `idleReplicaCount` 并设置 `minReplicaCount: n`。这些是 KEDA v2.18 规范边界，未确认上述集成样板的实际 KEDA 版本，不能据此宣布版本配套。
+- **从零重新激活**：零副本时引擎自身的 waiting 类指标不再可观测，谁继续观测新流量、产生可用指标并触发从零扩容须单独核查。该集成样板的指标可用性与保活触发器之外的重唤链路仍未验证（unknown），缩零配置不构成完整可用方案。
+- **睡眠模式变体**：vLLM sleep/wakeup 让引擎驻留进程但释放资源（如 GPU 内存，production-stack [sleep-wakeup 教程](https://github.com/vllm-project/production-stack/blob/20a658044af0dea70e9e0136494bb9979cfd9fab/docs/source/use_cases/sleep-wakeup-mode.rst)）；唤醒成本依 sleep level 与实现而异（固定 commit 的 worker 对不同 level 有不同处理），本文未核完整恢复路径，不预设"唤醒=全量权重重载"或"只省进程重启"任一结论（须测）。
 - **资源不可得**：扩容请求可能因集群资源不足悬置（调度等待语义见[配额、排队与准入](../05-cluster-platform/admission-and-placement.md)）；容量规划必须包含"扩不上去"分支——入口层降级/排队/拒绝策略（见[请求路由与流控](routing-and-flow-control.md)）。
 - **PD 双池联动**：PD 分离时 prefill 池与 decode 池分别触发、分别扩缩，且 KV 传输链路（connector 前提）必须与两侧拓扑同步；单侧扩容改变不了另一侧瓶颈。双池容量联动无通用公式，按[PD 分离](pd-disaggregation.md)的指标与失败链分别规划。**KServe/WVA 样板的额外约束**：LLMInferenceService 的 `spec.scaling` 与 `spec.replicas` 互斥；执行器 HPA/KEDA 二选一；PD 场景 decode 与 prefill 组件**必须使用同一种 actuator**（WVA 文档 Prefill Scaling 节），不可混搭（[llmisvc-autoscaling](https://kserve.github.io/website/docs/model-serving/generative-inference/llmisvc/autoscaling/llmisvc-autoscaling)）。
 - **最小冗余（本库规划建议，非通用规则）**：对故障期间仍须服务的部署，缩容下限应按故障模型与恢复窗口确定冗余（例如无共享故障域、剩余副本仍有足够 SLO 容量时取 ≥2）；副本数量本身不构成可用性保证——共享故障域、剩余容量不足、或控制器/空闲策略使实际 ready 数低于配置下限时仍会中断。未实测条件下的具体下限为待定变量。
@@ -107,7 +112,8 @@ verification:
 ## 来源与验证记录
 
 - [Kubernetes v1.32 HPA 文档](https://v1-32.docs.kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)：控制环参数、公式与容差、稳定窗、behavior 默认。
-- [KServe 0.20 线](https://kserve.github.io/website/docs/model-serving/predictive-inference/autoscaling/kpa-autoscaler)（网站仓 pin 3f4067e）：KPA 语义、WVA 集成、idleReplicaCount。
+- [KServe 0.20 线](https://kserve.github.io/website/docs/model-serving/predictive-inference/autoscaling/kpa-autoscaler)（网站仓 pin 3f4067e）：KPA 语义、WVA 集成；KEDA 字段限制另按下项核对。
+- [KEDA v2.18 ScaledObject 规范](https://keda.sh/docs/2.18/reference/scaledobject-spec/)：`idleReplicaCount` 仅支持 0、与 `minReplicaCount` 的关系，以及 `cooldownPeriod` 只作用于缩至零。
 - [vLLM Production Stack v0.1.9](https://github.com/vllm-project/production-stack/tree/vllm-stack-0.1.9)：KEDA 教程（waiting 深度触发）、router HPA 模板、sleep/wakeup 教程。
 - [vLLM v0.14.0 固定快照](https://github.com/vllm-project/vllm/tree/b17039bccc17b94a2ea107272ad7bc93508708df)：弹性扩缩容排空实现、KV 容量日志口径、conserving_memory、sleep 分支的 worker 层实现（level 1/2 不同处理、wake 调 allocator，L109-155——allocator 与完整恢复路径未核）。
 - [SRE Workbook Implementing SLOs](https://sre.google/workbook/implementing-slos/)：SLO 口径与误差预算背景。

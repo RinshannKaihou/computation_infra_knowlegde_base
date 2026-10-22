@@ -1,3 +1,7 @@
+# 生命周期（2026-10-22）：覆盖基线，保留供按需维护。
+# 保留主题覆盖、缺口和历史盘点输入；不据此启动写作批次或追求全平台无缺口。
+# 下方解析数据不变；未知、部分覆盖和未验证事项仅凭新证据与具体需求更新，不自动升状态。
+# 当前入口：../docs/current-status.md；归档说明：../docs/archive/README.md。
 schema_version: 1
 plan_type: topic_coverage_audit
 created_at: '2026-10-08'

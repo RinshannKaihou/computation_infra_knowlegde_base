@@ -12,7 +12,8 @@ source_refs:
 - src.kueue.admission-v0.19.0
 - src.kubernetes.job-controller-tests-v1.32.0
 - src.kubernetes.device-plugins-v1-32
-updated_at: "2026-10-14"
+- src.kubernetes.pod-lifecycle-v1-32
+updated_at: "2026-10-22"
 summary: 以 Kubernetes v1.32 Job/Pod 与 Kueue v0.19.0 Workload 为固定样板，解释提交、准入、运行、退出、重试、取消和资源清理的责任与状态边界；训练恢复状态仍归应用。
 related_ids:
 - cluster-platform.admission-and-placement
@@ -26,7 +27,8 @@ verification:
   - src.kueue.job-lifecycle-v0.19.0
   - src.kueue.admission-v0.19.0
   - src.kubernetes.job-controller-tests-v1.32.0
-  notes: "经 webfetch 只读核对 v1.32 版本化文档（Job、Pod 生命周期、TTL-after-finished、finalizers、owners-dependents、Job v1 API、ObjectMeta/GC）与 Kueue v0.19.0 固定 commit（Job 集成、两阶段准入、AdmissionCheck、stopPolicy、排障页、v1beta2 类型、账本字段、测试函数行号）；复用 src.kueue.admission-v0.19.0（准入两阶段/类型原文）与 src.kubernetes.device-plugins-v1-32（设备侧入口，细节见 device-resource-chain.md）；curl 字节级取回未执行，未部署集群、未提交 Job。"
+  - src.kubernetes.pod-lifecycle-v1-32
+  notes: "经 webfetch 只读核对 v1.32 版本化文档（Job、Pod 生命周期、TTL-after-finished、finalizers、owners-dependents、Job v1 API、ObjectMeta/GC）与 Kueue v0.19.0 固定 commit（Job 集成、两阶段准入、AdmissionCheck、stopPolicy、排障页、v1beta2 类型、账本字段、测试函数行号）；复用 src.kueue.admission-v0.19.0（准入两阶段/类型原文）与 src.kubernetes.device-plugins-v1-32（设备侧入口，细节见 device-resource-chain.md）；curl 字节级取回未执行，未部署集群、未提交 Job。 2026-10-22 IQ-02 定向重核 Pod phase 上位定义、Running 的全部容器已创建条件与状态表；未部署集群。"
 ---
 
 # Kubernetes 作业全生命周期与控制器责任
@@ -55,7 +57,17 @@ Pod 带 `batch.kubernetes.io/job-tracking` finalizer：只有计入 Job 状态�
 
 ### Pod 生命周期：阶段、条件与探针
 
-Pod 阶段只有五个（[Pod 生命周期页](https://v1-32.docs.kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/)）：`Pending`（原文仅含等待调度与下载镜像）、`Running`（已绑定节点，至少一容器运行或启动中）、`Succeeded`、`Failed`、`Unknown`（与节点失联）。phase 不是完备状态机（`not intended to be a comprehensive rollup/state machine`），`kubectl` 的 STATUS 列不等于 phase。沙箱联网属于 `PodReadyToStartContainers` 条件（kubelet 在沙箱创建且网络配好后置），`Initialized`/`ContainersReady`/`Ready` 另列。
+Pod 阶段只有五个（[v1.32 Pod phase](https://v1-32.docs.kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-phase)）：
+
+| phase | 定义与判断边界 |
+|---|---|
+| `Pending` | Pod 已被集群接受，但一个或多个容器尚未完成设置、达到可运行状态。等待调度和下载镜像是其中的示例；已绑定节点、仍卡在其他容器准备步骤的 Pod 也可能为 Pending，不能把调查限定为调度和拉镜像 |
+| `Running` | Pod 已绑定节点，所有容器均已创建，且至少一个容器仍在运行、启动或重启中 |
+| `Succeeded` | 所有容器均成功终止，且不会再重启 |
+| `Failed` | 所有容器均已终止，至少一个失败退出或被系统终止，且不再自动重启 |
+| `Unknown` | 因某种原因无法取得 Pod 状态，通常与无法同所在节点通信有关；不能据此单独确认节点故障 |
+
+phase 不是对全部观测的汇总或完备状态机，`kubectl` 的 STATUS 列不等于 phase。沙箱联网属于 `PodReadyToStartContainers` 条件（kubelet 在沙箱创建且网络配好后置），`Initialized`/`ContainersReady`/`Ready` 另列。Pending 的具体阻塞位置须结合这些条件、容器状态与事件判断。
 
 `Ready` 由 conditions 决定：容器全 Ready 且 `readinessGates` 全 True（缺失的门默认为 False）。`liveness` 失败按 `restartPolicy` 重启，`readiness` 失败摘除 endpoints（删除时自动 unready），`startup` 期间屏蔽其余探针。**Ready ≠ Running ≠ 应用持续进展**：探针只证容器与门的状态，不证训练 step 或请求进度。
 
