@@ -318,7 +318,7 @@ topics:
     - T00-05
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   - audit_gap_index: 2
     gap_ref: 00.6-G2
     gap_text: 缺少选型、验收、安装、优化、升级和恢复等任务路径
@@ -327,7 +327,7 @@ topics:
     - T00-07
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
   closure_criteria:
   - 全部角色/任务/三平台路径只链接已存在且已核对正文，具有先修和目标/完成检查；无重复正文或未来文件假链接。
   - 正文缺口须由实际交付的内容与精确来源验收关闭，新增/修订内容与已有证据组成五方面阅读闭环；真实证据缺口仅在独立验证轨道完成后关闭。
@@ -3831,7 +3831,9 @@ batches:
   conservative_wave: 15
 - number: 32
   title: 全景与导航、可靠性方法
-  status: planned
+  status: done
+  completed_at: '2026-10-22'
+  completion_record: docs/research/batch-32-source-audit.md
   task_refs:
   - T00-06
   - T08-09
@@ -7440,8 +7442,8 @@ tasks:
   work_units: 1
 - id: T00-06
   title: 选型、节点验收与环境安装任务路径
-  status: planned
-  readiness: needs_content_inputs
+  status: done
+  readiness: delivered
   batch: 32
   operation: navigation
   content_type: path
@@ -7488,8 +7490,8 @@ tasks:
   work_units: 1
 - id: T08-09
   title: 可靠性主题五方面及状态边界核对
-  status: planned
-  readiness: needs_content_inputs
+  status: done
+  readiness: delivered
   batch: 32
   operation: navigation
   content_type: index
@@ -7533,8 +7535,8 @@ tasks:
   work_units: 1
 - id: T00-07
   title: 性能优化、迁移升级与故障恢复任务路径
-  status: planned
-  readiness: needs_content_inputs
+  status: done
+  readiness: delivered
   batch: 32
   operation: navigation
   content_type: path
@@ -7602,8 +7604,8 @@ tasks:
   work_units: 1
 - id: T00-08
   title: 三平台入口与现有排障路径的收口
-  status: planned
-  readiness: needs_content_inputs
+  status: done
+  readiness: delivered
   batch: 32
   operation: navigation
   content_type: path

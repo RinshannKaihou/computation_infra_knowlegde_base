@@ -169,22 +169,27 @@ topics:
 - topic_id: '00.6'
   title: 按角色、任务与平台组织的阅读路径
   domain_code: '00'
-  coverage_status: partial
+  coverage_status: covered_basic
   core_scope: 按角色、任务和平台给出有先修顺序、完成目标及主题入口的阅读路径
-  present_scope: 已有昇腾/NVIDIA 与训练/推理排障四条路径
+  present_scope: 三平台入口（昇腾/NVIDIA/AMD）、训练/推理排障、三角色阅读路径与六条任务路径（选型/验收/安装、性能/迁移/恢复）齐备，含阅读目标与完成检查；导航页均 draft、未实测（T00-05 Batch 31，T00-06/07/08 Batch 32）
   evidence_refs:
   - path.platform.ascend
   - path.platform.nvidia
+  - path.platform.amd
   - path.task.training-triage
   - path.task.inference-triage
   - path.role.reading-by-role
+  - path.task.selection-and-capacity
+  - path.task.node-acceptance
+  - path.task.environment-installation
+  - path.task.performance-optimization
+  - path.task.migration-and-upgrade
+  - path.task.fault-recovery
   background_refs: []
-  gaps:
-  - 缺少学习者、架构设计与运维角色路径
-  - 缺少选型、验收、安装、优化、升级和恢复等任务路径
+  gaps: []
   followup_priority: normal
-  recommended_action: add_or_extend
-  closure_criteria: 补齐所列缺口，给出适用条件、精确来源、观察/判断方法及验证判据；需要真实结果时另登记复现证据。
+  recommended_action: maintain
+  closure_criteria: 导航页只链接已核对正文并保持入链完整；新增正文交付后同步更新路径入口与完成检查口径。
 - topic_id: '01.1'
   title: 机柜、供电、散热与故障域
   domain_code: '01'

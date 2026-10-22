@@ -70,6 +70,14 @@ related_ids:
 
 后续查阅具体条目前，记录 Instinct 型号与服务器（当前文档样板为 MI300X 平台）、固件 bundle 与 amdgpu 驱动版本、ROCm 版本及其组件（HIP/ROCr/rocBLAS/MIOpen/RCCL）、框架构建或分发渠道、引擎与拓扑；工作负载相关内容还需要模型、精度和并行配置。当前尚无本库实测的 AMD 兼容档案。
 
+## 阅读目标与完成检查
+
+**进入条件**：已读[00 导读](../../knowledge/00-overview/index.md)并按上节记录目标环境身份；首次接触软件栈分层者先读[主机到模型执行的软件栈分层](../../knowledge/02-software-stack/layers-and-boundaries.md)。
+
+**知识目标**：能按问题在本页定位 AMD 侧的取证正文与平台档案，并说出每个入口的证据边界（含 AMD 取证 / 通用方法伴读 / AMD 实现能力未核对三类区分）。
+
+**完成检查**：走完路径后应能——①列出目标环境的版本/制品身份，并指出哪些组合在[AMD ROCm 档案](../../knowledge/02-software-stack/amd-rocm-documented-profile.md)中无证据（文档样板与实际环境分开表述）；②对任一 AMD 术语/工具（如 AMD SMI、RCCL、HIP）能定位其取证正文与 unknown 清单；③对选定任务（安装/诊断/通信/精度/推理）说出下一项验证还缺什么证据。三者任一答不出即未完成，回到对应入口补读。
+
 ## 完整平台阅读路径
 
 1. [00 导读与系统全景](../../knowledge/00-overview/index.md)：训练任务与推理请求涉及哪些系统领域；AMD 在参考架构中的位置见[参考架构及选择](../../knowledge/00-overview/reference-architectures.md)——节点级 OEM 样板接入集群形态，超节点层无官方公开样板、保持 unknown 不类推。
@@ -77,7 +85,7 @@ related_ids:
 3. [02 系统软件与加速器执行栈](../../knowledge/02-software-stack/index.md)：amdgpu 驱动、ROCm/HIP、算子编译与框架适配。
 4. [03 互联网络与分布式通信](../../knowledge/03-communication/index.md)：网络和拓扑、RCCL、rank 关系及通信验证。
 5. [04 数据路径与存储系统](../../knowledge/04-data-storage/index.md)：数据加载与模型、checkpoint 文件路径（平台无关侧共用）。
-6. [05 集群平台与资源管理](../../knowledge/05-cluster-platform/index.md)：容器、设备分配、调度与任务生命周期（设备暴露核对见[设备资源链](../../knowledge/05-cluster-platform/device-resource-chain.md)）。
+6. [05 集群平台与资源管理](../../knowledge/05-cluster-platform/index.md)：容器、设备分配、调度与任务生命周期。设备暴露核对见[设备资源链](../../knowledge/05-cluster-platform/device-resource-chain.md)——它给的是通用责任链（实现例为 MindCluster/NVIDIA 设备插件与 Slurm，**AMD 插件接入未取证**）；AMD 侧设备/容器访问的具体取证（`/dev/kfd`、render node、权限与 ROCm 容器文档）见[OS/进程资源压力与设备访问诊断](../../knowledge/02-software-stack/host-resource-pressure-and-device-access.md)。
 7. [06 训练与后训练系统](../../knowledge/06-training/index.md)：并行训练、数值行为、性能与训练状态恢复。
 8. [07 推理与服务系统](../../knowledge/07-inference/index.md)：推理引擎、缓存、流量和请求路径。
 9. [08 可靠性与计算正确性方法](../../knowledge/08-reliability/index.md)：证据关联、假设检验与恢复验证。
@@ -92,7 +100,7 @@ related_ids:
 - 选型、节点验收与生命周期：从[节点选型、隔离返修、长期管理与退役](../../knowledge/01-hardware/node-selection-and-lifecycle.md)开始；四层验收方法见[新节点与返修节点验收](../../knowledge/01-hardware/node-acceptance-triage.md)（通用方法，AMD 侧通信基线样板用 RCCL 档案）。
 - 精度、混合精度或收敛疑问：从[混合精度、算子适配与收敛验证](../../knowledge/06-training/mixed-precision-and-convergence.md)与[dtype、layout 与有限精度语义](../../knowledge/02-software-stack/dtype-layout-and-precision-semantics.md)开始。
 - 推理引擎、量化或输出质量：从[推理引擎组件与平台功能交集档案](../../knowledge/07-inference/engine-backend-boundaries.md)（AMD/ROCm 交集档案）与[权重加载、引擎 ready 与启动失败诊断](../../knowledge/07-inference/model-loading-and-readiness.md)开始；量化支持与质量验证见[推理量化与输出质量验证](../../knowledge/07-inference/quantization-and-quality.md)（AMD/ROCm 支持矩阵分列）与[输出质量对照评估](../../knowledge/07-inference/output-quality-evaluation.md)。
-- 训练性能或慢 rank：从[训练性能分解、profiling 与优化验证](../../knowledge/06-training/performance-analysis.md)与[慢 rank 诊断](../../knowledge/06-training/slow-rank-triage.md)开始。
+- 训练性能或慢 rank：从[训练性能分解、profiling 与优化验证](../../knowledge/06-training/performance-analysis.md)开始（含 AMD 取证）。[慢 rank 诊断](../../knowledge/06-training/slow-rank-triage.md)为通用阶段分析方法伴读——其证据样板是 PyTorch 2.8/NCCL RAS/DCGM，**RCCL/ROCm 侧对应检查能力未核对**，不能由接口相似推定适用。
 - 健康全绿但结果异常：从[静默错误与计算完整性判定](../../knowledge/08-reliability/silent-errors-and-integrity.md)的平台证据清单（NVIDIA/AMD/Ascend 按版本记录）开始。
 
 这些是知识归属入口，不能仅凭症状确定根因。

@@ -115,6 +115,18 @@ related_ids:
 
 后续查阅具体条目前，记录芯片与服务器、固件与驱动、CANN、框架及设备后端、训练或推理引擎、算子包和拓扑；工作负载相关内容还需要模型、精度、执行模式与并行配置。当前尚无本库实测的兼容档案。
 
+## 阅读目标与完成检查
+
+**进入条件**：已读[00 导读](../../knowledge/00-overview/index.md)并按上节记录目标环境身份；首次接触软件栈分层者先读[软件栈分层](../../knowledge/02-software-stack/layers-and-boundaries.md)。
+
+**知识目标**：能按问题在本页定位昇腾侧正文与平台档案，并说出每个入口的证据边界。
+
+**完成检查**：走完路径后应能——①列出目标环境的版本/制品身份，并指出哪些组合在[昇腾文档配套档案](../../knowledge/02-software-stack/ascend-documented-profile.md)中无证据（文档样板与实际环境分开；TorchNPU 档案不与 MindCluster/Atlas 资料自动组成已验证环境）；②对选定任务（配套/算子/内存/通信/推理/恢复）说出首要入口与下一项验证还缺什么证据；③区分通用机制正文与含昇腾取证的正文（如 GPU 侧通用指南不自动适用 NPU）。任一答不出即回到对应入口补读。
+
+## 跨平台比较的阅读方式
+
+与[NVIDIA 路径](nvidia.md)、[AMD 路径](amd.md)使用相同的领域归属，先明确要比较的任务和环境，再比较具体机制；各平台的错误码、环境变量、诊断工具与支持边界分别查证，术语与字段名不作直译映射。
+
 ## 完整平台阅读路径
 
 1. [00 导读与系统全景](../../knowledge/00-overview/index.md)：先确定是在学习系统组成，还是定位一个训练或推理问题。
@@ -182,7 +194,7 @@ related_ids:
 
 ## 任务路径入口
 
-准备阶段：[选型与容量](../tasks/selection-and-capacity.md) · [节点验收](../tasks/node-acceptance.md) · [环境安装](../tasks/environment-installation.md)。运行阶段：[性能优化](../tasks/performance-optimization.md) · [迁移与升级](../tasks/migration-and-upgrade.md) · [故障恢复](../tasks/fault-recovery.md)。按角色阅读见[角色路径](../roles/reading-by-role.md)。
+排障首要入口：[训练排障](../tasks/training-triage.md) · [推理排障](../tasks/inference-triage.md)。准备阶段：[选型与容量](../tasks/selection-and-capacity.md) · [节点验收](../tasks/node-acceptance.md) · [环境安装](../tasks/environment-installation.md)。运行阶段：[性能优化](../tasks/performance-optimization.md) · [迁移与升级](../tasks/migration-and-upgrade.md) · [故障恢复](../tasks/fault-recovery.md)。按角色阅读见[角色路径](../roles/reading-by-role.md)。
 
 ## 原始资料入口
 

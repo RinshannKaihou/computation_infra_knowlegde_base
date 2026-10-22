@@ -68,7 +68,7 @@ related_ids:
 
 ## 原始资料入口
 
-- [NVIDIA GPU Node Triage and Systematic Debug Guidelines](https://docs.nvidia.com/deploy/gpu-debug-guidelines/gpu-node-triage.html)：NVIDIA 侧节点分诊官方指南（既有登记）。
+- [NVIDIA GPU Node Triage and Systematic Debug Guidelines（latest，2026-10-08 观察）](https://docs.nvidia.com/deploy/gpu-debug-guidelines/gpu-node-triage.html)：NVIDIA 侧节点分诊官方指南（既有登记）。
 - [MindX DL 6.0.RC2 ascend-dmi 故障诊断](https://www.hiascend.com/doc_center/source/zh/mindx-dl/60rc2/toolbox/ascenddmi/toolboxug_0020.html)：昇腾侧 ascend-dmi 官方文档（既有登记）。
 
 以上为外部入口，引用前需核对各自版本与许可；AMD 侧外部入口见 [AMD 平台路径](../platforms/amd.md)。

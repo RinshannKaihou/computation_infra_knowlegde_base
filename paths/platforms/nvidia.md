@@ -101,6 +101,14 @@ related_ids:
 
 后续查阅具体条目前，记录 GPU 与服务器、固件与驱动、CUDA 与相关库、框架、通信库、引擎及拓扑；工作负载相关内容还需要模型、精度和并行配置。当前尚无本库实测的兼容档案。
 
+## 阅读目标与完成检查
+
+**进入条件**：已读[00 导读](../../knowledge/00-overview/index.md)并按上节记录目标环境身份；首次接触软件栈分层者先读[软件栈分层](../../knowledge/02-software-stack/layers-and-boundaries.md)。
+
+**知识目标**：能按问题在本页定位 NVIDIA 侧正文与平台档案，并说出每个入口的证据边界。
+
+**完成检查**：走完路径后应能——①列出目标环境的版本/制品身份，并指出哪些组合在[NVIDIA 文档配套档案](../../knowledge/02-software-stack/nvidia-documented-profile.md)中无证据或存在来源冲突（文档样板与实际环境分开）；②对选定任务（安装/诊断/通信/精度/推理/恢复）说出首要入口与下一项验证还缺什么证据；③区分通用机制正文与含 NVIDIA 取证的正文，不以通用结论代平台结论。任一答不出即回到对应入口补读。
+
 ## 完整平台阅读路径
 
 1. [00 导读与系统全景](../../knowledge/00-overview/index.md)：训练任务与推理请求涉及哪些系统领域。
@@ -195,7 +203,7 @@ NCCL 资料仅覆盖平台知识的一部分；其余领域仍需逐项补齐对
 
 ## 任务路径入口
 
-准备阶段：[选型与容量](../tasks/selection-and-capacity.md) · [节点验收](../tasks/node-acceptance.md) · [环境安装](../tasks/environment-installation.md)。运行阶段：[性能优化](../tasks/performance-optimization.md) · [迁移与升级](../tasks/migration-and-upgrade.md) · [故障恢复](../tasks/fault-recovery.md)。按角色阅读见[角色路径](../roles/reading-by-role.md)。
+排障首要入口：[训练排障](../tasks/training-triage.md) · [推理排障](../tasks/inference-triage.md)。准备阶段：[选型与容量](../tasks/selection-and-capacity.md) · [节点验收](../tasks/node-acceptance.md) · [环境安装](../tasks/environment-installation.md)。运行阶段：[性能优化](../tasks/performance-optimization.md) · [迁移与升级](../tasks/migration-and-upgrade.md) · [故障恢复](../tasks/fault-recovery.md)。按角色阅读见[角色路径](../roles/reading-by-role.md)。
 
 ## 场景阅读入口
 

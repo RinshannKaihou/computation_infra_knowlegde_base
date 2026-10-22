@@ -71,6 +71,8 @@ related_ids:
 7. [三平台安装基线、迁移升级与回退验证](../../knowledge/02-software-stack/environment-installation-and-upgrade.md)与[兼容性证据方法](../../knowledge/02-software-stack/compatibility-evidence.md)：变更的准入门槛与证据判定。
 8. [可靠性维度与故障域](../../knowledge/08-reliability/dimensions-and-failure-domains.md)与[故障模型与传播](../../knowledge/08-reliability/fault-models-and-propagation.md)：把失效模式纳入设计。
 
+准备阶段任务路径（把上述知识组织成带前置材料与停止条件的执行前阅读顺序）：[选型与容量](../tasks/selection-and-capacity.md) · [节点验收](../tasks/node-acceptance.md) · [环境安装](../tasks/environment-installation.md)。
+
 **能回答的问题**：超节点相对集群换来了什么、付出了什么共享故障域？某"官方支持"的平台组合证据是文档声明、源码状态还是实测？升级某层组件前必须先确认哪些回退条件？
 
 **完成检查**：能对给定场景（节点数、模型规模、可用性目标）写出五类目标的主次与验收表；能指出任一选型结论的证据类型与边界（很多为文档样板、未实测）。
@@ -84,7 +86,7 @@ related_ids:
 **阅读顺序**：
 
 1. [可靠性方法总览](../../knowledge/08-reliability/index.md)与[证据与假设](../../knowledge/08-reliability/evidence-and-hypotheses.md)：症状/事件/观察/假设/结论的纪律。
-2. [训练排障路径](../tasks/training-triage.md)与[推理排障路径](../tasks/inference-triage.md)：按现象找首要入口（平台分支见[昇腾](../platforms/ascend.md)/[NVIDIA](../platforms/nvidia.md)专题）。
+2. [训练排障路径](../tasks/training-triage.md)与[推理排障路径](../tasks/inference-triage.md)：按现象找首要入口（平台分支见[昇腾](../platforms/ascend.md)/[NVIDIA](../platforms/nvidia.md)/[AMD](../platforms/amd.md)专题）。准备阶段另见[选型与容量](../tasks/selection-and-capacity.md)/[节点验收](../tasks/node-acceptance.md)/[环境安装](../tasks/environment-installation.md)三条任务路径；运行阶段另见[性能优化](../tasks/performance-optimization.md)、[迁移与升级](../tasks/migration-and-upgrade.md)与[故障恢复](../tasks/fault-recovery.md)任务路径。
 3. 领域分诊按需进入：[HCCL 超时](../../knowledge/03-communication/hccl-timeout-triage.md)、[NCCL 超时](../../knowledge/03-communication/nccl-timeout-triage.md)、[慢 rank](../../knowledge/06-training/slow-rank-triage.md)、[数据饥饿](../../knowledge/04-data-storage/data-starvation-triage.md)、[推理 OOM（GPU/昇腾）](../../knowledge/07-inference/gpu-inference-oom-triage.md)、[版本错配](../../knowledge/02-software-stack/ascend-version-mismatch-triage.md)。
 4. [隔离、重试预算、降级与恢复选择](../../knowledge/08-reliability/mitigation-and-recovery-principles.md)与[可靠性统计、有效产出与恢复损失](../../knowledge/08-reliability/reliability-metrics-and-recovery-loss.md)：处置选择与损失记账。
 5. [静默错误与计算完整性](../../knowledge/08-reliability/silent-errors-and-integrity.md)：健康全绿但结果异常时的分层判定。
