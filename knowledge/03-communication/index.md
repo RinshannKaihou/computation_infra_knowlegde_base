@@ -10,7 +10,7 @@ source_refs:
 - src.nvidia.nccl-docs
 - src.nvidia.nccl-tests
 - src.ascend.agent-skills
-updated_at: '2026-09-30'
+updated_at: '2026-10-22'
 summary: 从网络和拓扑到集合通信，组织通信正确性、性能和故障证据。
 related_ids:
 - hardware.index
@@ -34,7 +34,7 @@ related_ids:
 
 # 03 互联网络与分布式通信
 
-本页是内容导航草稿，已有正文见下方；其余二级主题继续建设。正文尚无本地环境实测。`generic` 表示跨平台导航，不表示所有环境兼容。
+本页组织互联、RDMA、集合通信、三库档案与通信诊断的基础内容。HCCL Test 与目标环境的版本交集仍有开放证据缺口，见下方 03.5。正文均为草稿，未经本地环境实测。`generic` 表示跨平台导航，不表示所有环境兼容。
 
 ## 本章范围
 
@@ -67,9 +67,9 @@ related_ids:
 - **03.2 Ethernet、InfiniBand、RoCE 与 RDMA** — 已有[机制主干](ethernet-ib-roce-rdma.md)（verbs/QP/CQ/MR 与完成语义）。
 - **03.3 拓扑、路由、拥塞与性能基线** — [基础正文草稿](bandwidth-baselines.md)；新增[RDMA 基线与拥塞诊断](rdma-baseline-and-congestion-triage.md)（独立对照流程，待执行）。
 - **03.4 集合通信原理与通信模式** — [基础正文草稿](collectives-and-rank-progress.md)（已补原语数据流、代价模型与工作负载映射）。
-- **03.5 NCCL、RCCL、HCCL 等通信库** — [基础正文草稿](collectives-and-rank-progress.md)；完整平台分支和具体流程待补。
-- **03.6 通信初始化、rank 映射与执行次序** — [基础正文草稿](collectives-and-rank-progress.md)；完整平台分支和具体流程待补。
-- **03.7 超时、链路退化、通信热点与验证** — 已有 HCCL/NCCL 超时指南、公开案例和实验设计；已有[带宽退化诊断](bandwidth-degradation-triage.md)（口径/配置/链路三分支）；拥塞与热点专题待补。
+- **03.5 NCCL、RCCL、HCCL 等通信库** — [三库能力与版本档案](communication-library-profiles.md)与[RCCL 独立档案](rccl-runtime-and-verification.md)分列平台条件；HCCL Test × 目标 CANN/HDK/机型交集仍按[例外清单](../../docs/research/batch-19-blocked-1-exception.md)保持 open，不构成可部署组合。
+- **03.6 通信初始化、rank 映射与执行次序** — [集合通信与 rank 进度](collectives-and-rank-progress.md)说明参与者和次序契约，[三库档案](communication-library-profiles.md)及[RCCL 档案](rccl-runtime-and-verification.md)分列初始化、映射与执行条件。
+- **03.7 超时、链路退化、通信热点与验证** — 已有 HCCL/NCCL 超时指南、公开案例和实验设计；已有[带宽退化诊断](bandwidth-degradation-triage.md)（口径/配置/链路与热点分支），以及[RDMA 拥塞诊断](rdma-baseline-and-congestion-triage.md)；所有对照和恢复验证仍待现场执行。
 
 ## 内容边界
 
@@ -99,6 +99,6 @@ HCCL 独立记录其环境、拓扑、设备与 rank 关系以及诊断证据。
 - [NVIDIA nccl-tests](https://github.com/NVIDIA/nccl-tests)：通信验证项目入口；测试方法及结果需匹配环境。
 - [Ascend Agent Skills](https://github.com/Ascend/agent-skills)：HCCL 测试等任务的资料入口。
 
-## 首轮成果与后续
+## 内容范围与后续维护
 
-已有 collective/rank 与带宽参考，以及 HCCL/NCCL 超时指南、案例和实验设计；新增互联路径双样板、RDMA 机制主干、RDMA 基线诊断流程与集合通信扩展映射；后续补拥塞热点专题与匹配环境的通信验证。
+已有 collective/rank 与带宽参考，以及 HCCL/NCCL 超时指南、案例和实验设计；新增互联路径双样板、RDMA 机制主干、RDMA 基线诊断流程与集合通信扩展映射；已有带宽退化与热点分支、三库条件档案和 RCCL 独立样板；后续补齐 HCCL Test 交集证据与匹配环境的通信验证。

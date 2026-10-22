@@ -6,14 +6,14 @@ domain: hardware
 status: draft
 platforms: [generic]
 source_refs: [src.infrasys.aiinfra, src.ascend.agent-skills]
-updated_at: "2026-10-09"
+updated_at: '2026-10-22'
 summary: 理解供电散热、主机与加速器组成，建立节点和硬件故障域的知识入口。
 related_ids: [hardware.resource-topology, software-stack.index, communication.index, cluster-platform.index, reliability.index, hardware.health-evidence, hardware.power-thermal-evidence, hardware.node-acceptance-triage, hardware.rack-power-cooling-and-failure-domains, hardware.numa-memory-and-io-locality, hardware.accelerator-execution-and-data-movement, hardware.bmc-firmware-and-events, hardware.node-selection-and-lifecycle]
 ---
 
 # 01 物理设施与计算节点
 
-本页是内容导航草稿。已建设的正文见下方入口，其余二级主题仍待补充；正文均为草稿，未经本地环境实测。`generic` 表示跨平台导航，不表示所有环境兼容。
+本页组织机柜与节点、主机资源、加速器、硬件健康和生命周期的基础内容。正文均为草稿，未经本地环境实测；真实验收环境档案仍待验证轨道补齐。`generic` 表示跨平台导航，不表示所有环境兼容。
 
 ## 已有正文
 
@@ -43,7 +43,7 @@ related_ids: [hardware.resource-topology, software-stack.index, communication.in
 
 - **01.1 机柜、供电、散热与故障域** — 已有[机柜供电、散热预算与共享依赖](rack-power-cooling-and-failure-domains.md)与[供电散热与性能退化证据](power-thermal-evidence.md)；BMC/带外事件见[BMC、固件身份与跨层硬件事件](bmc-firmware-and-events.md)。
 - **01.2 CPU、NUMA、主机内存与 I/O** — 已有[NUMA、主机内存与 I/O 局部性的成对验证](numa-memory-and-io-locality.md)与[资源与拓扑参考](resource-topology.md)。
-- **01.3 GPU/NPU 的执行单元、设备内存与数据移动** — 已有[加速器执行单元、内存层次与数据移动机制](accelerator-execution-and-data-movement.md)；NPU 主机传输/同步语义细节待补充。
+- **01.3 GPU/NPU 的执行单元、设备内存与数据移动** — 已有[加速器执行单元、内存层次与数据移动机制](accelerator-execution-and-data-movement.md)；NPU 主机传输、stream/event 与同步语义见[昇腾内存与 OOM 证据](../02-software-stack/ascend-memory-oom-evidence.md)。
 - **01.4 板卡、服务器、节点与超节点组成** — 已有[资源与拓扑参考](resource-topology.md)的四层次组成与 NVIDIA GB200 NVL72、Atlas 900 A3 SuperPoD、AMD OEM 节点样板。
 - **01.5 BMC、固件、硬件健康与错误信息** — 已有[健康证据参考](health-evidence.md)（含三平台错误码映射）与[BMC、固件身份与跨层硬件事件](bmc-firmware-and-events.md)。
 - **01.6 节点选型、验收与设备生命周期** — 已有[新节点与返修节点验收](node-acceptance-triage.md)与[节点选型、隔离返修、长期管理与退役](node-selection-and-lifecycle.md)；真实验收环境档案仍属独立验证轨道。
@@ -74,6 +74,6 @@ related_ids: [hardware.resource-topology, software-stack.index, communication.in
 - [AIInfra 项目仓库](https://github.com/Infrasys-AI/AIInfra)：计算节点和集群基础设施资料入口。
 - [Ascend Agent Skills](https://github.com/Ascend/agent-skills)：昇腾设备查询等任务的资料组织参考；具体技能需核对操作影响。
 
-## 首轮成果与后续
+## 内容范围与后续维护
 
-已有节点资源/拓扑（含板卡到超节点四层次与三平台样板）、健康证据（含三平台错误码映射）、供电散热参考、机柜预算、NUMA 局部性方法、加速器执行与数据移动概念、BMC/固件/事件参考、节点验收流程与选型/生命周期流程；后续补充验收环境档案规范与其余领域内容，并开展匹配环境验证。
+已有节点资源/拓扑（含板卡到超节点四层次与三平台样板）、健康证据（含三平台错误码映射）、供电散热参考、机柜预算、NUMA 局部性方法、加速器执行与数据移动概念、BMC/固件/事件参考、节点验收流程与选型/生命周期流程；验收环境档案字段与证据接入规范见[节点验收流程](node-acceptance-triage.md)；真实档案与匹配环境验证仍由独立验证轨道补齐。

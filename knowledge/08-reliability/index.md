@@ -6,7 +6,7 @@ domain: reliability
 status: draft
 platforms: [generic]
 source_refs: [src.ascend.mind-cluster, src.nvidia.nccl-docs, src.stas.ml-engineering]
-updated_at: "2026-10-22"
+updated_at: '2026-10-22'
 summary: 建立跨领域的故障模型、证据推理、恢复与验证方法；含八主题五方面入口表与交付核对。
 related_ids: [hardware.index, communication.index, data-storage.index, cluster-platform.index, training.index, inference.index, reliability.dimensions-and-failure-domains, reliability.evidence-and-hypotheses, reliability.silent-errors-and-integrity, reliability.fault-models-and-propagation, reliability.correlated-failure-source-case, reliability.mitigation-and-recovery-principles, reliability.test-design-and-coverage, reliability.reliability-metrics-and-recovery-loss, reliability.postmortem-and-knowledge-update, reliability.diagnostic-evaluation-method, reliability.diagnostic-evaluation-fixtures]
 ---
@@ -111,6 +111,6 @@ GPU 与 NPU 共用证据、假设和验证的表达方式；平台错误码、�
 - [NVIDIA NCCL 用户指南](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/index.html)：通信领域的诊断资料，可用于练习区分观察、推断和验证。
 - [ML Engineering 项目仓库](https://github.com/stas00/ml-engineering)：工程诊断和测试资料入口。
 
-## 成果与后续
+## 内容范围与后续维护
 
-已有可靠性维度、故障域与证据推理方法，七组公开来源案例已按环境、时间线和结果边界整理；Batch 29 新增故障模型/传播、相关故障案例与处置选择三篇；Batch 30 补齐 SDC 检测/传播/平台证据、统一测试方法、可靠性统计、事故复盘与诊断评测方法及公开题组；八主题五方面入口表、阅读检查清单与交付核对已随 T08-09 交付（2026-10-22，审阅待做）。后续维护方向：具体领域案例继续按复盘触发补入、全部真实环境验证（V 工作包）与独立评测集外置获取（V12）。
+已有可靠性维度、故障域与证据推理方法，七组公开来源案例已按环境、时间线和结果边界整理；Batch 29 新增故障模型/传播、相关故障案例与处置选择三篇；Batch 30 补齐 SDC 检测/传播/平台证据、统一测试方法、可靠性统计、事故复盘与诊断评测方法及公开题组；八主题五方面入口表、阅读检查清单与交付核对已随 T08-09 交付（2026-10-22，原审阅范围的发现已修订并复核关闭，见[批次审计](../../docs/research/batch-32-source-audit.md)）。后续维护方向：具体领域案例继续按复盘触发补入、全部真实环境验证（V 工作包）与独立评测集外置获取（V12）。

@@ -12,7 +12,7 @@ source_refs:
   - src.ceph.docs-rgw-s3-latest-boundary
   - src.lustre.ops-manual-2x
   - src.lustre.release-info-wiki
-updated_at: "2026-10-14"
+updated_at: '2026-10-22'
 summary: 以 Ceph Squid（v19 分支文档＋v19.2.7 实现锚）RGW S3 接口与 Lustre 2.x 手册（稳定锚 LTS 2.15.x）为双样板，解释对象 key/version、multipart、读回与 Lustre 命名空间/分条/锁/一致性，及部署组成、选型、瓶颈、观察点与最小验证设计。
 related_ids:
   - data-storage.local-and-shared-storage
@@ -26,7 +26,7 @@ verification:
     - src.ceph.repo-v19.2.7
     - src.lustre.ops-manual-2x
     - src.lustre.release-info-wiki
-  notes: "最终核对范围（初审修订后待复核）：Squid S3 三页条目、RGW 索引部署入口、v19.2.7 src/rgw 定位、Lustre 手册 §1/§12/§19/§20/§22/§23/§34/§39 与术语表；latest 页仅边界；未做任何创建/读写实测。"
+  notes: "最终核对范围（修订与第五次定向复核已完成；记录见 docs/research/batch-20-t04-03-claude-recheck-5.md）：Squid S3 三页条目、RGW 索引部署入口、v19.2.7 src/rgw 定位、Lustre 手册 §1/§12/§19/§20/§22/§23/§34/§39 与术语表；latest 页仅边界；未做任何创建/读写实测。"
 ---
 
 # 对象与并行存储版本化参考

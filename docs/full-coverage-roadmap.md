@@ -1,5 +1,7 @@
 # 原设计 63 个主题的后续完整覆盖规划
 
+> 规划与执行归档：Batch 13–32 已完成约定交付（含条件验收），本文保留原交付范围、批次设计与执行记录。当前覆盖及证据缺口见[主题盘点](topic-coverage-audit.md)和[收尾分析](research/batch-01-32-closure-audit.md)。
+
 规划日期：2026-10-08。沿用 9 个领域、63 个二级主题和现有稳定内容 ID，以 Batch 01–12 的覆盖盘点为基线。本文与 YAML 清单是规划产物，不增加正文覆盖率、来源核验数或实测完成数。
 
 [逐项内容任务与批次](../plans/full-coverage-backlog.yaml)是执行清单；[补充来源工作包](../plans/followup-source-acquisition.yaml)与[独立验证工作包](../plans/validation-backlog.yaml)分别管理材料和真实证据。原始范围见[内容总目录](../content-outline.md)，当前完成情况见[覆盖盘点](topic-coverage-audit.md)。

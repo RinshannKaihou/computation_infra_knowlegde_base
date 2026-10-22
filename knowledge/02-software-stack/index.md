@@ -10,7 +10,7 @@ source_refs:
 - src.ascend.torch-npu
 - src.ascend.agent-skills
 - src.infrasys.aiinfra
-updated_at: '2026-10-09'
+updated_at: '2026-10-22'
 summary: 组织驱动、运行时、编译器、算子与框架适配，并记录环境配套条件。
 related_ids:
 - software-stack.layers-and-boundaries
@@ -39,7 +39,7 @@ related_ids:
 
 # 02 系统软件与加速器执行栈
 
-本页是内容导航草稿。首批正文见下方阅读顺序，二级主题仍有待补充；所有文章均为草稿，尚未开展本地环境实测。`generic` 表示跨平台导航，不表示所有环境兼容。
+本页组织软件栈分层、三平台文档样板、执行机制、内存精度和安装迁移方法。正文均为草稿，未经本地环境实测；具体版本交集及精度契约的未知项以对应正文为准。`generic` 表示跨平台导航，不表示所有环境兼容。
 
 ## 首批正文与阅读顺序
 
@@ -112,6 +112,6 @@ CANN、驱动、框架与 torch_npu、算子包和执行模式均在本章定位
 - [Ascend Agent Skills](https://github.com/Ascend/agent-skills)：环境配置与适配任务的结构参考；本库尚未执行这些技能。
 - [AIInfra 项目仓库](https://github.com/Infrasys-AI/AIInfra)：软件栈在基础设施体系中的上下文。
 
-## 首轮成果与后续
+## 内容范围与后续维护
 
 已有分层（含三栈职责对照）、配套证据、三平台文档档案（NVIDIA/昇腾/AMD ROCm）、运行时初始化/同步/库装载参考、主机资源与设备访问诊断、算子/编译/图执行机制与 GPU 侧排障指南、框架后端适配核对、GPU 内存与 OOM 证据、精度语义基础、三平台安装/升级/回退方法档案（T02-12），以及昇腾配套失败指南、案例和实验设计；真实安装与升级执行由验证轨道推进。

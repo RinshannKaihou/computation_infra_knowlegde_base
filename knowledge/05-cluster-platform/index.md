@@ -10,7 +10,7 @@ source_refs:
 - src.ascend.mind-cluster
 - src.ascend.agent-skills
 - src.infrasys.aiinfra
-updated_at: '2026-10-18'
+updated_at: '2026-10-22'
 summary: 组织容器、设备资源管理、调度、多租户和集群变更。
 related_ids:
 - cluster-platform.device-resource-chain
@@ -34,7 +34,7 @@ related_ids:
 
 # 05 集群平台与资源管理
 
-本页是内容导航草稿。已建设的正文见下方入口，其余二级主题仍待补充；正文均为草稿，未经本地环境实测。`generic` 表示跨平台导航，不表示所有环境兼容。
+本页组织镜像与设备资源、作业生命周期、调度隔离、平台变更和恢复方法。正文均为草稿，未经本地环境实测；现场配置、资源账本与演练结果需单独验证。`generic` 表示跨平台导航，不表示所有环境兼容。
 
 ## 已有正文
 
@@ -109,6 +109,6 @@ Device Plugin、NPU Exporter、容器设备可见性和 MindCluster 的平台能
 - [Ascend Agent Skills](https://github.com/Ascend/agent-skills)：设备与容器环境相关任务的组织参考。
 - [AIInfra 项目仓库](https://github.com/Infrasys-AI/AIInfra)：云原生平台与资源管理的背景资料。
 
-## 首轮成果与后续
+## 内容范围与后续维护
 
 已有设备状态链、准入放置、Kubernetes/Slurm 作业生命周期、加速器共享与租户隔离、争用与容量验证、节点摘除与平台变更回退、控制面故障与恢复，以及容器内 NPU 可见性指南、案例和实验设计；后续补调度失败专题的现场验证与 V11 类演练。

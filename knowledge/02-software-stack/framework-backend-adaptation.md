@@ -23,7 +23,7 @@ source_refs:
   - src.mindspore.pluggable-device-2.5.0
   - src.vllm.platform-interface-0.14
   - src.vllm.plugin-system-v0-14
-updated_at: "2026-10-09"
+updated_at: '2026-10-22'
 summary: "以 PyTorch PrivateUse1 树外后端机制为责任清单主干，按设备选择、forward/backward、dtype/layout、算子覆盖与 fallback、编译、并行与引擎插件六项逐项核对 PyTorch CUDA/ROCm 内置路径与 TorchNPU 扩展后端（v7.2.0-pytorch2.6.0 固定快照），并以 MindSpore 可插拔设备（r2.5.0）与 vLLM 平台接口（v0.14.0）作第三方抽象责任对照；适配成功以任务级结果验证为准，不以 import 成功为准。"
 related_ids:
   - software-stack.layers-and-boundaries
@@ -117,4 +117,4 @@ PyTorch for HIP 有意复用 `torch.cuda` 接口（`device('cuda')` 写法、`is
 - 第三方对照：[MindSpore pluggable device（r2.5.0）](https://www.mindspore.cn/docs/en/r2.5.0/design/pluggable_device.html)、[vLLM interface.py @b17039b](https://raw.githubusercontent.com/vllm-project/vllm/b17039bccc17b94a2ea107272ad7bc93508708df/vllm/platforms/interface.py)。
 - 逐条主张与证据定位见[第十七批框架后端来源记录](../../docs/research/batch-17-framework-backend-sources.md)。
 - 待确认：TorchNPU 固定 commit 的 `test/npu/*` 用例名（blocked，目录页 504）；CANN/HDK 精确交集与 HCCL 配套（unknown，沿用分层文缺口）；vLLM 树内 CUDA/ROCm 平台职责页（unknown）；ROCm 文档站文本许可（unknown）。
-- 修订记录：2026-10-09 按初审 B17-C09/C10 修订（Storage 范围限定、逐能力测试表与适用分支；见 [batch-17-review-fixes.md](../../docs/research/batch-17-review-fixes.md)），定向复核待执行。
+- 修订记录：2026-10-09 按初审 B17-C09/C10 修订（Storage 范围限定、逐能力测试表与适用分支；见 [batch-17-review-fixes.md](../../docs/research/batch-17-review-fixes.md)），相关发现已完成[定向复核](../../docs/research/batch-17-codex-sixth-recheck.md)，本条目已关闭项不再待复核；本地环境验证仍未执行。

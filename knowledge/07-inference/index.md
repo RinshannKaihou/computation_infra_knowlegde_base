@@ -10,7 +10,7 @@ source_refs:
 - src.ascend.vllm-ascend
 - src.ascend.agent-skills
 - src.stas.ml-engineering
-updated_at: '2026-10-21'
+updated_at: '2026-10-22'
 summary: 组织模型推理执行、服务流量、性能指标和故障恢复；含八主题五方面入口表与缓存/SLO 边界交付核对。
 related_ids:
 - software-stack.index
@@ -39,7 +39,7 @@ related_ids:
 
 # 07 推理与服务系统
 
-本页是内容导航草稿。所列正文的编辑审阅已在各自批次闭环（记录见交付核对小节），但仍为 draft、未经本地环境实测；当前处于 T07-12 导航核对阶段。`generic` 表示跨平台导航，不表示所有环境兼容。
+本页是内容导航草稿。所列正文的编辑审阅已在各自批次闭环（记录见交付核对小节），但仍为 draft、未经本地环境实测；T07-12 的主题导航与边界核对已完成。`generic` 表示跨平台导航，不表示所有环境兼容。
 
 ## 已有正文
 
@@ -126,6 +126,6 @@ vLLM Ascend、MindIE 等引擎与后端分别建立环境和能力入口。模�
 - [Ascend Agent Skills](https://github.com/Ascend/agent-skills)：推理生态资料与 FAQ 整理流程的组织参考。
 - [ML Engineering 项目仓库](https://github.com/stas00/ml-engineering)：推理工程和性能问题资料入口。
 
-## 成果与后续
+## 内容范围与后续维护
 
 已有执行/KV、指标字典、昇腾长尾指南/案例/实验设计、OOM 诊断（昇腾＋GPU）、量化质量验证、PD 分离说明与路由/流控、扩缩容、发布恢复，以及引擎组件/MindIE/分布式布局档案；八主题五方面入口表与缓存/SLO 边界交付核对已随 T07-12 交付（2026-10-21）。后续维护方向：昇腾侧量化实测、容量与 SLO 实测基线、两篇 OOM 指南的来源案例与实验补齐，及全部真实环境验证（V 工作包）。

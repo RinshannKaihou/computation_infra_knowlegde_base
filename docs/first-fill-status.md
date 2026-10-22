@@ -1,5 +1,7 @@
 # 首轮内容交付核对
 
+> 历史归档：本文件保留首轮交付快照及当时的状态、建议和模型记录，不作为当前续作指令。当前入口见 [README](../README.md)，覆盖与开放项见[主题盘点](topic-coverage-audit.md)，现行编写与审阅规则见[写作指南](authoring-guide.md)。
+
 更新：2026-09-30。首轮 41 项正文已交付，任务清单全部为 done；第三至第七批已完成独立 astra/xhigh 审阅、修订及定向复核，发现均已关闭。以下统计以本次实际文件和构建结果为准，不计模板、调研笔记或候选来源为正文。
 
 2026-09-30 补审更新：用户授权 Codex 主助手替代 astra 审阅 batch 01、02、08、09，已完成[四批补审](research/batch-01-02-08-09-codex-review-summary.md)、修订和[定向复核](research/batch-02-08-09-codex-recheck.md)。batch 01 无修改项；其他三批的 9 项唯一发现（5 P2、4 P3）全部关闭。以下正文统计和首轮检查数字保留为首轮交付快照；当前目录为 60 entries / 71 sources，第二轮新增范围见 README 与 batch 08/09 来源审计。正文仍为 draft，本次没有硬件验证。

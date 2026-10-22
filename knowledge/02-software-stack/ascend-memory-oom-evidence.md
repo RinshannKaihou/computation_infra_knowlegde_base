@@ -20,7 +20,7 @@ source_refs:
   - src.ascend.torch-npu-v7.2.0-copy-nonblocking
   - src.ascend.torch-npu-v7.2.0-pinned-host-alloc
   - src.ascend.torch-npu-v7.2.0-stream-event
-updated_at: "2026-10-09"
+updated_at: '2026-10-22'
 summary: 区分昇腾 NPU 的物理设备内存、框架分配/保留、算子 workspace 与碎片证据；固定 TorchNPU/CANN 来源版本，说明 OOM 报错的抛出层与异步执行的归因边界；补齐主机内存与 H2D/D2H 传输、stream/event 三类同步、TorchNPU non_blocking 原生语义与 host buffer 生命周期（CUDA 同名语义明确不作 NPU 证据）。
 related_ids:
   - software-stack.layers-and-boundaries
@@ -175,4 +175,4 @@ Event 资源在首次 Record 时才申请（受单 Device 上限约束）；Reco
 - 逐文件读取范围与失败记录见[第八批内存来源记录](../../docs/research/batch-08-memory-sources.md)。
 - 待确认：npu-smi 口径；workspace 与张量池相互挤压的量化关系；expandable_segments 的生产效果；CANN 算子 workspace 的版本化文档章节；异步错位的直接官方证据；其他 TorchNPU/CANN 版本的选项集与文案。
 - 待确认（2026-10-09 加法）：`aclrtSynchronizeEvent/WithTimeout` 正文细读；`aclrtSetOpWaitTimeout` 与 StreamWait 联动语义；`HOST_TO_BUF_TO_DEVICE` 是否被 TorchNPU 拷贝路径使用；`AclrtMemcpyAsyncWithConditionExist` 条件含义；四步待执行验证与三失败分支的实机执行。
-- 修订记录：2026-10-09 按初审 B17-C02/C12 修订（`non_blocking` 条件同步分列；枚举计数 9→8；见 [batch-17-review-fixes.md](../../docs/research/batch-17-review-fixes.md)），定向复核待执行。
+- 修订记录：2026-10-09 按初审 B17-C02/C12 修订（`non_blocking` 条件同步分列；枚举计数 9→8；见 [batch-17-review-fixes.md](../../docs/research/batch-17-review-fixes.md)），相关发现已完成[定向复核](../../docs/research/batch-17-codex-sixth-recheck.md)，本条目已关闭项不再待复核；本地环境验证仍未执行。

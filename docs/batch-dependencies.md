@@ -1,5 +1,7 @@
 # Batch 13–32 依赖关系与并行推进
 
+> 历史依赖视图：Batch 13–32 已完成约定交付（含条件验收），下文保留原任务图与调度规则用于追溯，不是待启动队列。当前开放项见[收尾分析](research/batch-01-32-closure-audit.md)，现行审阅约定见[写作指南](authoring-guide.md#7-批次审阅约定)。
+
 更新时间：2026-10-08。依据[主执行清单](../plans/full-coverage-backlog.yaml)的 85 项任务 `depends_on` 推导，完整机器可读视图见[依赖清单](../plans/batch-dependencies.yaml)。任务依赖不变；批次表与图只是它的投影。此表不判断正在其他会话中运行的批次是否完成，完成状态以实际交付、审阅与复核记录为准。
 
 ## Batch 14 为什么依赖 Batch 13

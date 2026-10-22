@@ -19,7 +19,7 @@ source_refs:
   - src.nfs-utils.nfs-5-man7
   - src.ietf.rfc-8881
   - src.ceph.docs-bluestore-squid
-updated_at: "2026-10-14"
+updated_at: '2026-10-22'
 summary: "checkpoint 与制品的完整性证据分四层，外加校验原语对照、选定后端读路径责任、清单到结果的验证链与官方反例；DCP 2.6 FileSystem 路径未见独立内容摘要，MindIO checker 只数文件个数，Ceph 默认不自动修复，RADOS scrub 不等于 RGW 端到端校验；分别限定证据范围。"
 related_ids:
   - data-storage.checkpoint-durability
@@ -44,7 +44,7 @@ verification:
     - src.nfs-utils.nfs-5-man7
     - src.ietf.rfc-8881
     - src.ceph.docs-bluestore-squid
-  notes: "最终核对范围（T04-05 修订后待复核）：既有四层来源不变，新增 SRE 章（validator/恢复原则/两案例）、Squid RGW/BlueStore（ETag/版本化/读修复/32-bit 漏检量级）、Lustre §23.5.1 全文（两类 checksum/重试/EIO/adler32）、nfs(5) 传输损坏与 krb5i、safetensors/hub 行号；签名机制未取（unknown）；未执行任何保存、损坏注入或修复操作。"
+  notes: "最终核对范围（T04-05 已完成修订与定向复核；记录见 docs/research/batch-20-t04-05-claude-recheck-3.md）：既有四层来源不变，新增 SRE 章（validator/恢复原则/两案例）、Squid RGW/BlueStore（ETag/版本化/读修复/32-bit 漏检量级）、Lustre §23.5.1 全文（两类 checksum/重试/EIO/adler32）、nfs(5) 传输损坏与 krb5i、safetensors/hub 行号；签名机制未取（unknown）；未执行任何保存、损坏注入或修复操作。"
 ---
 
 # Checkpoint 完整性与校验证据
@@ -136,7 +136,7 @@ PyTorch 2.6 的 DCP（固定 v2.6.0 源码）：
 
 ## 验证链（T04-05 新增，只设计不执行）
 
-版本清单（commit/versionId/布局固定）→ 完整读回（全文件/全对象读出；注意 DCP 按 offset 读取不等于完整读回，见下）→ 应用结构检查（格式门，见制品传输 §3）→ 同输入结果（正确性门：训练 checkpoint 见恢复一致性"恢复后验证"；推理制品归 T07-01，未交付，unknown）。四类错误区分：
+版本清单（commit/versionId/布局固定）→ 完整读回（全文件/全对象读出；注意 DCP 按 offset 读取不等于完整读回，见下）→ 应用结构检查（格式门，见制品传输 §3）→ 同输入结果（正确性门：训练 checkpoint 见恢复一致性"恢复后验证"；推理加载见[权重加载与就绪诊断](../07-inference/model-loading-and-readiness.md)，结果质量见[输出质量评估](../07-inference/output-quality-evaluation.md)，现场结果仍未验证）。四类错误区分：
 
 - 缺片/缺成员（清单有、读回无）：发布/传输失败，见制品传输 §3；
 - 错版（revision/versionId 与清单不符）：版本机制判定，见对象存储 §5；
@@ -150,4 +150,4 @@ DCP 实例化：清单对应 `.metadata` 中 `storage_data` 列出的 `.distcp` 
 - hub 测试 `test_resume_from_incomplete`（L798–806）：测试期望值为 `"XXXXent"` 但 L804 缺 `assert`（测试未强制）；实现以长度为完成判据（见制品传输 §4）。反例含义以此为限。
 - 检测信号（非反例，列于此供对照）：Ceph PG_DAMAGED/OSD_SCRUB_ERRORS 报警（见前文 §3）；Lustre `BAD WRITE CHECKSUM` 日志（见上表）。
 - SRE 章官方支撑（不外推到 AI checkpoint）：Gmail out-of-band validator 在生产中发现过真实完整性问题；"data recovery plans should not rely upon replication"（与"写入前已错的字节会被多副本忠实保存"同义）；"the only test that should let you sleep at night is a full end-to-end test"；案例 Gmail 2011 磁带恢复、Google Music 2012 误删数周后发现（见 [SRE 数据完整性章](https://sre.google/sre-book/data-integrity/)）。
-- 修复/repair 前保留损坏证据的顺序为**本库设计约定**（文件＋清单＋日志快照 → 隔离 → 选恢复点 → 复验；Ceph repair 前的不一致对象清单无官方原文，unknown）：训练状态恢复按[恢复诊断指南](../06-training/checkpoint-state-recovery-triage.md)（[适用范围与前置条件](../06-training/checkpoint-state-recovery-triage.md)、[停止条件与恢复安排](../06-training/checkpoint-state-recovery-triage.md)、[完成判据](../06-training/checkpoint-state-recovery-triage.md)）；存储侧 repair/隔离流程归 T04-07（batch 21，未交付），缺失部分 unknown，不以 concept 页代替。
+- 修复/repair 前保留损坏证据的顺序为**本库设计约定**（文件＋清单＋日志快照 → 隔离 → 选恢复点 → 复验；Ceph repair 前的不一致对象清单无官方原文，unknown）：训练状态恢复按[恢复诊断指南](../06-training/checkpoint-state-recovery-triage.md)（[适用范围与前置条件](../06-training/checkpoint-state-recovery-triage.md)、[停止条件与恢复安排](../06-training/checkpoint-state-recovery-triage.md)、[完成判据](../06-training/checkpoint-state-recovery-triage.md)）；存储侧 repair/隔离与恢复验证见[存储客户端、后端异常与恢复验证](storage-client-backend-recovery.md)，未核对机制与实际执行缺口继续以该流程正文为准，不以 concept 页代替。

@@ -23,7 +23,7 @@ source_refs:
   - src.huawei.mindx-dl-60rc2-ascend-dmi-2026-09-29
   - src.nvidia.dgx-h100-h200-user-guide-2026-01-26
   - src.nvidia.dgx-superpod-dc-design-h100-2026-10-08
-updated_at: "2026-10-09"
+updated_at: '2026-10-22'
 summary: 把加速计算节点从选型、入库、验收、投产、降额、隔离、返修、回服到退役组织成可审计的状态机；容量与成本比较区分峰值规格与有效能力，长期健康比较要求同身份、同版本与观测窗口，退役数据处置以 NIST SP 800-88 Rev.2 和 OEM 官方说明为准，每次状态变更保留证据与角色记录。
 related_ids:
   - hardware.node-acceptance-triage
@@ -150,7 +150,7 @@ NVIDIA 侧的长期监控组件为 NVSM（[NVSM User Guide Release 25.03](https:
 
 ### 调度退出
 
-节点 drain（驱逐负载、标记不可调度）属于集群平台职责，本文只定义硬件侧衔接：进入退役流程前，节点须经平台侧完成 drain 并确认无残留负载；该流程在 05 领域（[集群平台与资源管理](../05-cluster-platform/index.md)）承载，其「节点上下线、升级、发布与变更」主题当前标注待建设——本库尚无调度侧退出流程正文，衔接动作的现场证据（drain 记录、残留负载确认）按本文状态表要求先行保留。
+节点 drain（驱逐负载、标记不可调度）属于集群平台职责，本文只定义硬件侧衔接：进入退役流程前，节点须经平台侧完成 drain 并确认无残留负载；该流程见 05 领域的[节点摘除、drain 与资源回收](../05-cluster-platform/node-drain-resource-reclamation.md)及[平台变更与回退](../05-cluster-platform/platform-change-and-rollback.md)，衔接动作的现场证据（drain 记录、残留负载确认）按本文状态表要求先行保留。
 
 ### 数据/凭据处置（NIST SP 800-88 Rev.2）
 

@@ -11,7 +11,7 @@ source_refs:
   - src.ceph.docs-rgw-s3-squid
   - src.linux-man-pages.fsync-6.19
   - src.linux-man-pages.rename-6.19
-updated_at: "2026-10-14"
+updated_at: '2026-10-22'
 summary: 从制品清单身份到暂存、传输、提交、读回验证的持久化发布协议；制品格式以 safetensors v0.7.0、传输实现以 huggingface_hub v0.33.0 固定代码为样板，后端承诺复用 T04-02/03。
 related_ids:
   - data-storage.local-and-shared-storage
@@ -70,7 +70,7 @@ safetensors header 字段只有 dtype、shape、`data_offsets` 与可选 `__meta
 | 重试与清理（方法设计，未执行） | 幂等重试；文件侧残留：`.incomplete`、临时名、锁文件（删除仍被并发下载持有的锁文件的安全条件未核对，unknown），发现方法为缓存/暂存目录扫描后按清单比对清理；对象侧残留：in-progress multipart（按 List 查再 Abort）；不以对象 API 200 或 Future 完成证明全部持久 | — |
 | 端到端校验 | 清单 SHA-256 比对（下载后本地重算；LFS ETag 只作远端声称值） | — |
 | 应用格式检查 | 门槛：首字符 `{`、header ≤100MB（`MAX_HEADER_SIZE`）、offset 合法、字节区完整无空洞（`MetadataIncompleteBuffer`）、键不重复（[README L89](https://github.com/safetensors/safetensors/blob/v0.7.0/README.md)；解析器未必遵守）；通过≠数值有效（NaN/±Inf 可存在于文件，[README L94](https://github.com/safetensors/safetensors/blob/v0.7.0/README.md)） | [tensor.rs L10/L20–45/L73–91/L389](https://github.com/safetensors/safetensors/blob/fa27fa835a466cb50d07696ec20b94f46aed0e31/safetensors/src/tensor.rs) |
-| 正确性门 | 最低形式：固定输入下与参考输出比对，容差由负责任务定；归属 T07-01（batch 26，未交付）；本页不设通过条件 | 缺失部分 unknown |
+| 正确性门 | 最低形式：固定输入下与参考输出比对，容差由负责任务定；方法见[权重加载与就绪诊断](../07-inference/model-loading-and-readiness.md)，输出质量评估见[推理输出质量的对照评估](../07-inference/output-quality-evaluation.md)；本页不设任务容差 | 现场结果未验证 |
 
 ## 4. 上游实现/测试的阶段计时与失败点（只定位不执行）
 
@@ -89,9 +89,9 @@ safetensors header 字段只有 dtype、shape、`data_offsets` 与可选 `__meta
 ## 5. 链接
 
 - [Checkpoint 写入与持久化边界](checkpoint-durability.md)（提交/持久化语义，"文件同步与目录记录是两个层面"节）、[Checkpoint 完整性与校验证据](checkpoint-integrity-evidence.md)（"四层校验机制与各自边界"节）、[本地与共享文件存储 §4](local-and-shared-storage.md)（NFS 发布行）、[对象与并行存储 §2/§5](object-and-parallel-storage.md)（multipart/版本化/验证设计）。
-- 推理加载归 T07-01（batch 26，未交付），暂链[07 推理与服务系统](../07-inference/index.md)，缺失部分 unknown。
+- 推理加载见[权重加载、引擎 ready 与启动失败诊断](../07-inference/model-loading-and-readiness.md)；格式正确、引擎就绪与输出质量仍按各自判据分别验证。
 
 ## 来源与更新范围
 
 - 上表各入口（两仓库 tag、v0.33.0 版指南、tensor.rs、T04-02/03）。
-- 待确认：传输/commit 中断官方测试（除所列行外）；safetensors 读写测试；hub 续传之外的中断语义；推理加载实现；全部实测（未执行）。
+- 待确认：传输/commit 中断官方测试（除所列行外）；safetensors 读写测试；hub 续传之外的中断语义；目标环境的推理加载与结果验证；全部实测（未执行）。

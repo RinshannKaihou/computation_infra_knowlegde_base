@@ -10,7 +10,7 @@ source_refs:
 - src.ascend.torch-npu
 - src.ascend.mind-cluster
 - src.stas.ml-engineering
-updated_at: '2026-10-21'
+updated_at: '2026-10-22'
 summary: 组织训练状态、并行、框架执行、预训练微调、RL rollout、数值行为、性能与故障恢复；含八主题五方面入口表与交付核对。
 related_ids:
 - software-stack.index
@@ -124,6 +124,6 @@ related_ids:
 - [MindCluster 官方仓库](https://github.com/Ascend/mind-cluster)：训练故障恢复与相关组件资料入口，需逐项核对适用条件。
 - [ML Engineering 项目仓库](https://github.com/stas00/ml-engineering)：训练工程、性能与诊断资料入口。
 
-## 成果与后续
+## 内容范围与后续维护
 
 已有并行/状态（含 EP/CP 与组合映射）、框架执行职责对照、预训练与微调状态契约、RL rollout 协同、混合精度与收敛验证、性能分解与吞吐回归案例，以及精度迁移、恢复异常、慢 rank、弹性训练的指南/案例/实验设计；八主题五方面入口表与交付核对已随 T06-09 交付（2026-10-21）。后续维护方向：具体工作负载的执行结果（06.3）、verl V1 控制流等 unknown 的取证（06.4）、慢 rank 专用案例/实验补齐与全部真实环境验证（V 工作包）。

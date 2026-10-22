@@ -13,7 +13,7 @@ related_ids: [hardware.index, software-stack.index, training.index, inference.in
 
 # 00 导读与系统全景
 
-本页是内容导航草稿。训练与推理全流程已有正文，其余二级主题待补充；内容未经本地环境实测。`generic` 表示跨平台导航，不表示所有环境兼容。
+本页组织六个导读主题：系统边界、训练与推理路径、参考架构、设计权衡和阅读路径。内容均为草稿，未经本地环境实测。`generic` 表示跨平台导航，不表示所有环境兼容。
 
 ## 已有正文
 
@@ -64,6 +64,6 @@ related_ids: [hardware.index, software-stack.index, training.index, inference.in
 - [AIInfra 项目仓库](https://github.com/Infrasys-AI/AIInfra)：全栈主题组织与中文资料入口。
 - [ML Engineering 项目仓库](https://github.com/stas00/ml-engineering)：从工程问题进入硬件、训练与推理等主题。
 
-## 首轮成果与后续
+## 内容范围与后续维护
 
 已建立训练与推理端到端路径、统一术语与系统责任边界、参考架构与设计目标权衡、三角色阅读路径、六条任务路径与三平台入口（角色路径 2026-10-21，任务路径与 AMD 入口 2026-10-22，T00-05/06/07/08）。00.6 已随 Batch 32 审阅闭环（16 项发现全部 CLOSED）升为已覆盖（基础）；导航页均 draft、未实测。

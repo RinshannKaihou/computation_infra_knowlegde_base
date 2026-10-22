@@ -1,5 +1,7 @@
 # 知识库内容填充计划
 
+> 历史归档：本文件保留首轮填充计划及当时的状态、建议和模型记录，不作为当前续作指令。当前入口见 [README](../README.md)，覆盖与开放项见[主题盘点](topic-coverage-audit.md)，现行编写与审阅规则见[写作指南](authoring-guide.md)。
+
 创建：2026-09-29；更新：2026-10-08。首轮交付快照：首轮填充完成。41 篇正文草稿、13 个导航/路径条目和 63 项来源已交付；第三至第七批独立 astra/xhigh 审阅发现均已修订并复核关闭。实际范围和缺口见[首轮交付核对](first-fill-status.md)。正文均保留 `draft`，7 项实验均未执行。
 
 配套文件：[来源获取工作包](../plans/source-acquisition.yaml)、[内容任务清单](../plans/content-backlog.yaml)、[内容总目录](../content-outline.md)、[写作指南](authoring-guide.md)。

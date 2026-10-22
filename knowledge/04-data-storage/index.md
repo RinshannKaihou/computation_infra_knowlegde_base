@@ -6,14 +6,14 @@ domain: data-storage
 status: draft
 platforms: [generic]
 source_refs: [src.ascend.mind-cluster, src.stas.ml-engineering, src.infrasys.aiinfra]
-updated_at: "2026-10-08"
+updated_at: '2026-10-22'
 summary: 组织数据加载、模型和 checkpoint I/O，以及完整性、持久化和存储异常。
 related_ids: [data-storage.training-data-path, hardware.resource-topology, cluster-platform.index, training.index, inference.index, reliability.index, data-storage.checkpoint-durability, data-storage.data-starvation-triage, data-storage.checkpoint-slow-io-triage, data-storage.checkpoint-integrity-evidence, data-storage.local-and-shared-storage, data-storage.object-and-parallel-storage, data-storage.storage-workload-baselines, data-storage.storage-client-backend-recovery]
 ---
 
 # 04 数据路径与存储系统
 
-本页是内容导航草稿。已建设的正文见下方入口，其余二级主题仍待补充；正文均为草稿，未经本地环境实测。`generic` 表示跨平台导航，不表示所有环境兼容。
+本页组织数据供给、四类存储样板、制品发布、完整性、性能与恢复方法。相关交付已完成原审阅范围内的修订和复核；正文仍为草稿，未经本地环境实测。`generic` 表示跨平台导航，不表示所有环境兼容。
 
 ## 已有正文
 
@@ -25,11 +25,17 @@ related_ids: [data-storage.training-data-path, hardware.resource-topology, clust
 
 - [Checkpoint 慢写与恢复 I/O 诊断指南](checkpoint-slow-io-triage.md)：把保存/恢复慢定位到状态收集、staging 拷贝、后台写入、内核 writeback/fsync、存储后端或读路径。
 
-- [Checkpoint 完整性与校验证据](checkpoint-integrity-evidence.md)：容器格式、框架元数据、存储层 scrub、应用自检四层校验各自能发现什么，外加校验原语对照、选定后端读路径责任、验证链与官方反例（T04-05 修订，审阅中）；DCP 2.6 无应用层校验和、MindIO checker 校验文件个数、Ceph deep scrub 默认不自动修复。
+- [Checkpoint 完整性与校验证据](checkpoint-integrity-evidence.md)：容器格式、框架元数据、存储层 scrub、应用自检四层校验各自能发现什么，外加校验原语对照、选定后端读路径责任、验证链与官方反例（修订已完成原范围审阅与复核，仍未实测）；DCP 2.6 无应用层校验和、MindIO checker 校验文件个数、Ceph deep scrub 默认不自动修复。
 
 - [本地与共享文件存储版本化参考](local-and-shared-storage.md)：Linux v6.16 ext4/NVMe 与 NFSv4.1（RFC 8881＋nfs-utils 手册页）双样板，接口/缓存/一致性/持久性对照与负载选型。
 
 - [对象与并行存储版本化参考](object-and-parallel-storage.md)：Ceph Squid RGW S3 与 Lustre 2.x 双样板，对象语义/分条/锁/一致性对照与最小验证设计。
+
+- [模型制品与 Checkpoint 的传输、发布和读回](artifact-transfer-and-publication.md)：清单身份、暂存、传输、提交与读回，衔接推理加载和结果验证。
+
+- [存储负载、容量与长尾基线口径](storage-workload-baselines.md)：负载身份、计时分层与长尾比较的条件。
+
+- [存储客户端、后端异常与恢复验证](storage-client-backend-recovery.md)：区分客户端、后端和应用恢复边界，保留停止与复验要求。
 
 ## 本章范围
 
@@ -37,12 +43,12 @@ related_ids: [data-storage.training-data-path, hardware.resource-topology, clust
 
 ## 二级主题地图
 
-- **04.1 数据集、预处理、加载与缓存** — 已有[训练数据路径草稿](training-data-path.md)，具体配置与验证待补充。
-- **04.2 本地、共享、对象与并行存储** — 已有[本地与共享文件存储参考](local-and-shared-storage.md)（T04-02 已通过）与[对象与并行存储参考](object-and-parallel-storage.md)（T04-03 已交付草稿，审阅中）；主题验收留待 Batch 21。
-- **04.3 模型与 Checkpoint 的读写、传输和持久化** — 已有[持久化边界](checkpoint-durability.md)与[慢写/恢复 I/O 诊断](checkpoint-slow-io-triage.md)，新增[制品传输发布读回](artifact-transfer-and-publication.md)（T04-04 草稿，审阅中）；具体后端与操作验证待补。
-- **04.4 数据与文件完整性、版本和一致性** — 已有[Checkpoint 完整性与校验证据](checkpoint-integrity-evidence.md)（四层校验边界）；[持久化边界](checkpoint-durability.md)另有部分完整性说明，版本管理与一致性专题待补。
-- **04.5 I/O 性能、数据饥饿与长尾** — 已有[分阶段观测与判断](training-data-path.md)和[饥饿诊断指南](data-starvation-triage.md)，新增[负载容量长尾基线口径](storage-workload-baselines.md)（T04-06 草稿，审阅中）；案例待补充。
-- **04.6 存储异常、恢复与验证** — 新增[存储客户端后端恢复](storage-client-backend-recovery.md)（T04-07 草稿，审阅中；与计划 target 对齐）。
+- **04.1 数据集、预处理、加载与缓存** — [训练数据路径](training-data-path.md)包含数据集身份、预处理、缓存与游标契约；现场配置和测量仍需补齐。
+- **04.2 本地、共享、对象与并行存储** — [本地与共享文件存储](local-and-shared-storage.md)与[对象与并行存储](object-and-parallel-storage.md)提供四类版本化参考和验证方法，真实后端行为仍须现场核对。
+- **04.3 模型与 Checkpoint 的读写、传输和持久化** — [持久化边界](checkpoint-durability.md)、[慢写/恢复 I/O 诊断](checkpoint-slow-io-triage.md)与[制品传输发布读回](artifact-transfer-and-publication.md)串联状态、后端和读回判据；操作验证未执行。
+- **04.4 数据与文件完整性、版本和一致性** — [完整性与校验证据](checkpoint-integrity-evidence.md)与[制品传输发布读回](artifact-transfer-and-publication.md)覆盖四层校验、版本身份和结果验证链；签名等未核对机制以各正文 unknown 为准。
+- **04.5 I/O 性能、数据饥饿与长尾** — [负载容量长尾基线](storage-workload-baselines.md)连接[饥饿诊断](data-starvation-triage.md)与[Checkpoint I/O 诊断](checkpoint-slow-io-triage.md)；基线和案例材料的范围以所链正文为准。
+- **04.6 存储异常、恢复与验证** — [客户端与后端恢复](storage-client-backend-recovery.md)衔接训练侧恢复检查；方法与真实恢复结果分开验收。
 
 ## 内容边界
 
@@ -71,6 +77,6 @@ NPU 工作负载沿用本章的数据路径问题组织方式；涉及平台相�
 - [ML Engineering 项目仓库](https://github.com/stas00/ml-engineering)：数据与存储工程资料入口。
 - [AIInfra 项目仓库](https://github.com/Infrasys-AI/AIInfra)：集群存储和数据路径的背景资料。
 
-## 首轮成果与后续
+## 内容范围与后续维护
 
 已有数据供给、checkpoint 持久化边界、慢写诊断与完整性校验分层；训练状态恢复由 06 的专题承接。后续补选定存储实现的实测与受控验证。

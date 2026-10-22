@@ -24,7 +24,7 @@ source_refs:
   - src.amd.hip-memory-7.14.0
   - src.amd.hip-stream-ordered-alloc-7.14.0
   - src.amd.pytorch-rocm-fork
-updated_at: "2026-10-09"
+updated_at: '2026-10-22'
 summary: "补齐 CUDA/PyTorch GPU 内存管理证据：设备总量与可用量、框架 allocated/reserved、缓存分配器双池与碎片证据提示、workspace 与 graph 池的用途分解（经分配器分配，已含在 aggregate 内，不另行相加）、graph 活跃量与保留量的分窗口记录；给出按进程、rank、设备身份和阶段对齐的记录表与固定负载/单变量/恢复三对照；AMD（HIP 7.14.60850）能力与字段独立核对，不与 CUDA 合并阈值或 API。"
 related_ids:
   - software-stack.ascend-memory-oom-evidence
@@ -138,4 +138,4 @@ graph capture 同理：capture 期分配走 graph-private pool，但该 pool 的
 - AMD（docs-7.14.0）：[HIP Memory management](https://rocm.docs.amd.com/projects/HIP/en/docs-7.14.0/reference/hip_runtime_api/modules/memory_management.html)、[Stream ordered allocator](https://rocm.docs.amd.com/projects/HIP/en/docs-7.14.0/reference/hip_runtime_api/modules/memory_management/stream_ordered_memory_allocator.html)、[ROCm/pytorch fork](https://github.com/ROCm/pytorch)。
 - 逐条主张与证据定位见[第十七批 GPU 内存来源记录](../../docs/research/batch-17-gpu-memory-sources.md)。
 - 待确认：HIP 7.14.0 流序分配器逐条重核；CUDA Graph Management 6.30 逐节核对；MIOpen/rocBLAS workspace 对应机制；ROCm 构建默认 backend 与 fork/上游 allocator diff；HIP 错误码（hipErrorOutOfMemory 等）定位；驱动/固件常驻占用逐项取证；任何实测数值。
-- 修订记录：2026-10-09 按初审 B17-C01/C03/C04/C05/C11 修订（见 [batch-17-review-fixes.md](../../docs/research/batch-17-review-fixes.md)），定向复核待执行。
+- 修订记录：2026-10-09 按初审 B17-C01/C03/C04/C05/C11 修订（见 [batch-17-review-fixes.md](../../docs/research/batch-17-review-fixes.md)），相关发现已完成[定向复核](../../docs/research/batch-17-codex-sixth-recheck.md)，本条目已关闭项不再待复核；本地环境验证仍未执行。
