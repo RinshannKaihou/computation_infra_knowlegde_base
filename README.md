@@ -2,6 +2,10 @@
 
 面向 Human 与 Agent，共同覆盖 GPU/NPU、训练/后训练/推理。内容按系统领域组织，可靠性贯穿各章，平台和任务入口串联同一份正文。
 
+**当前状态（2026-10-22）：Batch 01–32 已交付，含 Batch 17/19 的条件验收；整体尚未完全闭环。** 后续规划 Batch 13–32 的 85 项内容任务全部 done。当前为 **135 个条目 / 577 项来源**；63 个主题中 62 个基础覆盖、1 个部分覆盖。B17-C08（累加精度与 TorchNPU cubeMathType 透传）和 BLOCKED-1（HCCL Test 与目标环境交集）仍开放；七份实验方案真实执行 **0/7**，V00 的 19 个准备实例全部 not_ready。全部内容保持 draft，本地 reproduced 为 0。详见[32 批收尾分析与开放项](docs/research/batch-01-32-closure-audit.md)。
+
+下列首轮及逐批说明保留对应交付日期的历史口径，当前统计以上述收尾分析和[主题覆盖盘点](docs/topic-coverage-audit.md)为准。
+
 **首轮状态（2026-09-30 首轮交付时口径）：首轮 41 篇正文草稿已交付。** 第三至第七批已完成独立 astra/xhigh 审阅及问题修订复核，首轮任务清单全部完成。九个领域已有基础正文，并提供 7 组诊断指南、公开来源案例和实验设计。首轮来源登记共 63 项，正文均保持草稿；尚未开展真实 GPU/NPU 环境验证。
 
 交付范围、审阅记录与证据缺口见[首轮内容交付核对](docs/first-fill-status.md)。首轮结束后已暂停，后续由 Opus 接手，见[交接提示词](docs/handoff-to-opus.md)。第二轮首批（batch 08）新增 3 篇：昇腾 NPU 内存与 OOM 证据、训练数据加载饥饿诊断、空闲设备但作业等待诊断；第二批（batch 09）再增 3 篇：昇腾推理 OOM 诊断、通信带宽退化诊断、静默错误与计算完整性判定；第三批（batch 10）再增 3 篇：慢 rank 诊断、供电散热与性能退化证据、Checkpoint 慢写与恢复 I/O 诊断；第四批（batch 11）再增 3 篇：昇腾算子不支持与图编译失败诊断、弹性训练与成员变更、推理量化与输出质量验证；第五批（batch 12）再增 3 篇：Prefill/Decode 分离与流量分配、新节点与返修节点验收、Checkpoint 完整性与校验证据。任务清单见[第二轮任务表](plans/round-02-backlog.yaml)，来源与审阅记录见各批来源审计（[batch-08](docs/research/batch-08-source-audit.md)、[batch-09](docs/research/batch-09-source-audit.md)、[batch-10](docs/research/batch-10-source-audit.md)、[batch-11](docs/research/batch-11-source-audit.md)、[batch-12](docs/research/batch-12-source-audit.md)）；batch 01/02/08/09 已经 Codex 代审并复核闭环，见[四批汇总](docs/research/batch-01-02-08-09-codex-review-summary.md)。

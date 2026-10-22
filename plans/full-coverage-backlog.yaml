@@ -5,7 +5,7 @@ status: in_progress
 planning_stage: completed
 execution_started: true
 scope_version: content-v1-63-topics
-notice: 原63主题完整覆盖的有限交付基线；规划交付时任务为 planned。Batch 13（T00-01/T01-01/T01-02/T01-03/T01-04）已于 2026-10-08 交付并通过 gpt-6.1-sol / xhigh 审阅与两轮定向复核（18 项发现全部关闭）；Batch 14（T01-05/T01-06/T01-07/T01-08）已于 2026-10-09 交付并通过 gpt-6.1-sol / xhigh 审阅与三轮定向复核（15 项发现 B14-C01–C15 全部关闭，其中 C10 按「编写者核对记录、未独立核验」限定口径关闭）；Batch 15（T01-09/T02-01/T02-02/T02-03）已于 2026-10-09 交付并通过 gpt-6.1-sol / xhigh 审阅与两轮定向复核（8 项发现 B15-C01–C08 全部关闭，其中 C06 按「编写者核对记录、未独立核验」限定口径关闭）；Batch 16（T02-04/T02-05/T02-06/T02-07）已于 2026-10-09 交付并通过 gpt-6.1-sol / xhigh 审阅与两轮定向复核（7 项发现 B16-C01–C07 全部关闭）；Batch 17（T02-08/T02-09/T02-10/T02-11）已于 2026-10-09 交付并经 gpt-6.1-sol / xhigh 审阅与六轮定向复核（13 项发现 B17-C01–C13 中 12 项关闭；C08 逐算子累加精度与 cubeMathType 透传证据未关闭，2026-10-14 经例外清单条件验收、长期 open 具名跟踪，见 docs/research/batch-17-t02-10-exception.md）；Batch 18（T03-01/T03-02/T03-03/T03-04）已于 2026-10-09 交付并经 gpt-6.1-sol / xhigh 审阅与八轮定向复核（16 项发现 B18-C01–C16 全部关闭，C01 为审阅误读撤销、C16 为首轮修订引入）；Batch 19（T03-05/T03-06/T03-07/T03-08/T04-01）已于 2026-10-13 交付并经 gpt-6.1-sol / xhigh 审阅与多轮定向复核（27 项发现 B19-C01–C27 全部关闭；BLOCKED-1 HCCL Test×目标 CANN/HDK/机型交集无关闭路径，经例外清单条件验收、长期 open 具名跟踪，T03-06 acceptance 5 未验收，见 docs/research/batch-19-blocked-1-exception.md）；Batch 20（T04-02/T04-03/T04-04/T04-05）已于 2026-10-13 交付并经 claude-opus-5-5 审阅与逐任务定向复核（40 项发现 B20-C01–C40 全部关闭，无例外）；Batch 21 的 T04-06/T04-07 已于 2026-10-13 交付并经 claude-opus-5-5 审阅闭环（B21-C01–C18 全部关闭），T05-01 经两轮作废初审后改 codex gpt-6.1-sol / xhigh 初审与 33 轮定向复核（B21-C30–C34 全部关闭）于 2026-10-17 闭环，T04-08 于 2026-10-18 补交（两篇存储诊断指南加法修订，全部复用已登记来源）并经 claude-opus-5-5 初审与五轮定向复核（27 项发现 B21-C35–C61 全部关闭），批次至此完成；Batch 22（T05-02/T05-03/T05-05/T05-04）已于 2026-10-17 交付并经 claude-opus-5-5 审阅与定向复核（44 项发现 B22-C01–C44 全部关闭）及整批验收审阅（B22X-C01/C02 关闭）；Batch 17–21 的 exit_gate 主题范围复核环节未执行，01.3/02.5/02.6/03.1/03.2/03.3/03.4/03.5/03.6/03.7/04.1–04.6 的主题验收与缺口判定均未回填、保持 planned/open，留待补做；当前依赖视图不代表实时运行/完成状态，不证明技术核验或真实环境完成。
+notice: 2026-10-22 收尾核对：Batch 13–32 的 20 批与 85 项内容任务全部 done，其中 Batch 17/C08 与 Batch 19/BLOCKED-1 按用户批准的例外条件验收，均不关闭例外。63 主题为 62 个基础覆盖、1 个部分覆盖；真实验证未完成，整体仍 in_progress。逐批历史以来源审计和原审阅/复核报告为准，当前核对见 docs/research/batch-01-32-closure-audit.md。
 input_snapshot:
   audit_path: plans/topic-coverage.yaml
   outline_path: content-outline.md
@@ -44,6 +44,20 @@ policy:
   mandatory_scope_gate: 必交分支的必要来源或真实证据不足时，保留 blocked_on_evidence / open；unknown 是边界记录，不自动把未交付的原范围改为 covered。
   dependency_information: docs/batch-dependencies.md；机器可读视图 plans/batch-dependencies.yaml；以原 tasks[].depends_on 为权威。
   parallel_execution: 批次依赖是保守聚合；可先做独立任务的来源准备，来源/输入及具体任务前置验收通过后推进该任务。context_topic_refs 不产生整主题等待；共享写入由同一集成角色串行处理。
+closure_audit:
+  checked_at: '2026-10-22'
+  record: docs/research/batch-01-32-closure-audit.md
+  content_batches_done: 20
+  content_tasks_done: 85
+  accepted_topics: 62
+  pending_topics: ['03.5']
+  open_exceptions: [B17-C08, BLOCKED-1]
+  content_gaps_closed: 137
+  content_gaps_open: 1
+  combined_evidence_gaps_open: 3
+  actual_validation_runs: '0/7'
+  overall_closed: false
+  target_state_note: targets[].state 保留历史 planned_new/existing/delivered 标记；交付核对以任务状态、实际文件和稳定 ID 的一致性为准，不用该历史标签推断尚未交付。
 summary:
   topics: 63
   baseline_covered: 12
@@ -158,7 +172,8 @@ topics:
   - 本主题 task_refs 的有限 v1 交付通过 gpt-6.1-sol / xhigh 审阅、发现修订与定向复核及结构/构建检查后，再重新对照主题范围验收。
   - 模型审阅、source_checked 和方法定义均不等于 reproduced；硬件实际验证及真实环境档案分别保留状态。
   content_acceptance_batch: 31
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-31-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs: []
   retained_background_ids: []
 - topic_id: '00.3'
@@ -187,7 +202,8 @@ topics:
   - 本主题 task_refs 的有限 v1 交付通过 gpt-6.1-sol / xhigh 审阅、发现修订与定向复核及结构/构建检查后，再重新对照主题范围验收。
   - 模型审阅、source_checked 和方法定义均不等于 reproduced；硬件实际验证及真实环境档案分别保留状态。
   content_acceptance_batch: 31
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-31-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs: []
   retained_background_ids: []
 - topic_id: '00.4'
@@ -214,7 +230,9 @@ topics:
     - T00-02
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
+    closed_at: '2026-10-22'
+    closure_note: 账面回填；既有关闭依据为 docs/research/batch-29-source-audit.md 的主题账面与已审阅正文，不表示本日重新技术审阅或实测。
   - audit_gap_index: 2
     gap_ref: 00.4-G2
     gap_text: 缺少规模、拓扑、故障域和成本约束下的选择与验收方法
@@ -223,14 +241,17 @@ topics:
     - T00-03
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
+    closed_at: '2026-10-22'
+    closure_note: 账面回填；既有关闭依据为 docs/research/batch-29-source-audit.md 的主题账面与已审阅正文，不表示本日重新技术审阅或实测。
   closure_criteria:
   - 正文缺口须由实际交付的内容与精确来源验收关闭，新增/修订内容与已有证据组成五方面阅读闭环；真实证据缺口仅在独立验证轨道完成后关闭。
   - 精确上游证据、平台/版本/工具边界和未知项可追溯；资料尚未取得的 blocked_on_evidence 子项不能因任务规划或文档编写被标已覆盖。
   - 本主题 task_refs 的有限 v1 交付通过 gpt-6.1-sol / xhigh 审阅、发现修订与定向复核及结构/构建检查后，再重新对照主题范围验收。
   - 模型审阅、source_checked 和方法定义均不等于 reproduced；硬件实际验证及真实环境档案分别保留状态。
   content_acceptance_batch: 29
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-29-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs: []
   retained_background_ids:
   - hardware.resource-topology
@@ -262,7 +283,9 @@ topics:
     - T00-03
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
+    closed_at: '2026-10-22'
+    closure_note: 账面回填；既有关闭依据为 docs/research/batch-29-source-audit.md 的主题账面与已审阅正文，不表示本日重新技术审阅或实测。
   - audit_gap_index: 2
     gap_ref: 00.5-G2
     gap_text: 缺少能耗/有效产出度量
@@ -270,7 +293,9 @@ topics:
     - T00-03
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
+    closed_at: '2026-10-22'
+    closure_note: 账面回填；既有关闭依据为 docs/research/batch-29-source-audit.md 的主题账面与已审阅正文，不表示本日重新技术审阅或实测。
   - audit_gap_index: 3
     gap_ref: 00.5-G3
     gap_text: 缺少五类目标的权衡案例与验收表
@@ -278,14 +303,17 @@ topics:
     - T00-03
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
+    closed_at: '2026-10-22'
+    closure_note: 账面回填；既有关闭依据为 docs/research/batch-29-source-audit.md 的主题账面与已审阅正文，不表示本日重新技术审阅或实测。
   closure_criteria:
   - 正文缺口须由实际交付的内容与精确来源验收关闭，新增/修订内容与已有证据组成五方面阅读闭环；真实证据缺口仅在独立验证轨道完成后关闭。
   - 精确上游证据、平台/版本/工具边界和未知项可追溯；资料尚未取得的 blocked_on_evidence 子项不能因任务规划或文档编写被标已覆盖。
   - 本主题 task_refs 的有限 v1 交付通过 gpt-6.1-sol / xhigh 审阅、发现修订与定向复核及结构/构建检查后，再重新对照主题范围验收。
   - 模型审阅、source_checked 和方法定义均不等于 reproduced；硬件实际验证及真实环境档案分别保留状态。
   content_acceptance_batch: 29
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-29-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs: []
   retained_background_ids: []
 - topic_id: '00.6'
@@ -335,7 +363,8 @@ topics:
   - 本主题 task_refs 的有限 v1 交付通过 gpt-6.1-sol / xhigh 审阅、发现修订与定向复核及结构/构建检查后，再重新对照主题范围验收。
   - 模型审阅、source_checked 和方法定义均不等于 reproduced；硬件实际验证及真实环境档案分别保留状态。
   content_acceptance_batch: 32
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-32-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs: []
   retained_background_ids: []
 - topic_id: '01.1'
@@ -1014,6 +1043,7 @@ topics:
   - 模型审阅、source_checked 和方法定义均不等于 reproduced；硬件实际验证及真实环境档案分别保留状态。
   content_acceptance_batch: 17
   content_acceptance_status: accepted
+  content_acceptance_note: 有限基础内容验收沿用既有记录；T02-10 的 B17-C08 仍 OPEN，受 docs/research/batch-17-t02-10-exception.md 条件约束，不得将累加精度或 cubeMathType 透传作为已确立契约。
   validation_refs:
   - V05
   retained_background_ids: []
@@ -1048,7 +1078,9 @@ topics:
     - T02-12
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
+    closed_at: '2026-10-22'
+    closure_note: 账面回填；既有关闭依据为 docs/research/batch-31-source-audit.md 的主题账面与已审阅正文，不表示本日重新技术审阅或实测。
   - audit_gap_index: 2
     gap_ref: 02.7-G2
     gap_text: 缺少迁移/升级的变化清单、兼容检查和回退方法
@@ -1056,7 +1088,9 @@ topics:
     - T02-12
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
+    closed_at: '2026-10-22'
+    closure_note: 账面回填；既有关闭依据为 docs/research/batch-31-source-audit.md 的主题账面与已审阅正文，不表示本日重新技术审阅或实测。
   - audit_gap_index: 3
     gap_ref: 02.7-G3
     gap_text: 已有样板不是可直接部署的整套环境
@@ -1066,15 +1100,18 @@ topics:
     - T02-12
     closure_lane: content
     validation_refs: []
-    status: open
-    note: T02-03 已于 2026-10-09 交付两平台档案的交集核对并通过审阅；T02-04 已于 2026-10-09 交付 AMD ROCm 档案并通过 Batch 16 审阅（三平台样板档案齐备，仍为 documented 样板、非可直接部署环境）；余 T02-12 安装基线（Batch 31）未验收，保持 open，待其交付后按主题验收批次（02.7 为 Batch 31）统一关闭。
+    status: closed
+    closed_at: '2026-10-22'
+    closure_note: 账面回填；既有关闭依据为 docs/research/batch-31-source-audit.md 的主题账面与已审阅正文，不表示本日重新技术审阅或实测。
+    note: T02-03/T02-04 文档样板与 T02-12 安装基线已交付并完成 Batch 31 审阅；样板仍不是实测部署组合，真实环境验证单列。
   closure_criteria:
   - 正文缺口须由实际交付的内容与精确来源验收关闭，新增/修订内容与已有证据组成五方面阅读闭环；真实证据缺口仅在独立验证轨道完成后关闭。
   - 精确上游证据、平台/版本/工具边界和未知项可追溯；资料尚未取得的 blocked_on_evidence 子项不能因任务规划或文档编写被标已覆盖。
   - 本主题 task_refs 的有限 v1 交付通过 gpt-6.1-sol / xhigh 审阅、发现修订与定向复核及结构/构建检查后，再重新对照主题范围验收。
   - 模型审阅、source_checked 和方法定义均不等于 reproduced；硬件实际验证及真实环境档案分别保留状态。
   content_acceptance_batch: 31
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-31-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs:
   - V01
   retained_background_ids: []
@@ -1342,6 +1379,7 @@ topics:
   - 本轮必交的共享机制或工具/目标环境交集分支，缺少必要一手材料时保留该子项 open；unknown 与独占/其他平台例子不自动关闭缺口。
   content_acceptance_batch: 19
   content_acceptance_status: planned
+  content_acceptance_note: T03-06 除 acceptance 5 外按 docs/research/batch-19-blocked-1-exception.md 条件验收；03.5-G3/BLOCKED-1 仍 open，完整主题验收未通过。
   validation_refs:
   - V03
   - V04
@@ -2201,7 +2239,8 @@ topics:
   - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-31-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs: []
   retained_background_ids: []
 - topic_id: '06.2'
@@ -2260,7 +2299,8 @@ topics:
   - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-31-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs: []
   retained_background_ids: []
 - topic_id: '06.3'
@@ -2317,7 +2357,8 @@ topics:
   - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-31-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs: []
   retained_background_ids: []
 - topic_id: '06.4'
@@ -2373,7 +2414,8 @@ topics:
   - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-31-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs: []
   retained_background_ids:
   - training.gpu-npu-precision-difference-source-case
@@ -2434,7 +2476,8 @@ topics:
   - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-31-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs:
   - V05
   retained_background_ids: []
@@ -2494,7 +2537,8 @@ topics:
   - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-31-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs: []
   retained_background_ids: []
 - topic_id: '06.7'
@@ -2531,7 +2575,8 @@ topics:
   - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-31-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs:
   - V06
   retained_background_ids: []
@@ -2568,7 +2613,8 @@ topics:
   - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-31-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs:
   - V06
   retained_background_ids: []
@@ -2627,7 +2673,8 @@ topics:
   - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-31-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs: []
   retained_background_ids: []
 - topic_id: '07.2'
@@ -2687,7 +2734,8 @@ topics:
   - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-31-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs: []
   retained_background_ids: []
 - topic_id: '07.3'
@@ -2723,7 +2771,8 @@ topics:
   - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-31-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs:
   - V07
   retained_background_ids: []
@@ -2782,7 +2831,8 @@ topics:
   - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-31-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs: []
   retained_background_ids: []
 - topic_id: '07.5'
@@ -2843,7 +2893,8 @@ topics:
   - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-31-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs: []
   retained_background_ids: []
 - topic_id: '07.6'
@@ -2899,7 +2950,8 @@ topics:
   - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-31-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs:
   - V11
   retained_background_ids:
@@ -2939,7 +2991,8 @@ topics:
   - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-31-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs:
   - V07
   retained_background_ids: []
@@ -3002,7 +3055,8 @@ topics:
   - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 31
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-31-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs:
   - V11
   retained_background_ids: []
@@ -3039,7 +3093,8 @@ topics:
   - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 32
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-32-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs: []
   retained_background_ids: []
 - topic_id: '08.2'
@@ -3075,7 +3130,9 @@ topics:
     - T08-01
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
+    closed_at: '2026-10-22'
+    closure_note: 账面回填；既有关闭依据为 docs/research/batch-29-source-audit.md 的主题账面与已审阅正文，不表示本日重新技术审阅或实测。
   - audit_gap_index: 2
     gap_ref: 08.2-G2
     gap_text: 缺少跨层传播图与失效模式分析
@@ -3083,7 +3140,9 @@ topics:
     - T08-01
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
+    closed_at: '2026-10-22'
+    closure_note: 账面回填；既有关闭依据为 docs/research/batch-29-source-audit.md 的主题账面与已审阅正文，不表示本日重新技术审阅或实测。
   - audit_gap_index: 3
     gap_ref: 08.2-G3
     gap_text: 缺少关联故障/冗余失效的完整来源案例
@@ -3091,14 +3150,17 @@ topics:
     - T08-02
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
+    closed_at: '2026-10-22'
+    closure_note: 账面回填；既有关闭依据为 docs/research/batch-29-source-audit.md 的主题账面与已审阅正文，不表示本日重新技术审阅或实测。
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
   - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 32
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-32-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs: []
   retained_background_ids: []
 - topic_id: '08.3'
@@ -3134,7 +3196,8 @@ topics:
   - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 32
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-32-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs: []
   retained_background_ids: []
 - topic_id: '08.4'
@@ -3171,7 +3234,8 @@ topics:
   - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 32
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-32-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs:
   - V12
   retained_background_ids: []
@@ -3209,7 +3273,9 @@ topics:
     - T08-03
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
+    closed_at: '2026-10-22'
+    closure_note: 账面回填；既有关闭依据为 docs/research/batch-29-source-audit.md 的主题账面与已审阅正文，不表示本日重新技术审阅或实测。
   - audit_gap_index: 2
     gap_ref: 08.5-G2
     gap_text: 缺少重试预算、幂等/重放和降级策略
@@ -3217,7 +3283,9 @@ topics:
     - T08-03
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
+    closed_at: '2026-10-22'
+    closure_note: 账面回填；既有关闭依据为 docs/research/batch-29-source-audit.md 的主题账面与已审阅正文，不表示本日重新技术审阅或实测。
   - audit_gap_index: 3
     gap_ref: 08.5-G3
     gap_text: 缺少冗余/隔离失效案例与验证
@@ -3226,14 +3294,17 @@ topics:
     - T08-03
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
+    closed_at: '2026-10-22'
+    closure_note: 账面回填；既有关闭依据为 docs/research/batch-29-source-audit.md 的主题账面与已审阅正文，不表示本日重新技术审阅或实测。
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
   - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 32
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-32-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs: []
   retained_background_ids: []
 - topic_id: '08.6'
@@ -3269,7 +3340,9 @@ topics:
     - T08-04
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
+    closed_at: '2026-10-22'
+    closure_note: 账面回填；既有关闭依据为 docs/research/batch-30-source-audit.md 的主题账面与已审阅正文，不表示本日重新技术审阅或实测。
   - audit_gap_index: 2
     gap_ref: 08.6-G2
     gap_text: 缺少训练侧更完整的检测/传播与校验方法正文
@@ -3277,7 +3350,9 @@ topics:
     - T08-04
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
+    closed_at: '2026-10-22'
+    closure_note: 账面回填；既有关闭依据为 docs/research/batch-30-source-audit.md 的主题账面与已审阅正文，不表示本日重新技术审阅或实测。
   - audit_gap_index: 3
     gap_ref: 08.6-G3
     gap_text: 部分检测分类目前只有目录级证据
@@ -3285,14 +3360,17 @@ topics:
     - T08-04
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
+    closed_at: '2026-10-22'
+    closure_note: 账面回填；既有关闭依据为 docs/research/batch-30-source-audit.md 的主题账面与已审阅正文，不表示本日重新技术审阅或实测。
   closure_criteria:
   - 原目录题名和主归属保留；主题 delivery_scope 中的五方面均有明确正文/方法/来源证据，领域入口逐项映射，不用目录列表代替。
   - retained_evidence_ids 的实际正文在最终验收中复核范围、来源与导航，新增/修订任务完成后按原主题 scope 验收；本次规划不改变既有 audit coverage_status。
   - 每项内容任务锁定实际采用的来源 revision/页面与许可，draft 和 source_checked/not_verified/reproduced 分别如实维护，完成 gpt-6.1-sol / xhigh 审阅、修订与定向复核。
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   content_acceptance_batch: 32
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-32-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs:
   - V05
   retained_background_ids: []
@@ -3333,7 +3411,9 @@ topics:
     - T08-05
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
+    closed_at: '2026-10-22'
+    closure_note: 账面回填；既有关闭依据为 docs/research/batch-30-source-audit.md 的主题账面与已审阅正文，不表示本日重新技术审阅或实测。
   - audit_gap_index: 2
     gap_ref: 08.7-G2
     gap_text: 缺少压力测试/注入模型与统计方法
@@ -3341,7 +3421,9 @@ topics:
     - T08-05
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
+    closed_at: '2026-10-22'
+    closure_note: 账面回填；既有关闭依据为 docs/research/batch-30-source-audit.md 的主题账面与已审阅正文，不表示本日重新技术审阅或实测。
   - audit_gap_index: 3
     gap_ref: 08.7-G3
     gap_text: 缺少基于真实环境的结果证据，实测另行推进
@@ -3369,7 +3451,8 @@ topics:
   - 文档覆盖关闭与真实环境证据关闭分别报告；验证方案 0/7 未执行状态保留，待实际环境准备和独立执行后才可满足实测证据目标。
   - G3 的实测证据在对应 V 工作包执行后逐环境验收；正文测试方法通过不关闭 G3。
   content_acceptance_batch: 32
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-32-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs:
   - V12
   retained_background_ids: []
@@ -3407,7 +3490,9 @@ topics:
     - T08-06
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
+    closed_at: '2026-10-22'
+    closure_note: 账面回填；既有关闭依据为 docs/research/batch-30-source-audit.md 的主题账面与已审阅正文，不表示本日重新技术审阅或实测。
   - audit_gap_index: 2
     gap_ref: 08.8-G2
     gap_text: 缺少正式事故复盘与知识更新方法
@@ -3415,7 +3500,9 @@ topics:
     - T08-07
     closure_lane: content
     validation_refs: []
-    status: open
+    status: closed
+    closed_at: '2026-10-22'
+    closure_note: 账面回填；既有关闭依据为 docs/research/batch-30-source-audit.md 的主题账面与已审阅正文，不表示本日重新技术审阅或实测。
   - audit_gap_index: 3
     gap_ref: 08.8-G3
     gap_text: 缺少独立诊断评测集
@@ -3432,7 +3519,8 @@ topics:
   - make check 和 make build 通过仅证明结构与引用；真实环境缺口、无法取得材料和未支持平台组合仍明确记录，不能写成已验证。
   - 独立诊断案例集的实物/隔离/评估证据由 V12 验收；公开教学或合成题组只用于示例，独立素材未获得时 G3 保持 open。
   content_acceptance_batch: 32
-  content_acceptance_status: planned
+  content_acceptance_status: accepted
+  content_acceptance_note: 2026-10-22 按既有主题核对回填；依据 docs/research/batch-32-source-audit.md 与本主题五方面入口，仅验收已交付的有限正文范围，真实证据仍由 V 轨道管理。
   validation_refs:
   - V12
   retained_background_ids: []
@@ -3630,6 +3718,8 @@ batches:
   minimal_predecessor_batches:
   - 21
   conservative_wave: 9
+  completed_at: '2026-10-17'
+  completion_record: docs/research/batch-22-source-audit.md
 - number: 23
   title: 集群平台
   status: done
@@ -3690,6 +3780,8 @@ batches:
   minimal_predecessor_batches:
   - 24
   conservative_wave: 12
+  completed_at: '2026-10-20'
+  completion_record: docs/research/batch-25-source-audit.md
 - number: 26
   title: 训练与后训练、推理服务
   status: done
@@ -3708,6 +3800,8 @@ batches:
   minimal_predecessor_batches:
   - 24
   conservative_wave: 12
+  completed_at: '2026-10-21'
+  completion_record: docs/research/batch-26-source-audit.md
 - number: 27
   title: 推理服务
   status: done
@@ -7762,7 +7856,7 @@ validation:
     closed: 8
     open: 0
   scope: 规划结构、映射、来源/目标身份、DAG/批次和方案验收纪律；未执行新正文技术核验或真实环境验证。
-execution_status_note: 用户反馈 Batch 13 已运行并尝试并行 Batch 14；本次只整理依赖信息，未读取运行会话的产物与审阅结果。具体任务/批次阶段与完成状态须由实际执行会话更新，本次不将任何任务标为 done。
+execution_status_note: 2026-10-22 按实际任务、目标文件/稳定 ID、逐批来源审计与主题核对记录回填当前账面；不再沿用 Batch 13 启动时的说明。所有内容任务 done 不等于 63 主题无条件验收，也不等于 reproduced。
 dependency_view_validation:
   status: passed
   checked_at: '2026-10-08'
