@@ -1,0 +1,763 @@
+schema_version: 1
+plan_type: v00_preparation_instances
+created_at: '2026-10-22'
+status: prepared_skeletons
+parent_plan: plans/validation-backlog.yaml
+notice: >-
+  本文件执行 plans/validation-backlog.yaml 中 V00 的"先收集已知字段，未知项在该实例保留"步骤：
+  为每个验证包/子组整理一份准备实例骨架。所有实例 readiness 均为 not_ready——未取得任何真实
+  资源、授权、脚本冻结件或证据；不改变任何 V 包的 status 与 executed_at，不构成执行授权，
+  不使任何验证子组就绪。已知字段是对既有方案条目与正文方法锚点的整理，不是新主张；
+  方法细节以所引条目正文为准，本文件不复制其全文。fragment 约定：
+  preparation_instance_ref 的 #后缀为 package id，package_index 给出该包全部实例 id。
+result_policy_adopted: 继承 plans/validation-backlog.yaml 的 result_policy（原始证据外置；reproduced 仅在真实执行、证据可定位且范围固定后更新）。
+delivery_record: docs/research/v00-preparation-record.md
+package_index:
+  V01: [V01]
+  V02: [V02]
+  V03: [V03]
+  V04: [V04]
+  V05: [V05]
+  V06: [V06-CPU, V06-DCP-MULTIRANK]
+  V07: [V07]
+  V08: [V08]
+  V09: [V09]
+  V10: [V10-LOCAL-EXT4-NVME, V10-NFS-V41, V10-RGW-S3, V10-LUSTRE]
+  V11: [V11-SHARING-ISOLATION, V11-NODE-CHANGE, V11-CONTROL-PLANE, V11-SERVICE-RECOVERY]
+  V12: [V12]
+instance_schema:
+  id: 实例稳定 ID；V06/V10/V11 按 phase/subrun 拆分
+  package: 所属验证包（validation-backlog.yaml 的 V id）
+  subgroup: 子组名（无子组为 null）
+  scheme_refs: 既有方案条目的内容 ID（scheme-less 包为空）
+  method_content_refs: 提供方法/判据/边界锚点的正文文件（仓库相对路径）
+  source_anchors: 既有来源登记 ID（本文件不新增来源）
+  known_fields: 已由方案/正文固定或声明的设计、判据与边界（概述＋指向，不复制全文）
+  unknown_fields: 逐项缺项；在实例通过 V00 验收前保持未定
+  instance_pass_requirements: 该实例通过 V00 验收在 common_pass_floor 之上另须补齐的增量集合（局部清单完成而共同门槛未满足时不得判实例通过）
+common_pass_floor: >-
+  任何实例通过 V00 验收，除自身 instance_pass_requirements 增量外，还须同时满足以下共同门槛：
+  ①真实环境身份（硬件/OS/固件/驱动/包/镜像/模型/输入/拓扑，按该实例适用范围）冻结并保存可追溯
+  环境档案（外置）；②来源/脚本/输入冻结，预先判据与适用重复策略已登记；③已有授权范围、资源窗口、
+  隔离与资源预算可审阅；④停止、清理与恢复条件及负责人可审阅；⑤外置脱敏证据位置已预留并记录。
+  适用项缺失时实例保持 not_ready；确不适用的项须给出范围与理由，不得静默省略。共同门槛与增量
+  都不要求在本轮取得资源或授权，也不构成执行授权。
+instances:
+- id: V01
+  package: V01
+  subgroup: null
+  title: 昇腾版本配套验证——准备实例
+  instance_status: skeleton_prepared
+  readiness: not_ready
+  prepared_at: '2026-10-22'
+  scheme_refs:
+  - software-stack.ascend-version-mismatch-experiment
+  method_content_refs:
+  - knowledge/02-software-stack/ascend-version-mismatch-triage.md
+  - knowledge/02-software-stack/environment-installation-and-upgrade.md
+  source_anchors:
+  - src.ascend.torch-npu-v7.2.0-pytorch2.6.0
+  - src.huawei.cann-83rcx-install-2026-09-29
+  known_fields:
+    question_and_hypotheses: 单版本变量能否在依赖解析/导入链接/运行时/最小算子边界产生可重复差异，恢复基线后消失（H1）；多变量联动或基线失败即无法判断；不验证上层引擎/通信/数值正确性。
+    candidate_core_declared: TorchNPU README 固定配套声明——CANN 8.3.RC1 × PyTorch 2.6.0 × TorchNPU 2.6.0.post3，Python 3.9/3.10/3.11；仅覆盖 README 声明范围，不构成可执行基线。
+    group_design: B0 基线 / N1 改 PyTorch / N2 改 TorchNPU / N3 改一组 CANN 用户态子包 / R0 恢复；N 组分开运行、每次自同基线重建；重复数与阈值执行前固定。
+    minimal_function_path: README Quick Verification 代表的两个 NPU tensor 矩阵乘路径；实际脚本、随机种子、输入值与容差须执行前冻结。
+    observation_fields: 身份 / 解析 / 加载 / 设备 / 计算 / 恢复 六类必记字段（方案"观测字段"表）。
+    preregistered_criteria: 支持 H1 须同时满足身份相同＋单变量＋首差异重复稳定＋恢复消失；N 组无差异只说明该最小路径未暴露问题；三类结论（支持 / 失败 / 无法判断）与失效条件已在方案预注册。
+    stop_and_recovery_requirements: 仅可销毁隔离环境与专用节点；不改共享 CANN/驱动/固件；不运行上层模型或 HCCL；影响租户、需重启共享服务、无法恢复基线或加载文件与清单不一致即停。
+    execution_recording: 七步执行与记录方法（审核基线依据→隔离环境→B0 记录→单 N 组复核→保存首个失败→R0→重复稳定性）。
+    related_method_anchors: 三平台安装验证梯子、迁移升级变化矩阵与回退边界（environment-installation-and-upgrade，T02-12）可作 B0/N/R 身份冻结与恢复门槛的登记参照。
+  unknown_fields:
+    environment_identity:
+    - 专用 NPU 节点、硬件型号与拓扑、驱动/固件精确身份
+    - OS/内核与 CPU 架构、容器运行时与镜像 digest
+    - CANN 全部必需子包、安装介质来源与摘要
+    - Python 精确补丁版本、PyTorch/TorchNPU wheel 文件名、索引来源与摘要
+    - 动态库搜索路径与实际加载文件
+    frozen_scripts_and_inputs: null
+    repetition_and_thresholds: 重复次数、判定阈值与最小功能数值容差（不得看结果后调整）
+    resources_available: null
+    authorization_scope: null
+    evidence_location_external: null
+    cleanup_recovery_owner: null
+  instance_pass_requirements:
+  - 冻结环境身份并保存可追溯环境档案（外置），补齐 unknown_fields.environment_identity 全部条目
+  - 取得独立节点资源窗口、隔离与恢复授权并记录负责人
+  - 冻结脚本/输入/重复次数/判据，预留外置脱敏证据位置
+  - 满足 common_pass_floor 全部适用项（授权范围、资源窗口/隔离、停止/清理/恢复负责人、外置证据位置均可审阅；不适用项给出范围与理由）
+- id: V02
+  package: V02
+  subgroup: null
+  title: 设备可见性与资源分配链验证——准备实例
+  instance_status: skeleton_prepared
+  readiness: not_ready
+  prepared_at: '2026-10-22'
+  scheme_refs:
+  - cluster-platform.ascend-device-visibility-experiment
+  method_content_refs:
+  - knowledge/05-cluster-platform/device-resource-chain.md
+  source_anchors:
+  - src.kubernetes.device-plugins-v1-32
+  - src.ascend.mind-cluster-v26.1.1
+  - src.vllm-ascend.issue-2557
+  - src.vllm-ascend.pr-2541
+  known_fields:
+    question_and_hypotheses: H1 正常请求形成 host→plugin→allocatable→Allocate→container→framework 同链一个逻辑设备；H2 无请求 C0 不出现分配；H3 未映射物理 ID 当逻辑 ID 时差异首现于映射/选择层。
+    group_design: B0 正控制 / C0 负控制 / N1 编号混用 / R0 回退；C0 须同样禁用 privileged、设备 hostPath、人工挂载与宿主 PID/FS 访问，并确认 runtime 无默认注入，否则负控制无效；N1 仅当物理/逻辑 ID 可安全区分时执行，否则保留 B0/C0/R0 并将 H3 记为未验证。
+    observation_fields: 主机 / 插件 / 资源 / 分配 / 容器 / 进程 / 恢复 七层必记对象与字段（方案"分层记录表"）。
+    preregistered_criteria: 通过须 B0/R0 每层身份一致、C0 无分配且隔离条件成立、若执行 N1 则其差异稳定首现于逻辑 ID 选择并随恢复消失（无法安全构造单变量 N1 时只保留 B0/C0/R0 并把 H3 记为未验证，不否决其余设计范围）、清理后账本与健康回基线；多变量同变即无法判断。
+    design_basis_boundary: Kubernetes v1.32 Device Plugin 接口与 MindCluster v26.1.1 文档仅为设计依据；固定 MindCluster 与案例中 vLLM Ascend 版本未被证明为官方配套组合。
+    stop_and_recovery_requirements: 专用节点与隔离命名空间；确认无其他租户依赖目标设备；不重启共享 kubelet/引擎/插件；影响其他负载或账本漂移即停；Pod 自动清理与资源回收方案。
+    execution_recording: 八步执行与记录方法（主机/插件基线→Pod 规格审核→B0→进程内观察→C0→N1→R0→清理核对）。
+  unknown_fields:
+    environment_identity:
+    - 专用健康节点及硬件、驱动/固件、CANN 身份
+    - Kubernetes/kubelet、Ascend Device Plugin、Ascend Docker Runtime 与容器运行时版本
+    - 设备扩展资源名与固定 Pod/镜像规格
+    - 框架与设备后端版本、镜像 digest、运行用户与安全上下文
+    - 节点/Pod UID/container ID/插件实例/设备 ID 的关联方法
+    frozen_scripts_and_inputs: null
+    repetition_and_thresholds: 重复次数与时间窗限定
+    single_device_check_script: 单设备枚举/选择脚本、退出状态与预期逻辑设备数
+    resources_available: null
+    authorization_scope: null
+    evidence_location_external: null
+    cleanup_recovery_owner: null
+  instance_pass_requirements:
+  - 冻结专用 K8s/Ascend 环境与各组件版本身份并保存档案（外置）
+  - 确认无其他租户依赖目标设备并记录授权与回收负责人
+  - 冻结枚举/选择脚本、重复次数与预期结果，预留外置证据位置
+  - 满足 common_pass_floor 全部适用项（授权范围、资源窗口/隔离、停止/清理/恢复负责人、外置证据位置均可审阅；不适用项给出范围与理由）
+- id: V03
+  package: V03
+  subgroup: null
+  title: HCCL 超时验证——准备实例
+  instance_status: skeleton_prepared
+  readiness: not_ready
+  prepared_at: '2026-10-22'
+  scheme_refs:
+  - communication.hccl-timeout-experiment
+  method_content_refs:
+  - knowledge/03-communication/hccl-timeout-triage.md
+  - knowledge/03-communication/bandwidth-baselines.md
+  source_anchors:
+  - src.huawei.hccl-user-guide-cann-8.1-rc1-alpha001
+  - src.ascend.cann-hccl-2d685b08
+  known_fields:
+    question_and_hypotheses: 预注册 H1 rank/次序分叉、H2 上游阶段阻塞、H3 设备/runtime 先失败、H4 网络/链路先失败、H5 等待预算不足；须分离首因与级联。
+    layered_design: A 无注入共同进度基线（须通过结果检查，仅性能无正确性不得作基线）→ B 工作负载阶段对照 → C group/次序对照（注入仅限审核后测试程序，正文不提供生产注入命令）→ D 设备/网络独立对照（仅被动证据指向特定实体时另立专项）。
+    observation_fields: NPU/节点、软件、rank 映射、工作负载、时间/时钟、观测与日志容量、配置七类必填字段（方案"环境与输入"表）。
+    preregistered_criteria: 支持 H1–H5、实验失败与无法判断的预注册判据表；单次"没有复现/退出为 0/check success"不证明任何根因。
+    hccl_test_identity_boundary: src.ascend.cann-hccl-2d685b08 仅固定源码快照证据身份，README 自提示 master 与 CANN 版本可能不配套；执行须另取得与目标 CANN/HCCL 配套的 HCCL Test 发行物与说明——与 03.5-BLOCKED-1（HCCL Test × 目标 CANN/HDK/机型交集缺厂商一手资料）同源缺口。
+    stop_and_recovery_requirements: 独占节点/NPU 与专用端口/日志/rank group；资源预算预先批准；每轮单变量并保存原值与回滚；注入限一次性无业务作业且 launcher 可全回收；停止判据（不可恢复错误、持续链路异常、隔离破坏、预算超限）先保存 run id 与全 rank 证据再清理。
+    execution_recording: 五步执行与记录方法（审核清单→rank 映射与时钟核对→A→B/C/D 单变量→每轮恢复基线；偏离设计如实记录）。
+  unknown_fields:
+    environment_identity:
+    - 目标 NPU 型号/数量/拓扑/固件驱动与独占范围
+    - CANN/HCCL、torch_npu/框架、容器与宿主 OS/内核身份
+    - 与目标版本配套的 HCCL Test 发行物与说明（BLOCKED-1 关联）
+    rank_mapping: 节点/进程/global/group/local rank 到 NPU 与网口映射、group 成员与创建顺序
+    workload_identity: 最小 collective 或最小模型阶段、输入身份、collective/dtype/元素数、图模式与并行配置
+    clock_and_logging: 节点时钟同步状态、统一时区、run id 规则、各 rank 日志路径/保留期与容量预算
+    config_baseline: timeout 原值及来源、全部 HCCL/框架变量清单、允许的单变量与回滚值
+    frozen_scripts_and_inputs: null
+    repetition_and_thresholds: 重复次数与基线分布口径
+    resources_available: null
+    authorization_scope: null
+    evidence_location_external: null
+    cleanup_recovery_owner: null
+  instance_pass_requirements:
+  - 取得隔离多 NPU（跨节点另含网络）资源与授权并冻结环境身份
+  - 补齐与目标版本配套的 HCCL Test 发行物身份（BLOCKED-1 关联，未取得前该子项保留）
+  - 冻结 rank 映射、工作负载、时钟/日志方案、单变量清单与重复次数，预留外置证据位置
+  - 满足 common_pass_floor 全部适用项（授权范围、资源窗口/隔离、停止/清理/恢复负责人、外置证据位置均可审阅；不适用项给出范围与理由）
+- id: V04
+  package: V04
+  subgroup: null
+  title: NCCL 超时验证——准备实例
+  instance_status: skeleton_prepared
+  readiness: not_ready
+  prepared_at: '2026-10-22'
+  scheme_refs:
+  - communication.nccl-timeout-experiment
+  method_content_refs:
+  - knowledge/03-communication/nccl-timeout-triage.md
+  - knowledge/03-communication/bandwidth-baselines.md
+  source_anchors:
+  - src.nvidia.nccl-user-guide-2.27.5
+  - src.nvidia.nccl-tests-b4d5beeb
+  - src.pytorch.processgroupnccl-env-2.8
+  known_fields:
+    question_and_hypotheses: 预注册 N1 缺 rank/错序、N2 上游控制流阻塞、N3 GPU/driver 先失败、N4 transport/网络先失败、N5 等待预算不足；每项都允许无法判断。
+    layered_design: A 框架正确性/进度基线＋nccl-tests 通信工具基线（固定 b4d5beeb 身份；busbw 不当物理链路利用率；工具不复现框架控制流）→ B 被动观测（debug 文件唯一命名、RAS、PyTorch dump/trace；观测显著干扰即单独标记）→ C 控制流/次序单变量注入（限隔离可回收进程）→ D transport 路径对照（仅已有接口/transport 证据时）→ E GPU/driver 对照（仅早于 timeout 的 Xid/CUDA 证据时）。
+    version_applicability_rule: RAS 页属 NCCL 2.27.5（RAS 自 2.24 起可用）、PyTorch 变量页属 2.8；目标版本不满足时对应观测项记"不适用"，不得以相似变量名替代。
+    observation_fields: GPU/节点、软件、网络、communicator 契约、工作负载、观测、资源七类必填字段（方案"环境与输入"表）。
+    preregistered_criteria: 支持 N1–N5、实验失败与无法判断的预注册判据表；未出 RAS outlier 不作为无异常结论；单次 MISMATCH/#wrong 0/调大 timeout 不构成通过。
+    stop_and_recovery_requirements: 独占 GPU/节点与 NIC/rail；分项权限（运行、RAS 端口、状态读取、attach、环境变量）分别授权；日志容量预设；注入限短时可回收进程并设硬性时限；不在共享 fabric 做破坏性注入；停止判据与"先保存证据再清理"。
+    execution_recording: 五步执行与记录方法（审核环境与授权→双基线→B→C/D/E 逐层单变量→每轮撤销配置并重复基线）。
+  unknown_fields:
+    environment_identity:
+    - GPU 型号/数量/UUID、driver、NVLink/NVSwitch/PCIe/NUMA 拓扑与独占边界
+    - CUDA runtime、NCCL、PyTorch/框架、容器 digest、宿主 OS/内核
+    - nccl-tests 构建身份（源码已固定 commit，构建产物未产生）
+    network_identity: NIC/端口/固件、IB/RoCE/EFA 或 socket、MTU/GID/rail/交换路径、rank→GPU→NIC 映射
+    version_applicability_check: RAS（2.24+）与 PyTorch 观测变量在目标版本的实际可用性核对结果
+    communicator_and_workload: process group 成员/创建顺序、rank 契约、最小 collective 与结果正确性检查
+    frozen_scripts_and_inputs: null
+    repetition_and_thresholds: warm-up/iterations、重复次数与时间口径
+    resources_available: null
+    authorization_scope: null
+    evidence_location_external: null
+    cleanup_recovery_owner: null
+  instance_pass_requirements:
+  - 取得隔离多 GPU/NIC（跨节点另含网络）资源与分项授权并冻结环境身份
+  - 完成 RAS/trace 版本可用性核对并记录"适用/不适用"
+  - 冻结 communicator 契约、工作负载、观测方案、单变量清单与重复次数，预留外置证据位置
+  - 满足 common_pass_floor 全部适用项（授权范围、资源窗口/隔离、停止/清理/恢复负责人、外置证据位置均可审阅；不适用项给出范围与理由）
+- id: V05
+  package: V05
+  subgroup: null
+  title: GPU/NPU 精度差异验证——准备实例
+  instance_status: skeleton_prepared
+  readiness: not_ready
+  prepared_at: '2026-10-22'
+  scheme_refs:
+  - training.gpu-npu-precision-difference-experiment
+  method_content_refs:
+  - knowledge/06-training/gpu-npu-precision-difference-triage.md
+  - knowledge/06-training/mixed-precision-and-convergence.md
+  source_anchors:
+  - src.ascend.msprobe-training-guide-2026-09-30
+  - src.pytorch.numerical-verification-2.6
+  - src.pytorch.parallel-training-state-2.6
+  known_fields:
+    question_and_hypotheses: E1 比较对象未对齐、E2 平台内非确定性、E3 有限精度预期范围、E4 稳定首差异实现、E5 并行/通信引入、E6 个别设备异常；不以 bitwise identical 为默认通过，不以相同 seed 代替相同输入。
+    group_design: A 平台内重复基线（先量化各自波动）→ B 最小跨平台对照（同一序列化权重与输入字节，forward/loss/backward/update 最小步骤）→ C 模块到 API 首差异定位（msprobe 固定文档为方法依据；工具规则阈值不作默认验收线）→ D 候选节点单变量对照（CPU/float64 仅条件参考）→ E 传播与并行对照 → F 观测干扰对照（原始/最小采集/dump 分列）。
+    identity_requirements: 两侧分别建立环境记录；key/shape/dtype/layout、输入/权重字节、step/样本、并行映射逐项对齐；不一致即 E1 停止数值归因。
+    preregistered_criteria: 支持"可接受范围"/"具体根因"、实验失败与无法判断的判据表；重复次数、测量步数与容差须在看到跨平台结果前登记。
+    dump_governance: 限定节点/step/tensor/保留期/访问权限/删除路径；磁盘内存预计越界、数据未授权或脱敏无法确认时不启动。
+    stop_and_recovery_requirements: 仅授权隔离专用资源；NaN/Inf、身份无法证明相同、资源上限、越出隔离、需改共享环境即停；恢复时撤销 hook/dump/覆盖并核对企业资源释放。
+    execution_recording: 六步执行与记录方法（冻结计划→A 两侧重复→B→C/D→E/F→按判据记录支持/反证/未知）。
+  unknown_fields:
+    environment_identity:
+    - GPU 侧与 NPU 侧各一套硬件/驱动/框架栈/容器 digest 实际身份
+    - 模型代码/图/配置与并行布局（DP/TP/PP/EP/CP、world size、rank 映射）
+    - autocast/低精度/TF32 等效模式、图/编译/融合与确定性设置
+    data_and_state: 可合法保存的输入/权重字节范围与序列化受控位置；optimizer/scheduler/loss scale/累积配置
+    frozen_scripts_and_inputs: null
+    repetition_and_thresholds: 重复次数、测量步数、逐项容差与下游任务判据依据（预登记）
+    dump_budget: 观察的 tensor/API 清单、指标公式与参考、dump 预算
+    resources_available: null
+    authorization_scope: null
+    evidence_location_external: null
+    cleanup_recovery_owner: null
+  instance_pass_requirements:
+  - 分别冻结 GPU/NPU 环境身份并建立可追溯档案（外置）
+  - 确定模型/数据范围与合法保存位置、并行映射与观测清单
+  - 预登记重复次数与容差并冻结脚本/输入，预留外置脱敏证据位置
+  - 满足 common_pass_floor 全部适用项（授权范围、资源窗口/隔离、停止/清理/恢复负责人、外置证据位置均可审阅；不适用项给出范围与理由）
+- id: V06-CPU
+  package: V06
+  subgroup: CPU direct-set missing-FQN baseline/parent/commit（phase gate 1）
+  title: Checkpoint 恢复状态验证——CPU 阶段准备实例
+  instance_status: skeleton_prepared
+  readiness: not_ready
+  prepared_at: '2026-10-22'
+  scheme_refs:
+  - training.checkpoint-state-recovery-experiment
+  method_content_refs:
+  - knowledge/06-training/checkpoint-state-consistency.md
+  source_anchors:
+  - src.pytorch.dcp-2.6
+  - src.pytorch.dcp-issue-164257
+  - src.pytorch.dcp-fix-edd8d35
+  known_fields:
+    question_and_hypotheses: H1 在传入 state 确缺 bias FQN 时，固定修订 edd8d356 只改变 _split_optim_state_dict 的 strict false/true 分支；H2 fresh optimizer 经 get_state_dict 初始化后可能使 missing-FQN 前提不成立；H3 同名 rank-local 非 tensor 不能假定逐 rank 保存（H2/H3 属后续阶段，本阶段仅 H1）。
+    patch_causality_design: P 环境＝固定 parent 658c5f879c…，F 环境＝固定 commit edd8d356…；同 OS/Python/编译器/构建选项/依赖锁定/CPU/脚本；无法证明只差该提交时不作补丁因果判断。H 环境＝PyTorch 2.8.0 制品仅复核 Issue 历史症状，不入 P/F 对照。
+    group_design: 实验设计 A（不经过 DCP 读取）——P0/F0/S0 覆盖 strict false/true 分支，PC/FC 正控制；目标对象须 fresh 且只读原生 state_dict；记录传给 set_state_dict 的完整 key/FQN 集合与四观测点中适用点。
+    premise_verification: 源对象须先证明 weight state 存在而 bias state 不存在（optimizer state 已非空、_init_optim_state 预计早退）；bias state 已出现则 missing-FQN 组无效。
+    fixed_inputs: Linear(4,2,bias=True)、AdamW 超参数、初始化权重、输入/loss、随机性、保存目录与脚本 revision（值在脚本冻结件中固定）。
+    preregistered_criteria: 支持 H1 须 P/F 制品除目标提交外可比、P0/F0/S0 进入 split 前均缺同一 bias FQN、PC/FC 通过、P0 旧索引错误/F0 跳过/S0 解释性错误；任一组进入 set 前已含 bias 则不计入。
+    stop_and_recovery_requirements: 只用可销毁环境与临时 checkpoint 目录；禁止指向生产 checkpoint/latest 标记；不安装到共享训练环境；P/F 非源码差异无法解释时停止因果比较。
+    execution_recording: 方案"执行与记录方法"第 1–3、7 步（冻结 H/P/F 身份→生成并验证 missing/完整源 state→PC/FC 后 P0/F0/S0；多 rank 部分不属本阶段）。
+  unknown_fields:
+    environment_identity:
+    - P/F 同构建配方实际执行记录（toolchain、依赖锁定文件、构建参数、源码 SHA 与制品摘要）
+    - H 环境制品来源与摘要（仅历史症状复核用）
+    - 隔离 CPU 资源与实验目录
+    frozen_scripts_and_inputs: null
+    repetition_and_thresholds: 重复次数与离散分支结果比较口径
+    application_contract: 应用对缺失 optimizer state 的契约（允许/不允许），用于解释 F0 装载后状态
+    resources_available: null
+    authorization_scope: null
+    evidence_location_external: null
+    cleanup_recovery_owner: null
+  instance_pass_requirements:
+  - 产出 P/F 同构建制品并保存可复核构建记录（外置）
+  - 冻结脚本 revision、初始化与输入、重复次数和应用契约
+  - 记录隔离 CPU 资源与授权、清理与恢复负责人
+  - 满足 common_pass_floor 全部适用项（授权范围、资源窗口/隔离、停止/清理/恢复负责人、外置证据位置均可审阅；不适用项给出范围与理由）
+- id: V06-DCP-MULTIRANK
+  package: V06
+  subgroup: DCP callback 与多 rank 身份组（phase gate 2）
+  title: Checkpoint 恢复状态验证——DCP 与多 rank 阶段准备实例
+  instance_status: skeleton_prepared
+  readiness: not_ready
+  prepared_at: '2026-10-22'
+  scheme_refs:
+  - training.checkpoint-state-recovery-experiment
+  method_content_refs:
+  - knowledge/06-training/checkpoint-state-consistency.md
+  source_anchors:
+  - src.pytorch.dcp-2.6
+  - src.pytorch.dcp-issue-164257
+  - src.pytorch.dcp-fix-edd8d35
+  known_fields:
+    question_and_hypotheses: H2 wrapper/planner/partial-load 跳过是否把占位 state 留在回调输入；H3 默认 planner 对同名 rank-local 非 tensor 实际保留什么、不冲突身份能否按映射恢复。
+    group_design: 实验设计 B——H0（忠实 Issue 历史路径）/EP/EF（fresh Stateful）/BP/BF/BS（受控裁剪夹具，仅使 missing-FQN 前提可观察，非生产建议）/D0（dict 目标分开读取与装载）；四观测点（target-native/target-get/load-input/output/set-before/after）；第 3 点已含 bias 即不得声称覆盖补丁分支。实验设计 C——L0 同名 FQN/L1 不冲突身份/L2 rank 重排（仅映射契约明确时执行）；映射 oracle 保存前冻结。
+    version_anchors: 多 rank 部分固定 PyTorch 2.6.0、CPU 多进程 backend、默认 planner；v2.6.0 去重路径与非 tensor 索引的固定源码锚点已在方案登记。
+    preregistered_criteria: 支持 H2 须 EP/EF 三快照显示初始化与 partial skip 的实际变化，BP/BF/BS 仅在裁剪范围与缺失集合符合预注册时交叉确认；支持 H3 须 L0 保留结果与 planner metadata 可定位、L1 按 oracle 恢复。
+    stop_and_recovery_requirements: 独立目录；任一进程退出、身份重排、oracle 丢失或 writer 配置变化即停该轮；失败对象不复用。
+    execution_recording: 方案"执行与记录方法"第 4–6 步（H0/EP/EF/BP/BF/BS/D0 逐点记录→返回且契约允许的组做单步与短窗口→独立 2.6 环境运行 L0/L1，映射明确才 L2）。
+  unknown_fields:
+    environment_identity:
+    - 端到端 B 组（H0/EP/EF/BP/BF/BS/D0）——复用 V06-CPU 冻结的 P（parent 658c5f87…）/F（commit edd8d356…）不可变制品与同构建配方；H0 另需 PyTorch 2.8.0 正式制品身份（与 V06-CPU 的 H 环境共用登记）；不得以 2.6.0 环境替代 B 组任何一环
+    - 多 rank C 组（L0/L1/L2）——独立 PyTorch 2.6.0 环境、构建/安装方式与启动方式（CPU 多进程 backend）
+    - C 组共享存储位置、world size、rank 顺序与进程资源
+    application_identity_oracle: 应用身份 oracle（L1 聚合表示或 rank-local 身份定义）的冻结件
+    frozen_scripts_and_inputs: null
+    repetition_and_thresholds: 重复次数；浮点比较规则（离散分支精确比较、浮点按预定规则）
+    all_rank_evidence: 全 rank 证据采集与保存方案
+    resources_available: null
+    authorization_scope: null
+    evidence_location_external: null
+    cleanup_recovery_owner: null
+  instance_pass_requirements:
+  - 端到端 B 组——确认 V06-CPU 的 P/F 不可变制品可复用（或另建同配方制品）、补 H0 的 2.8.0 制品身份并登记（外置）
+  - 多 rank C 组——建立独立 PyTorch 2.6.0 多进程环境并冻结身份与启动方式（外置）
+  - 冻结映射 oracle、两组各自的脚本/输入与全 rank 证据方案；未覆盖的组明确保持未就绪，不并入他组结论
+  - 记录资源、授权与清理恢复负责人
+  - 满足 common_pass_floor 全部适用项（授权范围、资源窗口/隔离、停止/清理/恢复负责人、外置证据位置均可审阅；不适用项给出范围与理由）
+  conditional_extension_note: 存储后端或设备扩展（phase gate 3）未选定；选定后按该扩展实际后端/设备另建实例，不并入本两实例。
+- id: V07
+  package: V07
+  subgroup: null
+  title: 昇腾推理长尾验证——准备实例
+  instance_status: skeleton_prepared
+  readiness: not_ready
+  prepared_at: '2026-10-22'
+  scheme_refs:
+  - inference.ascend-inference-tail-latency-experiment
+  method_content_refs:
+  - knowledge/07-inference/latency-metrics.md
+  - knowledge/07-inference/execution-and-kv-cache.md
+  source_anchors:
+  - src.vllm.inference-v0-14
+  - src.ascend.vllm-ascend-v0-14-0rc1
+  known_fields:
+    question_and_preregistration: 一次实验只选一种主要候选因素；最小有意义差异、SLO、失败率与质量判据执行前由业务目标与基线变异确定，无定义时只作探索性观察；不预设机型应达 TTFT/tokens/s。
+    scope_boundary: 首先用于单实例受控服务；P/D 分离需另补连接器与角色边界，不能直接套用。
+    group_design: B0 基线 / V1 单因素 / R0 恢复 / O1 观测扰动独立开展；重复次数、请求数与稳态窗口运行前声明；B0/V1 交错或随机排列；冷缓存与预热分层，缓存准备办法统一记录；prefix cache 身份按 token/模型条件判断，输入相似≠命中。
+    measurement_conventions: 到达速率与 max_concurrency 是不同约束（vLLM serve.py 固定行号锚点，现场实现须重新确认）；客户端保存实际发起序列；跨时钟原始时间戳不直接相减；吞吐窗口边界与显式预热排除口径。
+    preregistered_criteria: 候选因素支持/未支持、质量或可靠性不通过、无法判断四类判据表；不得为"通过"事后删失败、改窗口或调 SLO。
+    stop_and_recovery_requirements: 容量隔离且两组环境无未计入竞争负载；预先限定设备、请求总量、时长、日志预算与停止条件；不含共享集群故障注入或驱动/固件变更；R0 验证基线恢复前保持隔离。
+    execution_recording: 六步执行与记录方法（核对制品与预算→预热与请求计划→逐次 B0/V1/R0→失败/取消/重试汇总按层报告→阶段证据对齐→撤销配置并按 R0 验证恢复）。
+  unknown_fields:
+    environment_identity:
+    - NPU 型号/数量/拓扑、CPU/主机内存、驱动/固件、CANN 子包、torch/torch_npu
+    - vLLM/插件 commit 与本地补丁、镜像摘要、模型与 tokenizer revision、量化/图模式/并行度
+    - 负载客户端实现与代理链
+    request_set_identity: 输入/输出长度分布、前缀重复率、采样参数、到达时间表、并发限制、timeout 与重试政策
+    frozen_scripts_and_inputs: null
+    slo_and_thresholds: SLO、最小有意义差异、失败率与质量判据（预登记）
+    repetition_and_thresholds: 重复次数、每次请求数、稳态窗口与排列方案
+    resources_available: null
+    authorization_scope: null
+    evidence_location_external: null
+    cleanup_recovery_owner: null
+  instance_pass_requirements:
+  - 取得独立 NPU 服务与负载客户端资源并冻结制品/模型身份（外置）
+  - 固定请求集身份与到达过程并冻结客户端
+  - 预登记 SLO/差异/质量判据与重复方案，预留外置脱敏证据位置
+  - 满足 common_pass_floor 全部适用项（授权范围、资源窗口/隔离、停止/清理/恢复负责人、外置证据位置均可审阅；不适用项给出范围与理由）
+- id: V08
+  package: V08
+  subgroup: null
+  title: 新节点/返修节点真实验收档案——准备实例
+  instance_status: skeleton_prepared
+  readiness: not_ready
+  prepared_at: '2026-10-22'
+  scheme_refs: []
+  method_content_refs:
+  - knowledge/01-hardware/node-acceptance-triage.md
+  - knowledge/01-hardware/health-evidence.md
+  - knowledge/01-hardware/resource-topology.md
+  source_anchors: []
+  known_fields:
+    method_anchors: 四层验收方法与环境档案/证据接入规范（node-acceptance-triage，T01-09 交付档案字段）；三平台错误信息与健康覆盖映射（health-evidence）；板卡到超节点拓扑核对（resource-topology）。
+    backlog_method: 获取实物身份/固件/带外/驱动/拓扑档案→按验收指南运行获授权检查、必要诊断与负载基线→保留异常隔离、返修后复检与回服判断；未支持/失败/跳过分别记录。
+    acceptance_boundary: 须有真实环境和结果引用；模板、厂商规格与上游案例不能关闭 01.6 实测 gap。
+    scope_note: 本包无既有 scheme 条目；验收执行清单以 node-acceptance-triage 正文为准，实例只登记已知方法锚点与环境缺项。
+  unknown_fields:
+    environment_identity:
+    - 一套 GPU 或 NPU 验收节点实物身份（型号/序列/固件/拓扑）
+    - 带外（BMC）/管理/诊断访问方式与凭据治理
+    acceptance_run_plan: 获授权检查项清单、必要诊断与工作负载基线选择
+    return_and_repair_flow: 异常隔离、返修后复检与回服判断的记录方案
+    frozen_scripts_and_inputs: null
+    repetition_and_thresholds: 复检重复口径与通过判据（引用验收指南并按现场授权范围裁剪）
+    resources_available: null
+    authorization_scope: null
+    evidence_location_external: null
+    cleanup_recovery_owner: null
+  instance_pass_requirements:
+  - 取得独立验收节点与管理/诊断访问授权
+  - 采集并冻结实物身份档案（外置），确定获授权检查与基线清单
+  - 记录隔离/返修/回服流程负责人与证据位置
+  - 满足 common_pass_floor 全部适用项（授权范围、资源窗口/隔离、停止/清理/恢复负责人、外置证据位置均可审阅；不适用项给出范围与理由）
+- id: V09
+  package: V09
+  subgroup: null
+  title: 跨节点网络与 RDMA 样板验证——准备实例（基础 verbs/network 组）
+  instance_status: skeleton_prepared
+  readiness: not_ready
+  prepared_at: '2026-10-22'
+  scheme_refs: []
+  method_content_refs:
+  - knowledge/03-communication/ethernet-ib-roce-rdma.md
+  - knowledge/03-communication/rdma-baseline-and-congestion-triage.md
+  - knowledge/03-communication/bandwidth-baselines.md
+  source_anchors: []
+  known_fields:
+    method_anchors: Ethernet/IB/RoCE/RDMA 协议与 verbs/QP/CQ/MR 完成语义（ethernet-ib-roce-rdma）；RDMA 基线、路由与拥塞诊断口径（rdma-baseline-and-congestion-triage）；跨节点、rail、隔离/并发、消息大小基线矩阵（bandwidth-baselines）。
+    backlog_method: 在已固定协议/NIC/固件/驱动/拓扑样板上准备端点与 baseline→分别测链路/verbs/collective 边界（消息/并发/affinity 与计数器窗口预固定）→单变量路径/负载对照并验证恢复与所有端点结果。
+    acceptance_boundary: 配置、数据路径、计数器和性能证据一致；无法采集层不做因果推断；不默认修改生产 PFC/路由。
+    scope_note: 本包无既有 scheme 条目；基础 verbs/network 组不等特定 collective/AMD/HCCL 或路由/rail 扩展，选定扩展时另补对应库/硬件/工具前置并另建实例。
+  unknown_fields:
+    environment_identity:
+    - 跨节点 RDMA 网络与对等端点资源
+    - 样板固定身份（协议、NIC/固件、驱动、拓扑）
+    baseline_parameters: 消息大小/并发/affinity 矩阵、计数器窗口与基线判据
+    single_variable_plan: 路径/负载对照清单与回滚
+    frozen_scripts_and_inputs: null
+    repetition_and_thresholds: 重复次数与分布口径
+    resources_available: null
+    authorization_scope: null
+    evidence_location_external: null
+    cleanup_recovery_owner: null
+  instance_pass_requirements:
+  - 取得独立跨节点 RDMA 网络与端点并冻结样板身份（外置）
+  - 预固定基线矩阵、计数器窗口与单变量清单
+  - 记录网络恢复负责人、授权与外置证据位置
+  - 满足 common_pass_floor 全部适用项（授权范围、资源窗口/隔离、停止/清理/恢复负责人、外置证据位置均可审阅；不适用项给出范围与理由）
+- id: V10-LOCAL-EXT4-NVME
+  package: V10
+  subgroup: 本地 ext4/NVMe
+  title: 存储后端验证——本地 ext4/NVMe 子组准备实例
+  instance_status: skeleton_prepared
+  readiness: not_ready
+  prepared_at: '2026-10-22'
+  scheme_refs: []
+  method_content_refs:
+  - knowledge/04-data-storage/local-and-shared-storage.md
+  - knowledge/04-data-storage/storage-workload-baselines.md
+  - knowledge/04-data-storage/storage-client-backend-recovery.md
+  - knowledge/04-data-storage/checkpoint-integrity-evidence.md
+  source_anchors: []
+  known_fields:
+    method_anchors: 本地文件存储提交/锁/页缓存/故障域与可读/重启/校验、冷热基线方法（local-and-shared-storage §2/§5，只设计不执行）；负载/容量/长尾基线口径（storage-workload-baselines）；客户端故障/恢复验证（storage-client-backend-recovery）；完整性校验证据分层（checkpoint-integrity-evidence）。
+    backlog_method: 固定后端和客户端版本→准备数据身份、读写/提交/校验基线与等待计时（不以吞吐代替持久性）→按既有授权做客户端故障/恢复对照，检查文件字节、提交与应用状态。
+    acceptance_boundary: 每后端分别记录成功/失败/无法判断；本子组结果不推广到 NFS/RGW/Lustre。
+  unknown_fields:
+    environment_identity:
+    - 独立测试数据与本地 ext4/NVMe 后端资源（设备/内核/文件系统参数）
+    - 客户端版本与挂载/缓存配置
+    baseline_parameters: 数据集身份与规模、读写/提交/校验基线参数、等待计时口径
+    recovery_plan: 客户端故障注入方式（限既有授权）与恢复对照清单
+    frozen_scripts_and_inputs: null
+    repetition_and_thresholds: 重复次数与判据
+    resources_available: null
+    authorization_scope: null
+    evidence_location_external: null
+    cleanup_recovery_owner: null
+  instance_pass_requirements:
+  - 取得本地 ext4/NVMe 环境并冻结后端/客户端身份（外置）
+  - 固定数据身份、基线参数与恢复对照清单
+  - 记录授权、清理恢复负责人与外置证据位置
+  - 满足 common_pass_floor 全部适用项（授权范围、资源窗口/隔离、停止/清理/恢复负责人、外置证据位置均可审阅；不适用项给出范围与理由）
+- id: V10-NFS-V41
+  package: V10
+  subgroup: Linux NFSv4.1
+  title: 存储后端验证——Linux NFSv4.1 子组准备实例
+  instance_status: skeleton_prepared
+  readiness: not_ready
+  prepared_at: '2026-10-22'
+  scheme_refs: []
+  method_content_refs:
+  - knowledge/04-data-storage/local-and-shared-storage.md
+  - knowledge/04-data-storage/storage-workload-baselines.md
+  - knowledge/04-data-storage/storage-client-backend-recovery.md
+  - knowledge/04-data-storage/checkpoint-integrity-evidence.md
+  source_anchors: []
+  known_fields:
+    method_anchors: 共享 NFS 缓存/锁/写入提交与恢复语义及可读/重启/校验、冷热基线方法（local-and-shared-storage §3/§5）；负载/容量/长尾口径（storage-workload-baselines）；客户端/后端异常与恢复验证（storage-client-backend-recovery）；完整性校验证据（checkpoint-integrity-evidence）。
+    backlog_method: 同 V10-LOCAL-EXT4-NVME 的 backlog_method；NFS 子组额外注意缓存一致性/锁与 deleg 状态的记录字段。
+    acceptance_boundary: 每后端分别记录；NFSv4.1 结果不推广到其余实现。
+  unknown_fields:
+    environment_identity:
+    - 独立 NFSv4.1 服务端与客户端资源（版本/选项/网络）
+    - 客户端与挂载参数（缓存/锁/deleg 相关）
+    baseline_parameters: null
+    recovery_plan: null
+    frozen_scripts_and_inputs: null
+    repetition_and_thresholds: null
+    resources_available: null
+    authorization_scope: null
+    evidence_location_external: null
+    cleanup_recovery_owner: null
+  instance_pass_requirements:
+  - 取得 NFSv4.1 环境并冻结服务端/客户端身份（外置）
+  - 固定基线参数与恢复对照清单
+  - 记录授权、清理恢复负责人与外置证据位置
+  - 满足 common_pass_floor 全部适用项（授权范围、资源窗口/隔离、停止/清理/恢复负责人、外置证据位置均可审阅；不适用项给出范围与理由）
+- id: V10-RGW-S3
+  package: V10
+  subgroup: Ceph RGW/S3 接口
+  title: 存储后端验证——Ceph RGW/S3 子组准备实例
+  instance_status: skeleton_prepared
+  readiness: not_ready
+  prepared_at: '2026-10-22'
+  scheme_refs: []
+  method_content_refs:
+  - knowledge/04-data-storage/object-and-parallel-storage.md
+  - knowledge/04-data-storage/storage-workload-baselines.md
+  - knowledge/04-data-storage/storage-client-backend-recovery.md
+  - knowledge/04-data-storage/checkpoint-integrity-evidence.md
+  source_anchors: []
+  known_fields:
+    method_anchors: 对象语义（Ceph RGW S3，以固定 Squid 文档为准）与最小验证设计三层先行定义（object-and-parallel-storage §2/§5，只设计不执行）；负载/容量口径（storage-workload-baselines）；恢复验证（storage-client-backend-recovery）；校验证据（checkpoint-integrity-evidence）。
+    backlog_method: 同 V10 总包；RGW 子组额外注意 S3 接口兼容不等于 AWS S3 语义、ETag/版本与提交语义的记录字段。
+    acceptance_boundary: 每后端分别记录；RGW 结果不推广到其余实现。
+  unknown_fields:
+    environment_identity:
+    - 独立 Ceph RGW 测试资源（版本/区域/凭证治理）
+    - S3 客户端与 SDK 身份
+    baseline_parameters: null
+    recovery_plan: null
+    frozen_scripts_and_inputs: null
+    repetition_and_thresholds: null
+    resources_available: null
+    authorization_scope: null
+    evidence_location_external: null
+    cleanup_recovery_owner: null
+  instance_pass_requirements:
+  - 取得 RGW 测试数据与后端资源并冻结身份（外置，凭证不入库）
+  - 固定基线参数与恢复对照清单
+  - 记录授权、清理恢复负责人与外置证据位置
+  - 满足 common_pass_floor 全部适用项（授权范围、资源窗口/隔离、停止/清理/恢复负责人、外置证据位置均可审阅；不适用项给出范围与理由）
+- id: V10-LUSTRE
+  package: V10
+  subgroup: Lustre
+  title: 存储后端验证——Lustre 子组准备实例
+  instance_status: skeleton_prepared
+  readiness: not_ready
+  prepared_at: '2026-10-22'
+  scheme_refs: []
+  method_content_refs:
+  - knowledge/04-data-storage/object-and-parallel-storage.md
+  - knowledge/04-data-storage/storage-workload-baselines.md
+  - knowledge/04-data-storage/storage-client-backend-recovery.md
+  - knowledge/04-data-storage/checkpoint-integrity-evidence.md
+  source_anchors: []
+  known_fields:
+    method_anchors: 并行存储语义（Lustre 2.x，以固定手册为准，引用"章.节＋节名"）与最小验证设计三层先行定义（object-and-parallel-storage §3/§5，只设计不执行）；负载/容量口径（storage-workload-baselines）；恢复验证（storage-client-backend-recovery）；校验证据（checkpoint-integrity-evidence）。
+    backlog_method: 同 V10 总包；Lustre 子组额外注意 OST/MDT 布局、stripe 与恢复窗口的记录字段。
+    acceptance_boundary: 每后端分别记录；Lustre 结果不推广到其余实现。
+  unknown_fields:
+    environment_identity:
+    - 独立 Lustre 测试资源（版本/OST/MDT/客户端）
+    baseline_parameters: null
+    recovery_plan: null
+    frozen_scripts_and_inputs: null
+    repetition_and_thresholds: null
+    resources_available: null
+    authorization_scope: null
+    evidence_location_external: null
+    cleanup_recovery_owner: null
+  instance_pass_requirements:
+  - 取得 Lustre 测试数据与后端资源并冻结身份（外置）
+  - 固定基线参数与恢复对照清单
+  - 记录授权、清理恢复负责人与外置证据位置
+  - 满足 common_pass_floor 全部适用项（授权范围、资源窗口/隔离、停止/清理/恢复负责人、外置证据位置均可审阅；不适用项给出范围与理由）
+- id: V11-SHARING-ISOLATION
+  package: V11
+  subgroup: 共享与租户隔离
+  title: 租户隔离/节点变更/服务恢复——共享与租户隔离子组准备实例
+  instance_status: skeleton_prepared
+  readiness: not_ready
+  prepared_at: '2026-10-22'
+  scheme_refs: []
+  method_content_refs:
+  - knowledge/05-cluster-platform/accelerator-sharing-and-isolation.md
+  - knowledge/05-cluster-platform/contention-capacity-validation.md
+  source_anchors: []
+  known_fields:
+    method_anchors: 设备独占与 MIG/MPS/time-slicing、可核查共享模式及租户/主机/网络/存储边界（accelerator-sharing-and-isolation）；争用/公平性/容量准入观察与两租户对照方法（contention-capacity-validation）。
+    backlog_method: 按独立平台样板分别准备租户、资源账本 baseline→验证共享干扰（每次只改一个因素）→检查租户边界、账本与恢复，失败保留隔离。
+    acceptance_boundary: 调度成功不能代替租户隔离；未证实 NPU 隔离保证保持未知。
+  unknown_fields:
+    environment_identity:
+    - 独立 Kubernetes 或 Slurm 环境及所选平台样板身份
+    - 租户定义、设备共享模式与隔离边界配置
+    baseline_parameters: 租户/资源账本 baseline 采集方案与公平性指标
+    single_variable_plan: 共享干扰对照清单（一次一因素）
+    frozen_scripts_and_inputs: null
+    repetition_and_thresholds: null
+    resources_available: null
+    authorization_scope: null
+    evidence_location_external: null
+    cleanup_recovery_owner: null
+  instance_pass_requirements:
+  - 取得独立平台环境并冻结样板与租户身份（外置）
+  - 固定 baseline 采集与单变量干扰清单
+  - 记录授权（不默认生产操作）、失败保留隔离的责任人与证据位置
+  - 满足 common_pass_floor 全部适用项（授权范围、资源窗口/隔离、停止/清理/恢复负责人、外置证据位置均可审阅；不适用项给出范围与理由）
+- id: V11-NODE-CHANGE
+  package: V11
+  subgroup: 节点变更、发布与回退
+  title: 租户隔离/节点变更/服务恢复——节点变更子组准备实例
+  instance_status: skeleton_prepared
+  readiness: not_ready
+  prepared_at: '2026-10-22'
+  scheme_refs: []
+  method_content_refs:
+  - knowledge/05-cluster-platform/node-drain-resource-reclamation.md
+  - knowledge/05-cluster-platform/platform-change-and-rollback.md
+  source_anchors: []
+  known_fields:
+    method_anchors: 节点摘除/drain/资源回收流程与停止准入/回服判据（node-drain-resource-reclamation）；组件版本变更、发布波次、失败停发/回退与跨层回服验收（platform-change-and-rollback）。
+    backlog_method: 准备节点/drain baseline→验证发布/回退（单变量）→检查账本回收与回服，失败则保留隔离。
+    acceptance_boundary: 新副本 ready 不能代替请求恢复和正确性；回退与回服边界按本子组方法正文自身的变更档案、预检、逐层三态判据与回服要求执行（软件栈 B0/N/R 对照与不可逆边界见 environment-installation-and-upgrade，仅作跨域参照，不是本子组定义的流程）。
+  unknown_fields:
+    environment_identity:
+    - 独立平台环境与组件版本/发布波次身份
+    - 目标节点与 drain 范围
+    baseline_parameters: 节点/账本 baseline 与变更前后检查清单
+    single_variable_plan: null
+    frozen_scripts_and_inputs: null
+    repetition_and_thresholds: null
+    resources_available: null
+    authorization_scope: null
+    evidence_location_external: null
+    cleanup_recovery_owner: null
+  instance_pass_requirements:
+  - 取得独立平台环境并冻结组件与节点身份（外置）
+  - 固定 drain/发布/回退检查清单与单变量方案
+  - 记录授权、回退负责人与证据位置
+  - 满足 common_pass_floor 全部适用项（授权范围、资源窗口/隔离、停止/清理/恢复负责人、外置证据位置均可审阅；不适用项给出范围与理由）
+- id: V11-CONTROL-PLANE
+  package: V11
+  subgroup: 控制面恢复与账本
+  title: 租户隔离/节点变更/服务恢复——控制面恢复子组准备实例
+  instance_status: skeleton_prepared
+  readiness: not_ready
+  prepared_at: '2026-10-22'
+  scheme_refs: []
+  method_content_refs:
+  - knowledge/05-cluster-platform/control-plane-recovery.md
+  source_anchors: []
+  known_fields:
+    method_anchors: Kubernetes API/etcd/控制器与 Slurm controller/worker/database 的故障分支、状态/证据链、备份/恢复/作业重建风险与账本校验（control-plane-recovery）。
+    backlog_method: 准备控制面与账本 baseline→按获授权故障对照验证恢复→账本校验与应用持续进展验收。
+    acceptance_boundary: 调度成功不能代替账本一致；恢复演练按平台文档支持范围设计，不默认生产操作。
+  unknown_fields:
+    environment_identity:
+    - 独立控制面环境（K8s 或 Slurm）与备份/恢复设施身份
+    baseline_parameters: 账本 baseline 与校验清单
+    recovery_plan: 获授权故障对照与恢复判据
+    frozen_scripts_and_inputs: null
+    repetition_and_thresholds: null
+    resources_available: null
+    authorization_scope: null
+    evidence_location_external: null
+    cleanup_recovery_owner: null
+  instance_pass_requirements:
+  - 取得独立控制面环境并冻结身份与备份设施（外置）
+  - 固定账本校验清单与故障/恢复判据
+  - 记录授权、恢复负责人与证据位置
+  - 满足 common_pass_floor 全部适用项（授权范围、资源窗口/隔离、停止/清理/恢复负责人、外置证据位置均可审阅；不适用项给出范围与理由）
+- id: V11-SERVICE-RECOVERY
+  package: V11
+  subgroup: 服务发布、副本/请求恢复
+  title: 租户隔离/节点变更/服务恢复——服务恢复子组准备实例
+  instance_status: skeleton_prepared
+  readiness: not_ready
+  prepared_at: '2026-10-22'
+  scheme_refs: []
+  method_content_refs:
+  - knowledge/07-inference/routing-and-flow-control.md
+  - knowledge/07-inference/capacity-and-autoscaling.md
+  - knowledge/07-inference/release-and-recovery.md
+  source_anchors: []
+  known_fields:
+    method_anchors: 请求路由/准入/背压/取消/重试边界（routing-and-flow-control）；容量/冷启动/扩缩容决策（capacity-and-autoscaling）；灰度/发布/drain/回退与服务恢复验证（release-and-recovery）。
+    backlog_method: 准备请求状态 baseline→验证副本摘除/请求重试（单变量）→检查持续服务/输出质量与恢复。
+    acceptance_boundary: 新副本 ready 不能代替请求恢复和正确性；单引擎服务组不等待另一引擎。
+  unknown_fields:
+    environment_identity:
+    - 独立服务环境与所选引擎/服务控制实现身份
+    - 负载客户端与请求状态观测方案
+    baseline_parameters: 请求状态/SLO baseline 与质量判据
+    single_variable_plan: 副本摘除/重试对照清单
+    frozen_scripts_and_inputs: null
+    repetition_and_thresholds: null
+    resources_available: null
+    authorization_scope: null
+    evidence_location_external: null
+    cleanup_recovery_owner: null
+  instance_pass_requirements:
+  - 取得独立服务环境并冻结引擎与客户端身份（外置）
+  - 固定请求 baseline、单变量对照与质量判据
+  - 记录授权、恢复负责人与证据位置
+  - 满足 common_pass_floor 全部适用项（授权范围、资源窗口/隔离、停止/清理/恢复负责人、外置证据位置均可审阅；不适用项给出范围与理由）
+- id: V12
+  package: V12
+  subgroup: null
+  title: 独立诊断案例集与方法评估——准备实例
+  instance_status: skeleton_prepared
+  readiness: not_ready
+  prepared_at: '2026-10-22'
+  scheme_refs: []
+  method_content_refs:
+  - knowledge/08-reliability/diagnostic-evaluation-method.md
+  - knowledge/08-reliability/diagnostic-evaluation-fixtures.md
+  - knowledge/08-reliability/test-design-and-coverage.md
+  source_anchors: []
+  known_fields:
+    method_anchors: 独立诊断评测方法（冻结、时间线逐步释放、输入/答案分离、评分规则与泄漏检查）（diagnostic-evaluation-method）；公开教学题组 PTF-01–10 的边界——不能自动成为独立保留集（diagnostic-evaluation-fixtures）；测试选择与统计纪律（test-design-and-coverage）。
+    backlog_method: 冻结未进入知识库完整复盘的案例家族/版本/时间划分并外置管理输入与答案→审核授权/脱敏、根因证据与无法判断标签→固定知识版本、模型/配置与评分规则，执行独立评估并记录失败与泄漏检查。
+    acceptance_boundary: 无真实独立材料保留缺证据，不虚构分数；正文中的公开/合成教学题不构成保留集。
+  unknown_fields:
+    case_source: 有授权且可脱敏的独立案例来源与案例家族清单
+    evaluation_resources: 评测资源（模型/配置/运行环境）身份
+    knowledge_version_pin: 被评知识版本的固定方式
+    separation_plan: 输入/答案分离与外置管理方案、时间线释放节奏
+    authorization_and_redaction: 授权范围与脱敏审核流程
+    scoring_and_leakage: 评分规则细则与泄漏检查方案（细则可在方法正文基础上按案例集裁剪并预登记）
+    resources_available: null
+    authorization_scope: null
+    evidence_location_external: null
+    cleanup_recovery_owner: null
+  instance_pass_requirements:
+  - 取得有授权且可脱敏的独立案例与评测资源
+  - 冻结案例划分、输入/答案分离外置方案与知识版本
+  - 冻结评测执行脚本与输入（模型/配置/评分脚本 revision）
+  - 预登记评分与泄漏检查规则；记录案例集与答卷的保存、撤销与泄漏处置（清理/恢复）负责人与证据位置
+  - 满足 common_pass_floor 全部适用项（授权范围、资源窗口/隔离、停止/清理/恢复负责人、外置证据位置均可审阅；不适用项给出范围与理由）
+common_unknowns_note: >-
+  所有实例共同的缺项——resources_available、authorization_scope、evidence_location_external、
+  cleanup_recovery_owner 均为 null：尚未取得独立资源与授权，外置脱敏证据库尚未建立，清理/恢复
+  责任人未指定。这些字段只有在真实取得并记录后才能填写；填写并通过该实例验收只使对应验证子组
+  就绪，不代表任何验证已执行。
+review_record: 见 delivery_record；审阅与修订按 docs/authoring-guide.md 第 7 节约定执行并如实记录。

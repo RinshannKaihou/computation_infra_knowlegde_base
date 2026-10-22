@@ -6,6 +6,16 @@ parent_plan: plans/full-coverage-backlog.yaml
 notice: 本轮只完成规划，既有七份方案仍未执行。验证工作包不计入内容 Batch 数；本文件不提供硬件/集群/生产执行授权。
 resources_status: unknown
 scheduling: V00 可先整理已知字段；V06 可在取得依赖和输入后优先准备 CPU 路径，其他按资源可用性并行，无日历承诺。
+preparation_delivery:
+  delivered_at: '2026-10-22'
+  instances_path: plans/v00-preparation-instances.yaml
+  instance_count: 19
+  scope_note: >-
+    仅执行 V00 的"先收集已知字段，未知项在该实例保留"步骤：19 个实例（V01–V05、V07–V09、V12 各一，
+    V06 两阶段、V10 四后端子组、V11 四子组）均为骨架（skeleton_prepared），readiness 全部 not_ready；
+    未取得资源/授权，未冻结脚本/输入，未建立外置证据位置。不改变任何 V 包 status 与 executed_at，
+    既有七份方案执行仍为 0/7，不构成执行授权。
+  fragment_convention: preparation_instance_ref 的 #后缀为 package id，该包全部实例见实例文件内 package_index。
 result_policy:
 - 基线、单变量对照、恢复及重复均保存原始证据引用；结果允许成功、失败或无法判断
 - reproduced 只在真实执行、证据可定位且范围固定后更新，来源/编辑审核独立维护
@@ -29,7 +39,7 @@ tasks:
   - 每个准备实例的真实环境、来源/脚本/输入/判据、已有授权范围与清理恢复条件可审阅；缺项逐条保留。该实例通过只使相应验证子组就绪，不代表所有验证资源准备完成。
   evidence_refs: []
   executed_at: null
-  preparation_note: 按验证包/子组分别准备与验收，不等三平台安装/迁移/升级全链或全部资源就绪。既有方案可直接作为准备输入；先收集已知字段，未知项在该实例保留。
+  preparation_note: 按验证包/子组分别准备与验收，不等三平台安装/迁移/升级全链或全部资源就绪。既有方案可直接作为准备输入；先收集已知字段，未知项在该实例保留。2026-10-22 已交付 19 个实例骨架（见 preparation_delivery 与 plans/v00-preparation-instances.yaml）；本次交付不改变 V00 与各 V 包的 planned 状态，后续按各实例独立验收与推进——某实例通过仅使对应验证子组就绪、允许对应运行，不代表所有验证资源准备完成，也不阻塞其他仍 planned 的子组；总包完成仍按各自完整验收条件。
   context_task_refs:
   - T01-09
   - T02-12
@@ -67,7 +77,7 @@ tasks:
   - T02-12
   existing_content_prerequisites:
   - software-stack.ascend-version-mismatch-experiment
-  preparation_instance_ref: null
+  preparation_instance_ref: plans/v00-preparation-instances.yaml#V01
   prerequisite_semantics: 仅要求当前方案实际选择的环境、对应版本/脚本/输入/预先判据和 V00 准备实例，不依赖 context_task_refs 全部完成。
 - id: V02
   title: 设备可见性与资源分配链验证
@@ -99,7 +109,7 @@ tasks:
   - T05-10
   existing_content_prerequisites:
   - cluster-platform.ascend-device-visibility-experiment
-  preparation_instance_ref: null
+  preparation_instance_ref: plans/v00-preparation-instances.yaml#V02
   prerequisite_semantics: 仅要求当前方案实际选择的环境、对应版本/脚本/输入/预先判据和 V00 准备实例，不依赖 context_task_refs 全部完成。
 - id: V03
   title: HCCL 超时验证
@@ -133,7 +143,7 @@ tasks:
   - T03-08
   existing_content_prerequisites:
   - communication.hccl-timeout-experiment
-  preparation_instance_ref: null
+  preparation_instance_ref: plans/v00-preparation-instances.yaml#V03
   prerequisite_semantics: 仅要求当前方案实际选择的环境、对应版本/脚本/输入/预先判据和 V00 准备实例，不依赖 context_task_refs 全部完成。
 - id: V04
   title: NCCL 超时验证
@@ -167,7 +177,7 @@ tasks:
   - T03-08
   existing_content_prerequisites:
   - communication.nccl-timeout-experiment
-  preparation_instance_ref: null
+  preparation_instance_ref: plans/v00-preparation-instances.yaml#V04
   prerequisite_semantics: 仅要求当前方案实际选择的环境、对应版本/脚本/输入/预先判据和 V00 准备实例，不依赖 context_task_refs 全部完成。
 - id: V05
   title: GPU/NPU 精度差异验证
@@ -201,7 +211,7 @@ tasks:
   - T08-05
   existing_content_prerequisites:
   - training.gpu-npu-precision-difference-experiment
-  preparation_instance_ref: null
+  preparation_instance_ref: plans/v00-preparation-instances.yaml#V05
   prerequisite_semantics: 仅要求当前方案实际选择的环境、对应版本/脚本/输入/预先判据和 V00 准备实例，不依赖 context_task_refs 全部完成。
 - id: V06
   title: Checkpoint 恢复状态验证
@@ -235,7 +245,7 @@ tasks:
   - T06-08
   existing_content_prerequisites:
   - training.checkpoint-state-recovery-experiment
-  preparation_instance_ref: null
+  preparation_instance_ref: plans/v00-preparation-instances.yaml#V06
   prerequisite_semantics: 仅要求当前方案实际选择的环境、对应版本/脚本/输入/预先判据和 V00 准备实例，不依赖 context_task_refs 全部完成。
   phase_gates:
   - phase: CPU direct-set missing-FQN baseline/parent/commit
@@ -273,7 +283,7 @@ tasks:
   - T07-10
   existing_content_prerequisites:
   - inference.ascend-inference-tail-latency-experiment
-  preparation_instance_ref: null
+  preparation_instance_ref: plans/v00-preparation-instances.yaml#V07
   prerequisite_semantics: 仅要求当前方案实际选择的环境、对应版本/脚本/输入/预先判据和 V00 准备实例，不依赖 context_task_refs 全部完成。
 - id: V08
   title: 新节点/返修节点真实验收档案
@@ -306,7 +316,7 @@ tasks:
   - hardware.node-acceptance-triage
   - hardware.health-evidence
   - hardware.resource-topology
-  preparation_instance_ref: null
+  preparation_instance_ref: plans/v00-preparation-instances.yaml#V08
   prerequisite_semantics: 仅要求当前方案实际选择的环境、对应版本/脚本/输入/预先判据和 V00 准备实例，不依赖 context_task_refs 全部完成。
 - id: V09
   title: 跨节点网络与 RDMA 样板验证
@@ -339,7 +349,7 @@ tasks:
   - T03-07
   - T03-08
   existing_content_prerequisites: []
-  preparation_instance_ref: null
+  preparation_instance_ref: plans/v00-preparation-instances.yaml#V09
   prerequisite_semantics: 仅要求当前方案实际选择的环境、对应版本/脚本/输入/预先判据和 V00 准备实例，不依赖 context_task_refs 全部完成。
   conditional_extensions: 要做特定 collective/AMD/HCCL 或路由/rail 扩展时，才补对应库/硬件/工具前置；基础 verbs/network 组不等这些扩展。
 - id: V10
@@ -376,7 +386,7 @@ tasks:
   - T04-04
   - T04-08
   existing_content_prerequisites: []
-  preparation_instance_ref: null
+  preparation_instance_ref: plans/v00-preparation-instances.yaml#V10
   prerequisite_semantics: 列表是总包方法输入；实际子组仅等待所选后端对应章节/来源通过，不等待其余后端，其他组继续 planned。四组均验收后才可将总包完成。
   subruns:
   - name: 本地 ext4/NVMe
@@ -443,7 +453,7 @@ tasks:
   - T05-05
   - T07-11
   existing_content_prerequisites: []
-  preparation_instance_ref: null
+  preparation_instance_ref: plans/v00-preparation-instances.yaml#V11
   prerequisite_semantics: 按选定平台/服务分开子组；仅等待本子组所需方法章节与对应来源，Slurm 不等待 vLLM/MindIE，单引擎服务不等待另一引擎。未执行子组保持 planned，总包不得提前完成。
   subruns:
   - name: 共享与租户隔离
@@ -490,7 +500,7 @@ tasks:
   context_task_refs:
   - T08-06
   existing_content_prerequisites: []
-  preparation_instance_ref: null
+  preparation_instance_ref: plans/v00-preparation-instances.yaml#V12
   prerequisite_semantics: 仅要求当前方案实际选择的环境、对应版本/脚本/输入/预先判据和 V00 准备实例，不依赖 context_task_refs 全部完成。
 prerequisite_policy: 既有七份方案按各自实际环境和阶段准备，不等待无关平台或全部后续正文。V00 为每个验证包/子组准备一份实例，仅该实例通过才允许对应运行；不要求先取得所有环境。context_task_refs
   仅供扩展阅读，不是执行硬前置。
