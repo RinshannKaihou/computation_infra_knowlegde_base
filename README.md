@@ -98,7 +98,7 @@
 
 ## 添加内容
 
-首两轮记录见[详细填充计划](docs/population-plan.md)与[首轮内容任务清单](plans/content-backlog.yaml)。Batch 13 起按[完整覆盖路线图](docs/full-coverage-roadmap.md)与[执行清单](plans/full-coverage-backlog.yaml)推进，材料由[原来源工作包](plans/source-acquisition.yaml)和[补充工作包](plans/followup-source-acquisition.yaml)管理；真实证据单列[验证任务](plans/validation-backlog.yaml)。任务状态随交付更新，只有已创建的正文才计入内容产量。
+首两轮记录见[详细填充计划](docs/population-plan.md)与[首轮内容任务清单](plans/content-backlog.yaml)。Batch 13 起按[完整覆盖路线图](docs/full-coverage-roadmap.md)与[执行清单](plans/full-coverage-backlog.yaml)推进，材料由[原来源工作包](plans/source-acquisition.yaml)和[补充工作包](plans/followup-source-acquisition.yaml)管理；真实证据单列[验证任务](plans/validation-backlog.yaml)，验证轨道的 V00 已知字段整理与准备实例骨架见 [V00 准备实例](plans/v00-preparation-instances.yaml)（全部 not_ready，未执行）。任务状态随交付更新，只有已创建的正文才计入内容产量。
 
 先读[写作指南](docs/authoring-guide.md)，再选择模板：
 
