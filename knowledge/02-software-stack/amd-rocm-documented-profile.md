@@ -34,7 +34,7 @@ source_refs:
   - src.amd.hip-docs-6.3.3
   - src.amd.rocr-runtime-docs-6.3.3
   - src.amd.instinct-mi300x-platform-datasheet-2023
-updated_at: "2026-10-09"
+updated_at: "2026-10-23"
 summary: 以 ROCm Core SDK 10.1.0、Instinct MI300X、Ubuntu 24.04.5 与 amdgpu 31.60.0 为文档样板，分层记录组件版本、兼容矩阵、HIP/ROCr 编程运行路径、PyTorch 构建分发关系、安装与验证入口及组件许可，并保留版本标注冲突与未取证边界。
 related_ids:
   - software-stack.layers-and-boundaries
@@ -205,7 +205,7 @@ verification:
 | BSD-2-Clause | rocSOLVER |
 | GPLv3 | ROCgdb |
 
-文档仓库本体为 MIT（许可页顶部全文；页面尾部另有 ©2023-2025 法律声明与 MIT 头 ©2023-2026 并存，照录）。包内许可文本位于 `/opt/rocm/share/doc/<component-name>/`；开源组件经 GitHub 与 repo.radeon.com 发布，专有组件在 repo.radeon.com 的 proprietary 子目录；ROCprof Trace Decoder 与 AOCC 二进制另有许可协议。本知识库未选统一再分发许可，本文只保存链接、短字段与原创归纳，不镜像网页、包或文档。
+文档仓库本体为 MIT（许可页顶部全文；页面尾部另有 ©2023-2025 法律声明与 MIT 头 ©2023-2026 并存，照录）。包内许可文本位于 `/opt/rocm/share/doc/<component-name>/`；开源组件经 GitHub 与 repo.radeon.com 发布，专有组件在 repo.radeon.com 的 proprietary 子目录；ROCprof Trace Decoder 与 AOCC 二进制另有许可协议。本知识库原创内容采用 [Apache License 2.0](../../LICENSE)，不改变上述外部材料的许可；本文只保存链接、短字段与原创归纳，不镜像网页、包或文档。
 
 ## 官方声明与本地验证状态
 

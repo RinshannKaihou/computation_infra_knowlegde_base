@@ -47,4 +47,4 @@ git show HEAD
 
 本仓库已配置 GitHub 远程 [origin](https://github.com/RinshannKaihou/computation_infra_knowlegde_base)。提交前用 `git remote -v` 确认当前 checkout 的地址；推送前先 fetch 并核对分支差异，通过检查后按已有授权执行 `git push origin main` 或推送当前工作分支。本地提交不等于远程备份，推送后核对远程提交身份；不以本文替代实际推送授权。
 
-共享分支通过评审合入 `main`；共享 `main` 不使用强制推送。Git 管理不改变本仓库尚未选择统一再分发许可证的状态，第三方许可与署名要求仍按来源登记保留。
+共享分支通过评审合入 `main`；共享 `main` 不使用强制推送。本项目原创内容采用 [Apache License 2.0](../LICENSE)，第三方许可与署名要求仍按来源登记保留。

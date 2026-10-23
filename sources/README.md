@@ -8,4 +8,4 @@
 - `license.status` 区分 `unknown`、`partial`、`identified`。即使根许可证已确认，也不覆盖外部引用或所有发行包。
 - 新来源先登记 ID，再在内容的 `source_refs` 引用。来源 ID 存在只证明引用可解析，不证明它支持正文全部结论。
 
-完整要求见[写作指南](../docs/authoring-guide.md)。本仓库自身的对外发布许可尚未决定，外部来源各自保留其许可和署名要求。
+完整要求见[写作指南](../docs/authoring-guide.md)。本项目原创内容采用 [Apache License 2.0](../LICENSE)，外部来源各自保留其版权、许可和署名要求。
